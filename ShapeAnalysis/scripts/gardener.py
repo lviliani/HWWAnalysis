@@ -20,6 +20,7 @@ from tree.higgsLineShape    import HiggsLineshapeWeightAdder
 from tree.jetHiggsVar       import JetHiggsVarFiller
 # from tree.vbfMVAVar         import VbfMVAVarFiller
 from tree.manyJetsHiggsVar  import ManyJetsHiggsVarFiller
+from tree.wwGenInfo         import WWGenFiller
 
 
 if __name__ == '__main__':
@@ -48,5 +49,6 @@ if __name__ == '__main__':
     modules['jetHiggsVar']      = JetHiggsVarFiller()
 #     modules['vbfMVAVar']        = VbfMVAVarFiller()
     modules['manyJetsHiggsVar'] = ManyJetsHiggsVarFiller()
+    modules['wwGenInfo']        = WWGenFiller()
 
     gardener_cli( modules )

@@ -52,7 +52,7 @@ class EffLepFiller(TreeCloner):
         group.add_option('-e', '--elfile', dest='elfile', help='Name of the input root file with electron efficiencies',)
         group.add_option('-m', '--mufile', dest='mufile', help='Name of the input root file with muon efficiencies',)
         group.add_option('-E', '--elname', dest='elname', help='Electon\'s histogram name (default=%default)', default='electronsDATAMCratio_All_selec')
-        group.add_option('-M', '--muname', dest='muname', help='Muon\'s histogram name (default=%default)', default='muonDATAMCratio_All_selec')
+        group.add_option('-M', '--muname', dest='muname', help='Muon\'s histogram name (default=%default)', default='muonsDATAMCratio_all')
         group.add_option('-b', '--branch',   dest='branch', help='Name of the lepton efficiency weight branch (default=%default)', default='effW')
 
         parser.add_option_group(group)
