@@ -2,7 +2,7 @@ import hwwtools
 import re
 
 
-signals = ['ggH','qqH','wzttH','ggH_ALT','qqH_ALT','WH','ZH','ttH']
+signals = ['ggH','qqH','wzttH','ggH_ALT','qqH_ALT','WH','ZH','ttH','VH']
 
 #--------------
 # mcsets,
@@ -124,7 +124,7 @@ mcsets = {
     ],
     'vbf_sf' : [
         #signals
-        'ggH','qqH','wzttH',
+        'ggH','qqH', #'wzttH',
         # bkgs
         #'WW','ggWW','VgS','Vg','WJet','Top','VV','DYTT','DYLL',
         'WW','ggWW','VgS','Vg','WJet','Top','VV',
@@ -147,7 +147,7 @@ mcsets = {
     ],
    'vbf_of' : [
         #signals
-        'ggH','qqH','wzttH',
+        'ggH','qqH', #'wzttH',
         # bkgs
         'WW','ggWW','VgS','Vg','WJet','Top','VV','DYTT',
         'WWewk',
@@ -172,7 +172,7 @@ mcsets = {
     ],
     'vh_sf' : [
         #signals
-        'ggH','qqH','WH','ZH','ttH',
+        'ggH','qqH','WH','ZH','ttH','VH',
         # bkgs
         'WW','ggWW','VgS','Vg','WJet','Top','VV',
         'VVV',
@@ -194,7 +194,7 @@ mcsets = {
     ],
    'vh_of' : [
         #signals
-        'ggH','qqH','WH','ZH','ttH',
+        'ggH','qqH','WH','ZH','ttH','VH',
         # bkgs
         'WW','ggWW','VgS','Vg','WJet','Top','VV','DYTT',
         'VVV',
@@ -242,6 +242,24 @@ mcsets = {
         # templates
         'VgS-template','Vg-template',
     ],
+   'whsc' : [
+        #signals
+        'ggH','qqH','WH','ZH','ttH','VH',
+        #'WH','ZH','ttH','VH',
+        #'VH',
+        # bkgs
+        'WW','ggWW','VgS','Vg','WJet','Top','VV','DYTT',
+        'DYee',
+        'DYmm',
+        'VVV',
+        # templates
+        ('WJetFakeRate-2j-template','WJetFakeRate-nominal'), # here and in the following I put the "template" distributions (relaxed cuts)
+        ('WJetFakeRate-2j-eUp',     'WJetFakeRate-nominal'),
+        ('WJetFakeRate-2j-eDn',     'WJetFakeRate-nominal'),
+        ('WJetFakeRate-2j-mUp',     'WJetFakeRate-nominal'),
+        ('WJetFakeRate-2j-mDn',     'WJetFakeRate-nominal'),
+        'VgS-template','Vg-template',
+    ],
 
    'topestimate' : [
         # signals
@@ -275,6 +293,7 @@ def samples(mass, energytag, datatag='Data2012', sigtag='SM', mctag='all'):
         raise ValueError('Energy misdefined: '+energytag)
 
     signals = sampledb.signalSamples(sigtag,mass)
+    print "*** signals = ",signals
 
     mcsamples = {}
     mcsamples.update(signals)

@@ -141,6 +141,7 @@ class DDCardReader:
         try:
             return (self.estimates[mass][channel],(mass,channel))
         except KeyError as ke:
+            print "no data driven estimation?\n"
             raise KeyError('{0} {1}'.format(mass,channel))
 
 class DDEntry:

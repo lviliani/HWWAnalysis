@@ -201,6 +201,70 @@ class vhcuts:
 
 
 
+# whsc: wh, h>ww, ww>lnjj same charge:  w(+/-)h>ww>l(+/-)njj
+class whsccuts:
+    # ---> ~30xSM sensitivity 
+    #_massindep = [
+        #'trigger==1.',
+        #'((ch1*ch2)>0 && pt1>20 && pt2>10)',
+        #'zveto==1',
+        #'mtw1<100',
+        #'mtw2<100',
+        #'mjj>60',
+        #'mjj<100',
+        #'detajj<3.5',
+        #'pfmet>20.',
+        #'( !sameflav ||  (pfmet > 45.0) )',
+        #'mpmet>20.',
+        #'mll>12 ',
+        #'bveto_mu==1 ',
+        #'nextra==0' ,
+        #'bveto_ip==1',
+        #'nbjettche==0',
+        #'njet>=2',
+    #]
+
+    _sqrtDependent2011 = [
+        'abs(jeteta1)<4.5 && abs(jeteta2)<4.5',
+        #'mll>(12+8*sameflav)',
+        'mll>12',
+        'mpmet>(20+(7+nvtx/2.)*sameflav)',
+        #'(pt2 > 15||!sameflav)',
+    ]
+    _sqrtDependent2012 = [
+        'mll>12 ',
+        '( !sameflav ||  (pfmet > 35.0))',
+    ]
+
+    _massindep = [
+        'trigger==1.',
+        '((ch1*ch2)>0 && pt1>20 && pt2>10)',
+        'zveto==1',
+        #'(mjj+(mtw1>mtw2)*mtw2+(mtw1<mtw2)*mtw1)<180',
+        'pt2<35',#'pt2<40',
+        #'(mjj+mtw1+mtw2)>180',
+        'abs(eta1-eta2) < 2.0',
+        #'(mtw2*(mtw1>mtw2)+mtw1*(mtw1<mtw2))<100',
+        '(mtw1*(mtw1>mtw2)+mtw2*(mtw1<mtw2))>70',
+        '(mtw1*(mtw1>mtw2)+mtw2*(mtw1<mtw2))<130',
+        'mjj>60',
+        'mjj<100',
+        'pfmet>20.',
+        'mpmet>20.',
+        'bveto_mu==1 ',
+        'nextra==0' ,
+        'bveto_ip==1',
+        'nbjettche==0',
+        'njet>=2',
+    ]
+
+    #whsccut      = _massindep
+    whsccut      = _massindep + _sqrtDependent2012
+    whsccut2011  = _massindep + _sqrtDependent2011
+
+
+
+
 masses = [110, 115, 120, 125, 130, 135, 140, 145, 150, 155, 160, 170, 180, 190, 200, 250, 300, 350, 400, 450, 500, 550, 600]
 #masses = [110, 115, 120, 125, 130, 135, 140, 150, 155, 160, 170, 180, 190, 200, 250, 300, 350, 400, 450, 500, 550, 600]  
 
@@ -210,6 +274,7 @@ categoryCuts['1j'] = wwcuts.onejet
 #categoryCuts['2j']   = wwcuts.vbf        # 2 or 3 jets, but the third not between the first two in \eta
 categoryCuts['2j']   = wwcuts.loosevbf   # 2 or 3 jets
 categoryCuts['vh2j'] = wwcuts.vh         # >=2 jets
+categoryCuts['whsc'] = wwcuts.vh         # >=2 jets
 
 
 flavorCuts = {}
@@ -240,6 +305,8 @@ channels['sf_2j'] = ('2j','sf')
 
 channels['of_vh2j'] = ('vh2j','of')
 channels['sf_vh2j'] = ('vh2j','sf')
+
+channels['ll_whsc'] = ('whsc','ll')
 
 
 #  __  __               ___     _      
@@ -456,6 +523,23 @@ def massSelections(mass):
     sel['vh-banana-shape-selection'] = sel['vh-banana-shape-level'].replace('(ch1*ch2)<0', '((ch1*ch2)<0 || !sameflav)')
     sel['vh-banana-shape-selection'] = sel['vh-banana-shape-selection'] + ' && (mth > {0:.1f} && mth < {1:.1f}) && ((sameflav && drll<1.5) || (!sameflav && drll<2.5))'.format(masscuts['mtmin_vh'], int(mass))
     sel['vh-banana-shape-selection'] = sel['vh-banana-shape-selection'] + ' && ((sameflav && mll>{0:.1f} && mll<{1:.1f}) || (!sameflav && mll<200)) && ((sameflav && drll<1.5) || (!sameflav && drll<2.5)) '.format(masscuts['mllmin_vh'], masscuts['mllmax_vh'])
+
+
+
+    # whsc #
+    sel['whsc-level']    = ' && '.join(whsccuts.whsccut) + ' && (abs((min(sqrt((2*pt1*cosh(eta1)+jetpt1*cosh(jeteta1)+jetpt2*cosh(jeteta2))*(2*pt1*cosh(eta1)+jetpt1*cosh(jeteta1)+jetpt2*cosh(jeteta2))-((2*pt1*sin(phi1)+jetpt1*sin(jetphi1)+jetpt2*sin(jetphi2))*(2*pt1*sin(phi1)+jetpt1*sin(jetphi1)+jetpt2*sin(jetphi2))+(2*pt1*cos(phi1)+jetpt1*cos(jetphi1)+jetpt2*cos(jetphi2))*(2*pt1*cos(phi1)+jetpt1*cos(jetphi1)+jetpt2*cos(jetphi2))+(2*pt1*(1-exp(-2*eta1))/(2.*exp(-eta1))+jetpt1*(1-exp(-2*jeteta1))/(2.*exp(-jeteta1))+jetpt2*(1-exp(-2*jeteta2))/(2.*exp(-jeteta2)))*(2*pt1*(1-exp(-2*eta1))/(2.*exp(-eta1))+jetpt1*(1-exp(-2*jeteta1))/(2.*exp(-jeteta1))+jetpt2*(1-exp(-2*jeteta2))/(2.*exp(-jeteta2))))),sqrt((2*pt2*cosh(eta2)+jetpt1*cosh(jeteta1)+jetpt2*cosh(jeteta2))*(2*pt2*cosh(eta2)+jetpt1*cosh(jeteta1)+jetpt2*cosh(jeteta2))-((2*pt2*sin(phi2)+jetpt1*sin(jetphi1)+jetpt2*sin(jetphi2))*(2*pt2*sin(phi2)+jetpt1*sin(jetphi1)+jetpt2*sin(jetphi2))+(2*pt2*cos(phi2)+jetpt1*cos(jetphi1)+jetpt2*cos(jetphi2))*(2*pt2*cos(phi2)+jetpt1*cos(jetphi1)+jetpt2*cos(jetphi2))+(2*pt2*(1-exp(-2*eta2))/(2.*exp(-eta2))+jetpt1*(1-exp(-2*jeteta1))/(2.*exp(-jeteta1))+jetpt2*(1-exp(-2*jeteta2))/(2.*exp(-jeteta2)))*(2*pt2*(1-exp(-2*eta2))/(2.*exp(-eta2))+jetpt1*(1-exp(-2*jeteta1))/(2.*exp(-jeteta1))+jetpt2*(1-exp(-2*jeteta2))/(2.*exp(-jeteta2))))))) - {0:.1f})<20) '.format(int(mass))
+    sel['whsc-selection'] = sel['whsc-level']
+
+    sel['whsc2011-level']    = ' && '.join(whsccuts.whsccut2011) + ' && (abs((min(sqrt((2*pt1*cosh(eta1)+jetpt1*cosh(jeteta1)+jetpt2*cosh(jeteta2))*(2*pt1*cosh(eta1)+jetpt1*cosh(jeteta1)+jetpt2*cosh(jeteta2))-((2*pt1*sin(phi1)+jetpt1*sin(jetphi1)+jetpt2*sin(jetphi2))*(2*pt1*sin(phi1)+jetpt1*sin(jetphi1)+jetpt2*sin(jetphi2))+(2*pt1*cos(phi1)+jetpt1*cos(jetphi1)+jetpt2*cos(jetphi2))*(2*pt1*cos(phi1)+jetpt1*cos(jetphi1)+jetpt2*cos(jetphi2))+(2*pt1*(1-exp(-2*eta1))/(2.*exp(-eta1))+jetpt1*(1-exp(-2*jeteta1))/(2.*exp(-jeteta1))+jetpt2*(1-exp(-2*jeteta2))/(2.*exp(-jeteta2)))*(2*pt1*(1-exp(-2*eta1))/(2.*exp(-eta1))+jetpt1*(1-exp(-2*jeteta1))/(2.*exp(-jeteta1))+jetpt2*(1-exp(-2*jeteta2))/(2.*exp(-jeteta2))))),sqrt((2*pt2*cosh(eta2)+jetpt1*cosh(jeteta1)+jetpt2*cosh(jeteta2))*(2*pt2*cosh(eta2)+jetpt1*cosh(jeteta1)+jetpt2*cosh(jeteta2))-((2*pt2*sin(phi2)+jetpt1*sin(jetphi1)+jetpt2*sin(jetphi2))*(2*pt2*sin(phi2)+jetpt1*sin(jetphi1)+jetpt2*sin(jetphi2))+(2*pt2*cos(phi2)+jetpt1*cos(jetphi1)+jetpt2*cos(jetphi2))*(2*pt2*cos(phi2)+jetpt1*cos(jetphi1)+jetpt2*cos(jetphi2))+(2*pt2*(1-exp(-2*eta2))/(2.*exp(-eta2))+jetpt1*(1-exp(-2*jeteta1))/(2.*exp(-jeteta1))+jetpt2*(1-exp(-2*jeteta2))/(2.*exp(-jeteta2)))*(2*pt2*(1-exp(-2*eta2))/(2.*exp(-eta2))+jetpt1*(1-exp(-2*jeteta1))/(2.*exp(-jeteta1))+jetpt2*(1-exp(-2*jeteta2))/(2.*exp(-jeteta2))))))) - {0:.1f})<20) '.format(int(mass))
+    sel['whsc2011-selection'] = sel['whsc2011-level']
+
+    sel['whscShape-level']    = ' && '.join(whsccuts.whsccut)
+    sel['whscShape-selection'] = sel['whscShape-level']
+
+    sel['whscShape2011-level']    = ' && '.join(whsccuts.whsccut2011)
+    sel['whscShape2011-selection'] = sel['whscShape2011-level']
+
+
 
     return sel
 
