@@ -65,6 +65,15 @@ backgrounds = {
     'DYLL-template-vbf'       : ['dyTemplate/latino_036_DY10toLLMad.root',
                                  'dyTemplate/latino_037_DY50toLLMad.root',
                                 ],
+
+#    for 2H model and signal injection
+    'ggH_SM'   : ['nominals/latino_9125_ggToH125toWWTo2LAndTau2Nu.root',
+                ],
+    'qqH_SM'   : ['nominals/latino_8125_vbfToH125toWWTo2LAndTau2Nu.root',
+                ],
+    'wzttH_SM' : ['nominals/latino_7125_wzttH125ToWW.root'],
+    'VH_SM'    : ['nominals/latino_7125_wzttH125ToWW.root'],
+
 }
 
 data = {
@@ -116,6 +125,7 @@ def signalSamples(sigtag,mass=125,suffix=''):
     std_ggH      = ['nominals/latino_9125_ggToH125toWWTo2LAndTau2Nu.root']
     std_qqH      = ['nominals/latino_8125_vbfToH125toWWTo2LAndTau2Nu.root']
     std_wzttH    = ['nominals/latino_7125_wzttH125ToWW.root']
+    std_VH       = ['nominals/latino_7125_wzttH125ToWW.root']
 
     jhu_ggSM     = ['nominals/latino_13001_SMH125ToWW2L2Nu.root',
                     'nominals/latino_13004_SMH125ToWW2Tau2Nu.root',
@@ -148,18 +158,34 @@ def signalSamples(sigtag,mass=125,suffix=''):
                  ]
         qqHnew  = ['nominals/latino_8{mass}_vbfToH{mass}toWWTo2LAndTau2Nu.root']
         wzttH   = ['nominals/latino_7{mass}_wzttH{mass}ToWW.root']
-        
+        VH      = ['nominals/latino_7{mass}_wzttH{mass}ToWW.root']
+        WH      = ['nominals/latino_7{mass}_wzttH{mass}ToWW.root']
+        ZH      = ['nominals/latino_7{mass}_wzttH{mass}ToWW.root']
+        ttH     = ['nominals/latino_7{mass}_wzttH{mass}ToWW.root']
+
+        if mass <= 300:
+          if (mass != 110) and (mass != 115) :
+            signals['wzttH'+suffix] = [f.format(mass = mass) for f in wzttH]
+            signals['VH'+suffix]    = [f.format(mass = mass) for f in VH]
+            #signals['WH'+suffix]    = [f.format(mass = mass) for f in WH]
+            #signals['ZH'+suffix]    = [f.format(mass = mass) for f in ZH]
+            #signals['ttH'+suffix]   = [f.format(mass = mass) for f in ttH]
+          else :
+            signals['wzttH'+suffix]  = ['nominals/latino_3{mass}_wzttH{mass}ToWW.root'.format(mass = mass)]
+            signals['VH'+suffix]     = ['nominals/latino_3{mass}_wzttH{mass}ToWW.root'.format(mass = mass)]
+            #signals['WH'+suffix]     = ['nominals/latino_3{mass}_wzttH{mass}ToWW.root'.format(mass = mass)]
+            #signals['ZH'+suffix]     = ['nominals/latino_3{mass}_wzttH{mass}ToWW.root'.format(mass = mass)]
+            #signals['ttH'+suffix]    = ['nominals/latino_3{mass}_wzttH{mass}ToWW.root'.format(mass = mass)]
+
         if int(mass)==122:
-            signals['ggH'+suffix]  = [f.format(mass = mass) for f in ggHnew]
+            signals['ggH'+suffix]   = [f.format(mass = mass) for f in ggHnew]
             signals['wzttH'+suffix] = [f.format(mass = mass) for f in wzttH]
         elif int(mass)==118 or (int(mass)>120 and int(mass)<130) or int(mass)==135:
-            signals['ggH'+suffix]  = [f.format(mass = mass) for f in ggHnew]
-            signals['qqH'+suffix]  = [f.format(mass = mass) for f in qqHnew]
-            signals['wzttH'+suffix] = [f.format(mass = mass) for f in wzttH]
+            signals['ggH'+suffix]   = [f.format(mass = mass) for f in ggHnew]
+            signals['qqH'+suffix]   = [f.format(mass = mass) for f in qqHnew]
         elif int(mass) > 115:
-            signals['ggH'+suffix]  = [f.format(mass = mass) for f in ggH]
-            signals['qqH'+suffix]  = [f.format(mass = mass) for f in qqH]
-            signals['wzttH'+suffix] = [f.format(mass = mass) for f in wzttH]
+            signals['ggH'+suffix]   = [f.format(mass = mass) for f in ggH]
+            signals['qqH'+suffix]   = [f.format(mass = mass) for f in qqH]
         else:
             signals['ggH'+suffix]  = ['nominals/latino_9{mass}_ggToH{mass}toWWTo2LAndTau2Nu.root'.format(mass = mass)]
             signals['qqH'+suffix]  = ['nominals/latino_8{mass}_vbfToH{mass}toWWTo2LAndTau2Nu.root'.format(mass = mass)]
