@@ -21,6 +21,7 @@ from tree.jetHiggsVar       import JetHiggsVarFiller
 # from tree.vbfMVAVar         import VbfMVAVarFiller
 from tree.manyJetsHiggsVar  import ManyJetsHiggsVarFiller
 from tree.wwGenInfo         import WWGenFiller
+from tree.higgsCPS          import HiggsCPSWeightAdder
 
 
 if __name__ == '__main__':
@@ -50,5 +51,6 @@ if __name__ == '__main__':
 #     modules['vbfMVAVar']        = VbfMVAVarFiller()
     modules['manyJetsHiggsVar'] = ManyJetsHiggsVarFiller()
     modules['wwGenInfo']        = WWGenFiller()
+    modules['higgsCPS']         = HiggsCPSWeightAdder()
 
     gardener_cli( modules )
