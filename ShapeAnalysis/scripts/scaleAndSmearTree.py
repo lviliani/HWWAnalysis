@@ -37,7 +37,7 @@ electronUncertaintyEE = 0.04
 #
 
 sigmaChargeElectron = (0.000240123, 7.55615e-05, 0.000144796, 2.52092e-05, 0.00120842, 0.00236264)
-sigmaChargeMuon     = 0.0002
+# sigmaChargeMuon     = 0.0002   --> muons are good!
 
 
 
@@ -1797,8 +1797,8 @@ class scaleAndSmear:
 
             ## muon-muon channel
             if self.oldttree.channel == 0:
-               ch1[0] = self.oldttree.ch1 * smearCharge(sigmaChargeMuon)
-               ch2[0] = self.oldttree.ch2 * smearCharge(sigmaChargeMuon)
+               ch1[0] = self.oldttree.ch1 # * smearCharge(sigmaChargeMuon)
+               ch2[0] = self.oldttree.ch2 # * smearCharge(sigmaChargeMuon)
 
             ## electron-muon electron
             if self.oldttree.channel == 1:
@@ -1860,11 +1860,11 @@ class scaleAndSmear:
                if ( self.oldttree.pt1 >= 50) :
                   if ( math.fabs(self.oldttree.eta1) >= 1.5) :
                       ch1[0] = self.oldttree.ch1 * smearCharge(sigmaChargeElectron[5])
-               ch2[0] = self.oldttree.ch2 * smearCharge(sigmaChargeMuon)
+               ch2[0] = self.oldttree.ch2 # * smearCharge(sigmaChargeMuon)
 
             ## muon-electron channel
             if self.oldttree.channel == 3:
-               ch1[0] = self.oldttree.ch1 * smearCharge(sigmaChargeMuon)
+               ch1[0] = self.oldttree.ch1 # * smearCharge(sigmaChargeMuon)
                if ( self.oldttree.pt2 < 30) :
                   if ( math.fabs(self.oldttree.eta2) < 1.5) :
                       ch2[0] = self.oldttree.ch2 * smearCharge(sigmaChargeElectron[0])
