@@ -236,9 +236,11 @@ def addFakeRateSyst(nuisances, mass, channel, jets, shape, suffix=''):
             fake_e_up = 0.91
             fake_e_dn = 1.06
 
-    nuisances['CMS'+suffix+'_hww_FakeRate']   = [ ['lnN'], { 'WJet': 1.20 } ] # from closure test
-    nuisances['CMS_hww_FakeRate_m'] = [ ['lnN'], { 'WJet': (fake_m_up,fake_m_dn) } ] # from jet ET variation
-    nuisances['CMS_hww_FakeRate_e'] = [ ['lnN'], { 'WJet': (fake_e_up,fake_e_dn) } ] # from jet ET variation
+    nuisances['CMS'+suffix+'_hww_FakeRate']   = [ ['lnN'], { 'WJet': 1.15 } ] # from stat on FR (+) prompt contamination
+    #nuisances['CMS'+suffix+'_hww_FakeRate']   = [ ['lnN'], { 'WJet': 1.20 } ] # from closure test
+    # FR normalisation systematics are together in the shape variation
+    #nuisances['CMS_hww_FakeRate_m'] = [ ['lnN'], { 'WJet': (fake_m_up,fake_m_dn) } ] # from jet ET variation
+    #nuisances['CMS_hww_FakeRate_e'] = [ ['lnN'], { 'WJet': (fake_e_up,fake_e_dn) } ] # from jet ET variation
 
 
 def floatNorm(process):

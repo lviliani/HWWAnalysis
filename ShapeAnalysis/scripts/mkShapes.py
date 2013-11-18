@@ -1079,6 +1079,10 @@ if __name__ == '__main__':
                 ('jetEnergyScale_up'       , 'p_scale_jUp'),
                 ('leptonEfficiency_down'   , 'eff_lDown'),
                 ('leptonEfficiency_up'     , 'eff_lUp'),
+                ('muonEfficiency_down'     , 'eff_mDown'),
+                ('muonEfficiency_up'       , 'eff_mUp'),
+                ('electronEfficiency_down' , 'eff_eDown'),
+                ('electronEfficiency_up'   , 'eff_eUp'),
                 ('puW_up'                  , 'puModelUp'),
                 ('puW_down'                , 'puModelDown'),
                 ('metResolution'           , 'met'),
@@ -1095,9 +1099,15 @@ if __name__ == '__main__':
               systematics.pop(s)
 
             systByWeight = {}
+            # use only leptonEfficiency or muonEfficiency+electronEfficiency
+            # skipSyst = ['leptonEfficiency_down', 'leptonEfficiency_up']
             systByWeight['leptonEfficiency_down'] = 'effWDown/effW'
             systByWeight['leptonEfficiency_up']   = 'effWUp/effW'
-
+            systByWeight['muonEfficiency_down'] = 'effWMuDown/effW'
+            systByWeight['muonEfficiency_up']   = 'effWMuUp/effW'
+            systByWeight['electronEfficiency_down'] = 'effWElDown/effW'
+            systByWeight['electronEfficiency_up']   = 'effWElUp/effW'
+                                    
             systByWeight['puW_down'] = 'puWup/puW'
             systByWeight['puW_up']   = 'puWdown/puW'
 
