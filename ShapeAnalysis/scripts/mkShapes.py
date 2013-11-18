@@ -733,25 +733,25 @@ class ShapeFactory:
     def _sampleWeights(self,mass,var,cat,sel):
         weights = {}
         # tocheck
-        weights['WJet']              = 'baseW*fakeW*(run!=201191)'
-        weights['WJetFakeRate-nominal']  = 'baseW*fakeW*(run!=201191)'
-        weights['WJetFakeRate-eUp']  = 'baseW*fakeWElUp*(run!=201191)'
-        weights['WJetFakeRate-eDn']  = 'baseW*fakeWElDown*(run!=201191)'
-        weights['WJetFakeRate-mUp']  = 'baseW*fakeWMuUp*(run!=201191)'
-        weights['WJetFakeRate-mDn']  = 'baseW*fakeWMuDown*(run!=201191)'
+        weights['WJet']              = self._stdWgt+'*kfW*fakeW*(run!=201191)'
+        weights['WJetFakeRate-nominal']  = self._stdWgt+'*kfW*fakeW*(run!=201191)'
+        weights['WJetFakeRate-eUp']  = self._stdWgt+'*kfW*fakeWElUp*(run!=201191)'
+        weights['WJetFakeRate-eDn']  = self._stdWgt+'*kfW*fakeWElDown*(run!=201191)'
+        weights['WJetFakeRate-mUp']  = self._stdWgt+'*kfW*fakeWMuUp*(run!=201191)'
+        weights['WJetFakeRate-mDn']  = self._stdWgt+'*kfW*fakeWMuDown*(run!=201191)'
 
 
-        weights['WJetFakeRate-2j-template']              = 'baseW*fakeW'
-        weights['WJetFakeRate-2j-eUp']  = 'baseW*fakeWElUp*(run!=201191)'
-        weights['WJetFakeRate-2j-eDn']  = 'baseW*fakeWElDown*(run!=201191)'
-        weights['WJetFakeRate-2j-mUp']  = 'baseW*fakeWMuUp*(run!=201191)'
-        weights['WJetFakeRate-2j-mDn']  = 'baseW*fakeWMuDown*(run!=201191)'
+        weights['WJetFakeRate-2j-template']              = self._stdWgt+'*kfW*fakeW'
+        weights['WJetFakeRate-2j-eUp']  = self._stdWgt+'*kfW*fakeWElUp*(run!=201191)'
+        weights['WJetFakeRate-2j-eDn']  = self._stdWgt+'*kfW*fakeWElDown*(run!=201191)'
+        weights['WJetFakeRate-2j-mUp']  = self._stdWgt+'*kfW*fakeWMuUp*(run!=201191)'
+        weights['WJetFakeRate-2j-mDn']  = self._stdWgt+'*kfW*fakeWMuDown*(run!=201191)'
 
-        weights['WJetSS']            = 'baseW*fakeW*ssW*(run!=201191)'
+        weights['WJetSS']            = self._stdWgt+'*fakeW*ssW*(run!=201191)'
 
-        weights['WJet-template']              = 'baseW*fakeW'
-        weights['WJetFakeRate-template']      = 'baseW*fakeWUp'
-        weights['WJet-templatesyst']          = 'baseW*fakeWUp'
+        weights['WJet-template']              = self._stdWgt+'*kfW*fakeW'
+        weights['WJetFakeRate-template']      = self._stdWgt+'*kfW*fakeWUp'
+        weights['WJet-templatesyst']          = self._stdWgt+'*kfW*fakeWUp'
 
         weights['Data']              = '(run!=201191)'
         # problem with DYTT using embedded for em/me, for ee/mm it is inlcuded in DD DY estimate
@@ -1086,6 +1086,8 @@ if __name__ == '__main__':
                 ('puW_up'                  , 'puModelUp'),
                 ('puW_down'                , 'puModelDown'),
                 ('metResolution'           , 'met'),
+                ('metScale_down'           , 'p_scale_metDown'),
+                ('metScale_up'             , 'p_scale_metUp'),
                 ('muonScale_down'          , 'p_scale_mDown'),
                 ('muonScale_up'            , 'p_scale_mUp'),
                 ('chargeResolution'        , 'ch_res'),

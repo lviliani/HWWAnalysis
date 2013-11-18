@@ -54,7 +54,7 @@ mcsets = {
     ],
     '0j1j' : [
         #signals
-        'ggH','qqH','wzttH',
+        'ggH','qqH','WH','ZH',
         # bkgs
         'WW','ggWW','VgS','Vg','WJet','Top','VV','VVV','DYTT','DYLL','WWnlo','WWnloUp','WWnloDown',
         # systematics
@@ -73,7 +73,7 @@ mcsets = {
     ],
     '0j1j-mH125' : [
         #signals
-        'ggH','qqH','wzttH',
+        'ggH','qqH','WH','ZH',
         # bkgs
         'WW','ggWW','VgS','Vg','WJet','Top','VV','VVV','DYTT','DYLL','WWnlo','WWnloUp','WWnloDown',
         # systematics
@@ -94,7 +94,7 @@ mcsets = {
     ],
      '0j1j-ss' : [
         #signals
-        'ggH','qqH','wzttH',
+        'ggH','qqH','WH','ZH',
         # bkgs
         'Other','VgS','Vg','WJet',
         #'WW',
@@ -113,7 +113,7 @@ mcsets = {
     ],
     'cutbased' : [
         #signals
-        'ggH','qqH','wzttH',
+        'ggH','qqH','WH','ZH',
         # bkgs
         'WW', 'VgS','Vg','WJet','Top','VV','VVV','DYTT',
         # templates
