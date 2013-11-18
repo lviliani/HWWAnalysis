@@ -3,8 +3,13 @@ import re
 
 
 backgrounds = {
-    'VVV'                     : ['nominals/latino_092_WWWJets.root',
+    'VVV'                     : ['nominals/latino_090_ZZZJets.root',
                                  'nominals/latino_091_WWZJets.root',
+                                 'nominals/latino_092_WWWJets.root',
+                                 'nominals/latino_093_TTWJets.root',
+                                 'nominals/latino_094_TTZJets.root',
+                                 'nominals/latino_095_TTWWJets.root',
+                                 'nominals/latino_096_TTGJets.root',
                                 ],
     'WW'                      : ['nominals/latino_000_WWJets2LMad.root'],
     'ggWW'                    : ['nominals/latino_001_GluGluToWWTo4L.root'],

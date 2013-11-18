@@ -63,7 +63,7 @@ def getCommonSysts(mass,channel,jets,qqWWfromData,shape,options,suffix,isssactiv
     if channel == 'of': MCPROC += ['DYLL']
     if not qqWWfromData: MCPROC+=['WW','ggWW']
     # -- Luminosity ---------------------
-    lumiunc = 1.044
+    lumiunc = 1.026
     if '7TeV' in suffix: lumiunc = 1.022
     nuisances['lumi'+suffix] = [ ['lnN'], dict([(p,lumiunc) for p in MCPROC if p!='DYTT' and p!='Top'])]
     # -- PDF ---------------------
@@ -179,6 +179,7 @@ def getCommonSysts(mass,channel,jets,qqWWfromData,shape,options,suffix,isssactiv
        nuisances['CMS'+suffix+'_norm_DYof'] = [ ['lnN'], { 'DYLL':2.0 } ]
     nuisances['CMS'+suffix+'_norm_DYTT'] = [ ['lnN'], { 'DYTT':1.3 } ]
     nuisances['CMS'+suffix+'_norm_Vg']   = [ ['lnN'], { 'Vg':1.3 } ]
+    nuisances['CMS'+suffix+'_norm_VVV']  = [ ['lnN'], { 'VVV':1.3 } ]
 
     return nuisances
 
