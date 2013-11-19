@@ -44,9 +44,11 @@ class ShapeFactory:
         ranges['vhMll-range']        = self._getMllVHrange
         ranges['vhMllBanana-range']  = self._getMllVHrangeWithControlRegion
         ranges['vbfMllBanana-range'] = self._getMllVBFrangeWithControlRegion
+        ranges['whsc-range']         = self._getWHSCrange
+
 
         self._ranges = ranges
-        
+
         self._dataTag         = '2012A'
         self._sigTag          = 'SM'
         self._mcTag           = '0j1j'
@@ -102,6 +104,17 @@ class ShapeFactory:
             #return theVariable[mass][cat]
         #elif callable(theVariable):
             #return theVariable(mass,cat)
+
+
+    # _____________________________________________________________________________
+    def _getWHSCrange(self,mass,cat):
+
+        if cat not in ['whsc']:
+            print cat
+            raise RuntimeError('range for '+str(cat)+' not defined. !?!?!?')
+
+        #return ([0,20,40,60,80,100,120,140,160,180,250,400],)
+        return ([0,40,80,120,160,200,240,300,400],)
 
 
 
@@ -778,6 +791,8 @@ class ShapeFactory:
 
         weights['ggH']               = self._stdWgt+'*kfW*'+self._muVal
         weights['qqH']               = self._stdWgt+'*kfW*'+self._muVal
+        weights['ggHminlo']          = 'effW*triggW*kfW*puW*HEPMCweight/497500.*1000*0.108*0.108*9*0.216'+self._muVal
+
         weights['WH']                = self._stdWgt+'*(mctruth == 26)*'+self._muVal
         weights['ZH']                = self._stdWgt+'*(mctruth == 24)*'+self._muVal
         weights['ttH']               = self._stdWgt+'*(mctruth == 121)*'+self._muVal
@@ -794,6 +809,51 @@ class ShapeFactory:
         weights['jhu_NORM']          = self._stdWgt+'*kfW*'+self._muVal
         weights['jhu_NLO']           = self._stdWgt+'*kfW*'+self._muVal
 
+
+        # fix for 2011
+        #print "sel = ",sel
+        if (sel == "whscShape2011") or (sel == "whsc2011") or (sel == "vh2011") :
+          if mass == 120:
+            weights['VH_SM']             = 'puW*effW*triggW*0.0007238280'
+          if mass == 125:
+            weights['VH_SM']             = 'puW*effW*triggW*0.0011041573*0.941792557006409292'   ##-> 0011041573   @126 -> scaled to 125
+          if mass == 130:
+            weights['VH_SM']             = 'puW*effW*triggW*0.0011893260'
+          if mass == 135:
+            weights['VH_SM']             = 'puW*effW*triggW*0.0015132260'
+          if mass == 140:
+            weights['VH_SM']             = 'puW*effW*triggW*0.0015174284'
+          if mass == 150:
+            weights['VH_SM']             = 'puW*effW*triggW*0.0016502763'
+          if mass == 160:
+            weights['VH_SM']             = 'puW*effW*triggW*0.0016590295'
+          if mass == 170:
+            weights['VH_SM']             = 'puW*effW*triggW*0.0014509147'
+          if mass == 180:
+            weights['VH_SM']             = 'puW*effW*triggW*0.0011345486'
+          if mass == 190:
+            weights['VH_SM']             = 'puW*effW*triggW*0.0007897267'
+
+          if mass == 120:
+            weights['VH']             = 'puW*effW*triggW*0.0007238280'
+          if mass == 125:
+            weights['VH']             = 'puW*effW*triggW*0.0011041573*0.941792557006409292'
+          if mass == 130:
+            weights['VH']             = 'puW*effW*triggW*0.0011893260'
+          if mass == 135:
+            weights['VH']             = 'puW*effW*triggW*0.0015132260'
+          if mass == 140:
+            weights['VH']             = 'puW*effW*triggW*0.0015174284'
+          if mass == 150:
+            weights['VH']             = 'puW*effW*triggW*0.0016502763'
+          if mass == 160:
+            weights['VH']             = 'puW*effW*triggW*0.0016590295'
+          if mass == 170:
+            weights['VH']             = 'puW*effW*triggW*0.0014509147'
+          if mass == 180:
+            weights['VH']             = 'puW*effW*triggW*0.0011345486'
+          if mass == 190:
+            weights['VH']             = 'puW*effW*triggW*0.0007897267'
 
 
         if cat in ['2j']:
@@ -1126,7 +1186,7 @@ if __name__ == '__main__':
             processMask = ['ggH', 'ggH_ALT',  'qqH',  'qqH_ALT', 'wzttH', 'ZH', 'WH', 'ttH', 'ggWW', 'Top', 'WW', 'VV', 'VgS', 'Vg', 'DYTT', 'Other', 'ggH125', 'qqH125','VVV', 'WWewk', 'CHITOP-Top' , 'ggH_SM', 'qqH_SM', 'wzttH_SM' , 'WH_SM','ZH_SM','ttH_SM']
 
             if '2011' in opt.dataset:
-                processMask = ['ggH', 'ggH_ALT','qqH','qqH_ALT', 'ggWW', 'Top', 'WW', 'VV', 'ggH125', 'vbfH125']
+                processMask = ['ggH', 'ggH_ALT', 'qqH', 'qqH_ALT', 'wzttH', 'ZH', 'WH', 'ttH', 'ggWW', 'Top', 'WW', 'VV', 'ggH125', 'qqH125',  'CHITOP-Top', 'ggH_SM', 'qqH_SM','VH','VH_SM']
 
             systMasks = dict([(s,processMask[:]) for s in systematics])
             systDirs  = dict([(s,systInputDir if s not in systByWeight else 'templates/' ) for s in systematics])
