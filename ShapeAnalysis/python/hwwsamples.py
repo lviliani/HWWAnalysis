@@ -170,6 +170,32 @@ mcsets = {
         # templates for Top estimation
         ('CHITOP-Top',     'Top'),
     ],
+   'ggH2j_of' : [
+        #signals
+        'ggH','qqH', #'wzttH',
+        #'ggHminlo',
+        # bkgs
+        'WW','ggWW','VgS','Vg','WJet','Top','VV','DYTT',
+        'WWewk',
+        # nuisance
+        'WWpow',
+        # systematics
+        ('WJetFakeRate-2j-template','WJetFakeRate-nominal'), # here and in the following I put the "template" distributions (relaxed cuts)
+        ('WJetFakeRate-2j-eUp',     'WJetFakeRate-nominal'),
+        ('WJetFakeRate-2j-eDn',     'WJetFakeRate-nominal'),
+        ('WJetFakeRate-2j-mUp',     'WJetFakeRate-nominal'),
+        ('WJetFakeRate-2j-mDn',     'WJetFakeRate-nominal'),
+        # top shape ---> to be checked if needed
+        #('TopTW',   'Top'),
+        #('TopCtrl', 'Top'),
+        # templates
+        'VgS-template','Vg-template',
+        # 2j specific
+        #('WJet-template',    'WJet-template-2j'),              #    A   <-   sorgente
+        #('WJet-templatesyst','WJet-templatesyst-2j')           #    mkmerged vuole "-template"
+        # templates for Top estimation
+        #('CHITOP-Top',     'Top'),
+    ],
     'vh_sf' : [
         #signals
         'ggH','qqH','WH','ZH','ttH','VH',

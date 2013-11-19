@@ -111,6 +111,8 @@ backgrounds = {
     'DYLL-template-vbf'       : ['dyTemplate/latino_036_DY10toLLMad.root',
                                  'dyTemplate/latino_037_DY50toLLMad.root',
                                 ],
+    'ggHminlo'                : [ 'nominals/latino_4125_ggToH125toWWTo2LAndTau2NuMinlo.root'
+                                ],
 }
 
 backgrounds['Other'] = backgrounds['WW']+backgrounds['ggWW']+backgrounds['Top']+backgrounds['VV']+backgrounds['DYTT']+backgrounds['DYLL']
