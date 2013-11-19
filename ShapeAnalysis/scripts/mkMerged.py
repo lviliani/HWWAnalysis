@@ -1196,7 +1196,7 @@ if __name__ == '__main__':
     parser.add_option('--path_scale'        , dest='path_scale'        , help='Scale factors'                    , default=None)
     parser.add_option('--path_shape_raw'    , dest='path_shape_raw'    , help='Input directory of raw shapes'    , default=None)
     parser.add_option('--path_shape_merged' , dest='path_shape_merged' , help='Destination directory for merged' , default=None)
-
+    parser.add_option('--no-syst',       dest='makeSyst',   help='Do not produce the systematics',        action='store_false',   default=True)
     parser.add_option('--simask'            , dest='simask'            , help='Signal injection mask' , default=None, type='string' , action='callback' , callback=hwwtools.list_maker('simask'))
 
     parser.add_option('--fillEmptyBins'     , dest='fillEmptyBins'     , help='fillEmptyBins used to fill empty bins' , default=False)
@@ -1219,7 +1219,7 @@ if __name__ == '__main__':
     print 'jhuMixFrac = ',opt.jhuMixFrac
 
     scale2nom = []
-    if '2012' in opt.dataset: scale2nom = scale2nom+[('Vg','*'), ('VgS','*')]
+    if '2012' in opt.dataset and opt.makeSyst : scale2nom = scale2nom+[('Vg','*'), ('VgS','*')]
     # in the future good to have a way of removing processes which are not in mcset
     #scale2nom = [(p,s) for p,s in scale2nom if p in hwwsamples.mcsets(opt.mcset)]
     for p,s in scale2nom:

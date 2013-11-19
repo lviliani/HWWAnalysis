@@ -774,12 +774,20 @@ class ShapeFactory:
         #filter and k-factor on Vg* done by kfW
         weights['VgS']               = self._stdWgt+'*kfW'
         weights['Vg']                = self._stdWgt+'*kfW'
+
+
         weights['ggH']               = self._stdWgt+'*kfW*'+self._muVal
         weights['qqH']               = self._stdWgt+'*kfW*'+self._muVal
-
         weights['WH']                = self._stdWgt+'*(mctruth == 26)*'+self._muVal
         weights['ZH']                = self._stdWgt+'*(mctruth == 24)*'+self._muVal
         weights['ttH']               = self._stdWgt+'*(mctruth == 121)*'+self._muVal
+
+        weights['ggH_SM']            = self._stdWgt+'*kfW*'+self._muVal
+        weights['qqH_SM']            = self._stdWgt+'*kfW*'+self._muVal
+        weights['WH_SM']             = self._stdWgt+'*(mctruth == 26)*'+self._muVal
+        weights['ZH_SM']             = self._stdWgt+'*(mctruth == 24)*'+self._muVal
+        weights['ttH_SM']            = self._stdWgt+'*(mctruth == 121)*'+self._muVal
+
 
         weights['ggH_ALT']           = self._stdWgt+'*kfW*'+self._muVal
         weights['qqH_ALT']           = self._stdWgt+'*kfW*'+self._muVal
@@ -1115,7 +1123,7 @@ if __name__ == '__main__':
 
             factory._systByWeight = systByWeight
 
-            processMask = ['ggH', 'ggH_ALT',  'qqH',  'qqH_ALT', 'wzttH', 'ZH', 'WH', 'ttH', 'ggWW', 'Top', 'WW', 'VV', 'VgS', 'Vg', 'DYTT', 'Other', 'ggH125', 'qqH125','VVV', 'WWewk', 'CHITOP-Top']
+            processMask = ['ggH', 'ggH_ALT',  'qqH',  'qqH_ALT', 'wzttH', 'ZH', 'WH', 'ttH', 'ggWW', 'Top', 'WW', 'VV', 'VgS', 'Vg', 'DYTT', 'Other', 'ggH125', 'qqH125','VVV', 'WWewk', 'CHITOP-Top' , 'ggH_SM', 'qqH_SM', 'wzttH_SM' , 'WH_SM','ZH_SM','ttH_SM']
 
             if '2011' in opt.dataset:
                 processMask = ['ggH', 'ggH_ALT','qqH','qqH_ALT', 'ggWW', 'Top', 'WW', 'VV', 'ggH125', 'vbfH125']

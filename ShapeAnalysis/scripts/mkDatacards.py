@@ -692,7 +692,7 @@ if __name__ == '__main__':
 
             # reshuffle the order
             #order = [ 'vbfH', 'ggH', 'wzttH', 'ggWW', 'Vg', 'WJet', 'Top', 'WW', 'DYLL', 'VV', 'DYTT', 'Data']
-            order = [ 'ggH','ggH_ALT','qqH','qqH_ALT', 'wzttH','wzttH_ALT', 'WH', 'ZH', 'ttH', 'ggWW', 'VgS', 'Vg', 'WJet', 'Top', 'WW', 'WWewk', 'DYLL', 'VV', 'DYTT', 'DYee', 'DYmm', 'Other', 'ggH125', 'qqH125', 'wzttH125', 'VVV', 'Data']
+            order = [ 'ggH','ggH_ALT','qqH','qqH_ALT', 'wzttH','wzttH_ALT', 'WH', 'ZH', 'ttH', 'ggWW', 'VgS', 'Vg', 'WJet', 'Top', 'WW', 'WWewk', 'DYLL', 'VV', 'DYTT', 'DYee', 'DYmm', 'Other', 'ggH125', 'qqH125', 'wzttH125', 'VVV', 'Data','ggH_SM', 'qqH_SM', 'WH_SM','ZH_SM']
 
             oldYields = yields.copy()
             yields = OrderedDict([ (k,oldYields[k]) for k in order if k in oldYields])
