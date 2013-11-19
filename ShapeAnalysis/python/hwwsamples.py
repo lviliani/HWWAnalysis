@@ -90,7 +90,6 @@ mcsets = {
         ('DYLL-template',    'DYLL-template-0j1j'),              #    A   <-   sorgente
         ('DYLL-templatesyst','DYLL-templatesyst-0j1j') ,         #    mkmerged vuole "-template"
         # mH125 as background
-        #'ggH125', 'qqH125', 'wzttH125',
         'ggH_SM', 'qqH_SM', 'WH_SM','ZH_SM',
     ],
      '0j1j-ss' : [
