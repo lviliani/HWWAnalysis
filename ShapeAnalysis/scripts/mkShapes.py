@@ -1055,9 +1055,15 @@ if __name__ == '__main__':
 #     parser.add_option('--skip-syst',     dest='skipSyst',   help='Skip set of systematics',               default='')
     parser.add_option('--skip-syst',     dest='skipSyst',   help='Skip set of systematics',               default=[] , type='string' , action='callback' , callback=hwwtools.list_maker('skipSyst'))
     parser.add_option('--mu'       ,     dest='muVal',   help='Initial signal strengh',               default='1.' , type='string' )
+    # EWK Doublet Model
+    parser.add_option('--ewksinglet',    dest='ewksinglet',  help='On/Off EWK singlet model',           default=False , action='store_true')   
+    parser.add_option('--cprimesq'  ,    dest='cprimesq',    help='EWK singlet C\'**2 mixing value',    default=[0.]  , type='float'  , action='callback' , callback=hwwtools.list_maker('cprimesq'))
     hwwtools.addOptions(parser)
     hwwtools.loadOptDefaults(parser)
     (opt, args) = parser.parse_args()
+
+    print 'EWK Singlet:' , opt.ewksinglet
+    print 'CPrime**2  :' , opt.cprimesq
 
     sys.argv.append( '-b' )
     ROOT.gROOT.SetBatch()
@@ -1103,103 +1109,114 @@ if __name__ == '__main__':
         nomInputDir         = ''
         systInputDir        = '{syst}/'
 
-        nominalOutFile      = 'shape_Mh{mass}_{category}_'+tag+'_shapePreSel_{flavor}.root'
-        systematicsOutFile  = 'shape_Mh{mass}_{category}_'+tag+'_shapePreSel_{flavor}_{nick}.root'
-        
-        factory = ShapeFactory()
-        factory._outFileFmt  = nominalOutFile
+        nModel = 1
+        if opt.ewksinglet : nModel = len(opt.cprimesq)
 
-#         masses = hwwinfo.masses[:] if opt.mass == 0 else [opt.mass]
-#         factory._masses   = masses
-        factory._masses = opt.mass
+        for iModel in xrange(0,nModel):
 
-        # go through final channels
-        factory._channels = dict([ (k,v) for k,v in hwwinfo.channels.iteritems() if k in opt.chans])
-        print factory._channels
+          if opt.ewksinglet:
+            nominalOutFile      = 'shape_Mh{mass}_{category}_'+tag+'_shapePreSel_{flavor}_EWKSinglet_CP2_'+str(opt.cprimesq[iModel]).replace('.','d')+'.root'
+            systematicsOutFile  = 'shape_Mh{mass}_{category}_'+tag+'_shapePreSel_{flavor}_EWKSinglet_CP2_'+str(opt.cprimesq[iModel]).replace('.','d')+'_{nick}.root'
+          else: 
+            nominalOutFile      = 'shape_Mh{mass}_{category}_'+tag+'_shapePreSel_{flavor}.root'
+            systematicsOutFile  = 'shape_Mh{mass}_{category}_'+tag+'_shapePreSel_{flavor}_{nick}.root'
+          
+          factory = ShapeFactory()
+          factory._outFileFmt  = nominalOutFile
+  
+  #         masses = hwwinfo.masses[:] if opt.mass == 0 else [opt.mass]
+  #         factory._masses   = masses
+          factory._masses = opt.mass
+  
+          # go through final channels
+          factory._channels = dict([ (k,v) for k,v in hwwinfo.channels.iteritems() if k in opt.chans])
+          print factory._channels
+  
+          factory._paths['base']  = latinoDir
+          factory._paths['bdtl']  = bdtDir
+          factory._paths['bdts']  = bdtDir
+  
+          factory._energy    = opt.energy
+          factory._dataTag   = opt.dataset
+          factory._sigTag    = opt.sigset
+          factory._mcTag     = opt.mcset
+          factory._range     = opt.range
+          factory._splitmode = opt.splitmode
+          factory._lumi      = opt.lumi
+          factory._muVal     = opt.muVal 
+  
+          if opt.makeNoms:
+              # nominal shapes
+              print factory.makeNominals(variable,selection,nomInputDir,nomOutDir+nominalOutFile)
+  
+          if opt.makeSyst:
+              class Systematics:
+                  def __init__(self,name,nick,indir,mask):
+                      pass
+              # systematic shapes
+              systematics = OrderedDict([
+                  ('electronResolution'      , 'p_res_e'),
+                  ('electronScale_down'      , 'p_scale_eDown'),
+                  ('electronScale_up'        , 'p_scale_eUp'),
+                  ('jetEnergyScale_down'     , 'p_scale_jDown'),
+                  ('jetEnergyScale_up'       , 'p_scale_jUp'),
+                  ('leptonEfficiency_down'   , 'eff_lDown'),
+                  ('leptonEfficiency_up'     , 'eff_lUp'),
+                  ('muonEfficiency_down'     , 'eff_mDown'),
+                  ('muonEfficiency_up'       , 'eff_mUp'),
+                  ('electronEfficiency_down' , 'eff_eDown'),
+                  ('electronEfficiency_up'   , 'eff_eUp'),
+                  ('puW_up'                  , 'puModelUp'),
+                  ('puW_down'                , 'puModelDown'),
+                  ('metResolution'           , 'met'),
+                  ('metScale_down'           , 'p_scale_metDown'),
+                  ('metScale_up'             , 'p_scale_metUp'),
+                  ('muonScale_down'          , 'p_scale_mDown'),
+                  ('muonScale_up'            , 'p_scale_mUp'),
+                  ('chargeResolution'        , 'ch_res'),
+              ])
+  
+              # remove skip-syst list
+  #             if opt.skipSyst!='':
+  #                for s in opt.skipSyst.split(','):
+              for s in opt.skipSyst:
+                print 'skipping systematics: '+s
+                systematics.pop(s)
+  
+              systByWeight = {}
+              # use only leptonEfficiency or muonEfficiency+electronEfficiency
+              # skipSyst = ['leptonEfficiency_down', 'leptonEfficiency_up']
+              systByWeight['leptonEfficiency_down'] = 'effWDown/effW'
+              systByWeight['leptonEfficiency_up']   = 'effWUp/effW'
+              systByWeight['muonEfficiency_down'] = 'effWMuDown/effW'
+              systByWeight['muonEfficiency_up']   = 'effWMuUp/effW'
+              systByWeight['electronEfficiency_down'] = 'effWElDown/effW'
+              systByWeight['electronEfficiency_up']   = 'effWElUp/effW'
+                                      
+              systByWeight['puW_down'] = 'puWup/puW'
+              systByWeight['puW_up']   = 'puWdown/puW'
+  
+              factory._systByWeight = systByWeight
+  
+              processMask = ['ggH', 'ggH_ALT',  'qqH',  'qqH_ALT', 'wzttH', 'ZH', 'WH', 'ttH', 'ggWW', 'Top', 'WW', 'VV', 'VgS', 'Vg', 'DYTT', 'Other', 'ggH125', 'qqH125','VVV', 'WWewk', 'CHITOP-Top' , 'ggH_SM', 'qqH_SM', 'wzttH_SM' , 'WH_SM','ZH_SM','ttH_SM']
+  
+              if '2011' in opt.dataset:
+                  processMask = ['ggH', 'ggH_ALT', 'qqH', 'qqH_ALT', 'VH' , 'wzttH', 'ZH', 'WH', 'ttH', 'ggWW', 'Top', 'WW', 'VV', 'ggH125', 'qqH125',  'CHITOP-Top', 'ggH_SM', 'qqH_SM','VH_SM', 'wzttH_SM', 'ZH_SM', 'WH_SM', 'ttH_SM']
+  
+              systMasks = dict([(s,processMask[:]) for s in systematics])
+              systDirs  = dict([(s,systInputDir if s not in systByWeight else 'templates/' ) for s in systematics])
+  
+              print systDirs
+  
+              for syst,mask in systMasks.iteritems():
+                  if opt.doSyst and opt.doSyst != syst:
+                      continue
+                  print '-'*80
+                  print ' Processing',syst,'for samples',' '.join(mask)
+                  print '-'*80
+                  files = factory.makeSystematics(variable,selection,syst,mask,systDirs[syst],systOutDir+systematicsOutFile, nicks=systematics)
 
-        factory._paths['base']  = latinoDir
-        factory._paths['bdtl']  = bdtDir
-        factory._paths['bdts']  = bdtDir
-
-        factory._energy    = opt.energy
-        factory._dataTag   = opt.dataset
-        factory._sigTag    = opt.sigset
-        factory._mcTag     = opt.mcset
-        factory._range     = opt.range
-        factory._splitmode = opt.splitmode
-        factory._lumi      = opt.lumi
-        factory._muVal     = opt.muVal 
-
-        if opt.makeNoms:
-            # nominal shapes
-            print factory.makeNominals(variable,selection,nomInputDir,nomOutDir+nominalOutFile)
-
-        if opt.makeSyst:
-            class Systematics:
-                def __init__(self,name,nick,indir,mask):
-                    pass
-            # systematic shapes
-            systematics = OrderedDict([
-                ('electronResolution'      , 'p_res_e'),
-                ('electronScale_down'      , 'p_scale_eDown'),
-                ('electronScale_up'        , 'p_scale_eUp'),
-                ('jetEnergyScale_down'     , 'p_scale_jDown'),
-                ('jetEnergyScale_up'       , 'p_scale_jUp'),
-                ('leptonEfficiency_down'   , 'eff_lDown'),
-                ('leptonEfficiency_up'     , 'eff_lUp'),
-                ('muonEfficiency_down'     , 'eff_mDown'),
-                ('muonEfficiency_up'       , 'eff_mUp'),
-                ('electronEfficiency_down' , 'eff_eDown'),
-                ('electronEfficiency_up'   , 'eff_eUp'),
-                ('puW_up'                  , 'puModelUp'),
-                ('puW_down'                , 'puModelDown'),
-                ('metResolution'           , 'met'),
-                ('metScale_down'           , 'p_scale_metDown'),
-                ('metScale_up'             , 'p_scale_metUp'),
-                ('muonScale_down'          , 'p_scale_mDown'),
-                ('muonScale_up'            , 'p_scale_mUp'),
-                ('chargeResolution'        , 'ch_res'),
-            ])
-
-            # remove skip-syst list
-#             if opt.skipSyst!='':
-#                for s in opt.skipSyst.split(','):
-            for s in opt.skipSyst:
-              print 'skipping systematics: '+s
-              systematics.pop(s)
-
-            systByWeight = {}
-            # use only leptonEfficiency or muonEfficiency+electronEfficiency
-            # skipSyst = ['leptonEfficiency_down', 'leptonEfficiency_up']
-            systByWeight['leptonEfficiency_down'] = 'effWDown/effW'
-            systByWeight['leptonEfficiency_up']   = 'effWUp/effW'
-            systByWeight['muonEfficiency_down'] = 'effWMuDown/effW'
-            systByWeight['muonEfficiency_up']   = 'effWMuUp/effW'
-            systByWeight['electronEfficiency_down'] = 'effWElDown/effW'
-            systByWeight['electronEfficiency_up']   = 'effWElUp/effW'
-                                    
-            systByWeight['puW_down'] = 'puWup/puW'
-            systByWeight['puW_up']   = 'puWdown/puW'
-
-            factory._systByWeight = systByWeight
-
-            processMask = ['ggH', 'ggH_ALT',  'qqH',  'qqH_ALT', 'wzttH', 'ZH', 'WH', 'ttH', 'ggWW', 'Top', 'WW', 'VV', 'VgS', 'Vg', 'DYTT', 'Other', 'ggH125', 'qqH125','VVV', 'WWewk', 'CHITOP-Top' , 'ggH_SM', 'qqH_SM', 'wzttH_SM' , 'WH_SM','ZH_SM','ttH_SM']
-
-            if '2011' in opt.dataset:
-                processMask = ['ggH', 'ggH_ALT', 'qqH', 'qqH_ALT', 'VH' , 'wzttH', 'ZH', 'WH', 'ttH', 'ggWW', 'Top', 'WW', 'VV', 'ggH125', 'qqH125',  'CHITOP-Top', 'ggH_SM', 'qqH_SM','VH_SM', 'wzttH_SM', 'ZH_SM', 'WH_SM', 'ttH_SM']
-
-            systMasks = dict([(s,processMask[:]) for s in systematics])
-            systDirs  = dict([(s,systInputDir if s not in systByWeight else 'templates/' ) for s in systematics])
-
-            print systDirs
-
-            for syst,mask in systMasks.iteritems():
-                if opt.doSyst and opt.doSyst != syst:
-                    continue
-                print '-'*80
-                print ' Processing',syst,'for samples',' '.join(mask)
-                print '-'*80
-                files = factory.makeSystematics(variable,selection,syst,mask,systDirs[syst],systOutDir+systematicsOutFile, nicks=systematics)
+#          factory.Delete() 
 
     except Exception as e:
         print '*'*80
