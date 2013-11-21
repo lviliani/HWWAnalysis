@@ -503,7 +503,7 @@ class NuisanceMapBuilder:
         qqWWfromData = self._wwddfilter.haswwdd(mass, channel)
 
         # vh and vbf mapped to "2j" category
-        if (jetcat == 'vh2j') :
+        if (jetcat == 'vh2j' or jetcat == 'whsc') :
            jetcat = '2j'
            optMatt.VH = 1
         else :
