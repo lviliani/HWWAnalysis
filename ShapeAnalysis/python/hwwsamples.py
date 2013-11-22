@@ -90,7 +90,7 @@ mcsets = {
         ('DYLL-template',    'DYLL-template-0j1j'),              #    A   <-   sorgente
         ('DYLL-templatesyst','DYLL-templatesyst-0j1j') ,         #    mkmerged vuole "-template"
         # mH125 as background
-        'ggH125', 'qqH125', 'wzttH125',
+        'ggH_SM', 'qqH_SM', 'WH_SM','ZH_SM',
     ],
      '0j1j-ss' : [
         #signals
@@ -169,6 +169,32 @@ mcsets = {
         #('WJet-templatesyst','WJet-templatesyst-2j')           #    mkmerged vuole "-template"
         # templates for Top estimation
         ('CHITOP-Top',     'Top'),
+    ],
+   'ggH2j_of' : [
+        #signals
+        'ggH','qqH', #'wzttH',
+        #'ggHminlo',
+        # bkgs
+        'WW','ggWW','VgS','Vg','WJet','Top','VV','DYTT',
+        'WWewk',
+        # nuisance
+        'WWpow',
+        # systematics
+        ('WJetFakeRate-2j-template','WJetFakeRate-nominal'), # here and in the following I put the "template" distributions (relaxed cuts)
+        ('WJetFakeRate-2j-eUp',     'WJetFakeRate-nominal'),
+        ('WJetFakeRate-2j-eDn',     'WJetFakeRate-nominal'),
+        ('WJetFakeRate-2j-mUp',     'WJetFakeRate-nominal'),
+        ('WJetFakeRate-2j-mDn',     'WJetFakeRate-nominal'),
+        # top shape ---> to be checked if needed
+        #('TopTW',   'Top'),
+        #('TopCtrl', 'Top'),
+        # templates
+        'VgS-template','Vg-template',
+        # 2j specific
+        #('WJet-template',    'WJet-template-2j'),              #    A   <-   sorgente
+        #('WJet-templatesyst','WJet-templatesyst-2j')           #    mkmerged vuole "-template"
+        # templates for Top estimation
+        #('CHITOP-Top',     'Top'),
     ],
     'vh_sf' : [
         #signals
@@ -304,7 +330,9 @@ def samples(mass, energytag, datatag='Data2012', sigtag='SM', mctag='all'):
         # get the background-higgs mass from the tag
         mHbkg = int(re.match('0j1j-mH(\d+)', mctag).group(1))
         print 'signal as background', mHbkg
-        signalbkg = sampledb.signalSamples(sigtag, mHbkg, str(mHbkg))
+        #signalbkg = sampledb.signalSamples(sigtag, mHbkg, str(mHbkg))
+        signalbkg = sampledb.signalSamples(sigtag, mHbkg, "_SM")
+        print signalbkg
         mcsamples.update(signalbkg)
 
     if isinstance(mctag,list):
