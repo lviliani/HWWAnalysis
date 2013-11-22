@@ -223,61 +223,62 @@ class NuisanceMapBuilder:
         self._ddreader      = datadriven.DDCardReader(ddPath)
         self._wwddfilter    = datadriven.DDWWFilter(self._ddreader, noWWddAbove)
 
-        self._build()
- 
-    def _build(self):
-        # common 0/1/2 jet systematics
-        pureMC = [ 'VgS', 'Vg', 'VV', 'ggH', 'qqH', 'wzttH', 'ZH', 'WH', 'ttH', 'Other', 'VVV', 'WW', 'WWewk']
-        dummy = {}
-        dummy['CMS_fake_e']    = (1.50, ['WJet']) # take the average of ee/me 
-#         dummy['CMS_fake_m']    = (1.42, ['WJet']) # take the average of mm/em
-        dummy['CMS_eff_l']     = (1.04, pureMC)
-        dummy['CMS_p_scale_e'] = (1.02, pureMC)
-#         dummy['CMS_p_scale_m'] = (1.01, pureMC)
-        dummy['CMS_p_scale_j'] = (1.02, pureMC)
-        dummy['CMS_met']       = (1.02, pureMC)
-        dummy['lumi']          = (1.04, pureMC)
-
-        for k,v in dummy.iteritems():
-            self._common[k] = (['lnN'], dict([( process, v[0]) for process in v[1] ]) )
-
-        self._common['pdf_gg']    = (['lnN'],dict([('ggWW',1.04),('ggH',1.08)]) )
-        self._common['pdf_qqbar'] = (['lnN'],dict([('WW',1.04),('VV',1.04),('qqH',1.02)]) )
-        self._common['pdf_assoc'] = (['lnN'],dict([('WW',1.04)]) )
-
-        dummy = {} 
-        # both 0/1 jets but different
-        dummy['CMS_QCDscale_WW_EXTRAP'] = ([0.95, 1.21], ['WW'])
-        dummy['QCDscale_VV']            = ([1.03, 1.03], ['VV'])
-        dummy['QCDscale_ggH1in']        = ([0.89, 1.39], ['ggH'])
-        dummy['QCDscale_ggH_ACEPT']     = ([1.02, 1.02], ['ggH'])
-        dummy['QCDscale_ggVV']          = ([1.30, 1.30], ['ggWW'])
-        dummy['QCDscale_qqH']           = ([1.01, 1.01], ['qqH'])
-        dummy['QCDscale_qqH_ACEPT']     = ([1.02, 1.02], ['qqH'])
-        dummy['QCDscale_wzttH_ACEPT']   = ([1.02, 1.02], ['wzttH'])
-        dummy['QCDscale_wzttH']         = ([1.01, 1.01], ['wzttH'])
-        dummy['UEPS']                   = ([0.94, 1.11], ['ggH'])
-
-        for k,v in dummy.iteritems():
-            self._0jetOnly[k] = (['lnN'], dict([( process, v[0][0]) for process in v[1] ]) )
-            self._1jetOnly[k] = (['lnN'], dict([( process, v[0][1]) for process in v[1] ]) )
-
-
-        # 0 jets only
-        dummy = {}
-
-        dummy['CMS_fake_Vg']  = (2.00,['Vg']) # Vg, 0jet 
-        dummy['QCDscale_Vg']  = (1.50,['Vg']) 
-        dummy['QCDscale_ggH'] = (1.16,['ggH']) # 0 jets only
-        for k,v in dummy.iteritems():
-            self._0jetOnly[k] = (['lnN'], dict([( process, v[0]) for process in v[1] ]) )
-
-        # 1 jet only
-        dummy = {}
-        dummy['QCDscale_ggH2in'] = (0.95,['ggH']) # 1 jey only
-        for k,v in dummy.iteritems():
-            self._1jetOnly[k] = (['lnN'], dict([( process, v[0]) for process in v[1] ]) )
-
+# This is deprecated ( Xavier, 21 Nov 2013 )
+#        self._build()
+# 
+#    def _build(self):
+#        # common 0/1/2 jet systematics
+#        pureMC = [ 'VgS', 'Vg', 'VV', 'ggH', 'qqH', 'wzttH', 'ZH', 'WH', 'ttH', 'Other', 'VVV', 'WW', 'WWewk']
+#        dummy = {}
+#        dummy['CMS_fake_e']    = (1.50, ['WJet']) # take the average of ee/me 
+##         dummy['CMS_fake_m']    = (1.42, ['WJet']) # take the average of mm/em
+#        dummy['CMS_eff_l']     = (1.04, pureMC)
+#        dummy['CMS_p_scale_e'] = (1.02, pureMC)
+##         dummy['CMS_p_scale_m'] = (1.01, pureMC)
+#        dummy['CMS_p_scale_j'] = (1.02, pureMC)
+#        dummy['CMS_met']       = (1.02, pureMC)
+#        dummy['lumi']          = (1.04, pureMC)
+#
+#        for k,v in dummy.iteritems():
+#            self._common[k] = (['lnN'], dict([( process, v[0]) for process in v[1] ]) )
+#
+#        self._common['pdf_gg']    = (['lnN'],dict([('ggWW',1.04),('ggH',1.08)]) )
+#        self._common['pdf_qqbar'] = (['lnN'],dict([('WW',1.04),('VV',1.04),('qqH',1.02)]) )
+#        self._common['pdf_assoc'] = (['lnN'],dict([('WW',1.04)]) )
+#
+#        dummy = {} 
+#        # both 0/1 jets but different
+#        dummy['CMS_QCDscale_WW_EXTRAP'] = ([0.95, 1.21], ['WW'])
+#        dummy['QCDscale_VV']            = ([1.03, 1.03], ['VV'])
+#        dummy['QCDscale_ggH1in']        = ([0.89, 1.39], ['ggH'])
+#        dummy['QCDscale_ggH_ACEPT']     = ([1.02, 1.02], ['ggH'])
+#        dummy['QCDscale_ggVV']          = ([1.30, 1.30], ['ggWW'])
+#        dummy['QCDscale_qqH']           = ([1.01, 1.01], ['qqH'])
+#        dummy['QCDscale_qqH_ACEPT']     = ([1.02, 1.02], ['qqH'])
+#        dummy['QCDscale_wzttH_ACEPT']   = ([1.02, 1.02], ['wzttH'])
+#        dummy['QCDscale_wzttH']         = ([1.01, 1.01], ['wzttH'])
+#        dummy['UEPS']                   = ([0.94, 1.11], ['ggH'])
+#
+#        for k,v in dummy.iteritems():
+#            self._0jetOnly[k] = (['lnN'], dict([( process, v[0][0]) for process in v[1] ]) )
+#            self._1jetOnly[k] = (['lnN'], dict([( process, v[0][1]) for process in v[1] ]) )
+#
+#
+#        # 0 jets only
+#        dummy = {}
+#
+#        dummy['CMS_fake_Vg']  = (2.00,['Vg']) # Vg, 0jet 
+#        dummy['QCDscale_Vg']  = (1.50,['Vg']) 
+#        dummy['QCDscale_ggH'] = (1.16,['ggH']) # 0 jets only
+#        for k,v in dummy.iteritems():
+#            self._0jetOnly[k] = (['lnN'], dict([( process, v[0]) for process in v[1] ]) )
+#
+#        # 1 jet only
+#        dummy = {}
+#        dummy['QCDscale_ggH2in'] = (0.95,['ggH']) # 1 jey only
+#        for k,v in dummy.iteritems():
+#            self._1jetOnly[k] = (['lnN'], dict([( process, v[0]) for process in v[1] ]) )
+#
 
     def _addDataDrivenNuisances(self, nuisances, yields, mass, channel, jetcat, suffix, opts):
 

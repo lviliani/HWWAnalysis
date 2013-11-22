@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 
-
+import json
 import sys
 import ROOT
 import optparse
@@ -14,6 +14,10 @@ from HWWAnalysis.Misc.odict import OrderedDict
 from HWWAnalysis.Misc.ROOTAndUtils import TH1AddDirSentry
 import traceback
 
+pathWght = os.environ['CMSSW_BASE']+"/src/HWWAnalysis/ShapeAnalysis/ewksinglet/"
+ROOT.gROOT.ProcessLineSync('.L '+pathWght+'getCPSWght.C+')
+ROOT.gROOT.ProcessLineSync('.L '+pathWght+'getBWWght.C+')
+ROOT.gROOT.ProcessLineSync('.L '+pathWght+'getIntWght.C+')
 
 class ShapeFactory:
     _logger = logging.getLogger('ShapeFactory')
@@ -61,6 +65,11 @@ class ShapeFactory:
         self._splitmode       = None
         self._lumi            = 1
         self._muVal           = '1.'
+
+        self._mh_SM           = 125.
+        self._newcps          = False
+        self._ewksinglet      = False
+        self._cprimesq        = 1.
 
         variables = {}
         variables['2dWithCR']             = self._getMllMth2DSpinWithControlRegion
@@ -565,6 +574,7 @@ class ShapeFactory:
 #         hproto,hdim = ShapeFactory._projexpr(rng)
         # 3 items per dimention
         hdim = self._bins2dim( rng )
+        print 'ggH : ' ,selections['ggH']
 
         if vdim != hdim:
             raise ValueError('The variable\'s and range number of dimensions are mismatching')
@@ -740,6 +750,76 @@ class ShapeFactory:
 
             selections[process] = wgt+'*('+cut+')'
 
+
+    #
+    # X. Janssen: Function to implement Higgs weigthing and replace old "kfw" from tree:
+    #       * k-factor (2011 only)
+    #       * New CPS   
+    #       * EWK Singlet
+    #       * Interference with WW (+systematics ?)
+    #
+    def _HiggsWgt(self,prodMode,mass):
+
+       hWght = '1.'
+
+       # New CPS (+ ptHiggs k-factor for 7 TeV MC)
+       if self._newcps and mass >= 250:
+         if self._energy == '7TeV' :
+           if prodMode in ['ggH','ggH_ALT'] : hWght += '*getpTHiggsWght()' 
+           if prodMode in ['qqH','qqH_ALT'] : hWght += '*getpTHiggsWght()' 
+           #if prodMode in ['ggH_SM'       ] : hWght += '*getpTHiggsWght()' 
+           #if prodMode in ['qqH_SM'       ] : hWght += '*getpTHiggsWght()' 
+
+         fileWght = os.environ['CMSSW_BASE']+"/src/HWWAnalysis/ShapeAnalysis/ewksinglet/data/cpsWght/cpsWght.root"
+         ROOT.gROOT.ProcessLineSync('initCPSWght("'+fileWght+'","'+self._energy+'",'+str(mass)+','+str(int(self._mh_SM))+')')
+ 
+         if prodMode in ['ggH','ggH_ALT'] : hWght += '*getCPSWght(0,MHiggs)' 
+         if prodMode in ['qqH','qqH_ALT'] : hWght += '*getCPSWght(1,MHiggs)' 
+         #if prodMode in ['ggH_SM'       ] : hWght += '*getCPSWght(2,MHiggs)' 
+         #if prodMode in ['qqH_SM'       ] : hWght += '*getCPSWght(3,MHiggs)' 
+       else:
+         if prodMode in ['ggH','ggH_ALT','ggH_SM','qqH','qqH_ALT','qqH_SM'] : hWght += '*kfW'
+
+       # EWK Singlet 
+       if self._ewksinglet : 
+
+         # ... Change high mass H width (only ggH and qqH for now)
+         fileBWParam = os.environ['CMSSW_BASE']+"/src/HWWAnalysis/ShapeAnalysis/ewksinglet/data/BWParam.json"
+         jsf = open(fileBWParam,"r+")
+         BWParam = (json.loads(jsf.read()))
+         jsf.close()  
+
+         GamSM = 0.
+         if    prodMode == 'ggH' :
+           Mass  = BWParam['ggH'][str(mass)]['Mass']
+           GamSM = BWParam['ggH'][str(mass)]['Gamma']
+
+         elif  prodMode == 'qqH' :
+           Mass  = BWParam['qqH'][str(mass)]['Mass']
+           GamSM = BWParam['qqH'][str(mass)]['Gamma']
+ 
+         Gamma = GamSM * self._cprimesq
+         
+         if prodMode in ['ggH','qqH']    : hWght += '*getBWWght(MHiggs,%f,%f,%f)'%(Mass,GamSM,Gamma)
+
+         # ... Change mu of both H
+         if prodMode in ['ggH','qqH','WH','ZH','ttH']                :  hWght += '*(1-'+str(self._cprimesq)+')'
+         if prodMode in ['ggH_SM','qqH_SM','WH_SM','ZH_SM','ttH_SM'] :  hWght += '*'+str(self._cprimesq)
+
+       # Inteference (Only meaningfull with new CPS as kfW already contains it otherwise)
+       if self._newcps :
+         if prodMode in ['ggH']    and mass        >= 400 : 
+            fileInt = os.environ['CMSSW_BASE']+'/src/HWWAnalysis/ShapeAnalysis/ewksinglet/data/Interference/h_MWW_rel_NNLO_'+str(mass)+'.root'
+            print fileInt
+            ROOT.gROOT.ProcessLineSync('initIntWght("'+fileInt+'",0,0)')
+            hWght += '*getIntWght(0,MHiggs,'+str(self._cprimesq)+')' 
+         #if prodMode in ['ggH_SM'] and self._mh_SM >= 400 : hWght += '*getIntWght()' 
+
+
+
+
+       return hWght
+
     # _____________________________________________________________________________
     # this is too convoluted
     # define here the mass-dependent weights
@@ -789,16 +869,16 @@ class ShapeFactory:
         weights['Vg']                = self._stdWgt+'*kfW'
 
 
-        weights['ggH']               = self._stdWgt+'*kfW*'+self._muVal
-        weights['qqH']               = self._stdWgt+'*kfW*'+self._muVal
+        weights['ggH']               = self._stdWgt+'*'+self._HiggsWgt('ggH',mass)+'*'+self._muVal
+        weights['qqH']               = self._stdWgt+'*'+self._HiggsWgt('qqH',mass)+'*'+self._muVal
         weights['ggHminlo']          = 'effW*triggW*kfW*puW*HEPMCweight/497500.*1000*0.108*0.108*9*0.216'+self._muVal
 
         weights['WH']                = self._stdWgt+'*(mctruth == 26)*'+self._muVal
         weights['ZH']                = self._stdWgt+'*(mctruth == 24)*'+self._muVal
         weights['ttH']               = self._stdWgt+'*(mctruth == 121)*'+self._muVal
 
-        weights['ggH_SM']            = self._stdWgt+'*kfW*'+self._muVal
-        weights['qqH_SM']            = self._stdWgt+'*kfW*'+self._muVal
+        weights['ggH_SM']            = self._stdWgt+'*'+self._HiggsWgt('ggH_SM',mass)+'*'+self._muVal
+        weights['qqH_SM']            = self._stdWgt+'*'+self._HiggsWgt('qqH_SM',mass)+'*'+self._muVal
         weights['WH_SM']             = self._stdWgt+'*(mctruth == 26)*'+self._muVal
         weights['ZH_SM']             = self._stdWgt+'*(mctruth == 24)*'+self._muVal
         weights['ttH_SM']            = self._stdWgt+'*(mctruth == 121)*'+self._muVal
@@ -1055,6 +1135,7 @@ if __name__ == '__main__':
 #     parser.add_option('--skip-syst',     dest='skipSyst',   help='Skip set of systematics',               default='')
     parser.add_option('--skip-syst',     dest='skipSyst',   help='Skip set of systematics',               default=[] , type='string' , action='callback' , callback=hwwtools.list_maker('skipSyst'))
     parser.add_option('--mu'       ,     dest='muVal',   help='Initial signal strengh',               default='1.' , type='string' )
+    parser.add_option('--newcps',        dest='newcps',  help='On/Off New CPS weights',               default=False , action='store_true')   
     # EWK Doublet Model
     parser.add_option('--ewksinglet',    dest='ewksinglet',  help='On/Off EWK singlet model',           default=False , action='store_true')   
     parser.add_option('--cprimesq'  ,    dest='cprimesq',    help='EWK singlet C\'**2 mixing value',    default=[0.]  , type='float'  , action='callback' , callback=hwwtools.list_maker('cprimesq'))
@@ -1067,6 +1148,8 @@ if __name__ == '__main__':
 
     sys.argv.append( '-b' )
     ROOT.gROOT.SetBatch()
+
+
 
     if not opt.debug:
         pass
@@ -1144,7 +1227,15 @@ if __name__ == '__main__':
           factory._splitmode = opt.splitmode
           factory._lumi      = opt.lumi
           factory._muVal     = opt.muVal 
-  
+ 
+          factory._newcps    = opt.newcps 
+          factory._ewksinglet= opt.ewksinglet
+          if not opt.ewksinglet :
+            factory._cprimesq  = 1.
+          else:  
+            factory._cprimesq  = opt.cprimesq[iModel]
+
+
           if opt.makeNoms:
               # nominal shapes
               print factory.makeNominals(variable,selection,nomInputDir,nomOutDir+nominalOutFile)
@@ -1198,10 +1289,10 @@ if __name__ == '__main__':
   
               factory._systByWeight = systByWeight
   
-              processMask = ['ggH', 'ggH_ALT',  'qqH',  'qqH_ALT', 'wzttH', 'ZH', 'WH', 'ttH', 'ggWW', 'Top', 'WW', 'VV', 'VgS', 'Vg', 'DYTT', 'Other', 'ggH125', 'qqH125','VVV', 'WWewk', 'CHITOP-Top' , 'ggH_SM', 'qqH_SM', 'wzttH_SM' , 'WH_SM','ZH_SM','ttH_SM']
+              processMask = ['ggH', 'ggH_ALT',  'qqH',  'qqH_ALT', 'wzttH', 'ZH', 'WH', 'ttH', 'ggWW', 'Top', 'WW', 'VV', 'VgS', 'Vg', 'DYTT', 'Other', 'VVV', 'WWewk', 'CHITOP-Top' , 'ggH_SM', 'qqH_SM', 'wzttH_SM' , 'WH_SM','ZH_SM','ttH_SM']
   
               if '2011' in opt.dataset:
-                  processMask = ['ggH', 'ggH_ALT', 'qqH', 'qqH_ALT', 'VH' , 'wzttH', 'ZH', 'WH', 'ttH', 'ggWW', 'Top', 'WW', 'VV', 'ggH125', 'qqH125',  'CHITOP-Top', 'ggH_SM', 'qqH_SM','VH_SM', 'wzttH_SM', 'ZH_SM', 'WH_SM', 'ttH_SM']
+                  processMask = ['ggH', 'ggH_ALT', 'qqH', 'qqH_ALT', 'VH' , 'wzttH', 'ZH', 'WH', 'ttH', 'ggWW', 'Top', 'WW', 'VV', 'CHITOP-Top', 'ggH_SM', 'qqH_SM','VH_SM', 'wzttH_SM', 'ZH_SM', 'WH_SM', 'ttH_SM']
   
               systMasks = dict([(s,processMask[:]) for s in systematics])
               systDirs  = dict([(s,systInputDir if s not in systByWeight else 'templates/' ) for s in systematics])
