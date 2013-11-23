@@ -1301,8 +1301,8 @@ if __name__ == '__main__':
                 label = 'mH{0} {1} {2}'.format(mass,cat,fl)
                 ss = ShapeMixer(label)
                 if opt.ewksinglet:
-                  ss.nominalsPath   = os.path.join(nomPath,nameTmpl.format(mass, cat, fl)+'_EWKSinglet_CP2_'+str(opt.cprimesq[iModel]).replace('.','d')+'.root')
-                  ss.systSearchPath = os.path.join(systPath,nameTmpl.format(mass, cat, fl)+'_EWKSinglet_CP2_'+str(opt.cprimesq[iModel]).replace('.','d')+'_*.root')
+                  ss.nominalsPath   = os.path.join(nomPath,nameTmpl.format(mass, cat, fl)+'.EWKSinglet_CP2_'+str(opt.cprimesq[iModel]).replace('.','d')+'.root')
+                  ss.systSearchPath = os.path.join(systPath,nameTmpl.format(mass, cat, fl)+'.EWKSinglet_CP2_'+str(opt.cprimesq[iModel]).replace('.','d')+'_*.root')
                 else:
                   ss.nominalsPath   = os.path.join(nomPath,nameTmpl.format(mass, cat, fl)+'.root')
                   ss.systSearchPath = os.path.join(systPath,nameTmpl.format(mass, cat, fl)+'_*.root')
@@ -1336,7 +1336,7 @@ if __name__ == '__main__':
             m.injectSignal()
             if not opt.dry:
                 if opt.ewksinglet:
-                  output = 'hww-{lumi:.2f}fb.mH{mass}.{channel}_EWKSinglet_CP2_{cprimsq}_shape.root'.format(lumi=opt.lumi,mass=mass,channel=chan,cprimsq=str(opt.cprimesq[iModel]).replace('.','d'))
+                  output = 'hww-{lumi:.2f}fb.mH{mass}.{channel}.EWKSinglet_CP2_{cprimsq}_shape.root'.format(lumi=opt.lumi,mass=mass,channel=chan,cprimsq=str(opt.cprimesq[iModel]).replace('.','d'))
                 else:
                   output = 'hww-{lumi:.2f}fb.mH{mass}.{channel}_shape.root'.format(lumi=opt.lumi,mass=mass,channel=chan)
                 path = os.path.join(mergedDir,output)

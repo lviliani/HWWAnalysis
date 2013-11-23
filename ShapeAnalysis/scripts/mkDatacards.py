@@ -673,7 +673,7 @@ if __name__ == '__main__':
     for iModel in xrange(0,nModel):
 
         if opt.ewksinglet:
-          shapeTmpl = os.path.join(mergedPath,'hww-'+lumistr+'fb.mH{mass}.{channel}_EWKSinglet_CP2_'+str(opt.cprimesq[iModel]).replace('.','d')+'_shape.root')
+          shapeTmpl = os.path.join(mergedPath,'hww-'+lumistr+'fb.mH{mass}.{channel}.EWKSinglet_CP2_'+str(opt.cprimesq[iModel]).replace('.','d')+'_shape.root')
         else:
           shapeTmpl = os.path.join(mergedPath,'hww-'+lumistr+'fb.mH{mass}.{channel}_shape.root')
         #mask = ['Vg','DYLL','DYTT']

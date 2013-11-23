@@ -803,8 +803,9 @@ class ShapeFactory:
          if prodMode in ['ggH','qqH']    : hWght += '*getBWWght(MHiggs,%f,%f,%f)'%(Mass,GamSM,Gamma)
 
          # ... Change mu of both H
-         if prodMode in ['ggH','qqH','WH','ZH','ttH']                :  hWght += '*(1-'+str(self._cprimesq)+')'
-         if prodMode in ['ggH_SM','qqH_SM','WH_SM','ZH_SM','ttH_SM'] :  hWght += '*'+str(self._cprimesq)
+         if prodMode in ['ggH','qqH','WH','ZH','ttH']                :  hWght += '*'+str(self._cprimesq)
+         if prodMode in ['ggH_SM','qqH_SM','WH_SM','ZH_SM','ttH_SM'] :  hWght += '*(1-'+str(self._cprimesq)+')'
+
 
        # Inteference (Only meaningfull with new CPS as kfW already contains it otherwise)
        if self._newcps :
@@ -1198,8 +1199,8 @@ if __name__ == '__main__':
         for iModel in xrange(0,nModel):
 
           if opt.ewksinglet:
-            nominalOutFile      = 'shape_Mh{mass}_{category}_'+tag+'_shapePreSel_{flavor}_EWKSinglet_CP2_'+str(opt.cprimesq[iModel]).replace('.','d')+'.root'
-            systematicsOutFile  = 'shape_Mh{mass}_{category}_'+tag+'_shapePreSel_{flavor}_EWKSinglet_CP2_'+str(opt.cprimesq[iModel]).replace('.','d')+'_{nick}.root'
+            nominalOutFile      = 'shape_Mh{mass}_{category}_'+tag+'_shapePreSel_{flavor}.EWKSinglet_CP2_'+str(opt.cprimesq[iModel]).replace('.','d')+'.root'
+            systematicsOutFile  = 'shape_Mh{mass}_{category}_'+tag+'_shapePreSel_{flavor}.EWKSinglet_CP2_'+str(opt.cprimesq[iModel]).replace('.','d')+'_{nick}.root'
           else: 
             nominalOutFile      = 'shape_Mh{mass}_{category}_'+tag+'_shapePreSel_{flavor}.root'
             systematicsOutFile  = 'shape_Mh{mass}_{category}_'+tag+'_shapePreSel_{flavor}_{nick}.root'
