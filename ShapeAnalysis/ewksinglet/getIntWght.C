@@ -141,9 +141,35 @@ void initIntWght(std::string wFile , int iType , int iSyst, float Hmass = 350) {
      }
 
     //---- build functions to interpolate ----
+     float log_S_N[100];
+     float log_SI_N[100];
+
+     for (int i=0; i<5; i++) {
+      double tempMass = 0;
+      if (i==0) tempMass = 350;
+      if (i==1) tempMass = 500;
+      if (i==2) tempMass = 650;
+      if (i==3) tempMass = 800;
+      if (i==4) tempMass = 1000;
+
+      int NBIN = 350;
+      if (tempMass>400) NBIN = 120;
+      if (tempMass>500) NBIN =  70;
+      if (tempMass>700) NBIN = 120;
+      if (tempMass>900) NBIN =  40;
+      int MAX = 800;
+      if (tempMass>400) MAX =  1500;
+      if (tempMass>500) MAX =  2000;
+      if (tempMass>700) MAX =  4000;
+      if (tempMass>900) MAX =  4000;
+      float scale = 1./ (MAX/NBIN);
+      log_S_N[i]  = log(S_N[i]  * scale);
+      log_SI_N[i] = log(SI_N[i] * scale);
+     }
+
      if (kind == 0) {
       for (int iVar=0; iVar<7; iVar++) {
-       if (iVar == 0) em_variables_S[iVar] = new TGraph (5,S_mass,S_N);
+       if (iVar == 0) em_variables_S[iVar] = new TGraph (5,S_mass,log_S_N);
        if (iVar == 1) em_variables_S[iVar] = new TGraph (5,S_mass,S_Mean);
        if (iVar == 2) em_variables_S[iVar] = new TGraph (5,S_mass,S_sigma);
        if (iVar == 3) em_variables_S[iVar] = new TGraph (5,S_mass,S_alphaR);
@@ -153,7 +179,7 @@ void initIntWght(std::string wFile , int iType , int iSyst, float Hmass = 350) {
       }
 
       for (int iVar=0; iVar<7; iVar++) {
-       if (iVar == 0) em_variables_SI[iVar] = new TGraph (5,SI_mass,SI_N);
+       if (iVar == 0) em_variables_SI[iVar] = new TGraph (5,SI_mass,log_SI_N);
        if (iVar == 1) em_variables_SI[iVar] = new TGraph (5,SI_mass,SI_Mean);
        if (iVar == 2) em_variables_SI[iVar] = new TGraph (5,SI_mass,SI_sigma);
        if (iVar == 3) em_variables_SI[iVar] = new TGraph (5,SI_mass,SI_alphaR);
@@ -165,13 +191,19 @@ void initIntWght(std::string wFile , int iType , int iSyst, float Hmass = 350) {
       em_crystal_Icorr_qqH = new TF1("em_crystal_Icorr_qqH",CrystalBallLowHighDivideCrystalBallLowHigh,0,3000,14);
 
       for (int iVar = 0; iVar<7; iVar++) {
-       em_crystal_Icorr_qqH->SetParameter(iVar,   em_variables_SI[iVar]->Eval(Hmass));
-       em_crystal_Icorr_qqH->SetParameter(iVar+7, em_variables_S[iVar]->Eval(Hmass));
+       if (iVar == 0) {
+        em_crystal_Icorr_qqH->SetParameter(iVar,   exp(em_variables_SI[iVar]->Eval(Hmass)));
+        em_crystal_Icorr_qqH->SetParameter(iVar+7, exp(em_variables_S[iVar]->Eval(Hmass)));
+       }
+       else {
+        em_crystal_Icorr_qqH->SetParameter(iVar,   em_variables_SI[iVar]->Eval(Hmass));
+        em_crystal_Icorr_qqH->SetParameter(iVar+7, em_variables_S[iVar]->Eval(Hmass));
+       }
       }
      }
      else if (kind == 1) {
       for (int iVar=0; iVar<7; iVar++) {
-       if (iVar == 0) mm_variables_S[iVar] = new TGraph (5,S_mass,S_N);
+       if (iVar == 0) mm_variables_S[iVar] = new TGraph (5,S_mass,log_S_N);
        if (iVar == 1) mm_variables_S[iVar] = new TGraph (5,S_mass,S_Mean);
        if (iVar == 2) mm_variables_S[iVar] = new TGraph (5,S_mass,S_sigma);
        if (iVar == 3) mm_variables_S[iVar] = new TGraph (5,S_mass,S_alphaR);
@@ -181,7 +213,7 @@ void initIntWght(std::string wFile , int iType , int iSyst, float Hmass = 350) {
       }
 
       for (int iVar=0; iVar<7; iVar++) {
-       if (iVar == 0) mm_variables_SI[iVar] = new TGraph (5,SI_mass,SI_N);
+       if (iVar == 0) mm_variables_SI[iVar] = new TGraph (5,SI_mass,log_SI_N);
        if (iVar == 1) mm_variables_SI[iVar] = new TGraph (5,SI_mass,SI_Mean);
        if (iVar == 2) mm_variables_SI[iVar] = new TGraph (5,SI_mass,SI_sigma);
        if (iVar == 3) mm_variables_SI[iVar] = new TGraph (5,SI_mass,SI_alphaR);
@@ -190,8 +222,14 @@ void initIntWght(std::string wFile , int iType , int iSyst, float Hmass = 350) {
        if (iVar == 6) mm_variables_SI[iVar] = new TGraph (5,SI_mass,SI_nL);
       }
       for (int iVar = 0; iVar<7; iVar++) {
-       mm_crystal_Icorr_qqH->SetParameter(iVar,   mm_variables_SI[iVar]->Eval(Hmass));
-       mm_crystal_Icorr_qqH->SetParameter(iVar+7, mm_variables_S[iVar]->Eval(Hmass));
+       if (iVar == 0) {
+        mm_crystal_Icorr_qqH->SetParameter(iVar,   exp(mm_variables_SI[iVar]->Eval(Hmass)));
+        mm_crystal_Icorr_qqH->SetParameter(iVar+7, exp(mm_variables_S[iVar]->Eval(Hmass)));
+       }
+       else {
+        mm_crystal_Icorr_qqH->SetParameter(iVar,   mm_variables_SI[iVar]->Eval(Hmass));
+        mm_crystal_Icorr_qqH->SetParameter(iVar+7, mm_variables_S[iVar]->Eval(Hmass));
+       }
       }
      }
     }
