@@ -5,14 +5,73 @@
 
 #include <TROOT.h>
 #include <TH1F.h>
+#include <TF1.h>
 #include <TSpline.h>
 #include <TFile.h>
 #include <string>
 #include <sstream>
+#include <fstream>
 #include <iostream>
 #include <iomanip>
 
-#include "qqHInterference.h
+//#include "qqHInterference.h"
+
+
+//-------------------
+//---- functions ----
+//-------------------
+
+double crystalBallLowHigh (double* x, double* par) {
+  //[0] = N
+  //[1] = mean
+  //[2] = sigma
+  //[3] = alpha on the right-hand side
+  //[4] = n
+  //[5] = alpha2 on the left-hand side
+  //[6] = n2
+
+ double xx = x[0];
+ double mean = par[1];
+ double sigma = fabs (par[2]);
+ double alpha = par[3];
+ double n = par[4];
+ double alpha2 = par[5];
+ double n2 = par[6];
+
+ if( (xx-mean)/sigma > fabs(alpha) ) {
+  double A = pow(n/fabs(alpha), n) * exp(-0.5 * alpha*alpha);
+  double B = n/fabs(alpha) - fabs(alpha);
+
+  return par[0] * A * pow(B + (xx-mean)/sigma, -1.*n);
+ }
+
+ else if( (xx-mean)/sigma < -1.*fabs(alpha2) ) {
+  double A = pow(n2/fabs(alpha2), n2) * exp(-0.5 * alpha2*alpha2);
+  double B = n2/fabs(alpha2) - fabs(alpha2);
+
+  return par[0] * A * pow(B - (xx-mean)/sigma, -1.*n2);
+ }
+
+ else {
+  return par[0] * exp(-1. * (xx-mean)*(xx-mean) / (2*sigma*sigma) );
+ }
+
+}
+
+
+//---- division of CBLowHigh with CBLowHigh ----
+
+Double_t CrystalBallLowHighDivideCrystalBallLowHigh(Double_t *x,Double_t *par) {
+ Double_t num = 0;
+ num = crystalBallLowHigh(x,par);
+
+ Double_t den = 1;
+ den = crystalBallLowHigh(x,&par[7]);
+
+ if (den != 0) return num/den;
+ else return 1.;
+
+}
 
 TH1F*     hInt_ggH = 0 ;
 TSpline3* wInt_ggH = 0 ;
@@ -36,9 +95,9 @@ float getIntWght(int iType, float mass , float cpsq, float kind = 0)
    float wInt=1.;
    if ( iType == 0 ) { //---- ggH
      if ( wInt_ggH ) {
-       if      (mass > 210 and mass < 1000.) wInt_ggH->Eval(mass) ;
-       else if (mass <= 210 ) wInt_ggH->Eval(210) ;
-       else if (mass >= 1000) wInt_ggH->Eval(1000);
+       if      (mass > 210 and mass < 1000.) wInt = wInt_ggH->Eval(mass) ;
+       else if (mass <= 210 ) wInt = wInt_ggH->Eval(210) ;
+       else if (mass >= 1000) wInt = wInt_ggH->Eval(1000);
        if ( cpsq < 1. ) wInt = 1.+(wInt-1.)/cpsq;
      } else {
        std::cout << "Missing Interference !!!!" << std::endl;
@@ -60,12 +119,13 @@ float getIntWght(int iType, float mass , float cpsq, float kind = 0)
 //         -1 : 
 void initIntWght(std::string wFile , int iType , int iSyst, float Hmass = 350) {
 
-   TFile* f = new TFile(wFile.c_str() , "READ");
-   gROOT->cd();
    if ( iType == 0 ) { //---- ggH 
+     TFile* f = new TFile(wFile.c_str() , "READ");
+     gROOT->cd();
      if ( iSyst == 0 ) hInt_ggH = (TH1F*) f->Get("h_MWW_rel_NNLO_cen")->Clone("hInt_ggH");
      //hInt_ggH.Smooth(10);
      wInt_ggH = new TSpline3(hInt_ggH) ;
+     f->Close();
    }
    else if ( iType ==1 ) { //---- qqH
 
@@ -95,8 +155,8 @@ void initIntWght(std::string wFile , int iType , int iSyst, float Hmass = 350) {
      float SI_nL[100];
 
      TString nameS;
-     if (kind == 0) nameS = Form ("data/InterferenceVBF/results_em_S.txt");
-     if (kind == 1) nameS = Form ("data/InterferenceVBF/results_mm_S.txt");
+     if (kind == 0) nameS = wFile+"/data/InterferenceVBF/results_em_S.txt";
+     if (kind == 1) nameS = wFile+"/data/InterferenceVBF/results_mm_S.txt";
      std::ifstream file_S (nameS.Data());
      counter = 0;
      while(!file_S.eof()) {
@@ -118,8 +178,8 @@ void initIntWght(std::string wFile , int iType , int iSyst, float Hmass = 350) {
      }
 
      TString nameSI;
-     if (kind == 0) nameSI = Form ("data/InterferenceVBF/results_em_SI.txt");
-     if (kind == 1) nameSI = Form ("data/InterferenceVBF/results_mm_SI.txt");
+     if (kind == 0) nameSI = wFile+"/data/InterferenceVBF/results_em_SI.txt";
+     if (kind == 1) nameSI = wFile+"/data/InterferenceVBF/results_mm_SI.txt";
      std::ifstream file_SI (nameSI.Data());
      counter = 0;
      while(!file_SI.eof()) {
@@ -238,5 +298,4 @@ void initIntWght(std::string wFile , int iType , int iSyst, float Hmass = 350) {
     }
 
    }
-   f->Close();
 }

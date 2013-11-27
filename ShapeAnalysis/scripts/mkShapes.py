@@ -814,7 +814,7 @@ class ShapeFactory:
             print fileInt
             ROOT.gROOT.ProcessLineSync('initIntWght("'+fileInt+'",0,0)')
             hWght += '*getIntWght(0,MHiggs,'+str(self._cprimesq)+')' 
-         #if prodMode in ['ggH_SM'] and self._mh_SM >= 400 : hWght += '*getIntWght()' 
+         #if prodMode in ['ggH_SM'] and self._mh_SM >= 350 : hWght += '*getIntWght()' 
 
 
 
