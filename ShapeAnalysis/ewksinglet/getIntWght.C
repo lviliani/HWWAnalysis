@@ -221,6 +221,9 @@ void initIntWght(std::string wFile , int iType , int iSyst, float Hmass = 350) {
        if (iVar == 5) mm_variables_SI[iVar] = new TGraph (5,SI_mass,SI_alphaL);
        if (iVar == 6) mm_variables_SI[iVar] = new TGraph (5,SI_mass,SI_nL);
       }
+
+      mm_crystal_Icorr_qqH = new TF1("mm_crystal_Icorr_qqH",CrystalBallLowHighDivideCrystalBallLowHigh,0,3000,14);
+
       for (int iVar = 0; iVar<7; iVar++) {
        if (iVar == 0) {
         mm_crystal_Icorr_qqH->SetParameter(iVar,   exp(mm_variables_SI[iVar]->Eval(Hmass)));
