@@ -223,61 +223,62 @@ class NuisanceMapBuilder:
         self._ddreader      = datadriven.DDCardReader(ddPath)
         self._wwddfilter    = datadriven.DDWWFilter(self._ddreader, noWWddAbove)
 
-        self._build()
- 
-    def _build(self):
-        # common 0/1/2 jet systematics
-        pureMC = [ 'VgS', 'Vg', 'VV', 'ggH', 'qqH', 'wzttH', 'ZH', 'WH', 'ttH', 'Other', 'VVV', 'WW', 'WWewk']
-        dummy = {}
-        dummy['CMS_fake_e']    = (1.50, ['WJet']) # take the average of ee/me 
-#         dummy['CMS_fake_m']    = (1.42, ['WJet']) # take the average of mm/em
-        dummy['CMS_eff_l']     = (1.04, pureMC)
-        dummy['CMS_p_scale_e'] = (1.02, pureMC)
-#         dummy['CMS_p_scale_m'] = (1.01, pureMC)
-        dummy['CMS_p_scale_j'] = (1.02, pureMC)
-        dummy['CMS_met']       = (1.02, pureMC)
-        dummy['lumi']          = (1.04, pureMC)
-
-        for k,v in dummy.iteritems():
-            self._common[k] = (['lnN'], dict([( process, v[0]) for process in v[1] ]) )
-
-        self._common['pdf_gg']    = (['lnN'],dict([('ggWW',1.04),('ggH',1.08)]) )
-        self._common['pdf_qqbar'] = (['lnN'],dict([('WW',1.04),('VV',1.04),('qqH',1.02)]) )
-        self._common['pdf_assoc'] = (['lnN'],dict([('WW',1.04)]) )
-
-        dummy = {} 
-        # both 0/1 jets but different
-        dummy['CMS_QCDscale_WW_EXTRAP'] = ([0.95, 1.21], ['WW'])
-        dummy['QCDscale_VV']            = ([1.03, 1.03], ['VV'])
-        dummy['QCDscale_ggH1in']        = ([0.89, 1.39], ['ggH'])
-        dummy['QCDscale_ggH_ACEPT']     = ([1.02, 1.02], ['ggH'])
-        dummy['QCDscale_ggVV']          = ([1.30, 1.30], ['ggWW'])
-        dummy['QCDscale_qqH']           = ([1.01, 1.01], ['qqH'])
-        dummy['QCDscale_qqH_ACEPT']     = ([1.02, 1.02], ['qqH'])
-        dummy['QCDscale_wzttH_ACEPT']   = ([1.02, 1.02], ['wzttH'])
-        dummy['QCDscale_wzttH']         = ([1.01, 1.01], ['wzttH'])
-        dummy['UEPS']                   = ([0.94, 1.11], ['ggH'])
-
-        for k,v in dummy.iteritems():
-            self._0jetOnly[k] = (['lnN'], dict([( process, v[0][0]) for process in v[1] ]) )
-            self._1jetOnly[k] = (['lnN'], dict([( process, v[0][1]) for process in v[1] ]) )
-
-
-        # 0 jets only
-        dummy = {}
-
-        dummy['CMS_fake_Vg']  = (2.00,['Vg']) # Vg, 0jet 
-        dummy['QCDscale_Vg']  = (1.50,['Vg']) 
-        dummy['QCDscale_ggH'] = (1.16,['ggH']) # 0 jets only
-        for k,v in dummy.iteritems():
-            self._0jetOnly[k] = (['lnN'], dict([( process, v[0]) for process in v[1] ]) )
-
-        # 1 jet only
-        dummy = {}
-        dummy['QCDscale_ggH2in'] = (0.95,['ggH']) # 1 jey only
-        for k,v in dummy.iteritems():
-            self._1jetOnly[k] = (['lnN'], dict([( process, v[0]) for process in v[1] ]) )
-
+# This is deprecated ( Xavier, 21 Nov 2013 )
+#        self._build()
+# 
+#    def _build(self):
+#        # common 0/1/2 jet systematics
+#        pureMC = [ 'VgS', 'Vg', 'VV', 'ggH', 'qqH', 'wzttH', 'ZH', 'WH', 'ttH', 'Other', 'VVV', 'WW', 'WWewk']
+#        dummy = {}
+#        dummy['CMS_fake_e']    = (1.50, ['WJet']) # take the average of ee/me 
+##         dummy['CMS_fake_m']    = (1.42, ['WJet']) # take the average of mm/em
+#        dummy['CMS_eff_l']     = (1.04, pureMC)
+#        dummy['CMS_p_scale_e'] = (1.02, pureMC)
+##         dummy['CMS_p_scale_m'] = (1.01, pureMC)
+#        dummy['CMS_p_scale_j'] = (1.02, pureMC)
+#        dummy['CMS_met']       = (1.02, pureMC)
+#        dummy['lumi']          = (1.04, pureMC)
+#
+#        for k,v in dummy.iteritems():
+#            self._common[k] = (['lnN'], dict([( process, v[0]) for process in v[1] ]) )
+#
+#        self._common['pdf_gg']    = (['lnN'],dict([('ggWW',1.04),('ggH',1.08)]) )
+#        self._common['pdf_qqbar'] = (['lnN'],dict([('WW',1.04),('VV',1.04),('qqH',1.02)]) )
+#        self._common['pdf_assoc'] = (['lnN'],dict([('WW',1.04)]) )
+#
+#        dummy = {} 
+#        # both 0/1 jets but different
+#        dummy['CMS_QCDscale_WW_EXTRAP'] = ([0.95, 1.21], ['WW'])
+#        dummy['QCDscale_VV']            = ([1.03, 1.03], ['VV'])
+#        dummy['QCDscale_ggH1in']        = ([0.89, 1.39], ['ggH'])
+#        dummy['QCDscale_ggH_ACEPT']     = ([1.02, 1.02], ['ggH'])
+#        dummy['QCDscale_ggVV']          = ([1.30, 1.30], ['ggWW'])
+#        dummy['QCDscale_qqH']           = ([1.01, 1.01], ['qqH'])
+#        dummy['QCDscale_qqH_ACEPT']     = ([1.02, 1.02], ['qqH'])
+#        dummy['QCDscale_wzttH_ACEPT']   = ([1.02, 1.02], ['wzttH'])
+#        dummy['QCDscale_wzttH']         = ([1.01, 1.01], ['wzttH'])
+#        dummy['UEPS']                   = ([0.94, 1.11], ['ggH'])
+#
+#        for k,v in dummy.iteritems():
+#            self._0jetOnly[k] = (['lnN'], dict([( process, v[0][0]) for process in v[1] ]) )
+#            self._1jetOnly[k] = (['lnN'], dict([( process, v[0][1]) for process in v[1] ]) )
+#
+#
+#        # 0 jets only
+#        dummy = {}
+#
+#        dummy['CMS_fake_Vg']  = (2.00,['Vg']) # Vg, 0jet 
+#        dummy['QCDscale_Vg']  = (1.50,['Vg']) 
+#        dummy['QCDscale_ggH'] = (1.16,['ggH']) # 0 jets only
+#        for k,v in dummy.iteritems():
+#            self._0jetOnly[k] = (['lnN'], dict([( process, v[0]) for process in v[1] ]) )
+#
+#        # 1 jet only
+#        dummy = {}
+#        dummy['QCDscale_ggH2in'] = (0.95,['ggH']) # 1 jey only
+#        for k,v in dummy.iteritems():
+#            self._1jetOnly[k] = (['lnN'], dict([( process, v[0]) for process in v[1] ]) )
+#
 
     def _addDataDrivenNuisances(self, nuisances, yields, mass, channel, jetcat, suffix, opts):
 
@@ -614,6 +615,11 @@ if __name__ == '__main__':
 
 
 
+    # EWK Doublet Model
+    parser.add_option('--ewksinglet',    dest='ewksinglet',  help='On/Off EWK singlet model',           default=False , action='store_true')   
+    parser.add_option('--cprimesq'  ,    dest='cprimesq',    help='EWK singlet C\'**2 mixing value',    default=[0.]  , type='float'  , action='callback' , callback=hwwtools.list_maker('cprimesq'))
+
+
     hwwtools.addOptions(parser)
     hwwtools.loadOptDefaults(parser)
 
@@ -667,68 +673,77 @@ if __name__ == '__main__':
     optsNuis['nuisFlags'] = opt.nuisFlags
     optsNuis['floatN'] = opt.floatN
     lumistr = '{0:.2f}'.format(opt.lumi)
-    shapeTmpl = os.path.join(mergedPath,'hww-'+lumistr+'fb.mH{mass}.{channel}_shape.root')
-    #mask = ['Vg','DYLL','DYTT']
-    mask = ['DYLL']
-
-    maskVeto = {
-       'CMS_8TeV_p_scale_j':['DYTT'],
-       'CMS_8TeV_puModel'  :['DYTT'],
-       }
 
 
+    nModel = 1
+    if opt.ewksinglet : nModel = len(opt.cprimesq)
+    for iModel in xrange(0,nModel):
 
-    builder = NuisanceMapBuilder( opt.path_dd, opt.noWWddAbove, opt.shape, opt.isssactive )
-    builder.statShapeVeto = mask
-    builder.expShapeVeto  = maskVeto
-
-    for mass in masses:
-        if '2011' in opt.dataset and (mass==145 or mass==155): continue
-        for ch,(jcat,fl) in channels.iteritems():
-
-#         for jets in jetBins:
-#             for flavor in flavors:
-            print '- Processing',mass, ch
-            loader = ShapeLoader(shapeTmpl.format(mass = mass, channel=ch) ) 
-            loader.load()
-
-            writer = ShapeDatacardWriter( mass, ch, opt.shape, opt.dataset )
-            print '   + loading yields'
-            yields = loader.yields()
-
-            # reshuffle the order
-            #order = [ 'vbfH', 'ggH', 'wzttH', 'ggWW', 'Vg', 'WJet', 'Top', 'WW', 'DYLL', 'VV', 'DYTT', 'Data']
-            order = [ 'ggH','ggH_ALT','qqH','qqH_ALT', 'wzttH','wzttH_ALT', 'WH', 'ZH', 'ttH', 'ggWW', 'VgS', 'Vg', 'WJet', 'Top', 'WW', 'WWewk', 'DYLL', 'VV', 'DYTT', 'DYee', 'DYmm', 'Other', 'ggH125', 'qqH125', 'wzttH125', 'VVV', 'Data']
-
-            oldYields = yields.copy()
-            yields = OrderedDict([ (k,oldYields[k]) for k in order if k in oldYields])
-            
-            # lista systematiche sperimentali (dal file. root)
-            effects = loader.effects()
-
-            print '   + making nuisance map'
-            nuisances = builder.nuisances( yields, effects , mass, ch, jcat, fl, optsNuis)
-
-            for n,(pdf, eff) in nuisances.iteritems():
-                if 'ggH' in eff and 'shape' not in pdf[0] and 'stat_bin' not in n :
-                    eff['ggH_ALT'] =  eff['ggH']
-                if 'qqH' in eff and 'shape' not in pdf[0] and 'stat_bin' not in n :
-                    eff['qqH_ALT'] =  eff['qqH']
-                if 'wzttH' in eff and 'shape' not in pdf[0] and 'stat_bin' not in n :
-                    eff['wzttH_ALT'] =  eff['wzttH']
-
-            #basename = 'hww-'+lumistr+'fb.mH{mass}.{bin}_shape'
-            basename = 'hww-'+lumistr+'fb.mH{mass}.{bin}'
-            if opt.shape :
-                 basename  = basename + '_shape'
-            print '   + dumping all to file'
-            if opt.listSignals==[] :
-                writer.write(yields,nuisances,outPath+basename+'.txt',shapeSubDir+basename+'.root')
-            else :
-                writer.write(yields,nuisances,outPath+basename+'.txt',shapeSubDir+basename+'.root',opt.listSignals)
-
-
-
+        if opt.ewksinglet:
+          shapeTmpl = os.path.join(mergedPath,'hww-'+lumistr+'fb.mH{mass}.{channel}.EWKSinglet_CP2_'+str(opt.cprimesq[iModel]).replace('.','d')+'_shape.root')
+        else:
+          shapeTmpl = os.path.join(mergedPath,'hww-'+lumistr+'fb.mH{mass}.{channel}_shape.root')
+        #mask = ['Vg','DYLL','DYTT']
+        mask = ['DYLL']
+    
+        maskVeto = {
+           'CMS_8TeV_p_scale_j':['DYTT'],
+           'CMS_8TeV_puModel'  :['DYTT'],
+           }
+    
+    
+    
+        builder = NuisanceMapBuilder( opt.path_dd, opt.noWWddAbove, opt.shape, opt.isssactive )
+        builder.statShapeVeto = mask
+        builder.expShapeVeto  = maskVeto
+    
+        for mass in masses:
+            if '2011' in opt.dataset and (mass==145 or mass==155): continue
+            for ch,(jcat,fl) in channels.iteritems():
+    
+    #         for jets in jetBins:
+    #             for flavor in flavors:
+                print '- Processing',mass, ch
+                loader = ShapeLoader(shapeTmpl.format(mass = mass, channel=ch) ) 
+                loader.load()
+    
+                writer = ShapeDatacardWriter( mass, ch, opt.shape, opt.dataset )
+                print '   + loading yields'
+                yields = loader.yields()
+    
+                # reshuffle the order
+                #order = [ 'vbfH', 'ggH', 'wzttH', 'ggWW', 'Vg', 'WJet', 'Top', 'WW', 'DYLL', 'VV', 'DYTT', 'Data']
+                order = [ 'ggH','ggH_ALT','qqH','qqH_ALT', 'wzttH','wzttH_ALT', 'WH', 'ZH', 'ttH', 'ggWW', 'VgS', 'Vg', 'WJet', 'Top', 'WW', 'WWewk', 'DYLL', 'VV', 'DYTT', 'DYee', 'DYmm', 'Other', 'VVV', 'Data','ggH_SM', 'qqH_SM', 'WH_SM','ZH_SM' , 'wzttH_SM' ]
+    
+                oldYields = yields.copy()
+                yields = OrderedDict([ (k,oldYields[k]) for k in order if k in oldYields])
+                
+                # lista systematiche sperimentali (dal file. root)
+                effects = loader.effects()
+    
+                print '   + making nuisance map'
+                nuisances = builder.nuisances( yields, effects , mass, ch, jcat, fl, optsNuis)
+    
+                for n,(pdf, eff) in nuisances.iteritems():
+                    if 'ggH' in eff and 'shape' not in pdf[0] and 'stat_bin' not in n :
+                        eff['ggH_ALT'] =  eff['ggH']
+                    if 'qqH' in eff and 'shape' not in pdf[0] and 'stat_bin' not in n :
+                        eff['qqH_ALT'] =  eff['qqH']
+                    if 'wzttH' in eff and 'shape' not in pdf[0] and 'stat_bin' not in n :
+                        eff['wzttH_ALT'] =  eff['wzttH']
+    
+                #basename = 'hww-'+lumistr+'fb.mH{mass}.{bin}_shape'
+                if opt.ewksinglet:
+                  basename = 'hww-'+lumistr+'fb.mH{mass}.{bin}.EWKSinglet_CP2_'+str(opt.cprimesq[iModel]).replace('.','d')
+                else:
+                  basename = 'hww-'+lumistr+'fb.mH{mass}.{bin}'
+                if opt.shape :
+                     basename  = basename + '_shape'
+                print '   + dumping all to file'
+                if opt.listSignals==[] :
+                     writer.write(yields,nuisances,outPath+basename+'.txt',shapeSubDir+basename+'.root')
+                else :
+                     writer.write(yields,nuisances,outPath+basename+'.txt',shapeSubDir+basename+'.root',opt.listSignals)
 
 
 

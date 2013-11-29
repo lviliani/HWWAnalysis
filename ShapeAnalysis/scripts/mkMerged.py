@@ -1196,12 +1196,17 @@ if __name__ == '__main__':
     parser.add_option('--path_scale'        , dest='path_scale'        , help='Scale factors'                    , default=None)
     parser.add_option('--path_shape_raw'    , dest='path_shape_raw'    , help='Input directory of raw shapes'    , default=None)
     parser.add_option('--path_shape_merged' , dest='path_shape_merged' , help='Destination directory for merged' , default=None)
-
+    parser.add_option('--no-syst',       dest='makeSyst',   help='Do not produce the systematics',        action='store_false',   default=True)
     parser.add_option('--simask'            , dest='simask'            , help='Signal injection mask' , default=None, type='string' , action='callback' , callback=hwwtools.list_maker('simask'))
 
     parser.add_option('--fillEmptyBins'     , dest='fillEmptyBins'     , help='fillEmptyBins used to fill empty bins' , default=False)
 
     parser.add_option('--jhuMixFrac'        , dest='jhuMixFrac'        , help='gg JHU Faction'             , default=1)
+
+    # EWK Doublet Model
+    parser.add_option('--ewksinglet',    dest='ewksinglet',  help='On/Off EWK singlet model',           default=False , action='store_true')   
+    parser.add_option('--cprimesq'  ,    dest='cprimesq',    help='EWK singlet C\'**2 mixing value',    default=[0.]  , type='float'  , action='callback' , callback=hwwtools.list_maker('cprimesq'))
+
 
 # discontined
 #     parser.add_option('--scale2nominal', dest='scale2nom', help='Systematics to normalize to nominal ', default='')
@@ -1219,7 +1224,7 @@ if __name__ == '__main__':
     print 'jhuMixFrac = ',opt.jhuMixFrac
 
     scale2nom = []
-    if '2012' in opt.dataset: scale2nom = scale2nom+[('Vg','*'), ('VgS','*')]
+    if '2012' in opt.dataset and opt.makeSyst : scale2nom = scale2nom+[('Vg','*'), ('VgS','*')]
     # in the future good to have a way of removing processes which are not in mcset
     #scale2nom = [(p,s) for p,s in scale2nom if p in hwwsamples.mcsets(opt.mcset)]
     for p,s in scale2nom:
@@ -1274,7 +1279,11 @@ if __name__ == '__main__':
 
     channels =  dict([ (k,v) for k,v in hwwinfo.channels.iteritems() if k in opt.chans])
 
-    for mass in masses:
+    nModel = 1
+    if opt.ewksinglet : nModel = len(opt.cprimesq)
+    for iModel in xrange(0,nModel):
+
+      for mass in masses:
         if '2011' in opt.dataset and (mass==145 or mass==155): continue
         for chan,(cat,fl) in channels.iteritems():
             flavors = hwwinfo.flavors[fl]
@@ -1291,8 +1300,12 @@ if __name__ == '__main__':
                 # configure
                 label = 'mH{0} {1} {2}'.format(mass,cat,fl)
                 ss = ShapeMixer(label)
-                ss.nominalsPath   = os.path.join(nomPath,nameTmpl.format(mass, cat, fl)+'.root')
-                ss.systSearchPath = os.path.join(systPath,nameTmpl.format(mass, cat, fl)+'_*.root')
+                if opt.ewksinglet:
+                  ss.nominalsPath   = os.path.join(nomPath,nameTmpl.format(mass, cat, fl)+'.EWKSinglet_CP2_'+str(opt.cprimesq[iModel]).replace('.','d')+'.root')
+                  ss.systSearchPath = os.path.join(systPath,nameTmpl.format(mass, cat, fl)+'.EWKSinglet_CP2_'+str(opt.cprimesq[iModel]).replace('.','d')+'_*.root')
+                else:
+                  ss.nominalsPath   = os.path.join(nomPath,nameTmpl.format(mass, cat, fl)+'.root')
+                  ss.systSearchPath = os.path.join(systPath,nameTmpl.format(mass, cat, fl)+'_*.root')
                 ss.lumiMask = lumiMask
                 ss.lumi     = opt.lumi
                 ss.rebin    = opt.rebin
@@ -1322,7 +1335,10 @@ if __name__ == '__main__':
 
             m.injectSignal()
             if not opt.dry:
-                output = 'hww-{lumi:.2f}fb.mH{mass}.{channel}_shape.root'.format(lumi=opt.lumi,mass=mass,channel=chan)
+                if opt.ewksinglet:
+                  output = 'hww-{lumi:.2f}fb.mH{mass}.{channel}.EWKSinglet_CP2_{cprimsq}_shape.root'.format(lumi=opt.lumi,mass=mass,channel=chan,cprimsq=str(opt.cprimesq[iModel]).replace('.','d'))
+                else:
+                  output = 'hww-{lumi:.2f}fb.mH{mass}.{channel}_shape.root'.format(lumi=opt.lumi,mass=mass,channel=chan)
                 path = os.path.join(mergedDir,output)
                 print '  - writing to',path
                 m.save(path)

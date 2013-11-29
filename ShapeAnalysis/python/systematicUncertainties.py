@@ -54,10 +54,13 @@ ggH_UEPS = dict([(m, dict(zip(['u0','u1','u2'], vals))) for m,vals in file2map(S
 
 ggH_intf = dict([(m, dict(zip(['intf'], vals))) for m,vals in file2map(SYST_PATH+"ggH_interference.txt").items()])
 
-def getCommonSysts(mass,channel,jets,qqWWfromData,shape,options,suffix,isssactive):
+def getCommonSysts(mass,channel,jets,qqWWfromData,shape,options,suffix,isssactive,mh_SM=125.):
+    print '\033[0;31m FIXME:  Old Yellow Report in use, 7TeV only!!!!!  \033[m'
+
+
     nuisances = {} 
     #MCPROC = ['ggH', 'vbfH', 'DTT', 'ggWW', 'VV', 'Vg' ]; 
-    MCPROC = ['ggH', 'qqH', 'wzttH', 'WH', 'ZH', 'ttH', 'DYTT', 'VV', 'VgS', 'Vg', 'Other', 'VVV', 'WWewk', 'ggH125', 'qqH125', 'wzttH125'];
+    MCPROC = ['ggH', 'qqH', 'wzttH', 'WH', 'ZH', 'ttH', 'DYTT', 'VV', 'VgS', 'Vg', 'Other', 'VVV', 'WWewk', 'ggH_SM', 'qqH_SM', 'wzttH_SM' , 'WH_SM', 'ZH_SM', 'ttH_SM' ];
     MCPROC+=['Top']
     if channel == 'elmu' or channel == 'muel': MCPROC+=['DYMM','DYEE']
     if channel == 'of': MCPROC += ['DYLL']
@@ -68,32 +71,56 @@ def getCommonSysts(mass,channel,jets,qqWWfromData,shape,options,suffix,isssactiv
     nuisances['lumi'+suffix] = [ ['lnN'], dict([(p,lumiunc) for p in MCPROC if p!='DYTT' and p!='Top'])]
     # -- PDF ---------------------
     #nuisances['pdf_gg']    = [ ['lnN'], { 'ggH':ggH_pdfErrYR[mass], 'ggWW':(1.00 if qqWWfromData else 1.04) }]
-    nuisances['pdf_gg']    = [ ['lnN'], { 'ggH':ggH_pdfErrYR[mass], 'ggWW':1.04 }]
-    nuisances['pdf_qqbar'] = [ ['lnN'], { 'wzttH':(1.0 if mass>300 else wzttH_pdfErrYR[mass]),  'WH':(1.0 if mass>300 else wH_pdfErrYR[mass]),  'ZH':(1.0 if mass>300 else zH_pdfErrYR[mass]),  'ttH':(1.0 if mass>300 else ttH_pdfErrYR[mass]), 'qqH':vbfH_pdfErrYR[mass], 'VV':1.04, 'WW':(1.0 if qqWWfromData else 1.04), 'wzttH125':(1.0 if mass>300 else wzttH_pdfErrYR[mass]) }]
+    nuisances['pdf_gg']    = [ ['lnN'], { 'ggH'    : ggH_pdfErrYR[mass], 
+                                          'ggH_SM' : ggH_pdfErrYR[mh_SM],
+                                          'ggWW'   : 1.04 , 
+                                        }]
+
+    nuisances['pdf_qqbar'] = [ ['lnN'], { 'wzttH' :(1.0 if mass>300 else wzttH_pdfErrYR[mass]),  
+                                          'WH'    :(1.0 if mass>300 else wH_pdfErrYR[mass]),  
+                                          'ZH'    :(1.0 if mass>300 else zH_pdfErrYR[mass]), 
+                                          'ttH'   :(1.0 if mass>300 else ttH_pdfErrYR[mass]), 
+                                          'qqH'   :vbfH_pdfErrYR[mass], 
+                                          'wzttH_SM' :(1.0 if mh_SM>300 else wzttH_pdfErrYR[mh_SM]),  
+                                          'WH_SM'    :(1.0 if mh_SM>300 else wH_pdfErrYR[mh_SM]),  
+                                          'ZH_SM'    :(1.0 if mh_SM>300 else zH_pdfErrYR[mh_SM]), 
+                                          'ttH_SM'   :(1.0 if mh_SM>300 else ttH_pdfErrYR[mh_SM]), 
+                                          'qqH_SM'   :vbfH_pdfErrYR[mh_SM], 
+                                          'VV':1.04, 
+                                          'WW':(1.0 if qqWWfromData else 1.04), 
+ 
+                                        }]
+
     # -- Theory ---------------------
     if jets == 0:
         # appendix D of https://indico.cern.ch/getFile.py/access?contribId=0&resId=0&materialId=0&confId=135333
         k0 = pow(ggH_scaErrYR[mass],     1/ggH_jets[mass]['f0'])
         k1 = pow(ggH_jets[mass]['k1'], 1-1/ggH_jets[mass]['f0']) # -f1-f2=f0-1
-        nuisances['QCDscale_ggH']    = [  ['lnN'], { 'ggH':k0, 'ggH125':k0 }]
-        nuisances['QCDscale_ggH1in'] = [  ['lnN'], { 'ggH':k1, 'ggH125':k1 }]
+        # ... and _SM:
+        k0_SM = pow(ggH_scaErrYR[mh_SM],     1/ggH_jets[mh_SM]['f0'])
+        k1_SM = pow(ggH_jets[mh_SM]['k1'], 1-1/ggH_jets[mh_SM]['f0']) # -f1-f2=f0-1
+        nuisances['QCDscale_ggH']    = [  ['lnN'], { 'ggH':k0, 'ggH_SM':k0_SM }]
+        nuisances['QCDscale_ggH1in'] = [  ['lnN'], { 'ggH':k1, 'ggH_SM':k1_SM }]
         if not qqWWfromData:
             nuisances['QCDscale_WW']    = [ ['lnN'], {'WW': 1.042 }]
             nuisances['QCDscale_WW1in'] = [ ['lnN'], {'WW': 0.978 }]
     elif jets == 1:
         k1 = pow(ggH_jets[mass]['k1'], 1+ggH_jets[mass]['f2']/ggH_jets[mass]['f1'])
         k2 = pow(ggH_jets[mass]['k2'],  -ggH_jets[mass]['f2']/ggH_jets[mass]['f1'])
-        nuisances['QCDscale_ggH1in'] = [  ['lnN'], { 'ggH':k1, 'ggH125':k1 }]
-        nuisances['QCDscale_ggH2in'] = [  ['lnN'], { 'ggH':k2, 'ggH125':k2 }]
+        # ... and _SM:
+        k1_SM = pow(ggH_jets[mh_SM]['k1'], 1+ggH_jets[mh_SM]['f2']/ggH_jets[mh_SM]['f1'])
+        k2_SM = pow(ggH_jets[mh_SM]['k2'],  -ggH_jets[mh_SM]['f2']/ggH_jets[mh_SM]['f1'])
+        nuisances['QCDscale_ggH1in'] = [  ['lnN'], { 'ggH':k1, 'ggH_SM':k1_SM }]
+        nuisances['QCDscale_ggH2in'] = [  ['lnN'], { 'ggH':k2, 'ggH_SM':k2_SM }]
         if not qqWWfromData:
             nuisances['QCDscale_WW1in'] = [ ['lnN'], {'WW': 1.076 }]
             nuisances['QCDscale_WW2in'] = [ ['lnN'], {'WW': 0.914 }]
     elif jets == 2:
         if options.VH:
-            nuisances['QCDscale_ggH2in_vh'] = [  ['lnN'], { 'ggH':1.30, 'ggH125':1.30 }]
+            nuisances['QCDscale_ggH2in_vh'] = [  ['lnN'], { 'ggH':1.30, 'ggH_SM':1.30 }]
             #nuisances['QCDscale_ggH2in_vh'] = [  ['lnN'], { 'ggH':1.70 }]
         else :
-            nuisances['QCDscale_ggH2in'] = [  ['lnN'], { 'ggH':ggH_jets[mass]['k2'], 'ggH125':ggH_jets[mass]['k2'] }]
+            nuisances['QCDscale_ggH2in'] = [  ['lnN'], { 'ggH':ggH_jets[mass]['k2'], 'ggH_SM':ggH_jets[mh_SM]['k2'] }]
         if not qqWWfromData:
             nuisances['QCDscale_WW2in'] = [ ['lnN'], {'WW': 1.210 }] # reduce by 1/2 because not applicable to vbf
             if not options.VH: 
@@ -102,11 +129,26 @@ def getCommonSysts(mass,channel,jets,qqWWfromData,shape,options,suffix,isssactiv
                nuisances['QCDscale_WWewk']     = [ ['lnN'], {'WWewk':1.20 }]
 
     nuisances['QCDscale_ggWW'] = [ ['lnN'], {'ggWW': 1.30}]
-    nuisances['QCDscale_qqH']    = [ ['lnN'], { 'qqH':vbfH_scaErrYR[mass] }]
-    if mass in wzttH_scaErrYR: nuisances['QCDscale_VH']  = [ ['lnN'], { 'wzttH':wzttH_scaErrYR[mass], 'wzttH125':wzttH_scaErrYR[mass] }]
-    if mass in wH_scaErrYR : nuisances['QCDscale_wH']  = [ ['lnN'], { 'WH':wH_scaErrYR[mass]}]
-    if mass in zH_scaErrYR : nuisances['QCDscale_zH']  = [ ['lnN'], { 'ZH':wH_scaErrYR[mass]}]
-    if mass in ttH_scaErrYR: nuisances['QCDscale_ttH'] = [ ['lnN'], {'ttH':wH_scaErrYR[mass]}]
+    nuisances['QCDscale_qqH']  = [ ['lnN'], { 'qqH':vbfH_scaErrYR[mass] , 'qqH_SM':vbfH_scaErrYR[mh_SM] }]
+
+    nuisances['QCDscale_VH']  = [ ['lnN'] , {} ]
+    nuisances['QCDscale_wH']  = [ ['lnN'] , {} ]
+    nuisances['QCDscale_zH']  = [ ['lnN'] , {} ]
+    nuisances['QCDscale_ttH'] = [ ['lnN'] , {} ]
+    if mass in wzttH_scaErrYR: nuisances['QCDscale_VH']  = [ ['lnN'], { 'wzttH':wzttH_scaErrYR[mass]}]
+    if mass in wH_scaErrYR :   nuisances['QCDscale_wH']  = [ ['lnN'], { 'WH'   :wH_scaErrYR[mass]}]
+    if mass in zH_scaErrYR :   nuisances['QCDscale_zH']  = [ ['lnN'], { 'ZH'   :wH_scaErrYR[mass]}]
+    if mass in ttH_scaErrYR:   nuisances['QCDscale_ttH'] = [ ['lnN'], {'ttH'   :wH_scaErrYR[mass]}]
+    # ... and _SM:
+    if mh_SM in wzttH_scaErrYR: nuisances['QCDscale_VH'][1] ['wzttH_SM']= wzttH_scaErrYR[mh_SM]
+    if mh_SM in wH_scaErrYR :   nuisances['QCDscale_wH'][1] ['WH_SM']   = wH_scaErrYR[mh_SM]
+    if mh_SM in zH_scaErrYR :   nuisances['QCDscale_zH'][1] ['ZH_SM']   = wH_scaErrYR[mh_SM]
+    if mh_SM in ttH_scaErrYR:   nuisances['QCDscale_ttH'][1]['ttH_SM']  = wH_scaErrYR[mh_SM]
+    if nuisances['QCDscale_VH'][1]  == {} : nuisances.pop('QCDscale_VH')
+    if nuisances['QCDscale_wH'][1]  == {} : nuisances.pop('QCDscale_wH')
+    if nuisances['QCDscale_zH'][1]  == {} : nuisances.pop('QCDscale_zH')
+    if nuisances['QCDscale_ttH'][1] == {} : nuisances.pop('QCDscale_ttH')
+
     nuisances['QCDscale_VV']     = [ ['lnN'], { 'VV':1.03 }]
     nuisances['QCDscale_VgS']    = [ ['lnN'], {'VgS':1.30 }]
 
@@ -126,25 +168,30 @@ def getCommonSysts(mass,channel,jets,qqWWfromData,shape,options,suffix,isssactiv
 
 
     # -- Experimental ---------------------
-    nuisances['QCDscale_ggH_ACCEPT'] = [ ['lnN'], {'ggH':1.02,  'ggH125':1.02}]
-    nuisances['QCDscale_qqH_ACCEPT'] = [ ['lnN'], {'qqH':1.02,  'qqH125':1.02}]
-    nuisances['QCDscale_wH_ACCEPT']  = [ ['lnN'], {'WH':1.02 ,  'WH125':1.02}]
-    nuisances['QCDscale_zH_ACCEPT']  = [ ['lnN'], {'ZH':1.02 ,  'ZH125':1.02}]
-    nuisances['QCDscale_ttH_ACCEPT'] = [ ['lnN'], {'ttH':1.02,  'ttH125':1.02}]
-    if   jets == 0: nuisances['UEPS'] = [ ['lnN'], {'ggH':ggH_UEPS[mass]['u0'], 'ggH125':ggH_UEPS[mass]['u0']}]
-    elif jets == 1: nuisances['UEPS'] = [ ['lnN'], {'ggH':ggH_UEPS[mass]['u1'], 'ggH125':ggH_UEPS[mass]['u1']}]
+    nuisances['QCDscale_ggH_ACCEPT'] = [ ['lnN'], {'ggH':1.02,  'ggH_SM':1.02}]
+    nuisances['QCDscale_qqH_ACCEPT'] = [ ['lnN'], {'qqH':1.02,  'qqH_SM':1.02}]
+    nuisances['QCDscale_wH_ACCEPT']  = [ ['lnN'], {'WH':1.02 ,  'WH_SM':1.02}]
+    nuisances['QCDscale_zH_ACCEPT']  = [ ['lnN'], {'ZH':1.02 ,  'ZH_SM':1.02}]
+    nuisances['QCDscale_ttH_ACCEPT'] = [ ['lnN'], {'ttH':1.02,  'ttH_SM':1.02}]
+    if   jets == 0: nuisances['UEPS'] = [ ['lnN'], {'ggH':ggH_UEPS[mass]['u0'], 'ggH_SM':ggH_UEPS[mh_SM]['u0']}]
+    elif jets == 1: nuisances['UEPS'] = [ ['lnN'], {'ggH':ggH_UEPS[mass]['u1'], 'ggH_SM':ggH_UEPS[mh_SM]['u1']}]
     #elif jets == 2: nuisances['UEPS'] = [ ['lnN'], {'ggH':ggH_UEPS[mass]['u2'], 'ggH125':ggH_UEPS[mass]['u2']}]
     elif jets == 2:
       if options.VH:
-          nuisances['UEPS_hww_vh']  = [ ['lnN'], {'ggH':1.05, 'ggH125':1.05, 'WH':1.08, 'ZH':1.08, 'VH':1.08, 'qqH':1.04}]
+          nuisances['UEPS_hww_vh']  = [ ['lnN'], {'ggH'   :1.05, 'WH'   :1.08, 'ZH'   :1.08, 'VH'   :1.08, 'qqH'   :1.04 ,
+                                                  'ggH_SM':1.05, 'WH_SM':1.08, 'ZH_SM':1.08, 'VH_SM':1.08, 'qqH_SM':1.04}]
       else :
-          nuisances['UEPS_hww_vbf'] = [ ['lnN'], {'ggH':1.20, 'ggH125':1.20, 'qqH':1.10}]
+          nuisances['UEPS_hww_vbf'] = [ ['lnN'], {'ggH'   :1.20, 'qqH'   :1.10 ,
+                                                  'ggH_SM':1.20, 'qqH_SM':1.10}]
 
     if ((not qqWWfromData) and (jets != 2)): nuisances['QCDscale_WW_EXTRAP'] = [ ['lnN'], {'WW':1.06}]
     # --- new ---
     # not needed with line-shape reweighting
     #nuisances['theoryUncXS_HighMH'] = [ ['lnN'], { 'ggH':1+1.5*pow(float(mass)/1000,3), 'vbfH':1+1.5*pow(float(mass)/1000,3), 'wzttH':1+1.5*pow(float(mass)/1000,3) } ]
     # -- Interference term ----------------
+    # FIXME: Interference Error !!!!!
+    print '\033[0;31m FIXME: Interference Error !!!!!  \033[m'
+
     if mass>=400:
         nuisances['interf_ggH'] = [ ['lnN'], {'ggH':ggH_intf[mass]['intf']}]
     else :

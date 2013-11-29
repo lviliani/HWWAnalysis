@@ -90,7 +90,7 @@ mcsets = {
         ('DYLL-template',    'DYLL-template-0j1j'),              #    A   <-   sorgente
         ('DYLL-templatesyst','DYLL-templatesyst-0j1j') ,         #    mkmerged vuole "-template"
         # mH125 as background
-        'ggH125', 'qqH125', 'wzttH125',
+        'ggH_SM', 'qqH_SM', 'WH_SM','ZH_SM',
     ],
      '0j1j-ss' : [
         #signals
@@ -386,7 +386,9 @@ def samples(mass, energytag, datatag='Data2012', sigtag='SM', mctag='all'):
         # get the background-higgs mass from the tag
         mHbkg = int(re.match('0j1j-mH(\d+)', mctag).group(1))
         print 'signal as background', mHbkg
-        signalbkg = sampledb.signalSamples(sigtag, mHbkg, str(mHbkg))
+        #signalbkg = sampledb.signalSamples(sigtag, mHbkg, str(mHbkg))
+        signalbkg = sampledb.signalSamples(sigtag, mHbkg, "_SM")
+        print signalbkg
         mcsamples.update(signalbkg)
 
     if isinstance(mctag,list):
