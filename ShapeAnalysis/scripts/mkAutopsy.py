@@ -580,10 +580,10 @@ class Coroner(object):
         print 'Creating the ROOT objects'
 
         # convert the shapes into histograms
-#         hists = dict( [
-#             (p,self._array2TH1('histo_'+p, a, title=p)) for p,a in nmarrays.iteritems()
-#         ] )
-        hists = { p:self._array2TH1('histo_'+p, a, title=p) for p,a in nmarrays.iteritems() }
+        hists = dict( [
+            (p,self._array2TH1('histo_'+p, a, title=p)) for p,a in nmarrays.iteritems()
+        ] )
+        #hists = { p:self._array2TH1('histo_'+p, a, title=p) for p,a in nmarrays.iteritems() }
 
         errs = {}
 
@@ -1108,4 +1108,3 @@ if __name__ == '__main__':
         print "*** format_exception:"
         print repr(traceback.format_exception(exc_type, exc_value,
                                               exc_traceback))
-

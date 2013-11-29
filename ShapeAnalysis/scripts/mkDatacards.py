@@ -503,7 +503,7 @@ class NuisanceMapBuilder:
         qqWWfromData = self._wwddfilter.haswwdd(mass, channel)
 
         # vh and vbf mapped to "2j" category
-        if (jetcat == 'vh2j') :
+        if (jetcat == 'vh2j' or jetcat == 'whsc') :
            jetcat = '2j'
            optMatt.VH = 1
         else :
@@ -609,6 +609,10 @@ if __name__ == '__main__':
 #     parser.add_option('--floatN',               dest='floatN'            , help='float normalisation of particular processes, separate by space ', default=' ')
     parser.add_option('--isssactive',           dest='isssactive'        , help='Is samesign datacard available'                           , default=False)
     parser.add_option('--floatN',               dest='floatN'            , help='float normalisation of particular processes, separate by space',  default=[] , type='string' , action='callback' , callback=hwwtools.list_maker('floatN'))
+    parser.set_defaults(listSignals=[])
+    parser.add_option('--lSg','--listSignals',  dest='listSignals'       , help='list of signal samples', action='callback', type='string', callback=incexc)
+
+
 
     hwwtools.addOptions(parser)
     hwwtools.loadOptDefaults(parser)
@@ -620,6 +624,8 @@ if __name__ == '__main__':
     print 'dataset:    ',opt.dataset
     print 'isssactive: ',opt.isssactive
     print 'MCextrap:   ',opt.MCextrap
+    print 'listSignals:',opt.listSignals
+
 
     # checks
     if not opt.variable or not opt.lumi:
@@ -716,7 +722,10 @@ if __name__ == '__main__':
             if opt.shape :
                  basename  = basename + '_shape'
             print '   + dumping all to file'
-            writer.write(yields,nuisances,outPath+basename+'.txt',shapeSubDir+basename+'.root')
+            if opt.listSignals==[] :
+                writer.write(yields,nuisances,outPath+basename+'.txt',shapeSubDir+basename+'.root')
+            else :
+                writer.write(yields,nuisances,outPath+basename+'.txt',shapeSubDir+basename+'.root',opt.listSignals)
 
 
 
