@@ -45,7 +45,7 @@ class ShapeFactory:
         ranges['vhMllBanana-range']  = self._getMllVHrangeWithControlRegion
         ranges['vbfMllBanana-range'] = self._getMllVBFrangeWithControlRegion
         ranges['whsc-range']         = self._getWHSCrange
-
+        ranges['wwewk-range']         = self._getWWewkrange
 
         self._ranges = ranges
 
@@ -104,6 +104,17 @@ class ShapeFactory:
             #return theVariable[mass][cat]
         #elif callable(theVariable):
             #return theVariable(mass,cat)
+
+
+    # _____________________________________________________________________________
+    def _getWWewkrange(self,mass,cat):
+
+        if cat not in ['2j']:
+            print cat
+            raise RuntimeError('range for '+str(cat)+' not defined. !?!?!?')
+
+        return ([-1.0, -0.5, 0.0, 0.2, 0.5, 0.6, 0.7, 0.8, 0.9, 1.0],)
+
 
 
     # _____________________________________________________________________________
@@ -1156,7 +1167,7 @@ if __name__ == '__main__':
 #             if opt.skipSyst!='':
 #                for s in opt.skipSyst.split(','):
             for s in opt.skipSyst:
-              print 'skipping systematics: '+s
+              print 'skipping systematics: ',s
               systematics.pop(s)
 
             systByWeight = {}
