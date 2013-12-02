@@ -105,8 +105,8 @@ def getCommonSysts(mass,channel,jets,qqWWfromData,shape,options,suffix,isssactiv
         nuisances['QCDscale_ggH']    = [  ['lnN'], { 'ggH':ggH_jets2[mass]['0'],    'ggH_SM':ggH_jets2[mh_SM]['0'] }]
         nuisances['QCDscale_ggH1in'] = [  ['lnN'], { 'ggH':ggH_jets2[mass]['1in0'], 'ggH_SM':ggH_jets2[mh_SM]['1in0'] }]
         if not qqWWfromData:
-            nuisances['QCDscale_WW']    = [ ['lnN'], {'WW': 1.042 }]
-            nuisances['QCDscale_WW1in'] = [ ['lnN'], {'WW': 0.978 }]
+            nuisances['QCDscale_WW']    = [ ['lnN'], {'WW': 1.042, 'ggWW': 1.042 }]
+            nuisances['QCDscale_WW1in'] = [ ['lnN'], {'WW': 0.978, 'ggWW': 0.978 }]
     elif jets == 1:
         k1 = pow(ggH_jets[mass]['k1'], 1+ggH_jets[mass]['f2']/ggH_jets[mass]['f1'])
         k2 = pow(ggH_jets[mass]['k2'],  -ggH_jets[mass]['f2']/ggH_jets[mass]['f1'])
@@ -118,8 +118,8 @@ def getCommonSysts(mass,channel,jets,qqWWfromData,shape,options,suffix,isssactiv
         nuisances['QCDscale_ggH1in'] = [  ['lnN'], { 'ggH':ggH_jets2[mass]['1in1'], 'ggH_SM':ggH_jets2[mh_SM]['1in1'] }]
         nuisances['QCDscale_ggH2in'] = [  ['lnN'], { 'ggH':ggH_jets2[mass]['2in1'], 'ggH_SM':ggH_jets2[mh_SM]['2in1'] }]
         if not qqWWfromData:
-            nuisances['QCDscale_WW1in'] = [ ['lnN'], {'WW': 1.076 }]
-            nuisances['QCDscale_WW2in'] = [ ['lnN'], {'WW': 0.914 }]
+            nuisances['QCDscale_WW1in'] = [ ['lnN'], {'WW': 1.076, 'ggWW': 1.076 }]
+            nuisances['QCDscale_WW2in'] = [ ['lnN'], {'WW': 0.914, 'ggWW': 0.914 }]
     elif jets == 2:
         if options.VH:
             nuisances['QCDscale_ggH2in_vh'] = [  ['lnN'], { 'ggH':1.30, 'ggH_SM':1.30 }]
@@ -128,7 +128,7 @@ def getCommonSysts(mass,channel,jets,qqWWfromData,shape,options,suffix,isssactiv
             nuisances['QCDscale_ggH2in_vbf'] = [  ['lnN'], { 'ggH':1.35, 'ggH125':1.35, 'ggH_SM':1.35}]
             #nuisances['QCDscale_ggH2in'] = [  ['lnN'], { 'ggH':ggH_jets[mass]['k2'], 'ggH_SM':ggH_jets[mh_SM]['k2'] }]
         if not qqWWfromData:
-            nuisances['QCDscale_WW2in'] = [ ['lnN'], {'WW': 1.210 }] # reduce by 1/2 because not applicable to vbf
+            nuisances['QCDscale_WW2in'] = [ ['lnN'], {'WW': 1.210, 'ggWW': 1.210 }] # reduce by 1/2 because not applicable to vbf
             if not options.VH: 
                #--> now we have Phantom WW+2jets ewk sample, no need this nuisance
                #nuisances['QCDscale_WWvbf'] = [ ['lnN'], {'WW': 1.500 }]
@@ -157,6 +157,7 @@ def getCommonSysts(mass,channel,jets,qqWWfromData,shape,options,suffix,isssactiv
 
     nuisances['QCDscale_VV']     = [ ['lnN'], { 'VV':1.03 }]
     nuisances['QCDscale_VgS']    = [ ['lnN'], {'VgS':1.30 }]
+    nuisances['QCDscale_VVV']    = [ ['lnN'], {'VVV':1.50 }]
 
     if isssactive == True :
         # -- extrapolation from same sign (ss) to opposite sign (os) region ---- 10% ? -> to be checked on data: how much is the charge misidentification difference data/MC by CMS?
@@ -190,7 +191,7 @@ def getCommonSysts(mass,channel,jets,qqWWfromData,shape,options,suffix,isssactiv
           nuisances['UEPS_hww_vbf'] = [ ['lnN'], {'ggH'   :1.20, 'qqH'   :1.10 ,
                                                   'ggH_SM':1.20, 'qqH_SM':1.10}]
 
-    if ((not qqWWfromData) and (jets != 2)): nuisances['QCDscale_WW_EXTRAP'] = [ ['lnN'], {'WW':1.06}]
+    #if ((not qqWWfromData) and (jets != 2)): nuisances['QCDscale_WW_EXTRAP'] = [ ['lnN'], {'WW':1.06}]
     # --- new ---
     # not needed with line-shape reweighting
     #nuisances['theoryUncXS_HighMH'] = [ ['lnN'], { 'ggH':1+1.5*pow(float(mass)/1000,3), 'vbfH':1+1.5*pow(float(mass)/1000,3), 'wzttH':1+1.5*pow(float(mass)/1000,3) } ]
@@ -232,7 +233,7 @@ def getCommonSysts(mass,channel,jets,qqWWfromData,shape,options,suffix,isssactiv
        nuisances['CMS'+suffix+'_norm_DYof'] = [ ['lnN'], { 'DYLL':2.0 } ]
     nuisances['CMS'+suffix+'_norm_DYTT'] = [ ['lnN'], { 'DYTT':1.3 } ]
     nuisances['CMS'+suffix+'_norm_Vg']   = [ ['lnN'], { 'Vg':1.3 } ]
-    nuisances['CMS'+suffix+'_norm_VVV']  = [ ['lnN'], { 'VVV':1.3 } ]
+    #nuisances['CMS'+suffix+'_norm_VVV']  = [ ['lnN'], { 'VVV':1.3 } ]
 
     return nuisances
 
