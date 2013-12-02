@@ -49,6 +49,7 @@ for X in 450, 550:
     vbfH_scaErrYR[X] = 0.5*(vbfH_scaErrYR[X-10]+vbfH_scaErrYR[X+10])
 
 ggH_jets = dict([(m, dict(zip(['f0','f1','f2','k1','k2'], vals))) for m,vals in file2map(SYST_PATH+"ggH_jetBins.txt").items()]) 
+ggH_jets2 = dict([(m, dict(zip(['0','1in0','1in1','2in1','2in2'], vals))) for m,vals in file2map(SYST_PATH+"ggH_jetBinNuisances.txt").items()]) 
 
 ggH_UEPS = dict([(m, dict(zip(['u0','u1','u2'], vals))) for m,vals in file2map(SYST_PATH+"ggH_UEPS.txt").items()])
 
@@ -99,8 +100,10 @@ def getCommonSysts(mass,channel,jets,qqWWfromData,shape,options,suffix,isssactiv
         # ... and _SM:
         k0_SM = pow(ggH_scaErrYR[mh_SM],     1/ggH_jets[mh_SM]['f0'])
         k1_SM = pow(ggH_jets[mh_SM]['k1'], 1-1/ggH_jets[mh_SM]['f0']) # -f1-f2=f0-1
-        nuisances['QCDscale_ggH']    = [  ['lnN'], { 'ggH':k0, 'ggH_SM':k0_SM }]
-        nuisances['QCDscale_ggH1in'] = [  ['lnN'], { 'ggH':k1, 'ggH_SM':k1_SM }]
+        #nuisances['QCDscale_ggH']    = [  ['lnN'], { 'ggH':k0, 'ggH_SM':k0_SM }]
+        #nuisances['QCDscale_ggH1in'] = [  ['lnN'], { 'ggH':k1, 'ggH_SM':k1_SM }]
+        nuisances['QCDscale_ggH']    = [  ['lnN'], { 'ggH':ggH_jets2[mass]['0'],    'ggH_SM':ggH_jets2[mh_SM]['0'] }]
+        nuisances['QCDscale_ggH1in'] = [  ['lnN'], { 'ggH':ggH_jets2[mass]['1in0'], 'ggH_SM':ggH_jets2[mh_SM]['1in0'] }]
         if not qqWWfromData:
             nuisances['QCDscale_WW']    = [ ['lnN'], {'WW': 1.042 }]
             nuisances['QCDscale_WW1in'] = [ ['lnN'], {'WW': 0.978 }]
@@ -110,8 +113,10 @@ def getCommonSysts(mass,channel,jets,qqWWfromData,shape,options,suffix,isssactiv
         # ... and _SM:
         k1_SM = pow(ggH_jets[mh_SM]['k1'], 1+ggH_jets[mh_SM]['f2']/ggH_jets[mh_SM]['f1'])
         k2_SM = pow(ggH_jets[mh_SM]['k2'],  -ggH_jets[mh_SM]['f2']/ggH_jets[mh_SM]['f1'])
-        nuisances['QCDscale_ggH1in'] = [  ['lnN'], { 'ggH':k1, 'ggH_SM':k1_SM }]
-        nuisances['QCDscale_ggH2in'] = [  ['lnN'], { 'ggH':k2, 'ggH_SM':k2_SM }]
+        #nuisances['QCDscale_ggH1in'] = [  ['lnN'], { 'ggH':k1, 'ggH_SM':k1_SM }]
+        #nuisances['QCDscale_ggH2in'] = [  ['lnN'], { 'ggH':k2, 'ggH_SM':k2_SM }]
+        nuisances['QCDscale_ggH1in'] = [  ['lnN'], { 'ggH':ggH_jets2[mass]['1in1'], 'ggH_SM':ggH_jets2[mh_SM]['1in1'] }]
+        nuisances['QCDscale_ggH2in'] = [  ['lnN'], { 'ggH':ggH_jets2[mass]['2in1'], 'ggH_SM':ggH_jets2[mh_SM]['2in1'] }]
         if not qqWWfromData:
             nuisances['QCDscale_WW1in'] = [ ['lnN'], {'WW': 1.076 }]
             nuisances['QCDscale_WW2in'] = [ ['lnN'], {'WW': 0.914 }]
