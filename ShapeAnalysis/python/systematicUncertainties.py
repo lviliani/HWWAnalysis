@@ -120,7 +120,8 @@ def getCommonSysts(mass,channel,jets,qqWWfromData,shape,options,suffix,isssactiv
             nuisances['QCDscale_ggH2in_vh'] = [  ['lnN'], { 'ggH':1.30, 'ggH_SM':1.30 }]
             #nuisances['QCDscale_ggH2in_vh'] = [  ['lnN'], { 'ggH':1.70 }]
         else :
-            nuisances['QCDscale_ggH2in'] = [  ['lnN'], { 'ggH':ggH_jets[mass]['k2'], 'ggH_SM':ggH_jets[mh_SM]['k2'] }]
+            nuisances['QCDscale_ggH2in_vbf'] = [  ['lnN'], { 'ggH':1.35, 'ggH125':1.35, 'ggH_SM':1.35}]
+            #nuisances['QCDscale_ggH2in'] = [  ['lnN'], { 'ggH':ggH_jets[mass]['k2'], 'ggH_SM':ggH_jets[mh_SM]['k2'] }]
         if not qqWWfromData:
             nuisances['QCDscale_WW2in'] = [ ['lnN'], {'WW': 1.210 }] # reduce by 1/2 because not applicable to vbf
             if not options.VH: 
