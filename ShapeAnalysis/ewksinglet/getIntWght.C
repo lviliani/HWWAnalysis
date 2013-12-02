@@ -4,6 +4,7 @@
 // You have to load the correct TSpline3 before using it !!!
 
 #include <TROOT.h>
+#include <TCanvas.h>
 #include <TH1F.h>
 #include <TF1.h>
 #include <TSpline.h>
@@ -95,10 +96,10 @@ float getIntWght(int iType, float mass , float cpsq, float kind = 0)
    float wInt=1.;
    if ( iType == 0 ) { //---- ggH
      if ( wInt_ggH ) {
-       if      (mass > 210 and mass < 1000.) wInt = wInt_ggH->Eval(mass) ;
-       else if (mass <= 210 ) wInt = wInt_ggH->Eval(210) ;
-       else if (mass >= 1000) wInt = wInt_ggH->Eval(1000);
-       if ( cpsq < 1. ) wInt = 1.+(wInt-1.)/cpsq;
+       wInt = wInt_ggH->Eval(mass) ;
+       if ( cpsq < 1. ) wInt = wInt/cpsq;
+       wInt += 1;
+       if (wInt < 0) wInt = 0;
      } else {
        std::cout << "Missing Interference !!!!" << std::endl;
      }
@@ -122,9 +123,59 @@ void initIntWght(std::string wFile , int iType , int iSyst, float Hmass = 350) {
    if ( iType == 0 ) { //---- ggH 
      TFile* f = new TFile(wFile.c_str() , "READ");
      gROOT->cd();
-     if ( iSyst == 0 ) hInt_ggH = (TH1F*) f->Get("h_MWW_rel_NNLO_cen")->Clone("hInt_ggH");
-     //hInt_ggH.Smooth(10);
+     if (hInt_ggH) hInt_ggH->Delete();
+     hInt_ggH = new TH1F("h_MWW_rel_NNLO_cen","h_MWW_rel_NNLO_cen",2000,0.,4000.);
+     TH1F* hCen = (TH1F*) f->Get("h_MWW_rel_NNLO_cen");
+     TH1F* hUp  = (TH1F*) f->Get("h_MWW_rel_NNLO_mul");
+     TH1F* hDo  = (TH1F*) f->Get("h_MWW_rel_NNLO_add");
+     // low/high Mass -> no value
+     float firstM    = 9999.;
+     float lastM     = -1.  ;
+     float firstVal  = -1;
+     float lastVal   = -1;
+     bool  foundFirst=false;
+     bool  foundLast =false;
+     for ( int iBin = 1 ; iBin <= hCen->GetNbinsX() ; ++iBin ) {
+       float m  = hCen->GetBinCenter(iBin);
+       float v  = hCen->GetBinContent(iBin);
+       if (v != 0 && ! foundFirst && m < Hmass ) {
+         firstVal   = v ;
+         firstM     = m ;
+         foundFirst = true;
+       }
+       if ( m > Hmass && v==0) foundLast = true;
+       if (!foundLast) {
+         lastVal   = v ;
+         lastM     = m ;
+       }
+     }
+     // Create Histograms 
+     for ( int iBin = 1 ; iBin <= hInt_ggH->GetNbinsX() ; ++iBin ) {
+       float m = hInt_ggH->GetBinCenter(iBin);
+       if ( m >= hCen->GetXaxis()->GetXmin() && m <= hCen->GetXaxis()->GetXmax() ) {
+         int jBin = hCen->FindBin(m);
+         if (iSyst ==  0) hInt_ggH->SetBinContent(iBin,hCen->GetBinContent(jBin));
+         if (iSyst ==  1) hInt_ggH->SetBinContent(iBin,hUp->GetBinContent(jBin));
+         if (iSyst == -1) hInt_ggH->SetBinContent(iBin,hDo->GetBinContent(jBin));
+       } 
+       if ( m < firstM || m < hCen->GetXaxis()->GetXmin() ) {
+         if (iSyst ==  0) hInt_ggH->SetBinContent(iBin,firstVal);
+         if (iSyst ==  1) hInt_ggH->SetBinContent(iBin,firstVal*2);
+         if (iSyst == -1) hInt_ggH->SetBinContent(iBin,0.        );
+       }
+       if ( m > lastM  || m > hCen->GetXaxis()->GetXmax() ) {
+         if (iSyst ==  0) hInt_ggH->SetBinContent(iBin,lastVal);
+         if (iSyst ==  1) hInt_ggH->SetBinContent(iBin,0.     );
+         if (iSyst == -1) hInt_ggH->SetBinContent(iBin,lastVal*2);
+       }
+
+     } 
+     //hInt_ggH->Draw();
+     //hUp->Draw("same");
      wInt_ggH = new TSpline3(hInt_ggH) ;
+     wInt_ggH->SetLineColor(kRed); 
+     wInt_ggH->Draw("same");
+     //gPad->WaitPrimitive();
      f->Close();
    }
    else if ( iType ==1 ) { //---- qqH
