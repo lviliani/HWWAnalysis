@@ -255,17 +255,15 @@ void initIntWght(std::string wFile , int iType , int iSyst, float Hmass = 350) {
      float log_S_N[100];
      float log_SI_N[100];
 
-     for (int i=0; i<7; i++) {
+     for (int i=0; i<5; i++) {
       double tempMass = 0;
-      if (i==0) tempMass = 250;
-      if (i==1) tempMass = 300;
-      if (i==2) tempMass = 350;
-      if (i==3) tempMass = 500;
-      if (i==4) tempMass = 650;
-      if (i==5) tempMass = 800;
-      if (i==6) tempMass = 1000;
+      if (i==0) tempMass = 350;
+      if (i==1) tempMass = 500;
+      if (i==2) tempMass = 650;
+      if (i==3) tempMass = 800;
+      if (i==4) tempMass = 1000;
 
-      int NBIN = 300;
+      int NBIN = 500;
       if (tempMass<350) NBIN = 500;
       if (tempMass>400) NBIN = 120;
       if (tempMass>500) NBIN =  70;
@@ -286,23 +284,23 @@ void initIntWght(std::string wFile , int iType , int iSyst, float Hmass = 350) {
 
      if (kind == 0) {
       for (int iVar=0; iVar<7; iVar++) {
-       if (iVar == 0) em_variables_S[iVar] = new TGraph (7,S_mass,log_S_N);
-       if (iVar == 1) em_variables_S[iVar] = new TGraph (7,S_mass,S_Mean);
-       if (iVar == 2) em_variables_S[iVar] = new TGraph (7,S_mass,S_sigma);
-       if (iVar == 3) em_variables_S[iVar] = new TGraph (7,S_mass,S_alphaR);
-       if (iVar == 4) em_variables_S[iVar] = new TGraph (7,S_mass,S_nR);
-       if (iVar == 5) em_variables_S[iVar] = new TGraph (7,S_mass,S_alphaL);
-       if (iVar == 6) em_variables_S[iVar] = new TGraph (7,S_mass,S_nL);
+       if (iVar == 0) em_variables_S[iVar] = new TGraph (5,S_mass,log_S_N);
+       if (iVar == 1) em_variables_S[iVar] = new TGraph (5,S_mass,S_Mean);
+       if (iVar == 2) em_variables_S[iVar] = new TGraph (5,S_mass,S_sigma);
+       if (iVar == 3) em_variables_S[iVar] = new TGraph (5,S_mass,S_alphaR);
+       if (iVar == 4) em_variables_S[iVar] = new TGraph (5,S_mass,S_nR);
+       if (iVar == 5) em_variables_S[iVar] = new TGraph (5,S_mass,S_alphaL);
+       if (iVar == 6) em_variables_S[iVar] = new TGraph (5,S_mass,S_nL);
       }
 
       for (int iVar=0; iVar<7; iVar++) {
-       if (iVar == 0) em_variables_SI[iVar] = new TGraph (7,SI_mass,log_SI_N);
-       if (iVar == 1) em_variables_SI[iVar] = new TGraph (7,SI_mass,SI_Mean);
-       if (iVar == 2) em_variables_SI[iVar] = new TGraph (7,SI_mass,SI_sigma);
-       if (iVar == 3) em_variables_SI[iVar] = new TGraph (7,SI_mass,SI_alphaR);
-       if (iVar == 4) em_variables_SI[iVar] = new TGraph (7,SI_mass,SI_nR);
-       if (iVar == 5) em_variables_SI[iVar] = new TGraph (7,SI_mass,SI_alphaL);
-       if (iVar == 6) em_variables_SI[iVar] = new TGraph (7,SI_mass,SI_nL);
+       if (iVar == 0) em_variables_SI[iVar] = new TGraph (5,SI_mass,log_SI_N);
+       if (iVar == 1) em_variables_SI[iVar] = new TGraph (5,SI_mass,SI_Mean);
+       if (iVar == 2) em_variables_SI[iVar] = new TGraph (5,SI_mass,SI_sigma);
+       if (iVar == 3) em_variables_SI[iVar] = new TGraph (5,SI_mass,SI_alphaR);
+       if (iVar == 4) em_variables_SI[iVar] = new TGraph (5,SI_mass,SI_nR);
+       if (iVar == 5) em_variables_SI[iVar] = new TGraph (5,SI_mass,SI_alphaL);
+       if (iVar == 6) em_variables_SI[iVar] = new TGraph (5,SI_mass,SI_nL);
       }
 
       em_crystal_Icorr_qqH = new TF1("em_crystal_Icorr_qqH",CrystalBallLowHighDivideCrystalBallLowHigh,0,3000,14);
@@ -320,23 +318,23 @@ void initIntWght(std::string wFile , int iType , int iSyst, float Hmass = 350) {
      }
      else if (kind == 1) {
       for (int iVar=0; iVar<7; iVar++) {
-       if (iVar == 0) mm_variables_S[iVar] = new TGraph (7,S_mass,log_S_N);
-       if (iVar == 1) mm_variables_S[iVar] = new TGraph (7,S_mass,S_Mean);
-       if (iVar == 2) mm_variables_S[iVar] = new TGraph (7,S_mass,S_sigma);
-       if (iVar == 3) mm_variables_S[iVar] = new TGraph (7,S_mass,S_alphaR);
-       if (iVar == 4) mm_variables_S[iVar] = new TGraph (7,S_mass,S_nR);
-       if (iVar == 5) mm_variables_S[iVar] = new TGraph (7,S_mass,S_alphaL);
-       if (iVar == 6) mm_variables_S[iVar] = new TGraph (7,S_mass,S_nL);
+       if (iVar == 0) mm_variables_S[iVar] = new TGraph (5,S_mass,log_S_N);
+       if (iVar == 1) mm_variables_S[iVar] = new TGraph (5,S_mass,S_Mean);
+       if (iVar == 2) mm_variables_S[iVar] = new TGraph (5,S_mass,S_sigma);
+       if (iVar == 3) mm_variables_S[iVar] = new TGraph (5,S_mass,S_alphaR);
+       if (iVar == 4) mm_variables_S[iVar] = new TGraph (5,S_mass,S_nR);
+       if (iVar == 5) mm_variables_S[iVar] = new TGraph (5,S_mass,S_alphaL);
+       if (iVar == 6) mm_variables_S[iVar] = new TGraph (5,S_mass,S_nL);
       }
 
       for (int iVar=0; iVar<7; iVar++) {
-       if (iVar == 0) mm_variables_SI[iVar] = new TGraph (7,SI_mass,log_SI_N);
-       if (iVar == 1) mm_variables_SI[iVar] = new TGraph (7,SI_mass,SI_Mean);
-       if (iVar == 2) mm_variables_SI[iVar] = new TGraph (7,SI_mass,SI_sigma);
-       if (iVar == 3) mm_variables_SI[iVar] = new TGraph (7,SI_mass,SI_alphaR);
-       if (iVar == 4) mm_variables_SI[iVar] = new TGraph (7,SI_mass,SI_nR);
-       if (iVar == 5) mm_variables_SI[iVar] = new TGraph (7,SI_mass,SI_alphaL);
-       if (iVar == 6) mm_variables_SI[iVar] = new TGraph (7,SI_mass,SI_nL);
+       if (iVar == 0) mm_variables_SI[iVar] = new TGraph (5,SI_mass,log_SI_N);
+       if (iVar == 1) mm_variables_SI[iVar] = new TGraph (5,SI_mass,SI_Mean);
+       if (iVar == 2) mm_variables_SI[iVar] = new TGraph (5,SI_mass,SI_sigma);
+       if (iVar == 3) mm_variables_SI[iVar] = new TGraph (5,SI_mass,SI_alphaR);
+       if (iVar == 4) mm_variables_SI[iVar] = new TGraph (5,SI_mass,SI_nR);
+       if (iVar == 5) mm_variables_SI[iVar] = new TGraph (5,SI_mass,SI_alphaL);
+       if (iVar == 6) mm_variables_SI[iVar] = new TGraph (5,SI_mass,SI_nL);
       }
 
       mm_crystal_Icorr_qqH = new TF1("mm_crystal_Icorr_qqH",CrystalBallLowHighDivideCrystalBallLowHigh,0,3000,14);
