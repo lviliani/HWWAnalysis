@@ -358,6 +358,15 @@ channels['ee_2j'] = ('2j','ee')
 channels['em_2j'] = ('2j','em')
 channels['me_2j'] = ('2j','me')
 
+channels['2jex']    = ('2jex','ll')
+channels['of_2jex'] = ('2jex','of')
+channels['sf_2jex'] = ('2jex','sf')
+channels['mm_2jex'] = ('2jex','mm')
+channels['ee_2jex'] = ('2jex','ee')
+channels['em_2jex'] = ('2jex','em')
+channels['me_2jex'] = ('2jex','me')
+
+
 channels['of_vh2j'] = ('vh2j','of')
 channels['sf_vh2j'] = ('vh2j','sf')
 
@@ -457,7 +466,7 @@ def massSelections(mass):
     sel['bdt-specific'] = 'mll < {0} && (mth > {1:.0f} && mth < {2:.0f})'.format(masscuts['mllmax_bdt'], mthmin_bdt, int(mass))
 
     #sel['ww-xsec'] = sel['ww-common'].replace(wwcuts.met, wwcuts.mpmet)+' && pt2>20 && ptll>45'
-    sel['ww-xsec'] = sel['ww-common']+' && pt2>20'
+    sel['ww-xsec'] = sel['ww-common']+' && pt2>20 && (!sameflav || ptll>45)'
 
     hwwlvl = {}
     hwwlvl['mll']    = 'mll < {0}'.format(masscuts['mllmax'])
