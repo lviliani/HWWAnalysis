@@ -292,7 +292,10 @@ class ShapeMixer:
         self.shapeFile = ROOT.TFile.Open(self.nominalsPath)
         self.systFiles = {}
         for file in glob.glob(self.systSearchPath):
-            m = re.search('_(e|m)(e|m)_(.*).root',file)
+            if opt.ewksinglet:
+              m = re.search('_(e|m)(e|m).EWKSinglet_CP2_'+str(opt.cprimesq[iModel]).replace('.','d')+'_(.*).root',file)
+            else:
+              m = re.search('_(e|m)(e|m)_(.*).root',file)
             if m is None:
                 raise NameError('something went wrong, this \''+file+'\' doesn\'t look like a experimental file')
             self.systFiles[m.group(3)] = ROOT.TFile.Open(file)
@@ -1034,6 +1037,7 @@ class ShapeMixer:
         self.histograms.update(self.statistical)
         self.histograms.update(self.experimental)
 
+
 #         sys.exit(0)
 
     def scale2Nominals(self, list):
@@ -1310,6 +1314,9 @@ if __name__ == '__main__':
                 ss.lumi     = opt.lumi
                 ss.rebin    = opt.rebin
                 ss.statmode = opt.statmode
+
+                print ss.nominalsPath
+                print ss.systSearchPath 
 
                 # run
                 print '     - mixing histograms'

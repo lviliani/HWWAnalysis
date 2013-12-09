@@ -192,6 +192,9 @@ def signalSamples(sigtag,mass=125,suffix=''):
             signals['WH'+suffix]    = [f.format(mass = mass) for f in WH]
             signals['ZH'+suffix]    = [f.format(mass = mass) for f in ZH]
             signals['ttH'+suffix]   = [f.format(mass = mass) for f in ttH]
+        elif mass == 1000:
+            signals['ggH'+suffix]   = ['nominals/latino_2000_ggToH1000toWWTo2LAndTau2Nu.root']
+            signals['qqH'+suffix]   = ['nominals/latino_3000_vbfToH1000toWWTo2LAndTau2Nu.root']
         else:
             signals['ggH'+suffix]   = [f.format(mass = mass) for f in ggH]
             signals['qqH'+suffix]   = [f.format(mass = mass) for f in qqH]
