@@ -124,6 +124,7 @@ class wwcuts:
                 
     zerojet = 'njet == 0'
     onejet  = 'njet == 1'
+    twojet  = 'njet == 2'
     loosevbf= '(njet >= 2 && njet <= 3) '
     vbf     = '(njet >= 2 && njet <= 3 && (jetpt3 <= 30 || !(jetpt3 > 30 && (  (jeteta1-jeteta3 > 0 && jeteta2-jeteta3 < 0) || (jeteta2-jeteta3 > 0 && jeteta1-jeteta3 < 0))))) '
     vbf2011 = '(njet >= 2 && njet <= 3 && njetvbf == 0) '
@@ -308,6 +309,7 @@ masses = [110, 115, 120, 125, 130, 135, 140, 145, 150, 155, 160, 170, 180, 190, 
 categoryCuts = {}
 categoryCuts['0j'] = wwcuts.zerojet
 categoryCuts['1j'] = wwcuts.onejet
+categoryCuts['2jex'] = wwcuts.twojet
 #categoryCuts['2j']   = wwcuts.vbf        # 2 or 3 jets, but the third not between the first two in \eta
 categoryCuts['2j']   = wwcuts.loosevbf   # 2 or 3 jets
 categoryCuts['vh2j'] = wwcuts.vh         # >=2 jets
@@ -324,6 +326,10 @@ flavorCuts['sf']  = 'channel < 1.5'
 flavorCuts['of']  = 'channel > 1.5' 
 
 flavors = {}
+flavors['mm']=['mm']
+flavors['ee']=['ee']
+flavors['em']=['em']
+flavors['me']=['me']
 flavors['sf']=['mm','ee']
 flavors['of']=['em','me']
 flavors['ll']=['mm','ee','em','me']
@@ -335,10 +341,31 @@ channels['of_0j'] = ('0j','of')
 channels['of_1j'] = ('1j','of')
 channels['sf_0j'] = ('0j','sf')
 channels['sf_1j'] = ('1j','sf')
+channels['mm_0j'] = ('0j','mm')
+channels['mm_1j'] = ('1j','mm')
+channels['ee_0j'] = ('0j','ee')
+channels['ee_1j'] = ('1j','ee')
+channels['em_0j'] = ('0j','em')
+channels['em_1j'] = ('1j','em')
+channels['me_0j'] = ('0j','me')
+channels['me_1j'] = ('1j','me')
 
 channels['2j']    = ('2j','ll')
 channels['of_2j'] = ('2j','of')
 channels['sf_2j'] = ('2j','sf')
+channels['mm_2j'] = ('2j','mm')
+channels['ee_2j'] = ('2j','ee')
+channels['em_2j'] = ('2j','em')
+channels['me_2j'] = ('2j','me')
+
+channels['2jex']    = ('2jex','ll')
+channels['of_2jex'] = ('2jex','of')
+channels['sf_2jex'] = ('2jex','sf')
+channels['mm_2jex'] = ('2jex','mm')
+channels['ee_2jex'] = ('2jex','ee')
+channels['em_2jex'] = ('2jex','em')
+channels['me_2jex'] = ('2jex','me')
+
 
 channels['of_vh2j'] = ('vh2j','of')
 channels['sf_vh2j'] = ('vh2j','sf')
@@ -438,6 +465,9 @@ def massSelections(mass):
     sel['ww2011btag-level'] = sel['ww2011btag-common']+'&& ptll>45'
     sel['bdt-specific'] = 'mll < {0} && (mth > {1:.0f} && mth < {2:.0f})'.format(masscuts['mllmax_bdt'], mthmin_bdt, int(mass))
 
+    #sel['ww-xsec'] = sel['ww-common'].replace(wwcuts.met, wwcuts.mpmet)+' && pt2>20 && ptll>45'
+    sel['ww-xsec'] = sel['ww-common']+' && pt2>20 && (!sameflav || ptll>45)'
+
     hwwlvl = {}
     hwwlvl['mll']    = 'mll < {0}'.format(masscuts['mllmax'])
     hwwlvl['pt1']    = 'pt1 > {0:.1f}'.format(masscuts['pt1min'])
@@ -445,6 +475,7 @@ def massSelections(mass):
     hwwlvl['dphill'] = 'dphill < {0}'.format(masscuts['dphimax'])
     hwwlvl['mth']    = '(mth > {0:.1f} && mth < {1:.1f})'.format(masscuts['mtmin'], masscuts['mtmax'])
 
+    sel['wwxsec-selection']       = sel['ww-xsec']
     sel['ww-selection']           = sel['ww-level']
     sel['wwbtag-selection']       = sel['wwbtag-level']
     sel['ww2011-selection']       = sel['ww2011-level']

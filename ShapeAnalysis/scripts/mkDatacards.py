@@ -97,9 +97,12 @@ class ShapeDatacardWriter:
                 if p in effect:
                   isAgoodNuisance = True
 
+            if 'WW' in signals and 'Gen_nlo_WW' in name:
+                isAgoodNuisance = False
+
             if (isAgoodNuisance) :
                if len(pdf) == 1: card.write('{0:<41} {1:<7}         '.format(name,pdf[0]))
-               else:             card.write('{0:<41} {1:<7} {2:<7}  '.format(name,pdf[0],pdf[1]))
+               else:             card.write('{0:<41} {1:<7} {2:<6}  '.format(name,pdf[0],pdf[1]))
                for i,p,y in keyline:
                    if p in effect:
                        #if 'FakeRate' in name:
@@ -425,6 +428,7 @@ class NuisanceMapBuilder:
             # select the experimental effects only (starting with gen)
             if not wwRegex.match(eff):
                 continue
+
             tag = eff
             if tag in nuisances: del nuisances[tag]
             nuisances[tag] = (['shapeN2'],dict([ (p,1) for p in processes]) )
@@ -510,7 +514,7 @@ class NuisanceMapBuilder:
         else :
            optMatt.VH = 0
 
-        if jetcat not in ['0j','1j','2j']: raise ValueError('Unsupported jet category found: %s')
+        if jetcat not in ['0j','1j','2j','2jex']: raise ValueError('Unsupported jet category found: %s')
 
 #         suffix = '_8TeV'
 #         if '2011' in opt.dataset: suffix = '_7TeV'
