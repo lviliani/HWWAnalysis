@@ -458,7 +458,7 @@ class ShapeFactory:
                          selections[vsample] = hwwinfo.flavorCuts[flavor]
 
 
-                    self._addweights(mass,var,'nominals',selections,category,sel)
+                    self._addweights(mass,var,'nominals',selections,category,sel,flavor)
 
                     print '.'*80
                     # - extract the histogram range
@@ -555,7 +555,7 @@ class ShapeFactory:
                          selections[vsample] = hwwinfo.flavorCuts[flavor]
 
 
-                    self._addweights(mass,var,syst,selections, category, sel)
+                    self._addweights(mass,var,syst,selections, category, sel,flavor)
 
                     print '.'*80
                     # - extract the histogram range
@@ -747,8 +747,8 @@ class ShapeFactory:
 
     # _____________________________________________________________________________
     # add the weights to the selection
-    def _addweights(self,mass,var,syst,selections,cat='',sel=''):
-        sampleWgts =  self._sampleWeights(mass,var,cat,sel)
+    def _addweights(self,mass,var,syst,selections,cat='',sel='',flavor='of'):
+        sampleWgts =  self._sampleWeights(mass,var,cat,sel,flavor)
         print '--',selections.keys()
         for process,cut in selections.iteritems():
             wgt = self._stdWgt
@@ -769,12 +769,12 @@ class ShapeFactory:
     #       * EWK Singlet
     #       * Interference with WW (+systematics ?)
     #
-    def _HiggsWgt(self,prodMode,mass):
+    def _HiggsWgt(self,prodMode,mass,flavor,iSyst=0):
 
        hWght = '1.'
 
        # New CPS (+ ptHiggs k-factor for 7 TeV MC)
-       if self._newcps and mass >= 250:
+       if self._newcps and mass >= 250 :
          if self._energy == '7TeV' :
            if prodMode in ['ggH','ggH_ALT'] : hWght += '*getpTHiggsWght()' 
            if prodMode in ['qqH','qqH_ALT'] : hWght += '*getpTHiggsWght()' 
@@ -813,19 +813,26 @@ class ShapeFactory:
          
          if prodMode in ['ggH','qqH']    : hWght += '*getBWWght(MHiggs,%f,%f,%f)'%(Mass,GamSM,Gamma)
 
-         # ... Change mu of both H
+         # ... Change mu of both all H
          if prodMode in ['ggH','qqH','WH','ZH','ttH']                :  hWght += '*'+str(self._cprimesq)
          if prodMode in ['ggH_SM','qqH_SM','WH_SM','ZH_SM','ttH_SM'] :  hWght += '*(1-'+str(self._cprimesq)+')'
 
 
        # Inteference (Only meaningfull with new CPS as kfW already contains it otherwise)
        if self._newcps :
-         if prodMode in ['ggH']    and mass        >= 400 : 
-            fileInt = os.environ['CMSSW_BASE']+'/src/HWWAnalysis/ShapeAnalysis/ewksinglet/data/Interference/h_MWW_rel_NNLO_'+str(mass)+'.root'
-            print fileInt
-            ROOT.gROOT.ProcessLineSync('initIntWght("'+fileInt+'",0,0)')
+         if prodMode in ['ggH'] and mass  >= 300 : 
+            fileInt = os.environ['CMSSW_BASE']+'/src/HWWAnalysis/ShapeAnalysis/ewksinglet/data/Interference_ggH/1.0SMWidth/h_MWW_IonS_NNLO_'+str(mass)+'.root'
+            ROOT.gROOT.ProcessLineSync('initIntWght("'+fileInt+'",0,'+str(iSyst)+','+str(mass)+')')
             hWght += '*getIntWght(0,MHiggs,'+str(self._cprimesq)+')' 
-         #if prodMode in ['ggH_SM'] and self._mh_SM >= 350 : hWght += '*getIntWght()' 
+         if prodMode in ['qqH'] and mass >= 350 : 
+            if   flavor in ['of','em','me'] : iFlavor = '0'
+            elif flavor in ['sf','mm','ee'] : iFlavor = '1'
+            else :
+              print '_HiggsWgt: Unknown flavor : ',flavor
+              exit()
+            EWKDir = os.environ['CMSSW_BASE']+'/src/HWWAnalysis/ShapeAnalysis/ewksinglet/'
+            ROOT.gROOT.ProcessLineSync('initIntWght("'+EWKDir+'" ,1,'+str(iSyst)+','+str(mass)+')') 
+            hWght += '*getIntWght(1,MHiggs,'+str(self._cprimesq)+','+iFlavor+')' 
 
 
 
@@ -835,7 +842,7 @@ class ShapeFactory:
     # _____________________________________________________________________________
     # this is too convoluted
     # define here the mass-dependent weights
-    def _sampleWeights(self,mass,var,cat,sel):
+    def _sampleWeights(self,mass,var,cat,sel,flavor):
         weights = {}
         # tocheck
         weights['WJet']              = self._stdWgt+'*kfW*fakeW*(run!=201191)'
@@ -881,19 +888,20 @@ class ShapeFactory:
         weights['Vg']                = self._stdWgt+'*kfW'
 
 
-        weights['ggH']               = self._stdWgt+'*'+self._HiggsWgt('ggH',mass)+'*'+self._muVal
-        weights['qqH']               = self._stdWgt+'*'+self._HiggsWgt('qqH',mass)+'*'+self._muVal
+        weights['ggH']               = self._stdWgt+'*'+self._HiggsWgt('ggH',mass,flavor)+'*'+self._muVal
+        weights['qqH']               = self._stdWgt+'*'+self._HiggsWgt('qqH',mass,flavor)+'*'+self._muVal
         weights['ggHminlo']          = 'effW*triggW*kfW*puW*HEPMCweight/497500.*1000*0.108*0.108*9*0.216'+self._muVal
 
-        weights['WH']                = self._stdWgt+'*(mctruth == 26)*'+self._muVal
-        weights['ZH']                = self._stdWgt+'*(mctruth == 24)*'+self._muVal
-        weights['ttH']               = self._stdWgt+'*(mctruth == 121)*'+self._muVal
+        weights['WH']                = self._stdWgt+'*'+self._HiggsWgt('WH',mass,flavor)+'*(mctruth == 26)*'+self._muVal
+        weights['ZH']                = self._stdWgt+'*'+self._HiggsWgt('ZH',mass,flavor)+'*(mctruth == 24)*'+self._muVal
+        weights['ttH']               = self._stdWgt+'*'+self._HiggsWgt('ttH',mass,flavor)+'*(mctruth == 121)*'+self._muVal
 
-        weights['ggH_SM']            = self._stdWgt+'*'+self._HiggsWgt('ggH_SM',mass)+'*'+self._muVal
-        weights['qqH_SM']            = self._stdWgt+'*'+self._HiggsWgt('qqH_SM',mass)+'*'+self._muVal
-        weights['WH_SM']             = self._stdWgt+'*(mctruth == 26)*'+self._muVal
-        weights['ZH_SM']             = self._stdWgt+'*(mctruth == 24)*'+self._muVal
-        weights['ttH_SM']            = self._stdWgt+'*(mctruth == 121)*'+self._muVal
+        weights['ggH_SM']            = self._stdWgt+'*'+self._HiggsWgt('ggH_SM',mass,flavor)+'*'+self._muVal
+        weights['qqH_SM']            = self._stdWgt+'*'+self._HiggsWgt('qqH_SM',mass,flavor)+'*'+self._muVal
+
+        weights['WH_SM']             = self._stdWgt+'*'+self._HiggsWgt('WH_SM',mass,flavor)+'*(mctruth == 26)*'+self._muVal
+        weights['ZH_SM']             = self._stdWgt+'*'+self._HiggsWgt('ZH_SM',mass,flavor)+'*(mctruth == 24)*'+self._muVal
+        weights['ttH_SM']            = self._stdWgt+'*'+self._HiggsWgt('ttH_SM',mass,flavor)+'*(mctruth == 121)*'+self._muVal
 
 
         weights['ggH_ALT']           = self._stdWgt+'*kfW*'+self._muVal

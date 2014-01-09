@@ -124,6 +124,7 @@ class wwcuts:
                 
     zerojet = 'njet == 0'
     onejet  = 'njet == 1'
+    twojet  = 'njet == 2'
     loosevbf= '(njet >= 2 && njet <= 3) '
     vbf     = '(njet >= 2 && njet <= 3 && (jetpt3 <= 30 || !(jetpt3 > 30 && (  (jeteta1-jeteta3 > 0 && jeteta2-jeteta3 < 0) || (jeteta2-jeteta3 > 0 && jeteta1-jeteta3 < 0))))) '
     vbf2011 = '(njet >= 2 && njet <= 3 && njetvbf == 0) '
@@ -424,13 +425,13 @@ class ww:
     wwCut    = _massindep
 
 
-
-masses = [110, 115, 120, 125, 130, 135, 140, 145, 150, 155, 160, 170, 180, 190, 200, 250, 300, 350, 400, 450, 500, 550, 600]
+masses = [110, 115, 120, 125, 130, 135, 140, 145, 150, 155, 160, 170, 180, 190, 200, 250, 300, 350, 400, 450, 500, 550, 600, 700, 800, 900, 1000]
 #masses = [110, 115, 120, 125, 130, 135, 140, 150, 155, 160, 170, 180, 190, 200, 250, 300, 350, 400, 450, 500, 550, 600]  
 
 categoryCuts = {}
 categoryCuts['0j'] = wwcuts.zerojet
 categoryCuts['1j'] = wwcuts.onejet
+categoryCuts['2jex'] = wwcuts.twojet
 #categoryCuts['2j']   = wwcuts.vbf        # 2 or 3 jets, but the third not between the first two in \eta
 categoryCuts['2j']   = wwcuts.loosevbf   # 2 or 3 jets
 categoryCuts['vh2j'] = wwcuts.vh         # >=2 jets
@@ -447,6 +448,10 @@ flavorCuts['sf']  = 'channel < 1.5'
 flavorCuts['of']  = 'channel > 1.5' 
 
 flavors = {}
+flavors['mm']=['mm']
+flavors['ee']=['ee']
+flavors['em']=['em']
+flavors['me']=['me']
 flavors['sf']=['mm','ee']
 flavors['of']=['em','me']
 flavors['ll']=['mm','ee','em','me']
@@ -458,10 +463,31 @@ channels['of_0j'] = ('0j','of')
 channels['of_1j'] = ('1j','of')
 channels['sf_0j'] = ('0j','sf')
 channels['sf_1j'] = ('1j','sf')
+channels['mm_0j'] = ('0j','mm')
+channels['mm_1j'] = ('1j','mm')
+channels['ee_0j'] = ('0j','ee')
+channels['ee_1j'] = ('1j','ee')
+channels['em_0j'] = ('0j','em')
+channels['em_1j'] = ('1j','em')
+channels['me_0j'] = ('0j','me')
+channels['me_1j'] = ('1j','me')
 
 channels['2j']    = ('2j','ll')
 channels['of_2j'] = ('2j','of')
 channels['sf_2j'] = ('2j','sf')
+channels['mm_2j'] = ('2j','mm')
+channels['ee_2j'] = ('2j','ee')
+channels['em_2j'] = ('2j','em')
+channels['me_2j'] = ('2j','me')
+
+channels['2jex']    = ('2jex','ll')
+channels['of_2jex'] = ('2jex','of')
+channels['sf_2jex'] = ('2jex','sf')
+channels['mm_2jex'] = ('2jex','mm')
+channels['ee_2jex'] = ('2jex','ee')
+channels['em_2jex'] = ('2jex','em')
+channels['me_2jex'] = ('2jex','me')
+
 
 channels['of_vh2j'] = ('vh2j','of')
 channels['sf_vh2j'] = ('vh2j','sf')
@@ -475,26 +501,26 @@ channels['ll_whsc'] = ('whsc','ll')
 # |_|  |_\__,_/__/__/  \___\_,_|\__/__/
 #
 # smurfs index              1     1     3     6     8     9    10    10    11    11    12    13    14    15    16   20     21    22    23    24    25    26    27
-# masses              = [ 110 , 115 , 120 , 125 , 130 , 135 , 140 , 145 , 150 , 155 , 160 , 170 , 180 , 190 , 200 , 250 , 300 , 350 , 400 , 450 , 500 , 550 , 600]
-#  normal index             0     1     2     3     4     5     6     7     8     9    10    11    12    13    14    15    16    17    18    19    20    21    22
+# masses              = [ 110 , 115 , 120 , 125 , 130 , 135 , 140 , 145 , 150 , 155 , 160 , 170 , 180 , 190 , 200 , 250 , 300 , 350 , 400 , 450 , 500 , 550 , 600 , 700 , 800 , 900 ,1000]
+#  normal index             0     1     2     3     4     5     6     7     8     9    10    11    12    13    14    15    16    17    18    19    20    21    22    23    24    25    26
 
 
 #  normal index             1     2     3     4     5     6     7     8     9    10    11    12    13    14    15    16    17    18    19    20    21    22    23
 
 cutmap = {}
-cutmap['mtmin_vh']    = [ 60  , 60  , 60  , 60  , 60  , 60  , 60  ,  60 ,  60 ,  60 ,  60 ,  60 ,  70 ,  70 ,  70 ,  70 ,  70 ,  70 ,  70 ,  70 ,  70 ,  70 ,  70 ]
-cutmap['mllmax_vh']   = [ 60  , 60  , 60  , 60  , 60  , 60  , 60  ,  60 ,  60 ,  60 ,  60 ,  60 ,  80 ,  80 ,  80 ,  80 ,  80 ,  80 ,  80 ,  80 ,  80 ,  80 ,  80 ]
-cutmap['mllmin_vh']   = [ 12  , 12  , 12  , 12  , 12  , 12  , 20  ,  20 ,  20 ,  20 ,  20 ,  20 ,  20 ,  20 ,  20 ,  20 ,  20 ,  20 ,  20 ,  20 ,  20 ,  20 ,  20 ]
-cutmap['drllmax_vh']  = [ 1.5 , 1.5 , 1.5 , 1.5 , 1.5 , 1.5 , 1.6 , 1.6 , 1.7 , 1.8 , 1.9 , 2.0 , 2.0 , 2.0 , 2.0 , 2.0 , 2.0 , 2.0 , 2.0 , 2.0 , 2.0 , 2.0 , 2.0 ]
+cutmap['mtmin_vh']    = [ 60  , 60  , 60  , 60  , 60  , 60  , 60  ,  60 ,  60 ,  60 ,  60 ,  60 ,  70 ,  70 ,  70 ,  70 ,  70 ,  70 ,  70 ,  70 ,  70 ,  70 ,  70 ,  70 ,  70 ,  70 ,  70 ]
+cutmap['mllmax_vh']   = [ 60  , 60  , 60  , 60  , 60  , 60  , 60  ,  60 ,  60 ,  60 ,  60 ,  60 ,  80 ,  80 ,  80 ,  80 ,  80 ,  80 ,  80 ,  80 ,  80 ,  80 ,  80 ,  80 ,  80 ,  80 ,  80 ]
+cutmap['mllmin_vh']   = [ 12  , 12  , 12  , 12  , 12  , 12  , 20  ,  20 ,  20 ,  20 ,  20 ,  20 ,  20 ,  20 ,  20 ,  20 ,  20 ,  20 ,  20 ,  20 ,  20 ,  20 ,  20 ,  20 ,  20 ,  20 ,  20 ]
+cutmap['drllmax_vh']  = [ 1.5 , 1.5 , 1.5 , 1.5 , 1.5 , 1.5 , 1.6 , 1.6 , 1.7 , 1.8 , 1.9 , 2.0 , 2.0 , 2.0 , 2.0 , 2.0 , 2.0 , 2.0 , 2.0 , 2.0 , 2.0 , 2.0 , 2.0 , 2.0 , 2.0 , 2.0 , 2.0 ]
 
-cutmap['mllmax_bdt']  = [ 70  , 70  , 70  , 80  , 80  , 90  , 90  , 100 , 100 , 100 , 100 , 100 , 110 , 120 , 130 , 250 , 300 , 350 , 400 , 450 , 500 , 550 , 600 ]
-cutmap['pt1min']      = [ 20  , 20  , 20  , 23  , 25  , 25  , 25  , 25  , 27  , 27  , 30  , 34  , 36  , 38  , 40  , 55  , 70  , 80  , 90  , 110 , 120 , 130 , 140 ]
-cutmap['pt2min']      = [ 10  , 10  , 10  , 10  , 10  , 12  , 15  , 15  , 25  , 25  , 25  , 25  , 25  , 25  , 25  , 25  , 25  , 25  , 25  , 25  , 25  , 25  , 25  ]
-cutmap['mllmax']      = [ 40  , 40  , 40  , 43  , 45  , 45  , 45  , 45  , 50  , 50  , 50  , 50  , 60  , 80  , 90  , 150 , 200 , 250 , 300 , 350 , 400 , 450 , 500 ]
-cutmap['dphimax']     = [ 115 , 115 , 115 , 100 , 90  , 90  , 90  , 90  , 90  , 90  , 60  , 60  , 70  , 90  , 100 , 140 , 175 , 175 , 175 , 175 , 175 , 175 , 175 ]
+cutmap['mllmax_bdt']  = [ 70  , 70  , 70  , 80  , 80  , 90  , 90  , 100 , 100 , 100 , 100 , 100 , 110 , 120 , 130 , 250 , 300 , 350 , 400 , 450 , 500 , 550 , 600 , 700 , 800 , 900 ,1000 ]
+cutmap['pt1min']      = [ 20  , 20  , 20  , 23  , 25  , 25  , 25  , 25  , 27  , 27  , 30  , 34  , 36  , 38  , 40  , 55  , 70  , 80  , 90  , 110 , 120 , 130 , 140 , 140 , 140 , 140 , 150 ]
+cutmap['pt2min']      = [ 10  , 10  , 10  , 10  , 10  , 12  , 15  , 15  , 25  , 25  , 25  , 25  , 25  , 25  , 25  , 25  , 25  , 25  , 25  , 25  , 25  , 25  , 25  , 25  , 25  , 25  , 25  ]
+cutmap['mllmax']      = [ 40  , 40  , 40  , 43  , 45  , 45  , 45  , 45  , 50  , 50  , 50  , 50  , 60  , 80  , 90  , 150 , 200 , 250 , 300 , 350 , 400 , 450 , 500 , 600 , 700 , 800 , 900 ]
+cutmap['dphimax']     = [ 115 , 115 , 115 , 100 , 90  , 90  , 90  , 90  , 90  , 90  , 60  , 60  , 70  , 90  , 100 , 140 , 175 , 175 , 175 , 175 , 175 , 175 , 175 , 175 , 175 , 175 , 175 ]
 
-cutmap['mtmin']       = [ 80  , 80  , 80  , 80  , 80  , 80  , 80  , 80  , 80  , 80  , 90  , 110 , 120 , 120 , 120 , 120 , 120 , 120 , 120 , 120 , 120 , 120 , 120 ]
-cutmap['mtmax']       = [ 110 , 110 , 120 , 123 , 125 , 128 , 130 , 140 , 150 , 155 , 160 , 170 , 180 , 190 , 200 , 250 , 300 , 350 , 400 , 450 , 500 , 550 , 600 ]
+cutmap['mtmin']       = [ 80  , 80  , 80  , 80  , 80  , 80  , 80  , 80  , 80  , 80  , 90  , 110 , 120 , 120 , 120 , 120 , 120 , 120 , 120 , 120 , 120 , 120 , 120 , 120 , 120 , 120 , 120 ]
+cutmap['mtmax']       = [ 110 , 110 , 120 , 123 , 125 , 128 , 130 , 140 , 150 , 155 , 160 , 170 , 180 , 190 , 200 , 250 , 300 , 350 , 400 , 450 , 500 , 550 , 600 , 700 , 800 , 900 ,1000 ]
 
 # for whsc                                                                                                                      [- random numbers from here on, I stop at 300 GeV
 #cutmap['mlljjmin']    = [ 90  , 95  , 100  ,105  ,110  ,110 , 110 , 110 , 110 , 115 , 120 , 130 , 130 , 130 , 140 , 140 , 150 , 120 , 120 , 120 , 120 , 120 , 120 ]
@@ -563,6 +589,9 @@ def massSelections(mass):
     sel['ww2011btag-level'] = sel['ww2011btag-common']+'&& ptll>45'
     sel['bdt-specific'] = 'mll < {0} && (mth > {1:.0f} && mth < {2:.0f})'.format(masscuts['mllmax_bdt'], mthmin_bdt, int(mass))
 
+    #sel['ww-xsec'] = sel['ww-common'].replace(wwcuts.met, wwcuts.mpmet)+' && pt2>20 && ptll>45'
+    sel['ww-xsec'] = sel['ww-common']+' && pt2>20 && (!sameflav || ptll>45)'
+
     hwwlvl = {}
     hwwlvl['mll']    = 'mll < {0}'.format(masscuts['mllmax'])
     hwwlvl['pt1']    = 'pt1 > {0:.1f}'.format(masscuts['pt1min'])
@@ -570,6 +599,7 @@ def massSelections(mass):
     hwwlvl['dphill'] = 'dphill < {0}'.format(masscuts['dphimax'])
     hwwlvl['mth']    = '(mth > {0:.1f} && mth < {1:.1f})'.format(masscuts['mtmin'], masscuts['mtmax'])
 
+    sel['wwxsec-selection']       = sel['ww-xsec']
     sel['ww-selection']           = sel['ww-level']
     sel['wwbtag-selection']       = sel['wwbtag-level']
     sel['ww2011-selection']       = sel['ww2011-level']

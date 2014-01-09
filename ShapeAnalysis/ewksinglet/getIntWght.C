@@ -263,16 +263,20 @@ void initIntWght(std::string wFile , int iType , int iSyst, float Hmass = 350) {
       if (i==3) tempMass = 800;
       if (i==4) tempMass = 1000;
 
-      int NBIN = 350;
+      int NBIN = 500;
+      if (tempMass<350) NBIN = 500;
       if (tempMass>400) NBIN = 120;
       if (tempMass>500) NBIN =  70;
       if (tempMass>700) NBIN = 120;
       if (tempMass>900) NBIN =  40;
+
       int MAX = 800;
+      if (tempMass<350) MAX =   500;
       if (tempMass>400) MAX =  1500;
       if (tempMass>500) MAX =  2000;
       if (tempMass>700) MAX =  4000;
       if (tempMass>900) MAX =  4000;
+
       float scale = 1./ (MAX/NBIN);
       log_S_N[i]  = log(S_N[i]  * scale);
       log_SI_N[i] = log(SI_N[i] * scale);
