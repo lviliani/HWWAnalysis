@@ -297,11 +297,13 @@ class NuisanceMapBuilder:
         else :
             cb = '_cb'
         mapping = {
-            'WW'   : ( jetcat+cb,  ['WW','ggWW'] ),
-            'Top'  : ( jetcat+cb,  ['Top']       ),
-            'DYLL' : ( jetcat+cb,  ['DYLL']      ),
-            'DYee' : ( channel+cb, ['DYee']      ),
-            'DYmm' : ( channel+cb, ['DYmm']      ),
+            'WW'      : ( jetcat+cb,  ['WW','ggWW'] ),
+            'Top'     : ( jetcat+cb,  ['Top']       ),
+            'DYLL'    : ( jetcat+cb,  ['DYLL']      ),
+            'DYee'    : ( channel+cb, ['DYee']      ),
+            'DYmm'    : ( channel+cb, ['DYmm']      ),
+            'DYee05'  : ( channel+cb, ['DYee05']      ),
+            'DYmm05'  : ( channel+cb, ['DYmm05']      ),
         }
 
         # see if there are MC extrapolation scale factors needed
@@ -717,8 +719,9 @@ if __name__ == '__main__':
     
                 # reshuffle the order
                 #order = [ 'vbfH', 'ggH', 'wzttH', 'ggWW', 'Vg', 'WJet', 'Top', 'WW', 'DYLL', 'VV', 'DYTT', 'Data']
-                order = [ 'ggH','ggH_ALT','qqH','qqH_ALT', 'wzttH','wzttH_ALT', 'WH', 'ZH', 'ttH', 'ggWW', 'VgS', 'Vg', 'WJet', 'Top', 'WW', 'WWewk', 'DYLL', 'VV', 'DYTT', 'DYee', 'DYmm', 'Other', 'VVV', 'Data','ggH_SM', 'qqH_SM', 'WH_SM','ZH_SM' , 'wzttH_SM' ]
+                order = [ 'ggH','ggH_ALT','qqH','qqH_ALT', 'wzttH','wzttH_ALT', 'WH', 'ZH', 'ttH', 'ggWW', 'VgS', 'Vg', 'WJet', 'Top', 'TopPt0', 'TopPt1', 'TopPt2', 'WW', 'WWewk', 'DYLL', 'VV', 'DYTT', 'DYee', 'DYmm', 'DYee05', 'DYmm05', 'Other', 'VVV', 'Data','ggH_SM', 'qqH_SM', 'WH_SM','ZH_SM' , 'wzttH_SM' ]
     
+   
                 oldYields = yields.copy()
                 yields = OrderedDict([ (k,oldYields[k]) for k in order if k in oldYields])
                 
