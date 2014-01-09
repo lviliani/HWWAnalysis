@@ -524,8 +524,8 @@ cutmap['mtmax']       = [ 110 , 110 , 120 , 123 , 125 , 128 , 130 , 140 , 150 , 
 
 # for whsc                                                                                                                      [- random numbers from here on, I stop at 300 GeV
 #cutmap['mlljjmin']    = [ 90  , 95  , 100  ,105  ,110  ,110 , 110 , 110 , 110 , 115 , 120 , 130 , 130 , 130 , 140 , 140 , 150 , 120 , 120 , 120 , 120 , 120 , 120 ]
-cutmap['mlljjmin']    = [ 50  , 55  ,  60  , 65  , 70  , 75 ,  80 ,  80 ,  80 ,  85 ,  90 ,  95 , 100 , 120 , 140 , 140 , 150 , 120 , 120 , 120 , 120 , 120 , 120 ]
-cutmap['mlljjmax']    = [ 140 , 145 , 150 , 165 , 170 , 175 , 175 , 175 , 180 , 185 , 190 , 200 , 210 , 220 , 220 , 270 , 320 , 190 , 190 , 190 , 190 , 190 , 190 ]
+cutmap['mlljjmin']    = [ 50  , 55  ,  60  , 65  , 70  , 75 ,  80 ,  80 ,  80 ,  85 ,  90 ,  95 , 100 , 120 , 140 , 140 , 150 , 120 , 120 , 120 , 120 , 120 , 120 , 120 , 120 , 120 , 120 ]
+cutmap['mlljjmax']    = [ 140 , 145 , 150 , 165 , 170 , 175 , 175 , 175 , 180 , 185 , 190 , 200 , 210 , 220 , 220 , 270 , 320 , 190 , 190 , 190 , 190 , 190 , 190 , 190 , 190 , 190 , 190 ]
 #cutmap['mlljjmax']    = [ 145 , 150 , 180 , 180 , 180 , 180 , 185 , 185 , 185 , 190 , 190 , 200 , 210 , 220 , 220 , 270 , 320 , 190 , 190 , 190 , 190 , 190 , 190 ]
 
 
@@ -776,14 +776,14 @@ def massSelections(mass):
     sel['wwewkCut-level']     = ' && '.join(wwewk.wwewkCut)
     sel['wwewkCut-selection'] = sel['wwewkCut-level']
 
-    sel['wwewkShape05-level']     = ' && '.join(wwewk.wwewkShape) + ' && jettche1 < 0.60   && jettche2 < 0.60 '
+    sel['wwewkShape05-level']     = ' && '.join(wwewk.wwewkShape) + ' && jettche1 < 0.50   && jettche2 < 0.50 '
     sel['wwewkShape05-selection'] = sel['wwewkShape05-level']
-    sel['wwewkShape21-level']     = ' && '.join(wwewk.wwewkShape) + ' && jettche1 >= 0.60  && jettche2 >= 0.60 '
+    sel['wwewkShape21-level']     = ' && '.join(wwewk.wwewkShape) + ' && jettche1 >= 0.50  && jettche2 >= 0.50 '
     sel['wwewkShape21-selection'] = sel['wwewkShape21-level']
 
-    sel['wwewkCut05-level']     = ' && '.join(wwewk.wwewkCut) + ' && jettche1 < 0.60   && jettche2 < 0.60 '
+    sel['wwewkCut05-level']     = ' && '.join(wwewk.wwewkCut) + ' && jettche1 < 0.50   && jettche2 < 0.50 '
     sel['wwewkCut05-selection'] = sel['wwewkCut05-level']
-    sel['wwewkCut21-level']     = ' && '.join(wwewk.wwewkCut) + ' && jettche1 >= 0.60  && jettche2 >= 0.60 '
+    sel['wwewkCut21-level']     = ' && '.join(wwewk.wwewkCut) + ' && jettche1 >= 0.50  && jettche2 >= 0.50 '
     sel['wwewkCut21-selection'] = sel['wwewkCut21-level']
 
 
