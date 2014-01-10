@@ -1325,8 +1325,8 @@ if __name__ == '__main__':
                   processMask = ['ggH', 'ggH_ALT', 'qqH', 'qqH_ALT', 'VH' , 'wzttH', 'ZH', 'WH', 'ttH', 'ggWW', 'Top', 'WW', 'VV', 'CHITOP-Top', 'ggH_SM', 'qqH_SM','VH_SM', 'wzttH_SM', 'ZH_SM', 'WH_SM', 'ttH_SM']
 
               systMasks = dict([(s,processMask[:]) for s in systematics])
-              #systDirs  = dict([(s,systInputDir if s not in systByWeight else 'templates/' ) for s in systematics])
-              systDirs  = dict([(s,systInputDir if s not in systByWeight else 'nominals/' ) for s in systematics])
+              systDirs  = dict([(s,systInputDir if s not in systByWeight else 'templates/' ) for s in systematics])
+              #systDirs  = dict([(s,systInputDir if s not in systByWeight else 'nominals/' ) for s in systematics])
               print "systDirs = ",systDirs
 
               for syst,mask in systMasks.iteritems():
