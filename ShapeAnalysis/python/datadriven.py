@@ -54,10 +54,11 @@ class DDCardReader:
         print 'Reading data driven estimates from',self._path
 
         # data driven systematics
-        basemapping  = {'of_0j': ('0j',['of']), 'sf_0j': ('0j',['sf']),
-                       'of_1j': ('1j',['of']), 'sf_1j': ('1j',['sf']),
-                       'of_2j': ('2j',['of']), 'sf_2j': ('2j',['sf']),
-                       'of_vh2j': ('vh2j',['of']), 'sf_vh2j': ('vh2j',['sf'])
+        basemapping  = {'of_0j'     : ('0j',['of']), 'sf_0j': ('0j',['sf']),
+                       'of_1j'      : ('1j',['of']), 'sf_1j': ('1j',['sf']),
+                       'of_2j'      : ('2j',['of']), 'sf_2j': ('2j',['sf']),
+                       'of_vh2j'    : ('vh2j',['of']), 'sf_vh2j': ('vh2j',['sf']),
+                       'of_2jtche05': ('2jtche05',['of']), 'sf_2jtche05': ('2jtche05',['sf'])
                        }
         wwmapping    = {'of_0j': ('0j',['of']), 'sf_0j': ('0j',['sf']),
                        'of_1j': ('1j',['of']), 'sf_1j': ('1j',['sf']),
@@ -67,16 +68,22 @@ class DDCardReader:
                        }
         lleemmmapping  = {
                        'sf_2j': ('2j',['sf']),
-                       'sf_vh2j': ('vh2j',['sf'])
+                       'sf_vh2j': ('vh2j',['sf']),
+                       'sf_2jtche05': ('2jtche05',['sf'])
                        }
 
         readmap = {}
         readmap['Top']  = basemapping.copy()
+        readmap['TopPt0']  = basemapping.copy()
+        readmap['TopPt1']  = basemapping.copy()
+        readmap['TopPt2']  = basemapping.copy()
         readmap['WW']   = wwmapping.copy()
         readmap['ggWW'] = wwmapping.copy()
         readmap['DYLL'] = llmapping.copy()
         readmap['DYee'] = lleemmmapping.copy()
         readmap['DYmm'] = lleemmmapping.copy()
+        readmap['DYee05'] = lleemmmapping.copy()
+        readmap['DYmm05'] = lleemmmapping.copy()
 
 
         ddcards = AlienDict()

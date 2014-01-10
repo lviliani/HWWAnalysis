@@ -68,8 +68,8 @@ mcsets = {
         # templates
         'VgS-template','Vg-template',
         # 0j1j specific
-        ('DYLL-template',    'DYLL-template-0j1j'),              #    A   <-   sorgente
-        ('DYLL-templatesyst','DYLL-templatesyst-0j1j')           #    mkmerged vuole "-template"
+        #('DYLL-template',    'DYLL-template-0j1j'),              #    A   <-   sorgente
+        #('DYLL-templatesyst','DYLL-templatesyst-0j1j')           #    mkmerged vuole "-template"
     ],
     '0j1j-mH125' : [
         #signals
@@ -287,13 +287,49 @@ mcsets = {
         'VgS-template','Vg-template',
     ],
 
+   'wwewkshape_of' : [
+        #signals
+        'ggH','qqH', #'wzttH',
+        #'ggHminlo',
+        # bkgs
+        'WW','ggWW','VgS','Vg','WJet','VV','DYTT',
+        ('TopPt0','Top'),
+        ('TopPt1','Top'),
+        ('TopPt2','Top'),
+        ('TopPt3','Top'),
+        'WWewk',
+        'VVV',
+        # nuisance
+        'WWpow',
+        # systematics
+        ('WJetFakeRate-2j-template','WJetFakeRate-nominal'), # here and in the following I put the "template" distributions (relaxed cuts)
+        ('WJetFakeRate-2j-eUp',     'WJetFakeRate-nominal'),
+        ('WJetFakeRate-2j-eDn',     'WJetFakeRate-nominal'),
+        ('WJetFakeRate-2j-mUp',     'WJetFakeRate-nominal'),
+        ('WJetFakeRate-2j-mDn',     'WJetFakeRate-nominal'),
+        # top shape ---> to be checked if needed
+        #('TopTW',   'Top'),
+        #('TopCtrl', 'Top'),
+        # templates
+        'VgS-template','Vg-template',
+        # 2j specific
+        #('WJet-template',    'WJet-template-2j'),              #    A   <-   sorgente
+        #('WJet-templatesyst','WJet-templatesyst-2j')           #    mkmerged vuole "-template"
+        # templates for Top estimation
+        #('CHITOP-Top',     'Top'),
+    ],
+
    'wwewk_of' : [
         #signals
         'ggH','qqH', #'wzttH',
         #'ggHminlo',
         # bkgs
-        'WW','ggWW','VgS','Vg','WJet','Top','VV','DYTT',
+        'WW','ggWW','VgS','Vg','WJet','VV','DYTT',
+        ('TopPt0','Top'),
+        ('TopPt1','Top'),
+        #('TopPt2','Top'),
         'WWewk',
+        'VVV',
         # nuisance
         'WWpow',
         # systematics
@@ -318,11 +354,16 @@ mcsets = {
         'ggH','qqH', #'wzttH',
         #'ggHminlo',
         # bkgs
-        'WW','ggWW','VgS','Vg','WJet','Top','VV',
+        'WW','ggWW','VgS','Vg','WJet','VV',
+         # dummy
+        ('TopPt0','WWewk'),
+        ('TopPt1','WWewk'),
+        #('TopPt2','WWewk'),
          # dummy
         ('DYee', 'WWewk'),
         ('DYmm', 'WWewk'),
         'WWewk',
+        'VVV',
         # nuisance
         'WWpow',
         # systematics

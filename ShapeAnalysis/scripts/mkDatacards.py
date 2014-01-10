@@ -79,7 +79,7 @@ class ShapeDatacardWriter:
         keyline.extend([ (-i,s,yields[s]._N) for i,s in enumerate(sigs) ])
         keyline.extend([ (i+1,b,yields[b]._N) for i,b in enumerate(bkgs) ])
 
-        coldef = 10
+        coldef = 15
 
         card.write('bin'.ljust(58)+''.join([self._bin.ljust(coldef)*len(keyline)])+'\n')
         card.write('process'.ljust(58)+''.join([n.ljust(coldef) for (i,n,N) in keyline])+'\n' )
@@ -510,7 +510,7 @@ class NuisanceMapBuilder:
         qqWWfromData = self._wwddfilter.haswwdd(mass, channel)
 
         # vh and vbf mapped to "2j" category
-        if (jetcat == 'vh2j' or jetcat == 'whsc') :
+        if (jetcat == 'vh2j' or jetcat == 'whsc' or jetcat == '2jtche05') :
            jetcat = '2j'
            optMatt.VH = 1
         else :
@@ -719,7 +719,7 @@ if __name__ == '__main__':
     
                 # reshuffle the order
                 #order = [ 'vbfH', 'ggH', 'wzttH', 'ggWW', 'Vg', 'WJet', 'Top', 'WW', 'DYLL', 'VV', 'DYTT', 'Data']
-                order = [ 'ggH','ggH_ALT','qqH','qqH_ALT', 'wzttH','wzttH_ALT', 'WH', 'ZH', 'ttH', 'ggWW', 'VgS', 'Vg', 'WJet', 'Top', 'TopPt0', 'TopPt1', 'TopPt2', 'WW', 'WWewk', 'DYLL', 'VV', 'DYTT', 'DYee', 'DYmm', 'DYee05', 'DYmm05', 'Other', 'VVV', 'Data','ggH_SM', 'qqH_SM', 'WH_SM','ZH_SM' , 'wzttH_SM' ]
+                order = [ 'ggH','ggH_ALT','qqH','qqH_ALT', 'wzttH','wzttH_ALT', 'WH', 'ZH', 'ttH', 'ggWW', 'VgS', 'Vg', 'WJet', 'Top', 'TopPt0', 'TopPt1', 'TopPt2', 'TopPt3', 'WW', 'WWewk', 'DYLL', 'VV', 'DYTT', 'DYee', 'DYmm', 'DYee05', 'DYmm05', 'Other', 'VVV', 'Data','ggH_SM', 'qqH_SM', 'WH_SM','ZH_SM' , 'wzttH_SM' ]
     
    
                 oldYields = yields.copy()
