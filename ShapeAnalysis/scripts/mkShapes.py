@@ -118,11 +118,14 @@ class ShapeFactory:
     # _____________________________________________________________________________
     def _getWWewkrange(self,mass,cat):
 
-        if cat not in ['2j']:
+        if cat not in ['2j','2jtche05']:
             print cat
             raise RuntimeError('range for '+str(cat)+' not defined. !?!?!?')
 
-        return ([-1.0, -0.5, 0.0, 0.2, 0.5, 0.6, 0.7, 0.8, 0.9, 1.0],)
+        #return ([-1.0, -0.5, 0.0, 0.2, 0.5, 0.6, 0.7, 0.8, 0.9, 1.0],)
+        #return ([-1.0, -0.75, -0.5, -0.25, 0.0, 0.25, 0.5, 0.6, 0.7, 0.8, 0.9, 1.0],)
+        #return ([-1.0, -0.75, -0.5, -0.25, 0.0, 0.30, 0.50, 0.70, 0.90, 1.0],)
+        return ([-1.0, -0.80, -0.60, -0.40, -0.20, 0.00, 0.20, 0.40, 0.60, 0.80, 1.00],)
 
 
 
@@ -885,7 +888,7 @@ class ShapeFactory:
         weights['DYLL-template']     = self._stdWgt+'* dyW *(1-(( dataset == 36 || dataset == 37 ) && mctruth == 2 ))'
         weights['DYLL-templatesyst'] = self._stdWgt+'*dyWUp*(1-(( dataset == 36 || dataset == 37 ) && mctruth == 2 ))'
         #systematics
-        weights['TopTW']             = self._stdWgt+'*(1+0.5*(dataset>=11 && dataset<=16))' 
+        weights['TopTW']             = self._stdWgt+'*(1+0.17*(dataset>=11 && dataset<=16))' 
         weights['TopCtrl']           = self._stdWgt+'*bvetoW'
         weights['Top-template']      = self._stdWgt+'*bvetoW'
         #filter and k-factor on Vg* done by kfW
@@ -961,7 +964,7 @@ class ShapeFactory:
             weights['VH']             = 'puW*effW*triggW*0.0007897267'
 
 
-        if cat in ['2j']:
+        if cat in ['2j','2jtche05']:
             #weights['WW']                = self._stdWgt+'*(1+(mjj>500)*(detajj>3.5))'
             weights['WW']                = self._stdWgt
             weights['WWewk']             = self._stdWgt+'*(numbLHE==0)'
@@ -969,7 +972,14 @@ class ShapeFactory:
               weights['CHITOP-Top']        = self._stdWgt+'*('+hwwinfo.massSelections(mass)['vbf-selection-top']+')'
             if (sel == 'vbf-shape-fish') :
               weights['CHITOP-Top']        = self._stdWgt+'*('+hwwinfo.massSelections(mass)['vbf-selection-fish-top']+')'
+            weights['TopPt0']             = self._stdWgt+'*(((abs(jeteta1)<abs(jeteta2))*(jetpt1)+((abs(jeteta1)>=abs(jeteta2))*(jetpt2)))<70)'
+            weights['TopPt1']             = self._stdWgt+'*(((abs(jeteta1)<abs(jeteta2))*(jetpt1)+((abs(jeteta1)>=abs(jeteta2))*(jetpt2)))>=70)'
 
+            if (var != 1) : # only if it's shape and not cut based
+              weights['TopPt0']             = self._stdWgt+'*(((abs(jeteta1)<abs(jeteta2))*(jetpt1)+((abs(jeteta1)>=abs(jeteta2))*(jetpt2)))<50)'
+              weights['TopPt1']       = self._stdWgt+'*(((abs(jeteta1)<abs(jeteta2))*(jetpt1)+((abs(jeteta1)>=abs(jeteta2))*(jetpt2)))>=50)*(((abs(jeteta1)<abs(jeteta2))*(jetpt1)+((abs(jeteta1)>=abs(jeteta2))*(jetpt2)))<70)'
+            weights['TopPt2']             =  self._stdWgt+'*(((abs(jeteta1)<abs(jeteta2))*(jetpt1)+((abs(jeteta1)>=abs(jeteta2))*(jetpt2)))>=70)*(((abs(jeteta1)<abs(jeteta2))*(jetpt1)+((abs(jeteta1)>=abs(jeteta2))*(jetpt2)))<100)'
+            weights['TopPt3']             = self._stdWgt+'*(((abs(jeteta1)<abs(jeteta2))*(jetpt1)+((abs(jeteta1)>=abs(jeteta2))*(jetpt2)))>=100)'
 
         if var in ['bdts','bdtl']:
             weights['WW']       = self._stdWgt+'*2*(event%2 == 0)'
@@ -1303,7 +1313,7 @@ if __name__ == '__main__':
               for s in opt.skipSyst:
                 print 'skipping systematics: ',s
                 systematics.pop(s)
-  
+
               systByWeight = {}
               # use only leptonEfficiency or muonEfficiency+electronEfficiency
               # skipSyst = ['leptonEfficiency_down', 'leptonEfficiency_up']
@@ -1313,22 +1323,22 @@ if __name__ == '__main__':
               systByWeight['muonEfficiency_up']   = 'effWMuUp/effW'
               systByWeight['electronEfficiency_down'] = 'effWElDown/effW'
               systByWeight['electronEfficiency_up']   = 'effWElUp/effW'
-                                      
+
               systByWeight['puW_down'] = 'puWup/puW'
               systByWeight['puW_up']   = 'puWdown/puW'
-  
+
               factory._systByWeight = systByWeight
-  
-              processMask = ['ggH', 'ggH_ALT',  'qqH',  'qqH_ALT', 'wzttH', 'ZH', 'WH', 'ttH', 'ggWW', 'Top', 'WW', 'VV', 'VgS', 'Vg', 'DYTT', 'Other', 'VVV', 'WWewk', 'CHITOP-Top' , 'ggH_SM', 'qqH_SM', 'wzttH_SM' , 'WH_SM','ZH_SM','ttH_SM']
-  
+
+              processMask = ['ggH', 'ggH_ALT',  'qqH',  'qqH_ALT', 'wzttH', 'ZH', 'WH', 'ttH', 'ggWW', 'Top', 'TopPt0', 'TopPt1', 'TopPt2', 'TopPt3', 'WW', 'VV', 'VgS', 'Vg', 'DYTT', 'Other', 'VVV', 'WWewk', 'CHITOP-Top' , 'ggH_SM', 'qqH_SM', 'wzttH_SM' , 'WH_SM','ZH_SM','ttH_SM']
+
               if '2011' in opt.dataset:
                   processMask = ['ggH', 'ggH_ALT', 'qqH', 'qqH_ALT', 'VH' , 'wzttH', 'ZH', 'WH', 'ttH', 'ggWW', 'Top', 'WW', 'VV', 'CHITOP-Top', 'ggH_SM', 'qqH_SM','VH_SM', 'wzttH_SM', 'ZH_SM', 'WH_SM', 'ttH_SM']
-  
+
               systMasks = dict([(s,processMask[:]) for s in systematics])
               systDirs  = dict([(s,systInputDir if s not in systByWeight else 'templates/' ) for s in systematics])
-  
-              print systDirs
-  
+              #systDirs  = dict([(s,systInputDir if s not in systByWeight else 'nominals/' ) for s in systematics])
+              print "systDirs = ",systDirs
+
               for syst,mask in systMasks.iteritems():
                   if opt.doSyst and opt.doSyst != syst:
                       continue

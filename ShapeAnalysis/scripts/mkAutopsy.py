@@ -104,7 +104,7 @@ class Coroner(object):
     #---
     def _build(self):
         '''Fill up the objects'''
-        
+
         hdata = self._MB.getShape(self._bin,'data_obs')
 
         # the Xaxis label has to be cheked
@@ -816,9 +816,14 @@ def fitAndPlot( dcpath, opts ):
         # 3.1 go to the tmp dir 
         here = os.getcwd()
         os.chdir(mlfdir)
-        # 3.2 
-        mlcmd = 'combine -M MaxLikelihoodFit --saveNormalizations '+os.path.join(here,wspath)
+        # 3.2
+        mlcmd = ' '
+        if opts.injectionSignal == False :
+          mlcmd = 'combine -M MaxLikelihoodFit --saveNormalizations '+os.path.join(here,wspath)
+        else :
+          mlcmd = 'combine --expectSignal=1 -t -1 -M MaxLikelihoodFit --saveNormalizations '+os.path.join(here,wspath)
         logging.debug(mlcmd)
+        print 'do: ',mlcmd
         print 'Fitting the workspace...',
         sys.stdout.flush()
         if opts.fit: os.system(mlcmd)
@@ -968,6 +973,7 @@ def printshapes( shapes, errs, mode, opts, bin, signals, processes ):
     for p in processes:
         if p not in shapes: continue
         if p in signals:
+            print "p = ",p
             plot.addsig(p,shapes2plot[p], label=plot.properties[p]['label']+'^{ %.0f}'%opt.mass)
         else:
             plot.addbkg(p,shapes2plot[p])
@@ -1039,16 +1045,17 @@ def printshapes( shapes, errs, mode, opts, bin, signals, processes ):
 #---
 def addOptions( parser ):
     
-    parser.add_option('-o' , '--output' , dest='output' , help='Output directory (%default)'     , default=None)
-    parser.add_option('-x' , '--xlabel' , dest='xlabel' , help='X-axis label'                    , default='')
-    parser.add_option('-r' , '--ratio'  , dest='ratio'  , help='Plot the data/mc ration'         , default=True       , action='store_false')
-    parser.add_option('--errormode'     , dest='errmode', help='Algo to calculate the errors'    , default='errorband')
-    parser.add_option('--nofit'         , dest='fit'    , help='Don\'t fit'                      , default=True       , action='store_false')
-    parser.add_option('--clean'         , dest='clean'  , help='Clean the ws (regenerate)'       , default=False      , action='store_true')
-    parser.add_option('--dump'          , dest='dump'   , help='Dump the histograms to file'     , default=None)
-    parser.add_option('--tmpdir'        , dest='tmpdir' , help='Temporary directory'             , default=None)
-    parser.add_option('--usefit'        , dest='usefit' , help='Do not fit, use an external file', default=None)
-    parser.add_option('--stretch'       , dest='stretch', help='Stretch'                         , default=None, type='float')
+    parser.add_option('-o' , '--output'    , dest='output'         , help='Output directory (%default)'     , default=None)
+    parser.add_option('-x' , '--xlabel'    , dest='xlabel'         , help='X-axis label'                    , default='')
+    parser.add_option('-r' , '--ratio'     , dest='ratio'          , help='Plot the data/mc ration'         , default=True       , action='store_false')
+    parser.add_option('--errormode'        , dest='errmode'        , help='Algo to calculate the errors'    , default='errorband')
+    parser.add_option('--nofit'            , dest='fit'            , help='Don\'t fit'                      , default=True       , action='store_false')
+    parser.add_option('--clean'            , dest='clean'          , help='Clean the ws (regenerate)'       , default=False      , action='store_true')
+    parser.add_option('--dump'             , dest='dump'           , help='Dump the histograms to file'     , default=None)
+    parser.add_option('--tmpdir'           , dest='tmpdir'         , help='Temporary directory'             , default=None)
+    parser.add_option('--usefit'           , dest='usefit'         , help='Do not fit, use an external file', default=None)
+    parser.add_option('--stretch'          , dest='stretch'        , help='Stretch'                         , default=None, type='float')
+    parser.add_option('--injectionSignal'  , dest='injectionSignal', help='Signal injection'                , default=False     , action='store_true')
 
     hwwtools.addOptions(parser)
     hwwtools.loadOptDefaults(parser)

@@ -342,7 +342,7 @@ class wwewk:
 
     _sqrtDependent2012 = [
         'mll>12 ',
-        '( !sameflav ||  (pfmet > 60.0))',
+        '( !sameflav ||  (pfmet > 45.0))',
     ]
 
     _massindep = [
@@ -357,15 +357,15 @@ class wwewk:
         'bveto_ip==1',
         'nbjettche==0',
         'njet>=2',
-        'njetvbf==0',
+        #'njetvbf==0',
         '(dphilljetjet<pi/180.*165. || !sameflav )',
 # mild VBF
-        'mjj>200',
-        'detajj>1.0',
+        'mjj>250',
+        'detajj>0.5',
     ]
 
     _cut = [
-        'WWewkMVABDTG > 0.70'
+        'WWewkMVABDTG > 0.55'
     ]
 
     wwewkShape  = _massindep + _sqrtDependent2012
@@ -433,9 +433,11 @@ categoryCuts['0j'] = wwcuts.zerojet
 categoryCuts['1j'] = wwcuts.onejet
 categoryCuts['2jex'] = wwcuts.twojet
 #categoryCuts['2j']   = wwcuts.vbf        # 2 or 3 jets, but the third not between the first two in \eta
-categoryCuts['2j']   = wwcuts.loosevbf   # 2 or 3 jets
+#categoryCuts['2j']   = wwcuts.loosevbf   # 2 or 3 jets  ----> changed! Need to propagate to some analysis? VBF cuts already applied in specific VBF selections!
+categoryCuts['2j']   = wwcuts.vh         # >=2 jets
 categoryCuts['vh2j'] = wwcuts.vh         # >=2 jets
 categoryCuts['whsc'] = wwcuts.atleastonejet     # >=1 jets
+categoryCuts['2jtche05'] = wwcuts.vh         # >=2 jets
 
 
 flavorCuts = {}
@@ -479,6 +481,10 @@ channels['mm_2j'] = ('2j','mm')
 channels['ee_2j'] = ('2j','ee')
 channels['em_2j'] = ('2j','em')
 channels['me_2j'] = ('2j','me')
+
+channels['of_2jtche05'] = ('2jtche05','of')
+channels['sf_2jtche05'] = ('2jtche05','sf')
+
 
 channels['2jex']    = ('2jex','ll')
 channels['of_2jex'] = ('2jex','of')
