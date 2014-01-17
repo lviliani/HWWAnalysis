@@ -579,6 +579,7 @@ def massSelections(mass):
     
     sel['shape-lomass'] = 'mth>%f && mth<%f && mll<%f '%(mthmin_2dlomass,mthmax_2dlomass,mllmax_2dlomass)
     sel['shape-himass'] = 'mth>80 && mth<380 && mll<450 && pt1>50'
+    sel['shape-vhimass']= 'mth>80 && pt1>50'
     
     sel['vbf-level']     = ' && '.join(vbfcuts.vbfcut)
     sel['vbf2011-level'] = ' && '.join(vbfcuts.vbf2011cut)
@@ -637,6 +638,17 @@ def massSelections(mass):
     sel['shapebtag-selection']    = sel['wwbtag-common'].replace("zveto==1", "zveto>-1").replace(wwcuts.met, wwcuts.mpmet)+' && '+sel['shape-lomass'] if mass <=250 else sel['wwbtag-common'].replace("zveto==1", "zveto>-1").replace(wwcuts.met, wwcuts.mpmet)+' && '+sel['shape-himass']
     sel['shape2011-selection']     = sel['ww2011-common'].replace("zveto==1", "zveto>-1")+' && '+sel['shape-lomass'] if mass <=250 else sel['ww2011-common'].replace("zveto==1","zveto>-1")+' && '+sel['shape-himass']
     sel['shape2011btag-selection'] = sel['ww2011btag-common'].replace("zveto==1", "zveto>-1")+' && '+sel['shape-lomass'] if mass <=250 else sel['ww2011btag-common'].replace("zveto==1","zveto>-1")+' && '+sel['shape-himass']
+
+    # EWK Singlet 0/1-jet (2012 data)
+    if   mass <= 250 : sel['shape-ewks-selection'] = sel['ww-common'].replace("zveto==1", "zveto>-1").replace(wwcuts.met, wwcuts.mpmet)+' && '+sel['shape-lomass'] + ' && pt2>30.&&mth>80'
+    elif mass <= 600 : sel['shape-ewks-selection'] = sel['ww-common'].replace("zveto==1", "zveto>-1").replace(wwcuts.met, wwcuts.mpmet)+' && '+sel['shape-himass']
+    else             : sel['shape-ewks-selection'] = sel['ww-common'].replace("zveto==1", "zveto>-1").replace(wwcuts.met, wwcuts.mpmet)+' && '+sel['shape-vhimass']
+
+    # EWK Singlet 0/1-jet (2011 data)
+    if   mass <= 250 : sel['shape2011-ewks-selection'] = sel['ww2011-common'].replace("zveto==1","zveto>-1")+' && '+sel['shape-lomass'] + ' && pt2>30.&&mth>80'
+    elif mass <= 600 : sel['shape2011-ewks-selection'] = sel['ww2011-common'].replace("zveto==1","zveto>-1")+' && '+sel['shape-himass']
+    else             : sel['shape2011-ewks-selection'] = sel['ww2011-common'].replace("zveto==1","zveto>-1")+' && '+sel['shape-vhimass']
+
 
     sel['shapehcp-selection']      =  sel['shape-selection'].replace('ptll>%f'%ptllCut,'ptll>45').replace('mth>%f'%mthmin_2dlomass,'mth>80')
     sel['shapehcp2011-selection']  =  sel['shape2011-selection'].replace('ptll>%f'%ptllCut,'ptll>45').replace('mth>%f'%mthmin_2dlomass,'mth>80')
