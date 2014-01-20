@@ -59,7 +59,7 @@ class wwcutsB:
     zerojet = 'njet == 0'
     onejet  = 'njet == 1'
     vbf     = '(njet >= 2 && njet <= 3 && (jetpt3 <= 30 || !(jetpt3 > 30 && (  (jeteta1-jeteta3 > 0 && jeteta2-jeteta3 < 0) || (jeteta2-jeteta3 > 0 && jeteta1-jeteta3 < 0))))) '
-
+    atleastonejet = 'njet >= 1'
 
 class wwcuts:
     wwcommon = [
@@ -124,12 +124,15 @@ class wwcuts:
                 
     zerojet = 'njet == 0'
     onejet  = 'njet == 1'
+    twojet  = 'njet == 2'
     loosevbf= '(njet >= 2 && njet <= 3) '
     vbf     = '(njet >= 2 && njet <= 3 && (jetpt3 <= 30 || !(jetpt3 > 30 && (  (jeteta1-jeteta3 > 0 && jeteta2-jeteta3 < 0) || (jeteta2-jeteta3 > 0 && jeteta1-jeteta3 < 0))))) '
     vbf2011 = '(njet >= 2 && njet <= 3 && njetvbf == 0) '
     vh      = '(njet >= 2)'
+    atleastonejet = '(njet >= 1)'
 
-# da rifare
+
+# vbf
 class vbfcuts:
     _massindep = [
         'abs(eta1 - (jeteta1+jeteta2)/2)/detajj < 0.5',
@@ -236,27 +239,59 @@ class whsccuts:
         '( !sameflav ||  (pfmet > 35.0))',
     ]
 
+    # sensitivity to 20x SM
+    #_massindep = [
+        #'trigger==1.',
+        #'((ch1*ch2)>0 && pt1>20 && pt2>10)',
+        #'zveto==1',
+        ##'(mjj+(mtw1>mtw2)*mtw2+(mtw1<mtw2)*mtw1)<180',
+        #'pt2<35',#'pt2<40',
+        ##'(mjj+mtw1+mtw2)>180',
+        #'abs(eta1-eta2) < 2.0',
+        ##'(mtw2*(mtw1>mtw2)+mtw1*(mtw1<mtw2))<100',
+        #'(mtw1*(mtw1>mtw2)+mtw2*(mtw1<mtw2))>70',
+        #'(mtw1*(mtw1>mtw2)+mtw2*(mtw1<mtw2))<130',
+        #'mjj>50',
+        #'mjj<100',
+        #'pfmet>20.',
+        #'mpmet>20.',
+        #'bveto_mu==1 ',
+        #'nextra==0' ,
+        #'bveto_ip==1',
+        #'nbjettche==0',
+        #'njet>=2',
+    #]
+
+    # x12 SM
     _massindep = [
         'trigger==1.',
         '((ch1*ch2)>0 && pt1>20 && pt2>10)',
         'zveto==1',
-        #'(mjj+(mtw1>mtw2)*mtw2+(mtw1<mtw2)*mtw1)<180',
-        'pt2<35',#'pt2<40',
-        #'(mjj+mtw1+mtw2)>180',
+        'pt2>15 && ((channel != 1) || pt2 > 20)',
         'abs(eta1-eta2) < 2.0',
-        #'(mtw2*(mtw1>mtw2)+mtw1*(mtw1<mtw2))<100',
-        '(mtw1*(mtw1>mtw2)+mtw2*(mtw1<mtw2))>70',
-        '(mtw1*(mtw1>mtw2)+mtw2*(mtw1<mtw2))<130',
-        'mjj>50',
-        'mjj<100',
+
+        '(mtw1*(mtw1>mtw2)+mtw2*(mtw1<mtw2))>50', #   --> these selections seem to distort the mllijj peak!
+        '(mtw1*(mtw1>mtw2)+mtw2*(mtw1<mtw2))<160',
+        '(mtw2*(mtw1>mtw2)+mtw1*(mtw1<mtw2))>10',
+
+        #'(mtw1*(mtw1>mtw2)+mtw2*(mtw1<mtw2))>70',
+        #'(mtw1*(mtw1>mtw2)+mtw2*(mtw1<mtw2))<130',
+        #'(mtw2*(mtw1>mtw2)+mtw1*(mtw1<mtw2))>20',
+        #'(mjj*(njet>=2))<100',
+
+        '(mjj*(njet>=2))<110',
         'pfmet>20.',
         'mpmet>20.',
         'bveto_mu==1 ',
         'nextra==0' ,
         'bveto_ip==1',
         'nbjettche==0',
-        'njet>=2',
+        'njet>=1',
+        #'minmlijj<400',
+        'mindphimlijj<400',
     ]
+
+
 
     #whsccut      = _massindep
     whsccut      = _massindep + _sqrtDependent2012
@@ -302,16 +337,107 @@ class ggH2j:
 
 
 
-masses = [110, 115, 120, 125, 130, 135, 140, 145, 150, 155, 160, 170, 180, 190, 200, 250, 300, 350, 400, 450, 500, 550, 600]
+# WW 2j ewk
+class wwewk:
+
+    _sqrtDependent2012 = [
+        'mll>12 ',
+        '( !sameflav ||  (pfmet > 45.0))',
+    ]
+
+    _massindep = [
+        'trigger==1.',
+        '((ch1*ch2)<0 && pt1>20 && pt2>10)',
+        'zveto==1',
+        'pfmet>20.',
+        'mpmet>20.',
+        'mll>50',
+        'bveto_mu==1 ',
+        'nextra==0' ,
+        'bveto_ip==1',
+        'nbjettche==0',
+        'njet>=2',
+        #'njetvbf==0',
+        '(dphilljetjet<pi/180.*165. || !sameflav )',
+# mild VBF
+        'mjj>250',
+        'detajj>0.5',
+    ]
+
+    _cut = [
+        'WWewkMVABDTG > 0.55'
+    ]
+
+    wwewkShape  = _massindep + _sqrtDependent2012
+    wwewkCut    = _massindep + _sqrtDependent2012 + _cut
+
+
+# WW 2j
+class ww2j:
+
+    _sqrtDependent2012 = [
+        'mll>12 ',
+        '( !sameflav ||  (pfmet > 60.0))',
+    ]
+
+    _massindep = [
+        'trigger==1.',
+        '((ch1*ch2)<0 && pt1>20 && pt2>10)',
+        'zveto==1',
+        'pfmet>20.',
+        'mpmet>20.',
+        'mll>70',
+        'bveto_mu==1 ',
+        'nextra==0' ,
+        'bveto_ip==1',
+        'nbjettche==0',
+        'njet>=2',
+        '(mth>40 || sameflav)',
+        'abs(jeteta1)<2.5',
+        'abs(jeteta2)<2.5',
+        'jetbjpb1<0.5',
+        'jetbjpb2<0.5',
+        '(dphilljetjet<pi/180.*165. || !sameflav )',
+    ]
+
+    ww2jCut    = _massindep + _sqrtDependent2012
+
+
+
+
+class ww:
+
+    _massindep = [
+        'trigger==1.',
+        '((ch1*ch2)<0 && pt1>20 && pt2>20)',
+        'nextra==0' ,
+        'pfmet>20.',
+        'mll>12',
+        'mpmet>20.  && ( !sameflav || ( (njet!=0 || dymva1>0.88) && (njet!=1 || dymva1>0.84) && ( njet==0 || njet==1 || (pfmet > 45.0)) ) ) ',
+        'zveto==1',
+        '(njet >=2 || (dphiveto || ! sameflav))',
+        'bveto_mu==1 ',
+        'bveto_ip==1',
+        'nbjettche==0',
+        'ptll>30 && (!sameflav || ptll>45) ',
+    ]
+
+    wwCut    = _massindep
+
+
+masses = [110, 115, 120, 125, 130, 135, 140, 145, 150, 155, 160, 170, 180, 190, 200, 250, 300, 350, 400, 450, 500, 550, 600, 700, 800, 900, 1000]
 #masses = [110, 115, 120, 125, 130, 135, 140, 150, 155, 160, 170, 180, 190, 200, 250, 300, 350, 400, 450, 500, 550, 600]  
 
 categoryCuts = {}
 categoryCuts['0j'] = wwcuts.zerojet
 categoryCuts['1j'] = wwcuts.onejet
+categoryCuts['2jex'] = wwcuts.twojet
 #categoryCuts['2j']   = wwcuts.vbf        # 2 or 3 jets, but the third not between the first two in \eta
-categoryCuts['2j']   = wwcuts.loosevbf   # 2 or 3 jets
+#categoryCuts['2j']   = wwcuts.loosevbf   # 2 or 3 jets  ----> changed! Need to propagate to some analysis? VBF cuts already applied in specific VBF selections!
+categoryCuts['2j']   = wwcuts.vh         # >=2 jets
 categoryCuts['vh2j'] = wwcuts.vh         # >=2 jets
-categoryCuts['whsc'] = wwcuts.vh         # >=2 jets
+categoryCuts['whsc'] = wwcuts.atleastonejet     # >=1 jets
+categoryCuts['2jtche05'] = wwcuts.vh         # >=2 jets
 
 
 flavorCuts = {}
@@ -324,6 +450,10 @@ flavorCuts['sf']  = 'channel < 1.5'
 flavorCuts['of']  = 'channel > 1.5' 
 
 flavors = {}
+flavors['mm']=['mm']
+flavors['ee']=['ee']
+flavors['em']=['em']
+flavors['me']=['me']
 flavors['sf']=['mm','ee']
 flavors['of']=['em','me']
 flavors['ll']=['mm','ee','em','me']
@@ -335,10 +465,35 @@ channels['of_0j'] = ('0j','of')
 channels['of_1j'] = ('1j','of')
 channels['sf_0j'] = ('0j','sf')
 channels['sf_1j'] = ('1j','sf')
+channels['mm_0j'] = ('0j','mm')
+channels['mm_1j'] = ('1j','mm')
+channels['ee_0j'] = ('0j','ee')
+channels['ee_1j'] = ('1j','ee')
+channels['em_0j'] = ('0j','em')
+channels['em_1j'] = ('1j','em')
+channels['me_0j'] = ('0j','me')
+channels['me_1j'] = ('1j','me')
 
 channels['2j']    = ('2j','ll')
 channels['of_2j'] = ('2j','of')
 channels['sf_2j'] = ('2j','sf')
+channels['mm_2j'] = ('2j','mm')
+channels['ee_2j'] = ('2j','ee')
+channels['em_2j'] = ('2j','em')
+channels['me_2j'] = ('2j','me')
+
+channels['of_2jtche05'] = ('2jtche05','of')
+channels['sf_2jtche05'] = ('2jtche05','sf')
+
+
+channels['2jex']    = ('2jex','ll')
+channels['of_2jex'] = ('2jex','of')
+channels['sf_2jex'] = ('2jex','sf')
+channels['mm_2jex'] = ('2jex','mm')
+channels['ee_2jex'] = ('2jex','ee')
+channels['em_2jex'] = ('2jex','em')
+channels['me_2jex'] = ('2jex','me')
+
 
 channels['of_vh2j'] = ('vh2j','of')
 channels['sf_vh2j'] = ('vh2j','sf')
@@ -352,30 +507,32 @@ channels['ll_whsc'] = ('whsc','ll')
 # |_|  |_\__,_/__/__/  \___\_,_|\__/__/
 #
 # smurfs index              1     1     3     6     8     9    10    10    11    11    12    13    14    15    16   20     21    22    23    24    25    26    27
-# masses              = [ 110 , 115 , 120 , 125 , 130 , 135 , 140 , 145 , 150 , 155 , 160 , 170 , 180 , 190 , 200 , 250 , 300 , 350 , 400 , 450 , 500 , 550 , 600]
-#  normal index             0     1     2     3     4     5     6     7     8     9    10    11    12    13    14    15    16    17    18    19    20    21    22
+# masses              = [ 110 , 115 , 120 , 125 , 130 , 135 , 140 , 145 , 150 , 155 , 160 , 170 , 180 , 190 , 200 , 250 , 300 , 350 , 400 , 450 , 500 , 550 , 600 , 700 , 800 , 900 ,1000]
+#  normal index             0     1     2     3     4     5     6     7     8     9    10    11    12    13    14    15    16    17    18    19    20    21    22    23    24    25    26
 
 
 #  normal index             1     2     3     4     5     6     7     8     9    10    11    12    13    14    15    16    17    18    19    20    21    22    23
 
 cutmap = {}
-cutmap['mtmin_vh']    = [ 60  , 60  , 60  , 60  , 60  , 60  , 60  ,  60 ,  60 ,  60 ,  60 ,  60 ,  70 ,  70 ,  70 ,  70 ,  70 ,  70 ,  70 ,  70 ,  70 ,  70 ,  70 ]
-cutmap['mllmax_vh']   = [ 60  , 60  , 60  , 60  , 60  , 60  , 60  ,  60 ,  60 ,  60 ,  60 ,  60 ,  80 ,  80 ,  80 ,  80 ,  80 ,  80 ,  80 ,  80 ,  80 ,  80 ,  80 ]
-cutmap['mllmin_vh']   = [ 12  , 12  , 12  , 12  , 12  , 12  , 20  ,  20 ,  20 ,  20 ,  20 ,  20 ,  20 ,  20 ,  20 ,  20 ,  20 ,  20 ,  20 ,  20 ,  20 ,  20 ,  20 ]
-cutmap['drllmax_vh']  = [ 1.5 , 1.5 , 1.5 , 1.5 , 1.5 , 1.5 , 1.6 , 1.6 , 1.7 , 1.8 , 1.9 , 2.0 , 2.0 , 2.0 , 2.0 , 2.0 , 2.0 , 2.0 , 2.0 , 2.0 , 2.0 , 2.0 , 2.0 ]
+cutmap['mtmin_vh']    = [ 60  , 60  , 60  , 60  , 60  , 60  , 60  ,  60 ,  60 ,  60 ,  60 ,  60 ,  70 ,  70 ,  70 ,  70 ,  70 ,  70 ,  70 ,  70 ,  70 ,  70 ,  70 ,  70 ,  70 ,  70 ,  70 ]
+cutmap['mllmax_vh']   = [ 60  , 60  , 60  , 60  , 60  , 60  , 60  ,  60 ,  60 ,  60 ,  60 ,  60 ,  80 ,  80 ,  80 ,  80 ,  80 ,  80 ,  80 ,  80 ,  80 ,  80 ,  80 ,  80 ,  80 ,  80 ,  80 ]
+cutmap['mllmin_vh']   = [ 12  , 12  , 12  , 12  , 12  , 12  , 20  ,  20 ,  20 ,  20 ,  20 ,  20 ,  20 ,  20 ,  20 ,  20 ,  20 ,  20 ,  20 ,  20 ,  20 ,  20 ,  20 ,  20 ,  20 ,  20 ,  20 ]
+cutmap['drllmax_vh']  = [ 1.5 , 1.5 , 1.5 , 1.5 , 1.5 , 1.5 , 1.6 , 1.6 , 1.7 , 1.8 , 1.9 , 2.0 , 2.0 , 2.0 , 2.0 , 2.0 , 2.0 , 2.0 , 2.0 , 2.0 , 2.0 , 2.0 , 2.0 , 2.0 , 2.0 , 2.0 , 2.0 ]
 
-cutmap['mllmax_bdt']  = [ 70  , 70  , 70  , 80  , 80  , 90  , 90  , 100 , 100 , 100 , 100 , 100 , 110 , 120 , 130 , 250 , 300 , 350 , 400 , 450 , 500 , 550 , 600 ]
-cutmap['pt1min']      = [ 20  , 20  , 20  , 23  , 25  , 25  , 25  , 25  , 27  , 27  , 30  , 34  , 36  , 38  , 40  , 55  , 70  , 80  , 90  , 110 , 120 , 130 , 140 ]
-cutmap['pt2min']      = [ 10  , 10  , 10  , 10  , 10  , 12  , 15  , 15  , 25  , 25  , 25  , 25  , 25  , 25  , 25  , 25  , 25  , 25  , 25  , 25  , 25  , 25  , 25  ]
-cutmap['mllmax']      = [ 40  , 40  , 40  , 43  , 45  , 45  , 45  , 45  , 50  , 50  , 50  , 50  , 60  , 80  , 90  , 150 , 200 , 250 , 300 , 350 , 400 , 450 , 500 ]
-cutmap['dphimax']     = [ 115 , 115 , 115 , 100 , 90  , 90  , 90  , 90  , 90  , 90  , 60  , 60  , 70  , 90  , 100 , 140 , 175 , 175 , 175 , 175 , 175 , 175 , 175 ]
+cutmap['mllmax_bdt']  = [ 70  , 70  , 70  , 80  , 80  , 90  , 90  , 100 , 100 , 100 , 100 , 100 , 110 , 120 , 130 , 250 , 300 , 350 , 400 , 450 , 500 , 550 , 600 , 700 , 800 , 900 ,1000 ]
+cutmap['pt1min']      = [ 20  , 20  , 20  , 23  , 25  , 25  , 25  , 25  , 27  , 27  , 30  , 34  , 36  , 38  , 40  , 55  , 70  , 80  , 90  , 110 , 120 , 130 , 140 , 140 , 140 , 140 , 150 ]
+cutmap['pt2min']      = [ 10  , 10  , 10  , 10  , 10  , 12  , 15  , 15  , 25  , 25  , 25  , 25  , 25  , 25  , 25  , 25  , 25  , 25  , 25  , 25  , 25  , 25  , 25  , 25  , 25  , 25  , 25  ]
+cutmap['mllmax']      = [ 40  , 40  , 40  , 43  , 45  , 45  , 45  , 45  , 50  , 50  , 50  , 50  , 60  , 80  , 90  , 150 , 200 , 250 , 300 , 350 , 400 , 450 , 500 , 600 , 700 , 800 , 900 ]
+cutmap['dphimax']     = [ 115 , 115 , 115 , 100 , 90  , 90  , 90  , 90  , 90  , 90  , 60  , 60  , 70  , 90  , 100 , 140 , 175 , 175 , 175 , 175 , 175 , 175 , 175 , 175 , 175 , 175 , 175 ]
 
-cutmap['mtmin']       = [ 80  , 80  , 80  , 80  , 80  , 80  , 80  , 80  , 80  , 80  , 90  , 110 , 120 , 120 , 120 , 120 , 120 , 120 , 120 , 120 , 120 , 120 , 120 ]
-cutmap['mtmax']       = [ 110 , 110 , 120 , 123 , 125 , 128 , 130 , 140 , 150 , 155 , 160 , 170 , 180 , 190 , 200 , 250 , 300 , 350 , 400 , 450 , 500 , 550 , 600 ]
+cutmap['mtmin']       = [ 80  , 80  , 80  , 80  , 80  , 80  , 80  , 80  , 80  , 80  , 90  , 110 , 120 , 120 , 120 , 120 , 120 , 120 , 120 , 120 , 120 , 120 , 120 , 120 , 120 , 120 , 120 ]
+cutmap['mtmax']       = [ 110 , 110 , 120 , 123 , 125 , 128 , 130 , 140 , 150 , 155 , 160 , 170 , 180 , 190 , 200 , 250 , 300 , 350 , 400 , 450 , 500 , 550 , 600 , 700 , 800 , 900 ,1000 ]
 
 # for whsc                                                                                                                      [- random numbers from here on, I stop at 300 GeV
-cutmap['mlljjmin']    = [ 90  , 95  , 100  ,105  ,110  ,110 , 110 , 110 , 110 , 115 , 120 , 130 , 130 , 130 , 140 , 140 , 150 , 120 , 120 , 120 , 120 , 120 , 120 ]
-cutmap['mlljjmax']    = [ 140 , 145 , 150 , 165 , 170 , 175 , 175 , 175 , 180 , 185 , 190 , 200 , 210 , 220 , 220 , 270 , 320 , 190 , 190 , 190 , 190 , 190 , 190 ]
+#cutmap['mlljjmin']    = [ 90  , 95  , 100  ,105  ,110  ,110 , 110 , 110 , 110 , 115 , 120 , 130 , 130 , 130 , 140 , 140 , 150 , 120 , 120 , 120 , 120 , 120 , 120 ]
+cutmap['mlljjmin']    = [ 50  , 55  ,  60  , 65  , 70  , 75 ,  80 ,  80 ,  80 ,  85 ,  90 ,  95 , 100 , 120 , 140 , 140 , 150 , 120 , 120 , 120 , 120 , 120 , 120 , 120 , 120 , 120 , 120 ]
+cutmap['mlljjmax']    = [ 140 , 145 , 150 , 165 , 170 , 175 , 175 , 175 , 180 , 185 , 190 , 200 , 210 , 220 , 220 , 270 , 320 , 190 , 190 , 190 , 190 , 190 , 190 , 190 , 190 , 190 , 190 ]
+#cutmap['mlljjmax']    = [ 145 , 150 , 180 , 180 , 180 , 180 , 185 , 185 , 185 , 190 , 190 , 200 , 210 , 220 , 220 , 270 , 320 , 190 , 190 , 190 , 190 , 190 , 190 ]
 
 
 # automatic conversion to radiants
@@ -428,6 +585,7 @@ def massSelections(mass):
     
     sel['shape-lomass'] = 'mth>%f && mth<%f && mll<%f '%(mthmin_2dlomass,mthmax_2dlomass,mllmax_2dlomass)
     sel['shape-himass'] = 'mth>80 && mth<380 && mll<450 && pt1>50'
+    sel['shape-vhimass']= 'mth>80 && pt1>50'
     
     sel['vbf-level']     = ' && '.join(vbfcuts.vbfcut)
     sel['vbf2011-level'] = ' && '.join(vbfcuts.vbf2011cut)
@@ -438,6 +596,9 @@ def massSelections(mass):
     sel['ww2011btag-level'] = sel['ww2011btag-common']+'&& ptll>45'
     sel['bdt-specific'] = 'mll < {0} && (mth > {1:.0f} && mth < {2:.0f})'.format(masscuts['mllmax_bdt'], mthmin_bdt, int(mass))
 
+    #sel['ww-xsec'] = sel['ww-common'].replace(wwcuts.met, wwcuts.mpmet)+' && pt2>20 && ptll>45'
+    sel['ww-xsec'] = sel['ww-common']+' && pt2>20 && (!sameflav || ptll>45)'
+
     hwwlvl = {}
     hwwlvl['mll']    = 'mll < {0}'.format(masscuts['mllmax'])
     hwwlvl['pt1']    = 'pt1 > {0:.1f}'.format(masscuts['pt1min'])
@@ -445,6 +606,7 @@ def massSelections(mass):
     hwwlvl['dphill'] = 'dphill < {0}'.format(masscuts['dphimax'])
     hwwlvl['mth']    = '(mth > {0:.1f} && mth < {1:.1f})'.format(masscuts['mtmin'], masscuts['mtmax'])
 
+    sel['wwxsec-selection']       = sel['ww-xsec']
     sel['ww-selection']           = sel['ww-level']
     sel['wwbtag-selection']       = sel['wwbtag-level']
     sel['ww2011-selection']       = sel['ww2011-level']
@@ -482,6 +644,17 @@ def massSelections(mass):
     sel['shapebtag-selection']    = sel['wwbtag-common'].replace("zveto==1", "zveto>-1").replace(wwcuts.met, wwcuts.mpmet)+' && '+sel['shape-lomass'] if mass <=250 else sel['wwbtag-common'].replace("zveto==1", "zveto>-1").replace(wwcuts.met, wwcuts.mpmet)+' && '+sel['shape-himass']
     sel['shape2011-selection']     = sel['ww2011-common'].replace("zveto==1", "zveto>-1")+' && '+sel['shape-lomass'] if mass <=250 else sel['ww2011-common'].replace("zveto==1","zveto>-1")+' && '+sel['shape-himass']
     sel['shape2011btag-selection'] = sel['ww2011btag-common'].replace("zveto==1", "zveto>-1")+' && '+sel['shape-lomass'] if mass <=250 else sel['ww2011btag-common'].replace("zveto==1","zveto>-1")+' && '+sel['shape-himass']
+
+    # EWK Singlet 0/1-jet (2012 data)
+    if   mass <= 250 : sel['shape-ewks-selection'] = sel['ww-common'].replace("zveto==1", "zveto>-1").replace(wwcuts.met, wwcuts.mpmet)+' && '+sel['shape-lomass'] + ' && pt2>30.&&mth>80'
+    elif mass <= 600 : sel['shape-ewks-selection'] = sel['ww-common'].replace("zveto==1", "zveto>-1").replace(wwcuts.met, wwcuts.mpmet)+' && '+sel['shape-himass']
+    else             : sel['shape-ewks-selection'] = sel['ww-common'].replace("zveto==1", "zveto>-1").replace(wwcuts.met, wwcuts.mpmet)+' && '+sel['shape-vhimass']
+
+    # EWK Singlet 0/1-jet (2011 data)
+    if   mass <= 250 : sel['shape2011-ewks-selection'] = sel['ww2011-common'].replace("zveto==1","zveto>-1")+' && '+sel['shape-lomass'] + ' && pt2>30.&&mth>80'
+    elif mass <= 600 : sel['shape2011-ewks-selection'] = sel['ww2011-common'].replace("zveto==1","zveto>-1")+' && '+sel['shape-himass']
+    else             : sel['shape2011-ewks-selection'] = sel['ww2011-common'].replace("zveto==1","zveto>-1")+' && '+sel['shape-vhimass']
+
 
     sel['shapehcp-selection']      =  sel['shape-selection'].replace('ptll>%f'%ptllCut,'ptll>45').replace('mth>%f'%mthmin_2dlomass,'mth>80')
     sel['shapehcp2011-selection']  =  sel['shape2011-selection'].replace('ptll>%f'%ptllCut,'ptll>45').replace('mth>%f'%mthmin_2dlomass,'mth>80')
@@ -569,8 +742,15 @@ def massSelections(mass):
 
 
     # whsc #
-    sel['whsc-level']    = ' && '.join(whsccuts.whsccut) + ' && ((min(sqrt((2*pt1*cosh(eta1)+jetpt1*cosh(jeteta1)+jetpt2*cosh(jeteta2))*(2*pt1*cosh(eta1)+jetpt1*cosh(jeteta1)+jetpt2*cosh(jeteta2))-((2*pt1*sin(phi1)+jetpt1*sin(jetphi1)+jetpt2*sin(jetphi2))*(2*pt1*sin(phi1)+jetpt1*sin(jetphi1)+jetpt2*sin(jetphi2))+(2*pt1*cos(phi1)+jetpt1*cos(jetphi1)+jetpt2*cos(jetphi2))*(2*pt1*cos(phi1)+jetpt1*cos(jetphi1)+jetpt2*cos(jetphi2))+(2*pt1*(1-exp(-2*eta1))/(2.*exp(-eta1))+jetpt1*(1-exp(-2*jeteta1))/(2.*exp(-jeteta1))+jetpt2*(1-exp(-2*jeteta2))/(2.*exp(-jeteta2)))*(2*pt1*(1-exp(-2*eta1))/(2.*exp(-eta1))+jetpt1*(1-exp(-2*jeteta1))/(2.*exp(-jeteta1))+jetpt2*(1-exp(-2*jeteta2))/(2.*exp(-jeteta2))))),sqrt((2*pt2*cosh(eta2)+jetpt1*cosh(jeteta1)+jetpt2*cosh(jeteta2))*(2*pt2*cosh(eta2)+jetpt1*cosh(jeteta1)+jetpt2*cosh(jeteta2))-((2*pt2*sin(phi2)+jetpt1*sin(jetphi1)+jetpt2*sin(jetphi2))*(2*pt2*sin(phi2)+jetpt1*sin(jetphi1)+jetpt2*sin(jetphi2))+(2*pt2*cos(phi2)+jetpt1*cos(jetphi1)+jetpt2*cos(jetphi2))*(2*pt2*cos(phi2)+jetpt1*cos(jetphi1)+jetpt2*cos(jetphi2))+(2*pt2*(1-exp(-2*eta2))/(2.*exp(-eta2))+jetpt1*(1-exp(-2*jeteta1))/(2.*exp(-jeteta1))+jetpt2*(1-exp(-2*jeteta2))/(2.*exp(-jeteta2)))*(2*pt2*(1-exp(-2*eta2))/(2.*exp(-eta2))+jetpt1*(1-exp(-2*jeteta1))/(2.*exp(-jeteta1))+jetpt2*(1-exp(-2*jeteta2))/(2.*exp(-jeteta2))))))) > {0:.1f})  '.format(masscuts['mlljjmin'])   + ' && ((min(sqrt((2*pt1*cosh(eta1)+jetpt1*cosh(jeteta1)+jetpt2*cosh(jeteta2))*(2*pt1*cosh(eta1)+jetpt1*cosh(jeteta1)+jetpt2*cosh(jeteta2))-((2*pt1*sin(phi1)+jetpt1*sin(jetphi1)+jetpt2*sin(jetphi2))*(2*pt1*sin(phi1)+jetpt1*sin(jetphi1)+jetpt2*sin(jetphi2))+(2*pt1*cos(phi1)+jetpt1*cos(jetphi1)+jetpt2*cos(jetphi2))*(2*pt1*cos(phi1)+jetpt1*cos(jetphi1)+jetpt2*cos(jetphi2))+(2*pt1*(1-exp(-2*eta1))/(2.*exp(-eta1))+jetpt1*(1-exp(-2*jeteta1))/(2.*exp(-jeteta1))+jetpt2*(1-exp(-2*jeteta2))/(2.*exp(-jeteta2)))*(2*pt1*(1-exp(-2*eta1))/(2.*exp(-eta1))+jetpt1*(1-exp(-2*jeteta1))/(2.*exp(-jeteta1))+jetpt2*(1-exp(-2*jeteta2))/(2.*exp(-jeteta2))))),sqrt((2*pt2*cosh(eta2)+jetpt1*cosh(jeteta1)+jetpt2*cosh(jeteta2))*(2*pt2*cosh(eta2)+jetpt1*cosh(jeteta1)+jetpt2*cosh(jeteta2))-((2*pt2*sin(phi2)+jetpt1*sin(jetphi1)+jetpt2*sin(jetphi2))*(2*pt2*sin(phi2)+jetpt1*sin(jetphi1)+jetpt2*sin(jetphi2))+(2*pt2*cos(phi2)+jetpt1*cos(jetphi1)+jetpt2*cos(jetphi2))*(2*pt2*cos(phi2)+jetpt1*cos(jetphi1)+jetpt2*cos(jetphi2))+(2*pt2*(1-exp(-2*eta2))/(2.*exp(-eta2))+jetpt1*(1-exp(-2*jeteta1))/(2.*exp(-jeteta1))+jetpt2*(1-exp(-2*jeteta2))/(2.*exp(-jeteta2)))*(2*pt2*(1-exp(-2*eta2))/(2.*exp(-eta2))+jetpt1*(1-exp(-2*jeteta1))/(2.*exp(-jeteta1))+jetpt2*(1-exp(-2*jeteta2))/(2.*exp(-jeteta2))))))) < {0:.1f})  '.format(masscuts['mlljjmax'])
+    #sel['whsc-level']    = ' && '.join(whsccuts.whsccut) + ' && ((min(sqrt((2*pt1*cosh(eta1)+jetpt1*cosh(jeteta1)+jetpt2*cosh(jeteta2))*(2*pt1*cosh(eta1)+jetpt1*cosh(jeteta1)+jetpt2*cosh(jeteta2))-((2*pt1*sin(phi1)+jetpt1*sin(jetphi1)+jetpt2*sin(jetphi2))*(2*pt1*sin(phi1)+jetpt1*sin(jetphi1)+jetpt2*sin(jetphi2))+(2*pt1*cos(phi1)+jetpt1*cos(jetphi1)+jetpt2*cos(jetphi2))*(2*pt1*cos(phi1)+jetpt1*cos(jetphi1)+jetpt2*cos(jetphi2))+(2*pt1*(1-exp(-2*eta1))/(2.*exp(-eta1))+jetpt1*(1-exp(-2*jeteta1))/(2.*exp(-jeteta1))+jetpt2*(1-exp(-2*jeteta2))/(2.*exp(-jeteta2)))*(2*pt1*(1-exp(-2*eta1))/(2.*exp(-eta1))+jetpt1*(1-exp(-2*jeteta1))/(2.*exp(-jeteta1))+jetpt2*(1-exp(-2*jeteta2))/(2.*exp(-jeteta2))))),sqrt((2*pt2*cosh(eta2)+jetpt1*cosh(jeteta1)+jetpt2*cosh(jeteta2))*(2*pt2*cosh(eta2)+jetpt1*cosh(jeteta1)+jetpt2*cosh(jeteta2))-((2*pt2*sin(phi2)+jetpt1*sin(jetphi1)+jetpt2*sin(jetphi2))*(2*pt2*sin(phi2)+jetpt1*sin(jetphi1)+jetpt2*sin(jetphi2))+(2*pt2*cos(phi2)+jetpt1*cos(jetphi1)+jetpt2*cos(jetphi2))*(2*pt2*cos(phi2)+jetpt1*cos(jetphi1)+jetpt2*cos(jetphi2))+(2*pt2*(1-exp(-2*eta2))/(2.*exp(-eta2))+jetpt1*(1-exp(-2*jeteta1))/(2.*exp(-jeteta1))+jetpt2*(1-exp(-2*jeteta2))/(2.*exp(-jeteta2)))*(2*pt2*(1-exp(-2*eta2))/(2.*exp(-eta2))+jetpt1*(1-exp(-2*jeteta1))/(2.*exp(-jeteta1))+jetpt2*(1-exp(-2*jeteta2))/(2.*exp(-jeteta2))))))) > {0:.1f})  '.format(masscuts['mlljjmin'])   + ' && ((min(sqrt((2*pt1*cosh(eta1)+jetpt1*cosh(jeteta1)+jetpt2*cosh(jeteta2))*(2*pt1*cosh(eta1)+jetpt1*cosh(jeteta1)+jetpt2*cosh(jeteta2))-((2*pt1*sin(phi1)+jetpt1*sin(jetphi1)+jetpt2*sin(jetphi2))*(2*pt1*sin(phi1)+jetpt1*sin(jetphi1)+jetpt2*sin(jetphi2))+(2*pt1*cos(phi1)+jetpt1*cos(jetphi1)+jetpt2*cos(jetphi2))*(2*pt1*cos(phi1)+jetpt1*cos(jetphi1)+jetpt2*cos(jetphi2))+(2*pt1*(1-exp(-2*eta1))/(2.*exp(-eta1))+jetpt1*(1-exp(-2*jeteta1))/(2.*exp(-jeteta1))+jetpt2*(1-exp(-2*jeteta2))/(2.*exp(-jeteta2)))*(2*pt1*(1-exp(-2*eta1))/(2.*exp(-eta1))+jetpt1*(1-exp(-2*jeteta1))/(2.*exp(-jeteta1))+jetpt2*(1-exp(-2*jeteta2))/(2.*exp(-jeteta2))))),sqrt((2*pt2*cosh(eta2)+jetpt1*cosh(jeteta1)+jetpt2*cosh(jeteta2))*(2*pt2*cosh(eta2)+jetpt1*cosh(jeteta1)+jetpt2*cosh(jeteta2))-((2*pt2*sin(phi2)+jetpt1*sin(jetphi1)+jetpt2*sin(jetphi2))*(2*pt2*sin(phi2)+jetpt1*sin(jetphi1)+jetpt2*sin(jetphi2))+(2*pt2*cos(phi2)+jetpt1*cos(jetphi1)+jetpt2*cos(jetphi2))*(2*pt2*cos(phi2)+jetpt1*cos(jetphi1)+jetpt2*cos(jetphi2))+(2*pt2*(1-exp(-2*eta2))/(2.*exp(-eta2))+jetpt1*(1-exp(-2*jeteta1))/(2.*exp(-jeteta1))+jetpt2*(1-exp(-2*jeteta2))/(2.*exp(-jeteta2)))*(2*pt2*(1-exp(-2*eta2))/(2.*exp(-eta2))+jetpt1*(1-exp(-2*jeteta1))/(2.*exp(-jeteta1))+jetpt2*(1-exp(-2*jeteta2))/(2.*exp(-jeteta2))))))) < {0:.1f})  '.format(masscuts['mlljjmax'])
+    #sel['whsc-selection'] = sel['whsc-level']
+
+    #sel['whsc-level']    = ' && '.join(whsccuts.whsccut) + ' && ( > {0:.1f})  '.format(masscuts['mlljjmin'])   + ' && ( < {0:.1f})  '.format(masscuts['mlljjmax'])
+    #((jetpt2>20)*min(sqrt((2*pt1*cosh(eta1)+jetpt1*cosh(jeteta1)+jetpt2*cosh(jeteta2))*(2*pt1*cosh(eta1)+jetpt1*cosh(jeteta1)+jetpt2*cosh(jeteta2))-((2*pt1*sin(phi1)+jetpt1*sin(jetphi1)+jetpt2*sin(jetphi2))*(2*pt1*sin(phi1)+jetpt1*sin(jetphi1)+jetpt2*sin(jetphi2))+(2*pt1*cos(phi1)+jetpt1*cos(jetphi1)+jetpt2*cos(jetphi2))*(2*pt1*cos(phi1)+jetpt1*cos(jetphi1)+jetpt2*cos(jetphi2))+(2*pt1*(1-exp(-2*eta1))/(2.*exp(-eta1))+jetpt1*(1-exp(-2*jeteta1))/(2.*exp(-jeteta1))+jetpt2*(1-exp(-2*jeteta2))/(2.*exp(-jeteta2)))*(2*pt1*(1-exp(-2*eta1))/(2.*exp(-eta1))+jetpt1*(1-exp(-2*jeteta1))/(2.*exp(-jeteta1))+jetpt2*(1-exp(-2*jeteta2))/(2.*exp(-jeteta2))))),sqrt((2*pt2*cosh(eta2)+jetpt1*cosh(jeteta1)+jetpt2*cosh(jeteta2))*(2*pt2*cosh(eta2)+jetpt1*cosh(jeteta1)+jetpt2*cosh(jeteta2))-((2*pt2*sin(phi2)+jetpt1*sin(jetphi1)+jetpt2*sin(jetphi2))*(2*pt2*sin(phi2)+jetpt1*sin(jetphi1)+jetpt2*sin(jetphi2))+(2*pt2*cos(phi2)+jetpt1*cos(jetphi1)+jetpt2*cos(jetphi2))*(2*pt2*cos(phi2)+jetpt1*cos(jetphi1)+jetpt2*cos(jetphi2))+(2*pt2*(1-exp(-2*eta2))/(2.*exp(-eta2))+jetpt1*(1-exp(-2*jeteta1))/(2.*exp(-jeteta1))+jetpt2*(1-exp(-2*jeteta2))/(2.*exp(-jeteta2)))*(2*pt2*(1-exp(-2*eta2))/(2.*exp(-eta2))+jetpt1*(1-exp(-2*jeteta1))/(2.*exp(-jeteta1))+jetpt2*(1-exp(-2*jeteta2))/(2.*exp(-jeteta2))))))+(jetpt2<=20)*min(sqrt((2*pt1*cosh(eta1)+jetpt1*cosh(jeteta1))*(2*pt1*cosh(eta1)+jetpt1*cosh(jeteta1))-((2*pt1*sin(phi1)+jetpt1*sin(jetphi1))*(2*pt1*sin(phi1)+jetpt1*sin(jetphi1))+(2*pt1*cos(phi1)+jetpt1*cos(jetphi1))*(2*pt1*cos(phi1)+jetpt1*cos(jetphi1))+(2*pt1*(1-exp(-2*eta1))/(2.*exp(-eta1))+jetpt1*(1-exp(-2*jeteta1))/(2.*exp(-jeteta1)))*(2*pt1*(1-exp(-2*eta1))/(2.*exp(-eta1))+jetpt1*(1-exp(-2*jeteta1))/(2.*exp(-jeteta1))))),sqrt((2*pt2*cosh(eta2)+jetpt1*cosh(jeteta1))*(2*pt2*cosh(eta2)+jetpt1*cosh(jeteta1))-((2*pt2*sin(phi2)+jetpt1*sin(jetphi1))*(2*pt2*sin(phi2)+jetpt1*sin(jetphi1))+(2*pt2*cos(phi2)+jetpt1*cos(jetphi1))*(2*pt2*cos(phi2)+jetpt1*cos(jetphi1))+(2*pt2*(1-exp(-2*eta2))/(2.*exp(-eta2))+jetpt1*(1-exp(-2*jeteta1))/(2.*exp(-jeteta1)))*(2*pt2*(1-exp(-2*eta2))/(2.*exp(-eta2))+jetpt1*(1-exp(-2*jeteta1))/(2.*exp(-jeteta1)))))))
+    sel['whsc-level']    = ' && '.join(whsccuts.whsccut) + ' && ( mindphimlijj > {0:.1f})  '.format(masscuts['mlljjmin'])   + ' && ( mindphimlijj < {0:.1f})  '.format(masscuts['mlljjmax'])
+    #sel['whsc-level']    = ' && '.join(whsccuts.whsccut) + ' && ( minmlijj > {0:.1f})  '.format(masscuts['mlljjmin'])   + ' && ( minmlijj < {0:.1f})  '.format(masscuts['mlljjmax'])
     sel['whsc-selection'] = sel['whsc-level']
+
 
     sel['whsc2011-level']    = ' && '.join(whsccuts.whsccut2011) + ' && ((min(sqrt((2*pt1*cosh(eta1)+jetpt1*cosh(jeteta1)+jetpt2*cosh(jeteta2))*(2*pt1*cosh(eta1)+jetpt1*cosh(jeteta1)+jetpt2*cosh(jeteta2))-((2*pt1*sin(phi1)+jetpt1*sin(jetphi1)+jetpt2*sin(jetphi2))*(2*pt1*sin(phi1)+jetpt1*sin(jetphi1)+jetpt2*sin(jetphi2))+(2*pt1*cos(phi1)+jetpt1*cos(jetphi1)+jetpt2*cos(jetphi2))*(2*pt1*cos(phi1)+jetpt1*cos(jetphi1)+jetpt2*cos(jetphi2))+(2*pt1*(1-exp(-2*eta1))/(2.*exp(-eta1))+jetpt1*(1-exp(-2*jeteta1))/(2.*exp(-jeteta1))+jetpt2*(1-exp(-2*jeteta2))/(2.*exp(-jeteta2)))*(2*pt1*(1-exp(-2*eta1))/(2.*exp(-eta1))+jetpt1*(1-exp(-2*jeteta1))/(2.*exp(-jeteta1))+jetpt2*(1-exp(-2*jeteta2))/(2.*exp(-jeteta2))))),sqrt((2*pt2*cosh(eta2)+jetpt1*cosh(jeteta1)+jetpt2*cosh(jeteta2))*(2*pt2*cosh(eta2)+jetpt1*cosh(jeteta1)+jetpt2*cosh(jeteta2))-((2*pt2*sin(phi2)+jetpt1*sin(jetphi1)+jetpt2*sin(jetphi2))*(2*pt2*sin(phi2)+jetpt1*sin(jetphi1)+jetpt2*sin(jetphi2))+(2*pt2*cos(phi2)+jetpt1*cos(jetphi1)+jetpt2*cos(jetphi2))*(2*pt2*cos(phi2)+jetpt1*cos(jetphi1)+jetpt2*cos(jetphi2))+(2*pt2*(1-exp(-2*eta2))/(2.*exp(-eta2))+jetpt1*(1-exp(-2*jeteta1))/(2.*exp(-jeteta1))+jetpt2*(1-exp(-2*jeteta2))/(2.*exp(-jeteta2)))*(2*pt2*(1-exp(-2*eta2))/(2.*exp(-eta2))+jetpt1*(1-exp(-2*jeteta1))/(2.*exp(-jeteta1))+jetpt2*(1-exp(-2*jeteta2))/(2.*exp(-jeteta2))))))) > {0:.1f})  '.format(masscuts['mlljjmin'])   + ' && ((min(sqrt((2*pt1*cosh(eta1)+jetpt1*cosh(jeteta1)+jetpt2*cosh(jeteta2))*(2*pt1*cosh(eta1)+jetpt1*cosh(jeteta1)+jetpt2*cosh(jeteta2))-((2*pt1*sin(phi1)+jetpt1*sin(jetphi1)+jetpt2*sin(jetphi2))*(2*pt1*sin(phi1)+jetpt1*sin(jetphi1)+jetpt2*sin(jetphi2))+(2*pt1*cos(phi1)+jetpt1*cos(jetphi1)+jetpt2*cos(jetphi2))*(2*pt1*cos(phi1)+jetpt1*cos(jetphi1)+jetpt2*cos(jetphi2))+(2*pt1*(1-exp(-2*eta1))/(2.*exp(-eta1))+jetpt1*(1-exp(-2*jeteta1))/(2.*exp(-jeteta1))+jetpt2*(1-exp(-2*jeteta2))/(2.*exp(-jeteta2)))*(2*pt1*(1-exp(-2*eta1))/(2.*exp(-eta1))+jetpt1*(1-exp(-2*jeteta1))/(2.*exp(-jeteta1))+jetpt2*(1-exp(-2*jeteta2))/(2.*exp(-jeteta2))))),sqrt((2*pt2*cosh(eta2)+jetpt1*cosh(jeteta1)+jetpt2*cosh(jeteta2))*(2*pt2*cosh(eta2)+jetpt1*cosh(jeteta1)+jetpt2*cosh(jeteta2))-((2*pt2*sin(phi2)+jetpt1*sin(jetphi1)+jetpt2*sin(jetphi2))*(2*pt2*sin(phi2)+jetpt1*sin(jetphi1)+jetpt2*sin(jetphi2))+(2*pt2*cos(phi2)+jetpt1*cos(jetphi1)+jetpt2*cos(jetphi2))*(2*pt2*cos(phi2)+jetpt1*cos(jetphi1)+jetpt2*cos(jetphi2))+(2*pt2*(1-exp(-2*eta2))/(2.*exp(-eta2))+jetpt1*(1-exp(-2*jeteta1))/(2.*exp(-jeteta1))+jetpt2*(1-exp(-2*jeteta2))/(2.*exp(-jeteta2)))*(2*pt2*(1-exp(-2*eta2))/(2.*exp(-eta2))+jetpt1*(1-exp(-2*jeteta1))/(2.*exp(-jeteta1))+jetpt2*(1-exp(-2*jeteta2))/(2.*exp(-jeteta2))))))) < {0:.1f})  '.format(masscuts['mlljjmax'])
     sel['whsc2011-selection'] = sel['whsc2011-level']
@@ -582,9 +762,65 @@ def massSelections(mass):
     sel['whscShape2011-selection'] = sel['whscShape2011-level']
 
 
+    sel['whscShape-ee-selection'] = sel['whscShape-level'] + ' && (channel == 1)'
+    sel['whscShape-em-selection'] = sel['whscShape-level'] + ' && (channel == 2)'
+    sel['whscShape-me-selection'] = sel['whscShape-level'] + ' && (channel == 3)'
+    sel['whscShape-mm-selection'] = sel['whscShape-level'] + ' && (channel == 0)'
+
+    # mumu #    channel == 0
+    # mue #     channel == 3
+    # emu #     channel == 2
+    # ee #      channel == 1
+
+
+
+    sel['whsc-ee-selection'] = sel['whsc-level'] + ' && (channel == 1)'
+    sel['whsc-em-selection'] = sel['whsc-level'] + ' && (channel == 2)'
+    sel['whsc-me-selection'] = sel['whsc-level'] + ' && (channel == 3)'
+    sel['whsc-mm-selection'] = sel['whsc-level'] + ' && (channel == 0)'
+
+
+    # ggH2j
 
     sel['ggH2jShape-level']     = ' && '.join(ggH2j.ggH2jShape) + ' && mth < {0:.1f}'.format(int(mass))
     sel['ggH2jShape-selection'] = sel['ggH2jShape-level']
+
+
+    # WW 2j ewk
+
+    sel['wwewkShape-level']     = ' && '.join(wwewk.wwewkShape)
+    sel['wwewkShape-selection'] = sel['wwewkShape-level']
+
+    sel['wwewkCut-level']     = ' && '.join(wwewk.wwewkCut)
+    sel['wwewkCut-selection'] = sel['wwewkCut-level']
+
+    sel['wwewkShape05-level']     = ' && '.join(wwewk.wwewkShape) + ' && jettche1 < 0.50   && jettche2 < 0.50 '
+    sel['wwewkShape05-selection'] = sel['wwewkShape05-level']
+    sel['wwewkShape21-level']     = ' && '.join(wwewk.wwewkShape) + ' && jettche1 >= 0.50  && jettche2 >= 0.50 '
+    sel['wwewkShape21-selection'] = sel['wwewkShape21-level']
+
+    sel['wwewkCut05-level']     = ' && '.join(wwewk.wwewkCut) + ' && jettche1 < 0.50   && jettche2 < 0.50 '
+    sel['wwewkCut05-selection'] = sel['wwewkCut05-level']
+    sel['wwewkCut21-level']     = ' && '.join(wwewk.wwewkCut) + ' && jettche1 >= 0.50  && jettche2 >= 0.50 '
+    sel['wwewkCut21-selection'] = sel['wwewkCut21-level']
+
+
+
+    # WW 2j
+
+    sel['ww2jShape-level']     = ' && '.join(wwewk.wwewkShape)
+    sel['ww2jShape-selection'] = sel['ww2jShape-level']
+
+    sel['ww2jCut-level']     = ' && '.join(ww2j.ww2jCut)
+    sel['ww2jCut-selection'] = sel['ww2jCut-level']
+
+
+
+    # WW 0/1 jet
+
+    sel['CutWW-level']     = ' && '.join(ww.wwCut)
+    sel['CutWW-selection'] = sel['CutWW-level']
+
 
     return sel
 
