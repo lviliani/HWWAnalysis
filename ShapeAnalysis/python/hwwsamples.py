@@ -198,7 +198,8 @@ mcsets = {
     ],
     'vh_sf' : [
         #signals
-        'ggH','qqH','WH','ZH','ttH','VH',
+        'ggH','qqH','WH','ZH',
+        #'ttH','VH',
         # bkgs
         'WW','ggWW','VgS','Vg','WJet','Top','VV',
         'VVV',
@@ -220,7 +221,8 @@ mcsets = {
     ],
    'vh_of' : [
         #signals
-        'ggH','qqH','WH','ZH','ttH','VH',
+        'ggH','qqH','WH','ZH',
+        #'ttH','VH',
         # bkgs
         'WW','ggWW','VgS','Vg','WJet','Top','VV','DYTT',
         'VVV',
@@ -293,7 +295,7 @@ mcsets = {
         #'ggHminlo',
         # bkgs
         'WW','ggWW','VgS','Vg','WJet','VV','DYTT',
-        ('TopPt0','Top'),
+        #('TopPt0','Top'),
         ('TopPt1','Top'),
         ('TopPt2','Top'),
         ('TopPt3','Top'),
