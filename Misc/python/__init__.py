@@ -1,5 +1,3 @@
 #Automatically created by SCRAM
 import os
-localrt=os.getenv('LOCALRT', None)
-if localrt != None:
-  __path__.append(localrt+'/cfipython/slc5_amd64_gcc434/HWWAnalysis/Misc')
+__path__.append(os.path.dirname(os.path.abspath(__file__).rsplit('/HWWAnalysis/Misc/',1)[0])+'/cfipython/slc5_amd64_gcc462/HWWAnalysis/Misc')

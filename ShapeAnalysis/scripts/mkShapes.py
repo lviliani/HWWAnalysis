@@ -70,7 +70,7 @@ class ShapeFactory:
         self._newcps          = False
         self._ewksinglet      = False
         self._cprimesq        = 1.
-
+        self._approxewk       = False
         variables = {}
         variables['2dWithCR']             = self._getMllMth2DSpinWithControlRegion
         variables['2dWithSSmirrorRegion'] = self._getMllMth2DSpinWithSSmirrorRegion
@@ -213,8 +213,10 @@ class ShapeFactory:
 
         if mass < 300.:
             return (10,80,280,8,0,200) 
-        else:
+        elif mass < 700:
             return (10,80,380,8,0,450) 
+        else:
+            return (13,80,600,10,0,600)
 
     # _____________________________________________________________________________
     def _getMllMth2DSpinrange(self,mass,cat):
@@ -224,9 +226,10 @@ class ShapeFactory:
 
         if mass < 300.:
             return ([60,70,80,90,100,110,120,140,160,180,200,220,240,260,280],[12,30,45,60,75,100,125,150,175,200])
+        elif mass < 700.:
+            return (10,80,380,8,0,450)
         else:
-            return (10,80,410,8,0,450)
-
+            return (12,80,580,10,0,600)
 
 
     # _____________________________________________________________________________
@@ -382,6 +385,10 @@ class ShapeFactory:
 
     # _____________________________________________________________________________
     def makeNominals(self, var, sel, inputDir, outPath, **kwargs):
+
+        print "======================"
+        print "==== makeNominals ===="
+        print "======================"
         
         ROOT.TH1.SetDefaultSumw2(True)
         shapeFiles = []
@@ -481,6 +488,10 @@ class ShapeFactory:
     # _____________________________________________________________________________
     def makeSystematics(self,var,sel,syst,mask,inputDir,outPath,**kwargs):
 
+        print "========================="
+        print "==== makeSystematics ===="
+        print "========================="
+
         ROOT.TH1.SetDefaultSumw2(True)
         shapeFiles = []
 
@@ -578,7 +589,7 @@ class ShapeFactory:
     def _draw(self, var, rng, selections, output, inputs):
         '''
         var :       the variable to plot
-        selection : the selction to draw
+        selection : the selection to draw
         output :    the output file path
         inputs :    the process-input files map
         '''
@@ -588,13 +599,14 @@ class ShapeFactory:
 #         hproto,hdim = ShapeFactory._projexpr(rng)
         # 3 items per dimention
         hdim = self._bins2dim( rng )
-        print 'ggH : ' ,selections['ggH']
 
         if vdim != hdim:
             raise ValueError('The variable\'s and range number of dimensions are mismatching')
 
         print 'var: '+var
-        print 'selection: '+selections['WW']
+        print 'selection (for WW  as example): '+selections['WW']
+        print 'selection (for ggH as example): '+selections['ggH']
+        #print 'inputs = ', inputs
 
         for process,tree  in inputs.iteritems():
 #             print ' '*3,process.ljust(20),':',tree.GetEntries(),
@@ -798,23 +810,25 @@ class ShapeFactory:
        if self._ewksinglet : 
 
          # ... Change high mass H width (only ggH and qqH for now)
-         fileBWParam = os.environ['CMSSW_BASE']+"/src/HWWAnalysis/ShapeAnalysis/ewksinglet/data/BWParam.json"
-         jsf = open(fileBWParam,"r+")
-         BWParam = (json.loads(jsf.read()))
-         jsf.close()  
-
-         GamSM = 0.
-         if    prodMode == 'ggH' :
-           Mass  = BWParam['ggH'][str(mass)]['Mass']
-           GamSM = BWParam['ggH'][str(mass)]['Gamma']
-
-         elif  prodMode == 'qqH' :
-           Mass  = BWParam['qqH'][str(mass)]['Mass']
-           GamSM = BWParam['qqH'][str(mass)]['Gamma']
- 
-         Gamma = GamSM * self._cprimesq
-         
-         if prodMode in ['ggH','qqH']    : hWght += '*getBWWght(MHiggs,%f,%f,%f)'%(Mass,GamSM,Gamma)
+         if mass >= 250 :
+           fileBWParam = os.environ['CMSSW_BASE']+"/src/HWWAnalysis/ShapeAnalysis/ewksinglet/data/BWParam.json"
+           jsf = open(fileBWParam,"r+")
+           BWParam = (json.loads(jsf.read()))
+           jsf.close()  
+  
+           GamSM = 0.
+           if    prodMode == 'ggH' :
+             Mass  = BWParam['ggH'][str(mass)]['Mass']
+             GamSM = BWParam['ggH'][str(mass)]['Gamma']
+  
+           elif  prodMode == 'qqH' :
+             Mass  = BWParam['qqH'][str(mass)]['Mass']
+             GamSM = BWParam['qqH'][str(mass)]['Gamma']
+   
+           Gamma = GamSM * self._cprimesq
+           
+           #if prodMode in ['ggH','qqH']  and not self._approxewk : hWght += '*getBWWght(MHiggs,%f,%f,%f)'%(Mass,GamSM,Gamma)
+           if prodMode in ['ggH','qqH']  : hWght += '*getBWWght(MHiggs,%f,%f,%f)'%(Mass,GamSM,Gamma)
 
          # ... Change mu of both all H
          if prodMode in ['ggH','qqH','WH','ZH','ttH']                :  hWght += '*'+str(self._cprimesq)
@@ -835,8 +849,8 @@ class ShapeFactory:
               exit()
             EWKDir = os.environ['CMSSW_BASE']+'/src/HWWAnalysis/ShapeAnalysis/ewksinglet/'
             ROOT.gROOT.ProcessLineSync('initIntWght("'+EWKDir+'" ,1,'+str(iSyst)+','+str(mass)+')') 
-            hWght += '*getIntWght(1,MHiggs,'+str(self._cprimesq)+','+iFlavor+')' 
-
+            if not self._approxewk : hWght += '*getIntWght(1,MHiggs,'+str(self._cprimesq)+','+iFlavor+')' 
+            else                   : hWght += '*getIntWght(1,MHiggs,1.0,'+iFlavor+')'
 
 
 
@@ -883,7 +897,7 @@ class ShapeFactory:
         weights['DYLL-template']     = self._stdWgt+'* dyW *(1-(( dataset == 36 || dataset == 37 ) && mctruth == 2 ))'
         weights['DYLL-templatesyst'] = self._stdWgt+'*dyWUp*(1-(( dataset == 36 || dataset == 37 ) && mctruth == 2 ))'
         #systematics
-        weights['TopTW']             = self._stdWgt+'*(1+0.17*(dataset>=11 && dataset<=16))' 
+        weights['TopTW']             = self._stdWgt+'*(1+0.17*(dataset>=11 && dataset<=16))' # 17% on tW/tt ratio
         weights['TopCtrl']           = self._stdWgt+'*bvetoW'
         weights['Top-template']      = self._stdWgt+'*bvetoW'
         #filter and k-factor on Vg* done by kfW
@@ -963,18 +977,27 @@ class ShapeFactory:
             #weights['WW']                = self._stdWgt+'*(1+(mjj>500)*(detajj>3.5))'
             weights['WW']                = self._stdWgt
             weights['WWewk']             = self._stdWgt+'*(numbLHE==0)'
+            #weights['WWewk']             = self._stdWgt+'*(abs(jetLHEPartonpid1)!=6 && abs(jetLHEPartonpid2)!=6 && abs(jetLHEPartonpid3)!=6)*(abs(jetLHEPartonpid1)!=5 && abs(jetLHEPartonpid2)!=5 && abs(jetLHEPartonpid3)!=5)'
+
             if (sel == 'vbf' or sel == 'vbf-shape') :
               weights['CHITOP-Top']        = self._stdWgt+'*('+hwwinfo.massSelections(mass)['vbf-selection-top']+')'
+
             if (sel == 'vbf-shape-fish') :
               weights['CHITOP-Top']        = self._stdWgt+'*('+hwwinfo.massSelections(mass)['vbf-selection-fish-top']+')'
+
+            if (sel == 'vbf2011' or sel == 'vbf2011-shape') :
+              weights['CHITOP-Top']        = self._stdWgt+'*('+hwwinfo.massSelections(mass)['vbf2011-selection-top']+')'
+
+
             weights['TopPt0']             = self._stdWgt+'*(((abs(jeteta1)<abs(jeteta2))*(jetpt1)+((abs(jeteta1)>=abs(jeteta2))*(jetpt2)))<70)'
             weights['TopPt1']             = self._stdWgt+'*(((abs(jeteta1)<abs(jeteta2))*(jetpt1)+((abs(jeteta1)>=abs(jeteta2))*(jetpt2)))>=70)'
 
             if (var != 1) : # only if it's shape and not cut based
-              weights['TopPt0']             = self._stdWgt+'*(((abs(jeteta1)<abs(jeteta2))*(jetpt1)+((abs(jeteta1)>=abs(jeteta2))*(jetpt2)))<50)'
-              weights['TopPt1']       = self._stdWgt+'*(((abs(jeteta1)<abs(jeteta2))*(jetpt1)+((abs(jeteta1)>=abs(jeteta2))*(jetpt2)))>=50)*(((abs(jeteta1)<abs(jeteta2))*(jetpt1)+((abs(jeteta1)>=abs(jeteta2))*(jetpt2)))<70)'
-            weights['TopPt2']             =  self._stdWgt+'*(((abs(jeteta1)<abs(jeteta2))*(jetpt1)+((abs(jeteta1)>=abs(jeteta2))*(jetpt2)))>=70)*(((abs(jeteta1)<abs(jeteta2))*(jetpt1)+((abs(jeteta1)>=abs(jeteta2))*(jetpt2)))<100)'
-            weights['TopPt3']             = self._stdWgt+'*(((abs(jeteta1)<abs(jeteta2))*(jetpt1)+((abs(jeteta1)>=abs(jeteta2))*(jetpt2)))>=100)'
+              weights['TopPt2']           = self._stdWgt+'*(((abs(jeteta1)<abs(jeteta2))*(jetpt1)+((abs(jeteta1)>=abs(jeteta2))*(jetpt2)))<50)'
+              weights['TopPt3']           = self._stdWgt+'*(((abs(jeteta1)<abs(jeteta2))*(jetpt1)+((abs(jeteta1)>=abs(jeteta2))*(jetpt2)))>=50)*(((abs(jeteta1)<abs(jeteta2))*(jetpt1)+((abs(jeteta1)>=abs(jeteta2))*(jetpt2)))<70)'
+              weights['TopPt1']           =  self._stdWgt+'*(((abs(jeteta1)<abs(jeteta2))*(jetpt1)+((abs(jeteta1)>=abs(jeteta2))*(jetpt2)))>=70)'
+            #weights['TopPt2']             =  self._stdWgt+'*(((abs(jeteta1)<abs(jeteta2))*(jetpt1)+((abs(jeteta1)>=abs(jeteta2))*(jetpt2)))>=70)*(((abs(jeteta1)<abs(jeteta2))*(jetpt1)+((abs(jeteta1)>=abs(jeteta2))*(jetpt2)))<100)'
+            #weights['TopPt3']             = self._stdWgt+'*(((abs(jeteta1)<abs(jeteta2))*(jetpt1)+((abs(jeteta1)>=abs(jeteta2))*(jetpt2)))>=100)'
 
         if var in ['bdts','bdtl']:
             weights['WW']       = self._stdWgt+'*2*(event%2 == 0)'
@@ -1169,12 +1192,16 @@ if __name__ == '__main__':
     # EWK Doublet Model
     parser.add_option('--ewksinglet',    dest='ewksinglet',  help='On/Off EWK singlet model',           default=False , action='store_true')   
     parser.add_option('--cprimesq'  ,    dest='cprimesq',    help='EWK singlet C\'**2 mixing value',    default=[0.]  , type='float'  , action='callback' , callback=hwwtools.list_maker('cprimesq'))
+    parser.add_option('--approxewk'  ,    dest='approxewk',    help='EWK not scaling width/interf',   default=False , action='store_true') 
+
+
     hwwtools.addOptions(parser)
     hwwtools.loadOptDefaults(parser)
     (opt, args) = parser.parse_args()
 
     print 'EWK Singlet:' , opt.ewksinglet
     print 'CPrime**2  :' , opt.cprimesq
+    print 'Approx. EWK :' , opt.approxewk 
 
     sys.argv.append( '-b' )
     ROOT.gROOT.SetBatch()
@@ -1260,6 +1287,7 @@ if __name__ == '__main__':
  
           factory._newcps    = opt.newcps 
           factory._ewksinglet= opt.ewksinglet
+          factory._approxewk = opt.approxewk
           if not opt.ewksinglet :
             factory._cprimesq  = 1.
           else:  
@@ -1319,7 +1347,7 @@ if __name__ == '__main__':
 
               factory._systByWeight = systByWeight
 
-              processMask = ['ggH', 'ggH_ALT',  'qqH',  'qqH_ALT', 'wzttH', 'ZH', 'WH', 'ttH', 'ggWW', 'Top', 'TopPt0', 'TopPt1', 'TopPt2', 'TopPt3', 'WW', 'VV', 'VgS', 'Vg', 'DYTT', 'Other', 'VVV', 'WWewk', 'CHITOP-Top' , 'ggH_SM', 'qqH_SM', 'wzttH_SM' , 'WH_SM','ZH_SM','ttH_SM']
+              processMask = ['ggH', 'ggH_ALT',  'qqH',  'qqH_ALT', 'wzttH', 'ZH', 'WH', 'ttH', 'ggWW', 'Top', 'TopPt0', 'TopPt1', 'TopPt2', 'TopPt3', 'TopPt4', 'WW', 'VV', 'VgS', 'Vg', 'DYTT', 'Other', 'VVV', 'WWewk', 'CHITOP-Top' , 'ggH_SM', 'qqH_SM', 'wzttH_SM' , 'WH_SM','ZH_SM','ttH_SM']
 
               if '2011' in opt.dataset:
                   processMask = ['ggH', 'ggH_ALT', 'qqH', 'qqH_ALT', 'VH' , 'wzttH', 'ZH', 'WH', 'ttH', 'ggWW', 'Top', 'WW', 'VV', 'CHITOP-Top', 'ggH_SM', 'qqH_SM','VH_SM', 'wzttH_SM', 'ZH_SM', 'WH_SM', 'ttH_SM']
@@ -1332,9 +1360,9 @@ if __name__ == '__main__':
               for syst,mask in systMasks.iteritems():
                   if opt.doSyst and opt.doSyst != syst:
                       continue
-                  print '-'*80
-                  print ' Processing',syst,'for samples',' '.join(mask)
-                  print '-'*80
+                  print '='*80
+                  print ' Processing ',syst,' for samples ',' '.join(mask)
+                  print '='*80
                   files = factory.makeSystematics(variable,selection,syst,mask,systDirs[syst],systOutDir+systematicsOutFile, nicks=systematics)
 
 #          factory.Delete() 

@@ -1,5 +1,3 @@
 #Automatically created by SCRAM
 import os
-localrt=os.getenv('LOCALRT', None)
-if localrt != None:
-  __path__.append(localrt+'/cfipython/slc5_amd64_gcc434/HWWAnalysis/DataFormats')
+__path__.append(os.path.dirname(os.path.abspath(__file__).rsplit('/HWWAnalysis/DataFormats/',1)[0])+'/cfipython/slc5_amd64_gcc462/HWWAnalysis/DataFormats')

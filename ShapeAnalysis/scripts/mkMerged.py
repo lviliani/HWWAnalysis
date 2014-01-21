@@ -201,6 +201,9 @@ class ShapeMerger:
 
                     foundCHI = True
 
+                  #
+                  # Nsig = Nctr * alpha
+                  #
                   # the statistical fluctuation fails with this "string" test:
                   #     e.g. Top_CMS_8TeV_hww_Top_of_2j_stat_shapeDown
                   #specialReducedName = 'CHITOP-',p
@@ -210,10 +213,36 @@ class ShapeMerger:
                     print "special (statistical) ScaleFactor[",reducedName,",",shape.GetName(),"] = ",scaleFactor
                     foundCHI = True
 
+                  #
+                  # only for bin-by-bin case:
+                  #    -> at CHI level there may be bbb fluctuations
+                  #    -> the only constraint is that at CHI level the normalization MUST be the datadriven one
+                  #    -> then we apply a scale factor as for the global statistical fluctuation, as in the "unified" approach
+                  #
+                  # the statistical fluctuation fails with this "string" test:
+                  #     e.g. Top_CMS_8TeV_hww_Top_of_2j_stat_shape_bin1Down   does not match with     CHITOP-Top_CMS_8TeV_hww_CHITOP-Top_of_2j_stat_shape_bin1Down
+                  #
+                  for iBin in range(0,shape.GetNbinsX()) :
+                     #if reducedNameInHisto.startswith("CHITOP-"+p) : 
+                         #print "     >>>> reducedNameInHisto = "+reducedNameInHisto
+                         #print "      <<< reducedName = "+reducedName
+                         # e.g. CHITOP-Top_CMS_8TeV_hww_CHITOP-Top_of_2j_stat_shape_bin6Down
+                         #      CHITOP-Top   ---> then ok first test
+                         #                                              _stat_shape_bin6Down   ---> then ok next step
+                     if reducedNameInHisto.startswith("CHITOP-"+p) and (
+                           (reducedNameInHisto.endswith("_stat_shape_bin"+str(iBin+1)+"Down") and reducedName.endswith("_stat_shape_bin"+str(iBin+1)+"Down")) 
+                           or
+                           (reducedNameInHisto.endswith("_stat_shape_bin"+str(iBin+1)+"Up") and reducedName.endswith("_stat_shape_bin"+str(iBin+1)+"Up")) ):
+                        scaleFactor = e.Nsig()/vHisto.Integral()
+                        shape.Scale(scaleFactor)
+                        print "special (statistical bin) ScaleFactor[",reducedName,",",shape.GetName(),"] = ",scaleFactor
+                        foundCHI = True
+
                 if not foundCHI :
                   # "normal" data driven
                   print "normal ScaleFactor[",reducedName,",",shape.GetName(),"] = ",e.Nsig()/shape.Integral()
                   shape.Scale(e.Nsig()/shape.Integral())
+
 
 
     def applyDataDrivenRelative(self, estimates):

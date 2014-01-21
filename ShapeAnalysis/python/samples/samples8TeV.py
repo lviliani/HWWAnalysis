@@ -15,7 +15,7 @@ backgrounds = {
     'ggWW'                    : ['nominals/latino_001_GluGluToWWTo4L.root'],
     'VgS'                     : ['nominals/latino_082_WGstarToElNuMad.root',
                                  'nominals/latino_083_WGstarToMuNuMad.root',
-                                 'nominals/latino_084_WGstarToTauNuMad.root',
+                                 'nominals/latino_084_WGstarToTauNuMad.root', # missing jettche !!
                                 ],
     'VgS-template'            : ['vgTemplate/latino_082_WGstarToElNuMad.root',
                                  'vgTemplate/latino_083_WGstarToMuNuMad.root',

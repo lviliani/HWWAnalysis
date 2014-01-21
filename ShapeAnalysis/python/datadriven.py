@@ -123,8 +123,9 @@ class DDCardReader:
         cardFile = open(filename)
         card = {}
         for line in cardFile:
+          tokens = line.split()
+          if len(tokens) > 0 and tokens[0] != "#" :
             # <mass> <events in ctrl region> <scale factor> <unc scale factor>
-            tokens = line.split()
             if not tokens: continue
             mass = int(tokens[0])
             evInCtrlReg = int(float(tokens[1]))
