@@ -672,27 +672,60 @@ def massSelections(mass):
     sel['vbf-selection-top']       = sel['vbf-selection-top-temp'].replace('ptll>30.', 'ptll>45.')
 
 
-    sel['vbf-shape-temp']      = ' && '.join([sel['vbf-level']]+[cut for var,cut in hwwlvl.iteritems() if var != 'mth' and var != 'mll'])
-    sel['vbf-shape']           = sel['vbf-shape-temp'].replace('ptll>30.', 'ptll>45.')
-    sel['vbf-shape-selection'] = sel['vbf-shape'] + ' && ((sameflav && (mth > {0:.1f} && mth < {1:.1f}) && mll<{2:.1f}) || (!sameflav && (mth > {3:.1f} && mth < {4:.1f})))   '.format(mthmin_vbf, masscuts['mtmax'],masscuts['mllmax'],50,int(mass))
+    # my AN 2013/097
+    #sel['vbf-shape-temp']      = ' && '.join([sel['vbf-level']]+[cut for var,cut in hwwlvl.iteritems() if var != 'mth' and var != 'mll'])
+    #sel['vbf-shape']           = sel['vbf-shape-temp'].replace('ptll>30.', 'ptll>45.')
+    #sel['vbf-shape-selection'] = sel['vbf-shape'] + ' && ((sameflav && (mth > {0:.1f} && mth < {1:.1f}) && mll<{2:.1f}) || (!sameflav && (mth > {3:.1f} && mth < {4:.1f})))   '.format(mthmin_vbf, masscuts['mtmax'],masscuts['mllmax'],50,int(mass))
 
-    #sel['vbf-shape']    = ' && '.join(vbfcuts.vbfshape)
-    #sel['vbf-shape']    =  sel['vbf-shape'].replace("ptll>30.", "ptll>45.")
-    #sel['vbf-shape-selection'] = sel['vbf-shape']+' && (mth > 50 && mth < {0:.0f})'.format(int(mass))
 
+   # to synch with smurf # only emu
+    sel['vbf-shape-temp']      = ' && '.join([sel['vbf-level']])
+    sel['vbf-shape-selection'] = sel['vbf-shape-temp'] + ' && (!sameflav && (mth > {0:.1f} && mth < {1:.1f})) '.format(30,int(mass))
+    sel['vbf-shape-selection'] = sel['vbf-shape-selection'].replace('ptll>30.', 'ptll>45.')
+
+    if (mass > 250) :
+        sel['vbf-shape-selection'] = sel['vbf-shape-selection'] + ' && pt1>50'
+
+
+
+    # new cut mth > 30 everywhere to synch
+
+    ##sel['vbf-shape']    = ' && '.join(vbfcuts.vbfshape)
+    ##sel['vbf-shape']    =  sel['vbf-shape'].replace("ptll>30.", "ptll>45.")
+    ##sel['vbf-shape-selection'] = sel['vbf-shape']+' && (mth > 50 && mth < {0:.0f})'.format(int(mass))
+
+    ## vbf in 2011#
+    #sel['vbf2011-selection-temp']     = ' && '.join([sel['vbf2011-level']]+[cut for var,cut in hwwlvl.iteritems() if var != 'mth' and var != 'mll' and var != 'pt1' and var != 'pt2' and var != 'dphill'])
+    ##sel['vbf2011-selection-temp']     = ' && '.join([sel['vbf2011-level']]+[cut for var,cut in hwwlvl.iteritems() if var != 'mth'])
+    #sel['vbf2011-selection-temp']     = sel['vbf2011-selection-temp'].replace('dphiveto', 'dphilljetjet<pi/180.*165.')
+    #sel['vbf2011-selection-temp']     = sel['vbf2011-selection-temp'].replace('ptll>30.', 'ptll>45.')
+    #sel['vbf2011-selection']          = sel['vbf2011-selection-temp'] + ' && (mth > {0:.1f} && mth < {1:.1f})'.format(mthmin_vbf, masscuts['mtmax'])
+    #if (mass <= 200) :
+      #sel['vbf2011-selection']        = sel['vbf2011-selection']      + ' && (mll<100)'
+
+    #sel['vbf2011-selection-top-temp']  = ' && '.join([sel['vbf2011-level']])
+    #sel['vbf2011-selection-top']       = sel['vbf2011-selection-top-temp'].replace('ptll>30.', 'ptll>45.')
+    #sel['vbf2011-selection-top']       = sel['vbf2011-selection-top'].replace('dphiveto', 'dphilljetjet<pi/180.*165.')
+
+   # to synch with smurf
     # vbf in 2011#
-    sel['vbf2011-selection-temp']     = ' && '.join([sel['vbf2011-level']]+[cut for var,cut in hwwlvl.iteritems() if var != 'mth' and var != 'mll' and var != 'pt1' and var != 'pt2' and var != 'dphill'])
-    #sel['vbf2011-selection-temp']     = ' && '.join([sel['vbf2011-level']]+[cut for var,cut in hwwlvl.iteritems() if var != 'mth'])
+    sel['vbf2011-selection-temp']     = ' && '.join([sel['vbf2011-level']]+[cut for var,cut in hwwlvl.iteritems() if var != 'mth'])
     sel['vbf2011-selection-temp']     = sel['vbf2011-selection-temp'].replace('dphiveto', 'dphilljetjet<pi/180.*165.')
     sel['vbf2011-selection-temp']     = sel['vbf2011-selection-temp'].replace('ptll>30.', 'ptll>45.')
     sel['vbf2011-selection']          = sel['vbf2011-selection-temp'] + ' && (mth > {0:.1f} && mth < {1:.1f})'.format(mthmin_vbf, masscuts['mtmax'])
-    if (mass <= 200) :
-      sel['vbf2011-selection']        = sel['vbf2011-selection']      + ' && (mll<100)'
 
     sel['vbf2011-selection-top-temp']  = ' && '.join([sel['vbf2011-level']])
     sel['vbf2011-selection-top']       = sel['vbf2011-selection-top-temp'].replace('ptll>30.', 'ptll>45.')
     sel['vbf2011-selection-top']       = sel['vbf2011-selection-top'].replace('dphiveto', 'dphilljetjet<pi/180.*165.')
 
+
+    # vbf in 2011#
+    # to synch with smurf # only emu
+    sel['vbf2011-shape-temp']      = ' && '.join([sel['vbf2011-level']])
+    sel['vbf2011-shape-selection'] = sel['vbf2011-shape-temp'] + ' && (!sameflav && (mth > {0:.1f} && mth < {1:.1f}))   '.format(30,int(mass))
+    sel['vbf2011-shape-selection'] = sel['vbf2011-shape-selection'].replace('ptll>30.', 'ptll>45.')
+    if (mass > 250) :
+        sel['vbf2011-shape-selection'] = sel['vbf2011-shape-selection'] + ' && pt1>50'
 
 
 
@@ -742,11 +775,7 @@ def massSelections(mass):
 
 
     # whsc #
-    #sel['whsc-level']    = ' && '.join(whsccuts.whsccut) + ' && ((min(sqrt((2*pt1*cosh(eta1)+jetpt1*cosh(jeteta1)+jetpt2*cosh(jeteta2))*(2*pt1*cosh(eta1)+jetpt1*cosh(jeteta1)+jetpt2*cosh(jeteta2))-((2*pt1*sin(phi1)+jetpt1*sin(jetphi1)+jetpt2*sin(jetphi2))*(2*pt1*sin(phi1)+jetpt1*sin(jetphi1)+jetpt2*sin(jetphi2))+(2*pt1*cos(phi1)+jetpt1*cos(jetphi1)+jetpt2*cos(jetphi2))*(2*pt1*cos(phi1)+jetpt1*cos(jetphi1)+jetpt2*cos(jetphi2))+(2*pt1*(1-exp(-2*eta1))/(2.*exp(-eta1))+jetpt1*(1-exp(-2*jeteta1))/(2.*exp(-jeteta1))+jetpt2*(1-exp(-2*jeteta2))/(2.*exp(-jeteta2)))*(2*pt1*(1-exp(-2*eta1))/(2.*exp(-eta1))+jetpt1*(1-exp(-2*jeteta1))/(2.*exp(-jeteta1))+jetpt2*(1-exp(-2*jeteta2))/(2.*exp(-jeteta2))))),sqrt((2*pt2*cosh(eta2)+jetpt1*cosh(jeteta1)+jetpt2*cosh(jeteta2))*(2*pt2*cosh(eta2)+jetpt1*cosh(jeteta1)+jetpt2*cosh(jeteta2))-((2*pt2*sin(phi2)+jetpt1*sin(jetphi1)+jetpt2*sin(jetphi2))*(2*pt2*sin(phi2)+jetpt1*sin(jetphi1)+jetpt2*sin(jetphi2))+(2*pt2*cos(phi2)+jetpt1*cos(jetphi1)+jetpt2*cos(jetphi2))*(2*pt2*cos(phi2)+jetpt1*cos(jetphi1)+jetpt2*cos(jetphi2))+(2*pt2*(1-exp(-2*eta2))/(2.*exp(-eta2))+jetpt1*(1-exp(-2*jeteta1))/(2.*exp(-jeteta1))+jetpt2*(1-exp(-2*jeteta2))/(2.*exp(-jeteta2)))*(2*pt2*(1-exp(-2*eta2))/(2.*exp(-eta2))+jetpt1*(1-exp(-2*jeteta1))/(2.*exp(-jeteta1))+jetpt2*(1-exp(-2*jeteta2))/(2.*exp(-jeteta2))))))) > {0:.1f})  '.format(masscuts['mlljjmin'])   + ' && ((min(sqrt((2*pt1*cosh(eta1)+jetpt1*cosh(jeteta1)+jetpt2*cosh(jeteta2))*(2*pt1*cosh(eta1)+jetpt1*cosh(jeteta1)+jetpt2*cosh(jeteta2))-((2*pt1*sin(phi1)+jetpt1*sin(jetphi1)+jetpt2*sin(jetphi2))*(2*pt1*sin(phi1)+jetpt1*sin(jetphi1)+jetpt2*sin(jetphi2))+(2*pt1*cos(phi1)+jetpt1*cos(jetphi1)+jetpt2*cos(jetphi2))*(2*pt1*cos(phi1)+jetpt1*cos(jetphi1)+jetpt2*cos(jetphi2))+(2*pt1*(1-exp(-2*eta1))/(2.*exp(-eta1))+jetpt1*(1-exp(-2*jeteta1))/(2.*exp(-jeteta1))+jetpt2*(1-exp(-2*jeteta2))/(2.*exp(-jeteta2)))*(2*pt1*(1-exp(-2*eta1))/(2.*exp(-eta1))+jetpt1*(1-exp(-2*jeteta1))/(2.*exp(-jeteta1))+jetpt2*(1-exp(-2*jeteta2))/(2.*exp(-jeteta2))))),sqrt((2*pt2*cosh(eta2)+jetpt1*cosh(jeteta1)+jetpt2*cosh(jeteta2))*(2*pt2*cosh(eta2)+jetpt1*cosh(jeteta1)+jetpt2*cosh(jeteta2))-((2*pt2*sin(phi2)+jetpt1*sin(jetphi1)+jetpt2*sin(jetphi2))*(2*pt2*sin(phi2)+jetpt1*sin(jetphi1)+jetpt2*sin(jetphi2))+(2*pt2*cos(phi2)+jetpt1*cos(jetphi1)+jetpt2*cos(jetphi2))*(2*pt2*cos(phi2)+jetpt1*cos(jetphi1)+jetpt2*cos(jetphi2))+(2*pt2*(1-exp(-2*eta2))/(2.*exp(-eta2))+jetpt1*(1-exp(-2*jeteta1))/(2.*exp(-jeteta1))+jetpt2*(1-exp(-2*jeteta2))/(2.*exp(-jeteta2)))*(2*pt2*(1-exp(-2*eta2))/(2.*exp(-eta2))+jetpt1*(1-exp(-2*jeteta1))/(2.*exp(-jeteta1))+jetpt2*(1-exp(-2*jeteta2))/(2.*exp(-jeteta2))))))) < {0:.1f})  '.format(masscuts['mlljjmax'])
-    #sel['whsc-selection'] = sel['whsc-level']
 
-    #sel['whsc-level']    = ' && '.join(whsccuts.whsccut) + ' && ( > {0:.1f})  '.format(masscuts['mlljjmin'])   + ' && ( < {0:.1f})  '.format(masscuts['mlljjmax'])
-    #((jetpt2>20)*min(sqrt((2*pt1*cosh(eta1)+jetpt1*cosh(jeteta1)+jetpt2*cosh(jeteta2))*(2*pt1*cosh(eta1)+jetpt1*cosh(jeteta1)+jetpt2*cosh(jeteta2))-((2*pt1*sin(phi1)+jetpt1*sin(jetphi1)+jetpt2*sin(jetphi2))*(2*pt1*sin(phi1)+jetpt1*sin(jetphi1)+jetpt2*sin(jetphi2))+(2*pt1*cos(phi1)+jetpt1*cos(jetphi1)+jetpt2*cos(jetphi2))*(2*pt1*cos(phi1)+jetpt1*cos(jetphi1)+jetpt2*cos(jetphi2))+(2*pt1*(1-exp(-2*eta1))/(2.*exp(-eta1))+jetpt1*(1-exp(-2*jeteta1))/(2.*exp(-jeteta1))+jetpt2*(1-exp(-2*jeteta2))/(2.*exp(-jeteta2)))*(2*pt1*(1-exp(-2*eta1))/(2.*exp(-eta1))+jetpt1*(1-exp(-2*jeteta1))/(2.*exp(-jeteta1))+jetpt2*(1-exp(-2*jeteta2))/(2.*exp(-jeteta2))))),sqrt((2*pt2*cosh(eta2)+jetpt1*cosh(jeteta1)+jetpt2*cosh(jeteta2))*(2*pt2*cosh(eta2)+jetpt1*cosh(jeteta1)+jetpt2*cosh(jeteta2))-((2*pt2*sin(phi2)+jetpt1*sin(jetphi1)+jetpt2*sin(jetphi2))*(2*pt2*sin(phi2)+jetpt1*sin(jetphi1)+jetpt2*sin(jetphi2))+(2*pt2*cos(phi2)+jetpt1*cos(jetphi1)+jetpt2*cos(jetphi2))*(2*pt2*cos(phi2)+jetpt1*cos(jetphi1)+jetpt2*cos(jetphi2))+(2*pt2*(1-exp(-2*eta2))/(2.*exp(-eta2))+jetpt1*(1-exp(-2*jeteta1))/(2.*exp(-jeteta1))+jetpt2*(1-exp(-2*jeteta2))/(2.*exp(-jeteta2)))*(2*pt2*(1-exp(-2*eta2))/(2.*exp(-eta2))+jetpt1*(1-exp(-2*jeteta1))/(2.*exp(-jeteta1))+jetpt2*(1-exp(-2*jeteta2))/(2.*exp(-jeteta2))))))+(jetpt2<=20)*min(sqrt((2*pt1*cosh(eta1)+jetpt1*cosh(jeteta1))*(2*pt1*cosh(eta1)+jetpt1*cosh(jeteta1))-((2*pt1*sin(phi1)+jetpt1*sin(jetphi1))*(2*pt1*sin(phi1)+jetpt1*sin(jetphi1))+(2*pt1*cos(phi1)+jetpt1*cos(jetphi1))*(2*pt1*cos(phi1)+jetpt1*cos(jetphi1))+(2*pt1*(1-exp(-2*eta1))/(2.*exp(-eta1))+jetpt1*(1-exp(-2*jeteta1))/(2.*exp(-jeteta1)))*(2*pt1*(1-exp(-2*eta1))/(2.*exp(-eta1))+jetpt1*(1-exp(-2*jeteta1))/(2.*exp(-jeteta1))))),sqrt((2*pt2*cosh(eta2)+jetpt1*cosh(jeteta1))*(2*pt2*cosh(eta2)+jetpt1*cosh(jeteta1))-((2*pt2*sin(phi2)+jetpt1*sin(jetphi1))*(2*pt2*sin(phi2)+jetpt1*sin(jetphi1))+(2*pt2*cos(phi2)+jetpt1*cos(jetphi1))*(2*pt2*cos(phi2)+jetpt1*cos(jetphi1))+(2*pt2*(1-exp(-2*eta2))/(2.*exp(-eta2))+jetpt1*(1-exp(-2*jeteta1))/(2.*exp(-jeteta1)))*(2*pt2*(1-exp(-2*eta2))/(2.*exp(-eta2))+jetpt1*(1-exp(-2*jeteta1))/(2.*exp(-jeteta1)))))))
     sel['whsc-level']    = ' && '.join(whsccuts.whsccut) + ' && ( mindphimlijj > {0:.1f})  '.format(masscuts['mlljjmin'])   + ' && ( mindphimlijj < {0:.1f})  '.format(masscuts['mlljjmax'])
     #sel['whsc-level']    = ' && '.join(whsccuts.whsccut) + ' && ( minmlijj > {0:.1f})  '.format(masscuts['mlljjmin'])   + ' && ( minmlijj < {0:.1f})  '.format(masscuts['mlljjmax'])
     sel['whsc-selection'] = sel['whsc-level']
