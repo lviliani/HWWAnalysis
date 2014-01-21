@@ -347,7 +347,7 @@ class wwewk:
 
     _massindep = [
         'trigger==1.',
-        '((ch1*ch2)<0 && pt1>20 && pt2>10)',
+        '((ch1*ch2)<0 && pt1>20 && pt2>20)',  # pt2>20 !
         'zveto==1',
         'pfmet>20.',
         'mpmet>20.',
@@ -360,12 +360,12 @@ class wwewk:
         #'njetvbf==0',
         '(dphilljetjet<pi/180.*165. || !sameflav )',
 # mild VBF
-        'mjj>250',
+        'mjj>350', # >250 #>400
         'detajj>0.5',
     ]
 
     _cut = [
-        'WWewkMVABDTG > 0.55'
+        'WWewkMVABDTG > 0.40'
     ]
 
     wwewkShape  = _massindep + _sqrtDependent2012
@@ -782,14 +782,14 @@ def massSelections(mass):
     sel['wwewkCut-level']     = ' && '.join(wwewk.wwewkCut)
     sel['wwewkCut-selection'] = sel['wwewkCut-level']
 
-    sel['wwewkShape05-level']     = ' && '.join(wwewk.wwewkShape) + ' && jettche1 < 0.50   && jettche2 < 0.50 '
+    sel['wwewkShape05-level']     = ' && '.join(wwewk.wwewkShape) + ' && jettche1 < 1.00   && jettche2 < 1.00 '
     sel['wwewkShape05-selection'] = sel['wwewkShape05-level']
-    sel['wwewkShape21-level']     = ' && '.join(wwewk.wwewkShape) + ' && jettche1 >= 0.50  && jettche2 >= 0.50 '
+    sel['wwewkShape21-level']     = ' && '.join(wwewk.wwewkShape) + ' && jettche1 >= 1.00  && jettche2 >= 1.00 '
     sel['wwewkShape21-selection'] = sel['wwewkShape21-level']
 
-    sel['wwewkCut05-level']     = ' && '.join(wwewk.wwewkCut) + ' && jettche1 < 0.50   && jettche2 < 0.50 '
+    sel['wwewkCut05-level']     = ' && '.join(wwewk.wwewkCut) + ' && jettche1 < 1.00   && jettche2 < 1.00 '
     sel['wwewkCut05-selection'] = sel['wwewkCut05-level']
-    sel['wwewkCut21-level']     = ' && '.join(wwewk.wwewkCut) + ' && jettche1 >= 0.50  && jettche2 >= 0.50 '
+    sel['wwewkCut21-level']     = ' && '.join(wwewk.wwewkCut) + ' && jettche1 >= 1.00  && jettche2 >= 1.00 '
     sel['wwewkCut21-selection'] = sel['wwewkCut21-level']
 
 
