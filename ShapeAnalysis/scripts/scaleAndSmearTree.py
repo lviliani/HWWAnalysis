@@ -13,6 +13,7 @@ import optparse
 import os
 import ROOT
 import numpy
+from math import *
 import math
 # from ROOT import *
  
@@ -49,15 +50,11 @@ electronUncertaintyEE2012 = 0.02 # abseta > 2.0
 sigmaChargeElectron = (0.000240123, 7.55615e-05, 0.000144796, 2.52092e-05, 0.00120842, 0.00236264)
 sigmaChargeMuon     = 0.0002
 
-
-
 ## pu uncertainty
 puUp   = "puDATAup.root"
 puDown = "puDATAdown.root"
 puMC   = "puMC.root"
 weightNamePU = "puW"
-
-
 
 #verbose = False
 mZ = 91.1876
@@ -184,7 +181,7 @@ def getJEUFactor(pt, eta, jeuList):
                 if pt <  float(s[3]): # 3 = minimum pt in table
                     scale = float(s[4]) # 4 = corresponding smallest uncertainty
 ##                     print ' ----------------------------------'
-                    print 'Jet has too low pt: '+str(pt)+' << '+s[3]
+##                     print 'Jet has too low pt: '+str(pt)+' << '+s[3]
 ##                     print 'Setting uncertainty to minimum pt uncertainty: '+str(scale)
 ##                     print 'pseudorapidity: '+str(eta)
                     break
@@ -205,7 +202,7 @@ def projectMET(lep1, lep2, met):
         pmet *= math.sin(dphimin)
     return pmet
 
-
+    
 ###############################################################################################
 ##                 _                        _                                 
 ##                | |                      | |                                
@@ -216,6 +213,7 @@ def projectMET(lep1, lep2, met):
 ##                                                                           
 ##                                                                           
 class scaleAndSmear:
+
     def __init__(self):
         self.inputFileName = ''
         self.outputFileName = ''
@@ -231,7 +229,70 @@ class scaleAndSmear:
         self.correctMETwithJES = False
         self.dataset = ''
         
+        self.pt1 = numpy.zeros(1, dtype=numpy.float32)
+        self.pt2 = numpy.zeros(1, dtype=numpy.float32)
+        self.pt3 = numpy.zeros(1, dtype=numpy.float32)
+        self.pt4 = numpy.zeros(1, dtype=numpy.float32)
+        self.mll = numpy.zeros(1, dtype=numpy.float32)
+        self.ptll = numpy.zeros(1, dtype=numpy.float32)
+        ## self.dphill = numpy.zeros(1, dtype=numpy.float32)
+        self.dphilljet = numpy.zeros(1, dtype=numpy.float32)
+        self.gammaMRStar = numpy.zeros(1, dtype=numpy.float32)
+        self.zveto = numpy.zeros(1, dtype=int)
+
+        self.jetpt1 = numpy.zeros(1, dtype=numpy.float32)
+        self.jetpt2 = numpy.zeros(1, dtype=numpy.float32)
+        self.njet = numpy.zeros(1, dtype=numpy.float32)
+        self.dphilljetjet = numpy.zeros(1, dtype=numpy.float32)
+        self.mjj = numpy.zeros(1, dtype=numpy.float32)
+        self.jetpt3 = numpy.zeros(1, dtype=numpy.float32)
+        self.jetpt4 = numpy.zeros(1, dtype=numpy.float32)
+        self.cjetpt1 = numpy.zeros(1, dtype=numpy.float32)
+        self.cjetpt2 = numpy.zeros(1, dtype=numpy.float32)
+        self.njetvbf = numpy.zeros(1, dtype=numpy.float32)
         
+        self.dphillmet = numpy.zeros(1, dtype=numpy.float32)
+        self.dphilmet = numpy.zeros(1, dtype=numpy.float32)
+        self.dphilmet1 = numpy.zeros(1, dtype=numpy.float32)
+        self.dphilmet2 = numpy.zeros(1, dtype=numpy.float32)
+        self.mth = numpy.zeros(1, dtype=numpy.float32)
+        self.mtw1 = numpy.zeros(1, dtype=numpy.float32)
+        self.mtw2 = numpy.zeros(1, dtype=numpy.float32)
+        self.pfmet = numpy.zeros(1, dtype=numpy.float32)
+        self.pfmetphi = numpy.zeros(1, dtype=numpy.float32)
+        self.chmet = numpy.zeros(1, dtype=numpy.float32)
+        self.chmetphi = numpy.zeros(1, dtype=numpy.float32)
+        ## self.tcmet = numpy.zeros(1, dtype=numpy.float32)
+        ## self.tcmetphi = numpy.zeros(1, dtype=numpy.float32)
+        self.ppfmet = numpy.zeros(1, dtype=numpy.float32)
+        self.pchmet = numpy.zeros(1, dtype=numpy.float32)
+        ## self.ptcmet = numpy.zeros(1, dtype=numpy.float32)
+        self.mpmet = numpy.zeros(1, dtype=numpy.float32)
+        self.pfmetSignificance = numpy.zeros(1, dtype=numpy.float32)
+        self.pfmetMEtSig = numpy.zeros(1, dtype=numpy.float32)
+        self.dphilljet1  = numpy.ones(1, dtype=numpy.float32)
+        self.dphimetjet1 = numpy.zeros(1, dtype=numpy.float32)
+        self.recoil = numpy.zeros(1, dtype=numpy.float32)
+        self.dymva0 = numpy.zeros(1, dtype=numpy.float32)
+        self.dymva1 = numpy.zeros(1, dtype=numpy.float32)
+        
+        self.getDYMVAV0j0 = None
+        self.getDYMVAV0j1 = None
+        self.getDYMVAV0j0 = None
+        self.getDYMVAV1j1 = None
+        self.var1 = numpy.ones(1, dtype=numpy.float32)
+        self.var2 = numpy.ones(1, dtype=numpy.float32)
+        self.var3 = numpy.ones(1, dtype=numpy.float32)
+        self.var4 = numpy.ones(1, dtype=numpy.float32)
+        self.var5 = numpy.ones(1, dtype=numpy.float32)
+        self.var6 = numpy.ones(1, dtype=numpy.float32)
+        self.var7 = numpy.ones(1, dtype=numpy.float32)
+        self.var8 = numpy.ones(1, dtype=numpy.float32)
+        self.var9 = numpy.ones(1, dtype=numpy.float32)
+        self.var10 = numpy.ones(1, dtype=numpy.float32)
+        self.var11 = numpy.ones(1, dtype=numpy.float32)
+
+
     def __del__(self):
         if self.outFile:
             self.outFile.Write()
@@ -333,66 +394,32 @@ class scaleAndSmear:
 
         ## do not clone the branches which should be scaled
         ## i.e. set status to 0
-        if self.systArgument == 'muonScale':
-            oldTree.SetBranchStatus('pt1'       ,0)
-            oldTree.SetBranchStatus('pt2'       ,0)
-            oldTree.SetBranchStatus('mll'       ,0)
-            oldTree.SetBranchStatus('ptll'      ,0)
-##             oldTree.SetBranchStatus('dphill'    ,0)
-##             oldTree.SetBranchStatus('dphilljet' ,0)
-            oldTree.SetBranchStatus('dphillmet' ,0)
-            oldTree.SetBranchStatus('dphilmet' ,0)
-            oldTree.SetBranchStatus('dphilmet1' ,0)
-            oldTree.SetBranchStatus('dphilmet2' ,0)
-            oldTree.SetBranchStatus('mth'       ,0)
-            oldTree.SetBranchStatus('mtw1'      ,0)
-            oldTree.SetBranchStatus('mtw2'      ,0)
-            oldTree.SetBranchStatus('pfmet'     ,0)
-            oldTree.SetBranchStatus('pfmetphi'  ,0)
-            oldTree.SetBranchStatus('chmet'     ,0)
-            oldTree.SetBranchStatus('chmetphi'  ,0)
-            ## oldTree.SetBranchStatus('tcmet'     ,0)
-            ## oldTree.SetBranchStatus('tcmetphi'  ,0)
-            oldTree.SetBranchStatus('ppfmet'    ,0)
-            oldTree.SetBranchStatus('pchmet'    ,0)
-            ## oldTree.SetBranchStatus('ptcmet'    ,0)
-            oldTree.SetBranchStatus('mpmet'     ,0)
-            oldTree.SetBranchStatus('gammaMRStar',0)
-            oldTree.SetBranchStatus('zveto',0)
-
-        if self.systArgument == 'electronScale':
-            oldTree.SetBranchStatus('pt1'       ,0)
-            oldTree.SetBranchStatus('pt2'       ,0)
-            oldTree.SetBranchStatus('mll'       ,0)
-            oldTree.SetBranchStatus('ptll'      ,0)
-##             oldTree.SetBranchStatus('dphill'    ,0)
-##             oldTree.SetBranchStatus('dphilljet' ,0)
-            oldTree.SetBranchStatus('dphillmet' ,0)
-            oldTree.SetBranchStatus('dphilmet' ,0)
-            oldTree.SetBranchStatus('dphilmet1' ,0)
-            oldTree.SetBranchStatus('dphilmet2' ,0)
-            oldTree.SetBranchStatus('mth'       ,0)
-            oldTree.SetBranchStatus('mtw1'      ,0)
-            oldTree.SetBranchStatus('mtw2'      ,0)
-            oldTree.SetBranchStatus('pfmet'     ,0)
-            oldTree.SetBranchStatus('pfmetphi'  ,0)
-            oldTree.SetBranchStatus('chmet'     ,0)
-            oldTree.SetBranchStatus('chmetphi'  ,0)
-            ## oldTree.SetBranchStatus('tcmet'     ,0)
-            ## oldTree.SetBranchStatus('tcmetphi'  ,0)
-            oldTree.SetBranchStatus('ppfmet'    ,0)
-            oldTree.SetBranchStatus('pchmet'    ,0)
-            ## oldTree.SetBranchStatus('ptcmet'    ,0)
-            oldTree.SetBranchStatus('mpmet'     ,0)
-            oldTree.SetBranchStatus('gammaMRStar',0)
-            oldTree.SetBranchStatus('zveto',0)
-            
         if self.systArgument == 'leptonEfficiency':
             oldTree.SetBranchStatus('effW'      ,0)
             oldTree.SetBranchStatus('effAW'     ,0)
-            oldTree.SetBranchStatus('effBW'     ,0)            
+            oldTree.SetBranchStatus('effBW'     ,0)
+            
+        elif self.systArgument == 'puscale':
+            oldTree.SetBranchStatus('puW'       ,0)
+            
+        elif self.systArgument == 'chargeResolution':
+            oldTree.SetBranchStatus('ch1'       ,0)
+            oldTree.SetBranchStatus('ch2'       ,0)
 
-        if self.systArgument == 'jetEnergyScale':
+        else:
+        ## by default, re-assign all these variables
+        ## currently not needed for JEC, but for everything else
+            oldTree.SetBranchStatus('pt1'       ,0)
+            oldTree.SetBranchStatus('pt2'       ,0)
+            oldTree.SetBranchStatus('pt3'       ,0)
+            oldTree.SetBranchStatus('pt4'       ,0)
+            oldTree.SetBranchStatus('mll'       ,0)
+            oldTree.SetBranchStatus('ptll'      ,0)
+            ## oldTree.SetBranchStatus('dphill'    ,0)
+            oldTree.SetBranchStatus('dphilljet' ,0)
+            oldTree.SetBranchStatus('gammaMRStar',0)
+            oldTree.SetBranchStatus('zveto'     ,0)
+
             oldTree.SetBranchStatus('jetpt1'    ,0)
             oldTree.SetBranchStatus('jetpt2'    ,0)
             oldTree.SetBranchStatus('njet'      ,0)
@@ -400,145 +427,35 @@ class scaleAndSmear:
             oldTree.SetBranchStatus('dphilljetjet' ,0)
             oldTree.SetBranchStatus('jetpt3'    ,0)
             oldTree.SetBranchStatus('jetpt4'    ,0)
-            oldTree.SetBranchStatus('cjetpt1'    ,0)
-            oldTree.SetBranchStatus('cjetpt2'    ,0)
-            oldTree.SetBranchStatus('njetvbf'    ,0)
-            if self.correctMETwithJES:
-               oldTree.SetBranchStatus('pfmet'     ,0)
-               oldTree.SetBranchStatus('pfmetphi'  ,0)
-               oldTree.SetBranchStatus('chmet'     ,0)
-               oldTree.SetBranchStatus('chmetphi'  ,0)
-            ## oldTree.SetBranchStatus('tcmet'     ,0)
-            ## oldTree.SetBranchStatus('tcmetphi'  ,0)
-               oldTree.SetBranchStatus('mth'       ,0)
-               oldTree.SetBranchStatus('mtw1'      ,0)
-               oldTree.SetBranchStatus('mtw2'      ,0)
-##             oldTree.SetBranchStatus('dphill'    ,0)
-##             oldTree.SetBranchStatus('dphilljet' ,0)
-               oldTree.SetBranchStatus('dphillmet' ,0)
-               oldTree.SetBranchStatus('dphilmet' ,0)
-               oldTree.SetBranchStatus('dphilmet1' ,0)
-               oldTree.SetBranchStatus('dphilmet2' ,0)
-               oldTree.SetBranchStatus('ppfmet'    ,0)
-               oldTree.SetBranchStatus('pchmet'    ,0)
-            ## oldTree.SetBranchStatus('ptcmet'    ,0)
-            ## oldTree.SetBranchStatus('mpmet'     ,0)
-            #oldTree.SetBranchStatus('hardbdisctche' ,0)
-            #oldTree.SetBranchStatus('softbdisctche' ,0)
-
-        if self.systArgument == 'metScale':
+            oldTree.SetBranchStatus('cjetpt1'   ,0)
+            oldTree.SetBranchStatus('cjetpt2'   ,0)
+            oldTree.SetBranchStatus('njetvbf'   ,0)
+                                                                                                                        
             oldTree.SetBranchStatus('pfmet'     ,0)
             oldTree.SetBranchStatus('pfmetphi'  ,0)
             oldTree.SetBranchStatus('chmet'     ,0)
             oldTree.SetBranchStatus('chmetphi'  ,0)
             ## oldTree.SetBranchStatus('tcmet'     ,0)
             ## oldTree.SetBranchStatus('tcmetphi'  ,0)
+            oldTree.SetBranchStatus('dphillmet' ,0)
+            oldTree.SetBranchStatus('dphilmet'  ,0)
+            oldTree.SetBranchStatus('dphilmet1' ,0)
+            oldTree.SetBranchStatus('dphilmet2' ,0)
             oldTree.SetBranchStatus('mth'       ,0)
             oldTree.SetBranchStatus('mtw1'      ,0)
             oldTree.SetBranchStatus('mtw2'      ,0)
-            oldTree.SetBranchStatus('dphillmet' ,0)
-            oldTree.SetBranchStatus('dphilmet' ,0)
-            oldTree.SetBranchStatus('dphilmet1' ,0)
-            oldTree.SetBranchStatus('dphilmet2' ,0)
             oldTree.SetBranchStatus('ppfmet'    ,0)
             oldTree.SetBranchStatus('pchmet'    ,0)
             ## oldTree.SetBranchStatus('ptcmet'    ,0)
             oldTree.SetBranchStatus('mpmet'     ,0)
-            
-        if self.systArgument == 'metResolution':
-            oldTree.SetBranchStatus('pfmet'     ,0)
-            oldTree.SetBranchStatus('pfmetphi'  ,0)
-            oldTree.SetBranchStatus('chmet'     ,0)
-            oldTree.SetBranchStatus('chmetphi'  ,0)
-            ## oldTree.SetBranchStatus('tcmet'     ,0)
-            ## oldTree.SetBranchStatus('tcmetphi'  ,0)
-            oldTree.SetBranchStatus('mth'       ,0)
-            oldTree.SetBranchStatus('mtw1'      ,0)
-            oldTree.SetBranchStatus('mtw2'      ,0)
-            oldTree.SetBranchStatus('dphillmet' ,0)
-            oldTree.SetBranchStatus('dphilmet' ,0)
-            oldTree.SetBranchStatus('dphilmet1' ,0)
-            oldTree.SetBranchStatus('dphilmet2' ,0)
-            oldTree.SetBranchStatus('ppfmet'    ,0)
-            oldTree.SetBranchStatus('pchmet'    ,0)
-            ## oldTree.SetBranchStatus('ptcmet'    ,0)
-            oldTree.SetBranchStatus('mpmet'     ,0)            
-
-        if self.systArgument == 'muonResolution':
-            oldTree.SetBranchStatus('pt1'       ,0)
-            oldTree.SetBranchStatus('pt2'       ,0)
-            oldTree.SetBranchStatus('mll'       ,0)
-            oldTree.SetBranchStatus('ptll'      ,0)
-            ##             oldTree.SetBranchStatus('dphill'    ,0)
-            ##             oldTree.SetBranchStatus('dphilljet' ,0)
-            oldTree.SetBranchStatus('dphillmet' ,0)
-            oldTree.SetBranchStatus('dphilmet' ,0)
-            oldTree.SetBranchStatus('dphilmet1' ,0)
-            oldTree.SetBranchStatus('dphilmet2' ,0)
-            oldTree.SetBranchStatus('mth'       ,0)
-            oldTree.SetBranchStatus('mtw1'      ,0)
-            oldTree.SetBranchStatus('mtw2'      ,0)
-            oldTree.SetBranchStatus('pfmet'     ,0)
-            oldTree.SetBranchStatus('pfmetphi'  ,0)
-            oldTree.SetBranchStatus('chmet'     ,0)
-            oldTree.SetBranchStatus('chmetphi'  ,0)
-            ## oldTree.SetBranchStatus('tcmet'     ,0)
-            ## oldTree.SetBranchStatus('tcmetphi'  ,0)
-            oldTree.SetBranchStatus('ppfmet'    ,0)
-            oldTree.SetBranchStatus('pchmet'    ,0)
-            ## oldTree.SetBranchStatus('ptcmet'    ,0)
-            oldTree.SetBranchStatus('mpmet'     ,0)
-            oldTree.SetBranchStatus('gammaMRStar',0)
-            oldTree.SetBranchStatus('zveto',0)
-
-        if self.systArgument == 'electronResolution':
-            oldTree.SetBranchStatus('pt1'       ,0)
-            oldTree.SetBranchStatus('pt2'       ,0)
-            oldTree.SetBranchStatus('mll'       ,0)
-            oldTree.SetBranchStatus('ptll'      ,0)
-##             oldTree.SetBranchStatus('dphill'    ,0)
-##             oldTree.SetBranchStatus('dphilljet' ,0)
-            oldTree.SetBranchStatus('dphillmet' ,0)
-            oldTree.SetBranchStatus('dphilmet' ,0)
-            oldTree.SetBranchStatus('dphilmet1' ,0)
-            oldTree.SetBranchStatus('dphilmet2' ,0)
-            oldTree.SetBranchStatus('mth'       ,0)
-            oldTree.SetBranchStatus('mtw1'      ,0)
-            oldTree.SetBranchStatus('mtw2'      ,0)
-            oldTree.SetBranchStatus('pfmet'     ,0)
-            oldTree.SetBranchStatus('pfmetphi'  ,0)
-            oldTree.SetBranchStatus('chmet'     ,0)
-            oldTree.SetBranchStatus('chmetphi'  ,0)
-            ## oldTree.SetBranchStatus('tcmet'     ,0)
-            ## oldTree.SetBranchStatus('tcmetphi'  ,0)
-            oldTree.SetBranchStatus('ppfmet'    ,0)
-            oldTree.SetBranchStatus('pchmet'    ,0)
-            ## oldTree.SetBranchStatus('ptcmet'    ,0)
-            oldTree.SetBranchStatus('mpmet'     ,0)
-            oldTree.SetBranchStatus('gammaMRStar',0)
-            oldTree.SetBranchStatus('zveto',0)
-
-        if self.systArgument == 'dyTemplate':
-            oldTree.SetBranchStatus('pfmet'     ,0)
-            oldTree.SetBranchStatus('chmet'     ,0)
-            ## oldTree.SetBranchStatus('tcmet'     ,0)
-            oldTree.SetBranchStatus('ppfmet'    ,0)
-            oldTree.SetBranchStatus('pchmet'    ,0)
-            ## oldTree.SetBranchStatus('ptcmet'    ,0)
-            oldTree.SetBranchStatus('mth'       ,0)
-            oldTree.SetBranchStatus('mtw1'      ,0)
-            oldTree.SetBranchStatus('mtw2'      ,0)
-            oldTree.SetBranchStatus('mpmet'     ,0)            
-            oldTree.SetBranchStatus('njet'      ,0)
+            oldTree.SetBranchStatus('pfmetSignificance', 0)
+            oldTree.SetBranchStatus('pfmetMEtSig',0)
+            oldTree.SetBranchStatus('dphilljet1',0)
+            oldTree.SetBranchStatus('dphimetjet1',0)
+            oldTree.SetBranchStatus('recoil'    ,0)
             oldTree.SetBranchStatus('dymva0'    ,0)
             oldTree.SetBranchStatus('dymva1'    ,0)
-
-        if self.systArgument == 'puscale':
-            oldTree.SetBranchStatus('puW'       ,0)
-
-        if self.systArgument == 'chargeResolution':
-            oldTree.SetBranchStatus('ch1'       ,0)
-            oldTree.SetBranchStatus('ch2'       ,0)
+                        
 
         newTree = oldTree.CloneTree(0)
         nentries = oldTree.GetEntriesFast()
@@ -553,7 +470,318 @@ class scaleAndSmear:
         for branch in self.ttree.GetListOfBranches():
             print branch
 
+## define variables to recompute
+    def defineVariables(self):
 
+        self.ttree.Branch('pt1',self.pt1,'pt1/F')
+        self.ttree.Branch('pt2',self.pt2,'pt2/F')
+        self.ttree.Branch('pt3',self.pt3,'pt3/F')
+        self.ttree.Branch('pt4',self.pt4,'pt4/F')
+        self.ttree.Branch('mll',self.mll,'mll/F')
+        self.ttree.Branch('ptll',self.ptll,'ptll/F')
+        ##         self.ttree.Branch('dphill',self.dphill,'dphill/F')
+        self.ttree.Branch('dphilljet',self.dphilljet,'dphilljet/F')
+        self.ttree.Branch('gammaMRStar',self.gammaMRStar,'gammaMRStar/F')
+        self.ttree.Branch('zveto',self.zveto,'zveto/I')
+        
+        self.ttree.Branch('jetpt1',self.jetpt1,'jetpt1/F')
+        self.ttree.Branch('jetpt2',self.jetpt2,'jetpt2/F')
+        self.ttree.Branch('njet',self.njet,'njet/F')
+        self.ttree.Branch('mjj',self.mjj,'mjj/F')
+        self.ttree.Branch('dphilljetjet',self.dphilljetjet,'dphilljetjet/F')
+        self.ttree.Branch('jetpt3',self.jetpt3,'jetpt3/F')
+        self.ttree.Branch('jetpt4',self.jetpt4,'jetpt4/F')
+        self.ttree.Branch('cjetpt1',self.cjetpt1,'cjetpt1/F')
+        self.ttree.Branch('cjetpt2',self.cjetpt2,'cjetpt2/F')
+        self.ttree.Branch('njetvbf',self.njetvbf,'njetvbf/F')
+    
+        self.ttree.Branch('dphillmet',self.dphillmet,'dphillmet/F')
+        self.ttree.Branch('dphilmet',self.dphilmet,'dphilmet/F')
+        self.ttree.Branch('dphilmet1',self.dphilmet1,'dphilmet1/F')
+        self.ttree.Branch('dphilmet2',self.dphilmet2,'dphilmet2/F')
+        self.ttree.Branch('mth',self.mth,'mth/F')
+        self.ttree.Branch('mtw1',self.mtw1,'mtw1/F')
+        self.ttree.Branch('mtw2',self.mtw2,'mtw2/F')
+        self.ttree.Branch('pfmet',self.pfmet,'pfmet/F')
+        self.ttree.Branch('pfmetphi',self.pfmetphi,'pfmetphi/F')
+        self.ttree.Branch('chmet',self.chmet,'chmet/F')
+        self.ttree.Branch('chmetphi',self.chmetphi,'chmetphi/F')
+        ## self.ttree.Branch('tcmet',self.tcmet,'tcmet/F')
+        ## self.ttree.Branch('tcmetphi',self.tcmetphi,'tcmetphi/F')
+        self.ttree.Branch('ppfmet',self.ppfmet,'ppfmet/F')
+        self.ttree.Branch('pchmet',self.pchmet,'pchmet/F')
+        ## self.ttree.Branch('ptcmet',self.ptcmet,'ptcmet/F')
+        self.ttree.Branch('mpmet',self.mpmet,'mpmet/F')
+        self.ttree.Branch('pfmetSignificance',self.pfmetSignificance,'pfmetSignificance/F')
+        self.ttree.Branch('pfmetMEtSig',self.pfmetMEtSig,'pfmetMEtSig/F')
+        self.ttree.Branch('dphimetjet1',self.dphimetjet1,'dphimetjet1/F')
+        self.ttree.Branch('dphilljet1',self.dphilljet1,'dphilljet1/F')
+        self.ttree.Branch('recoil',self.recoil,'recoil/F')
+        self.ttree.Branch('dymva0',self.dymva0,'dymva0/F')
+        self.ttree.Branch('dymva1',self.dymva1,'dymva1/F')
+
+
+## get old values from original tree
+    def getOriginalVariables(self):
+        
+        self.pt1[0] = self.oldttree.pt1
+        self.pt2[0] = self.oldttree.pt2
+        #print 'original '+str(tree.pt1)+' '+str(tree.pt2)
+        #print 'original '+str(self.pt1)+' '+str(self.pt2)
+        self.pt3[0] = self.oldttree.pt3
+        self.pt4[0] = self.oldttree.pt4
+        self.mll[0] = self.oldttree.mll
+        self.ptll[0] = self.oldttree.ptll
+        ## self.dphill[0] = self.oldttree.dphill
+        self.dphilljet[0] = self.oldttree.dphilljet
+        self.gammaMRStar[0] = self.oldttree.gammaMRStar
+        self.zveto[0] = self.oldttree.zveto
+        
+        self.jetpt1[0] = self.oldttree.jetpt1
+        self.jetpt2[0] = self.oldttree.jetpt2
+        self.njet[0] = self.oldttree.njet
+        self.dphilljetjet[0] = self.oldttree.dphilljetjet
+        self.mjj[0] = self.oldttree.mjj
+        self.jetpt3[0] = self.oldttree.jetpt3
+        self.jetpt4[0] = self.oldttree.jetpt4
+        self.cjetpt1[0] = self.oldttree.cjetpt1
+        self.cjetpt2[0] = self.oldttree.cjetpt2
+        self.njetvbf[0] = self.oldttree.njetvbf
+        
+        self.dphillmet[0] = self.oldttree.dphillmet
+        self.dphilmet[0] = self.oldttree.dphilmet
+        self.dphilmet1[0] = self.oldttree.dphilmet1
+        self.dphilmet2[0] = self.oldttree.dphilmet2
+        self.mth[0] = self.oldttree.mth
+        self.mtw1[0] = self.oldttree.mtw1
+        self.mtw2[0] = self.oldttree.mtw2
+        self.pfmet[0] = self.oldttree.pfmet
+        self.pfmetphi[0] = self.oldttree.pfmetphi
+        self.chmet[0] = self.oldttree.chmet
+        self.chmetphi[0] = self.oldttree.chmetphi
+        ## self.tcmet[0] = self.oldttree.tchmet
+        ## self.tcmetphi[0] = self.oldttree.tcmetphi
+        self.ppfmet[0] = self.oldttree.ppfmet
+        self.pchmet[0] = self.oldttree.pchmet
+        ## self.ptcmet[0] = self.oldttree.ptcmet
+        self.mpmet[0] = self.oldttree.mpmet
+        self.pfmetSignificance[0] = self.oldttree.pfmetSignificance
+        self.pfmetMEtSig[0] = self.oldttree.pfmetMEtSig
+        self.dphimetjet1[0] = -999 #self.oldttree.dphimetjet1
+        self.dphilljet1[0] = -999
+        self.recoil[0] = -999 #self.oldttree.recoil
+        self.dymva0[0] = self.oldttree.dymva0
+        self.dymva1[0] = self.oldttree.dymva1 
+                                                                                                                                                                                        
+
+## recompute lepton related variables from already corrected leptons
+    def computeLeptonVariables(self,l1,l2):
+
+        self.mll[0]  = invariantMass(l1, l2)
+        self.ptll[0] = dileptonPt(l1, l2)
+        ## self.dphill[0] =  deltaPhi(l1,l2)
+        
+        self.gammaMRStar[0] = calculateGammaMRStar(l1,l2)
+        self.zveto[0] = checkZveto(self.mll, self.oldttree.channel)
+
+        j1 = ROOT.TLorentzVector()
+        j1.SetPtEtaPhiM(self.jetpt1[0], self.oldttree.jeteta1, self.oldttree.jetphi1, 0)
+        self.dphilljet[0] = deltaPhi(l1+l2,j1)
+
+## recompute met related variables from already corrected lepton and pfmet/chmet
+    def computeMETVariables(self,l1,l2,pf,ch):
+    
+        ## correct projected MET
+        self.ppfmet[0] = projectMET(l1, l2, pf)
+        self.pchmet[0] = projectMET(l1, l2, ch)
+        self.mpmet[0] = min( self.ppfmet, self.pchmet )
+
+        self.dphillmet[0] =  deltaPhi(l1+l2,pf)
+        self.dphilmet1[0] =  deltaPhi(l1,pf)
+        self.dphilmet2[0] =  deltaPhi(l2,pf)
+        self.dphilmet[0]  =  min(self.dphilmet1, self.dphilmet2)
+        
+        self.mth[0]  = transverseMass((l1+l2),pf)
+        self.mtw1[0] = transverseMass((l1),pf)
+        self.mtw2[0] = transverseMass((l2),pf)
+
+        jpt1 = self.jetpt1[0]
+        if self.jetpt1[0] < 15 :
+            jpt1 = 15
+            self.dphilljet1[0]  = -0.1;
+            self.dphimetjet1[0] = -0.1;
+        else :
+            jet1 = ROOT.TLorentzVector()
+            jet1.SetPtEtaPhiM(self.jetpt1[0], self.oldttree.jeteta1, self.oldttree.jetphi1, 0)
+            self.dphilljet1[0]  = deltaPhi(l1+l2,jet1)
+            self.dphimetjet1[0] = deltaPhi(pf,jet1)
+
+        #self.pfmetSignificance[0] = self.pfmet[0] / self.oldttree.pfmet * self.oldttree.pfmetSignificance
+        self.pfmetMEtSig[0] = self.pfmet[0] / self.oldttree.pfmet * self.oldttree.pfmetMEtSig
+        
+        px_rec = pf.Pt() * cos(pf.Phi()) + (l1+l2).Px()
+        py_rec = pf.Pt() * sin(pf.Phi()) + (l1+l2).Py()
+        self.recoil[0] = sqrt(px_rec*px_rec + py_rec*py_rec)
+                                
+        self.dymva0[0] = self.computeDYMVA(0, self.njet[0], l1, l2, pf)
+        self.dymva1[0] = self.computeDYMVA(1, self.njet[0], l1, l2, pf)
+        
+
+## print values before and after
+    def printVariables(self):
+
+        print 'channel: '+str(self.oldttree.channel)
+        print 'pt1: '+str(self.oldttree.pt1)+' -> '+ str(self.pt1[0])
+        print 'pt2: '+str(self.oldttree.pt2)+' -> '+ str(self.pt2[0])
+        print 'mll: '    + str(self.oldttree.mll)    +to+ str(self.mll[0])
+        print 'ptll: '   + str(self.oldttree.ptll)   +to+ str(self.ptll[0])
+        ##                 print 'dphill: ' + str(self.oldttree.dphill) +to+ str(self.dphill[0])  
+        print 'gammaMRStar: '    +str(self.oldttree.gammaMRStar)    +to+str(self.gammaMRStar[0])
+        print 'zveto: '    +str(self.oldttree.zveto)    +to+str(self.zveto[0])
+        print 'pfmet: '    +str(self.oldttree.pfmet)    +to+str(self.pfmet[0])
+        print 'pfmetphi: ' +str(self.oldttree.pfmetphi) +to+str(self.pfmetphi[0])
+        print 'chmet: '    +str(self.oldttree.chmet)    +to+str(self.chmet[0])
+        print 'chmetphi: ' +str(self.oldttree.chmetphi) +to+str(self.chmetphi[0])
+        ## print 'tcmet: '    +str(self.oldttree.tcmet)    +to+str(self.tcmet[0])
+        ## print 'tcmetphi: ' +str(self.oldttree.tcmetphi) +to+str(self.tcmetphi[0])
+        print 'dphillmet: ' + str(self.oldttree.dphillmet) +to+ str(self.dphillmet[0])
+        print 'dphilmet: ' + str(self.oldttree.dphilmet) +to+ str(self.dphilmet[0])
+        print 'dphilljet: ' + str(self.oldttree.dphilljet) +to+ str(self.dphilljet[0])
+        print 'dphilmet1: ' + str(self.oldttree.dphilmet1) +to+ str(self.dphilmet1[0])
+        print 'dphilmet2: ' + str(self.oldttree.dphilmet2) +to+ str(self.dphilmet2[0])
+        print 'mth: ' + str(self.oldttree.mth) +to+ str(self.mth[0])
+        print 'mtw1: ' + str(self.oldttree.mtw1) +to+ str(self.mtw1[0])
+        print 'mtw2: ' + str(self.oldttree.mtw2) +to+ str(self.mtw2[0])
+        print 'ppfmet: '    +str(self.oldttree.ppfmet)    +to+str(self.ppfmet[0])
+        print 'pchmet: '    +str(self.oldttree.pchmet)    +to+str(self.pchmet[0])
+        ## print 'ptcmet: '    +str(self.oldttree.ptcmet)    +to+str(self.ptcmet[0])
+        print 'mpmet: '    +str(self.oldttree.mpmet)    +to+str(self.mpmet[0])
+        print 'dymva0: '    +str(self.oldttree.dymva0)    +to+str(self.dymva0[0])
+        print 'dymva1: '    +str(self.oldttree.dymva1)    +to+str(self.dymva1[0])
+        print 'jetpt1: '+str(self.oldttree.jetpt1)+' -> '+ str(self.jetpt1[0])
+        print 'jetpt2: '+str(self.oldttree.jetpt2)+' -> '+ str(self.jetpt2[0])
+        print 'jetpt3: '+str(self.oldttree.jetpt3)+' -> '+ str(self.jetpt3[0])
+        print 'jetpt4: '+str(self.oldttree.jetpt4)+' -> '+ str(self.jetpt4[0])
+        print 'cjetpt1: '+str(self.oldttree.cjetpt1)+' -> '+ str(self.cjetpt1[0])
+        print 'cjetpt2: '+str(self.oldttree.cjetpt2)+' -> '+ str(self.cjetpt2[0])
+        print 'njet: '  +str(self.oldttree.njet)        +to+str(self.njet[0])
+        print 'njetvbf: '  +str(self.oldttree.njetvbf)        +to+str(self.njetvbf[0])
+        print 'mjj: ' + str(self.oldttree.mjj) +to+ str(self.mjj[0])
+        
+
+    def createDYMVA(self):
+        self.getDYMVAV0j0 = ROOT.TMVA.Reader();
+        self.getDYMVAV0j1 = ROOT.TMVA.Reader();
+        self.getDYMVAV1j0 = ROOT.TMVA.Reader();
+        self.getDYMVAV1j1 = ROOT.TMVA.Reader();
+        
+        self.getDYMVAV0j0.AddVariable("met",           (self.var1))
+        self.getDYMVAV0j0.AddVariable("trackMet",      (self.var2))
+        self.getDYMVAV0j0.AddVariable("jet1pt",        (self.var3))
+        self.getDYMVAV0j0.AddVariable("metSig",        (self.var4))
+        self.getDYMVAV0j0.AddVariable("dPhiDiLepJet1", (self.var5))
+        self.getDYMVAV0j0.AddVariable("dPhiJet1MET",   (self.var6))
+        self.getDYMVAV0j0.AddVariable("mt",            (self.var7))
+        
+        self.getDYMVAV0j1.AddVariable("met",           (self.var1))
+        self.getDYMVAV0j1.AddVariable("trackMet",      (self.var2))
+        self.getDYMVAV0j1.AddVariable("jet1pt",        (self.var3))
+        self.getDYMVAV0j1.AddVariable("metSig",        (self.var4))
+        self.getDYMVAV0j1.AddVariable("dPhiDiLepJet1", (self.var5))
+        self.getDYMVAV0j1.AddVariable("dPhiJet1MET",   (self.var6))
+        self.getDYMVAV0j1.AddVariable("mt",            (self.var7))
+        
+        self.getDYMVAV1j0.AddVariable("pmet",           (self.var1))
+        self.getDYMVAV1j0.AddVariable("pTrackMet",      (self.var2))
+        self.getDYMVAV1j0.AddVariable("nvtx",           (self.var3))
+        self.getDYMVAV1j0.AddVariable("dilpt",          (self.var4))
+        self.getDYMVAV1j0.AddVariable("jet1pt",         (self.var5))
+        self.getDYMVAV1j0.AddVariable("metSig",         (self.var6))
+        self.getDYMVAV1j0.AddVariable("dPhiDiLepJet1",  (self.var7))
+        self.getDYMVAV1j0.AddVariable("dPhiDiLepMET",   (self.var8))
+        self.getDYMVAV1j0.AddVariable("dPhiJet1MET",    (self.var9))
+        self.getDYMVAV1j0.AddVariable("recoil",         (self.var10))
+        self.getDYMVAV1j0.AddVariable("mt",             (self.var11))
+        
+        self.getDYMVAV1j1.AddVariable("pmet",           (self.var1))
+        self.getDYMVAV1j1.AddVariable("pTrackMet",      (self.var2))
+        self.getDYMVAV1j1.AddVariable("nvtx",           (self.var3))
+        self.getDYMVAV1j1.AddVariable("dilpt",          (self.var4))
+        self.getDYMVAV1j1.AddVariable("jet1pt",         (self.var5))
+        self.getDYMVAV1j1.AddVariable("metSig",         (self.var6))
+        self.getDYMVAV1j1.AddVariable("dPhiDiLepJet1",  (self.var7))
+        self.getDYMVAV1j1.AddVariable("dPhiDiLepMET",   (self.var8))
+        self.getDYMVAV1j1.AddVariable("dPhiJet1MET",    (self.var9))
+        self.getDYMVAV1j1.AddVariable("recoil",         (self.var10))
+        self.getDYMVAV1j1.AddVariable("mt",             (self.var11))
+        
+        
+        #baseCMSSW = string(getenv("CMSSW_BASE"))
+        #self.getDYMVAV0j0.BookMVA("BDTB",baseCMSSW+string("/src/DYMvaInCMSSW/GetDYMVA/data/TMVA_0j_BDTB.weights.xml"))
+        #self.getDYMVAV0j1.BookMVA("BDTB",baseCMSSW+string("/src/DYMvaInCMSSW/GetDYMVA/data/TMVA_1j_BDTB.weights.xml"))
+        #self.getDYMVAV1j0.BookMVA("BDTG",baseCMSSW+string("/src/DYMvaInCMSSW/GetDYMVA/data/TMVA_BDTG_0j_MCtrain.weights.xml"))
+        #self.getDYMVAV1j1.BookMVA("BDTG",baseCMSSW+string("/src/DYMvaInCMSSW/GetDYMVA/data/TMVA_BDTG_1j_MCtrain.weights.xml"))
+        
+        #baseCMSSW = os.getenv('CMSSW_BASE')
+        #self.getDYMVAV0j0.BookMVA("BDTB",baseCMSSW+"/src/DYMvaInCMSSW/GetDYMVA/data/TMVA_0j_BDTB.weights.xml")
+        #self.getDYMVAV0j1.BookMVA("BDTB",baseCMSSW+"/src/DYMvaInCMSSW/GetDYMVA/data/TMVA_1j_BDTB.weights.xml")
+        #self.getDYMVAV1j0.BookMVA("BDTG",baseCMSSW+"/src/DYMvaInCMSSW/GetDYMVA/data/TMVA_BDTG_0j_MCtrain.weights.xml")
+        #self.getDYMVAV1j1.BookMVA("BDTG",baseCMSSW+"/src/DYMvaInCMSSW/GetDYMVA/data/TMVA_BDTG_1j_MCtrain.weights.xml")
+        
+        # new dymva trainined xml
+        baseCMSSW = os.getenv('CMSSW_BASE')
+        self.getDYMVAV0j0.BookMVA("BDTB",baseCMSSW+"/src/DYMvaInCMSSW/GetDYMVA/data/TMVA_0j_BDTB.weights.xml")
+        self.getDYMVAV0j1.BookMVA("BDTB",baseCMSSW+"/src/DYMvaInCMSSW/GetDYMVA/data/TMVA_1j_BDTB.weights.xml")
+        self.getDYMVAV1j0.BookMVA("BDTG",baseCMSSW+"/src/DYMvaInCMSSW/GetDYMVA/data/TMVA_0j_metshift_BDTG.weights.xml")
+        self.getDYMVAV1j1.BookMVA("BDTG",baseCMSSW+"/src/DYMvaInCMSSW/GetDYMVA/data/TMVA_1j_metshift_BDTG.weights.xml")
+        
+        
+    def computeDYMVA(self, algo, nj, l1, l2, met):
+
+        dymva = -999
+
+        if algo == 0:
+            
+            self.var1[0] =  self.pfmet[0]
+            self.var2[0] =  self.chmet[0]
+            self.var3[0] =  self.jetpt1[0]
+            self.var4[0] =  self.pfmetSignificance[0]
+            self.var5[0] =  self.dphilljet1[0]
+            self.var6[0] =  self.dphimetjet1[0]
+            self.var7[0] =  self.mth[0]
+            
+            if nj == 0:
+                dymva = self.getDYMVAV0j0.EvaluateMVA("BDTB")
+            elif nj == 1:
+                dymva = self.getDYMVAV0j1.EvaluateMVA("BDTB")
+            else :
+                dymva = -999
+
+        if algo == 1:
+            self.var1[0]  =  self.ppfmet[0]
+            self.var2[0]  =  self.pchmet[0]
+            self.var3[0]  =  self.oldttree.nvtx
+            self.var4[0]  =  self.ptll[0]
+            self.var5[0]  =  self.jetpt1[0]
+            self.var6[0]  =  self.pfmetMEtSig[0]
+            self.var7[0]  =  self.dphilljet1[0]
+            self.var8[0]  =  self.dphillmet[0]
+            self.var9[0]  =  self.dphimetjet1[0]
+            self.var10[0] =  self.recoil[0]
+            self.var11[0] =  self.mth[0]
+        
+            if nj == 0:
+                dymva = self.getDYMVAV1j0.EvaluateMVA("BDTG")
+            elif nj == 1:
+                dymva = self.getDYMVAV1j1.EvaluateMVA("BDTG")
+            else :
+                dymva = -999
+
+            #print 'dymva '+str(self.oldttree.dymva1)+' '+str(dymva)
+
+        return dymva
+    
+        
 ###############################################################################################
 ##     
 ##     
@@ -573,9 +801,9 @@ class scaleAndSmear:
         self.ttree.Branch(weightNamePU,puW,weightNamePU+"/F")
 
 
-        inDATAFileUp   = openTFile(puUp)
-        inDATAFileDown = openTFile(puDown)
-        inMCFile       = openTFile(puMC)
+        inDATAFileUp   = openTFile('data/'+puUp)
+        inDATAFileDown = openTFile('data/'+puDown)
+        inMCFile       = openTFile('data/'+puMC)
 
 
         puScaleDATAhistoUp   = getHist(inDATAFileUp,"pileup")
@@ -733,61 +961,9 @@ class scaleAndSmear:
             direction = -1.0
         scaleMB = uncertaintyMB * direction
         scaleME = uncertaintyME * direction
-        print 'scale MB '+str(scaleMB)
-        print 'scale ME '+str(scaleME)
 
         ## define a new branch
-        pt1 = numpy.zeros(1, dtype=numpy.float32)
-        pt2 = numpy.zeros(1, dtype=numpy.float32)
-        mll = numpy.zeros(1, dtype=numpy.float32)
-        ptll = numpy.zeros(1, dtype=numpy.float32)
-##         dphill = numpy.zeros(1, dtype=numpy.float32)
-##         dphilljet = numpy.zeros(1, dtype=numpy.float32)
-        dphillmet = numpy.zeros(1, dtype=numpy.float32)
-        dphilmet = numpy.zeros(1, dtype=numpy.float32)
-        dphilmet1 = numpy.zeros(1, dtype=numpy.float32)
-        dphilmet2 = numpy.zeros(1, dtype=numpy.float32)
-        mth = numpy.zeros(1, dtype=numpy.float32)
-        mtw1 = numpy.zeros(1, dtype=numpy.float32)
-        mtw2 = numpy.zeros(1, dtype=numpy.float32)
-        pfmet = numpy.zeros(1, dtype=numpy.float32)
-        pfmetphi = numpy.zeros(1, dtype=numpy.float32)
-        chmet = numpy.zeros(1, dtype=numpy.float32)
-        chmetphi = numpy.zeros(1, dtype=numpy.float32)
-        ## tcmet = numpy.zeros(1, dtype=numpy.float32)
-        ## tcmetphi = numpy.zeros(1, dtype=numpy.float32)
-        ppfmet = numpy.zeros(1, dtype=numpy.float32)
-        pchmet = numpy.zeros(1, dtype=numpy.float32)
-        ## ptcmet = numpy.zeros(1, dtype=numpy.float32)
-        mpmet = numpy.zeros(1, dtype=numpy.float32)
-        gammaMRStar = numpy.zeros(1, dtype=numpy.float32)
-        zveto = numpy.zeros(1, dtype=int)
-                
-        self.ttree.Branch('pt1',pt1,'pt1/F')
-        self.ttree.Branch('pt2',pt2,'pt2/F')
-        self.ttree.Branch('mll',mll,'mll/F')
-        self.ttree.Branch('ptll',ptll,'ptll/F')
-##         self.ttree.Branch('dphill',dphill,'dphill/F')
-##         self.ttree.Branch('dphilljet',dphilljet,'dphilljet/F')
-        self.ttree.Branch('dphillmet',dphillmet,'dphillmet/F')
-        self.ttree.Branch('dphilmet',dphilmet,'dphilmet/F')
-        self.ttree.Branch('dphilmet1',dphilmet1,'dphilmet1/F')
-        self.ttree.Branch('dphilmet2',dphilmet2,'dphilmet2/F')
-        self.ttree.Branch('mth',mth,'mth/F')
-        self.ttree.Branch('mtw1',mtw1,'mtw1/F')
-        self.ttree.Branch('mtw2',mtw2,'mtw2/F')
-        self.ttree.Branch('pfmet',pfmet,'pfmet/F')
-        self.ttree.Branch('pfmetphi',pfmetphi,'pfmetphi/F')
-        self.ttree.Branch('chmet',chmet,'chmet/F')
-        self.ttree.Branch('chmetphi',chmetphi,'chmetphi/F')
-        ## self.ttree.Branch('tcmet',tcmet,'tcmet/F')
-        ## self.ttree.Branch('tcmetphi',tcmetphi,'tcmetphi/F')
-        self.ttree.Branch('ppfmet',ppfmet,'ppfmet/F')
-        self.ttree.Branch('pchmet',pchmet,'pchmet/F')
-        ## self.ttree.Branch('ptcmet',ptcmet,'ptcmet/F')
-        self.ttree.Branch('mpmet',mpmet,'mpmet/F')
-        self.ttree.Branch('gammaMRStar',gammaMRStar,'gammaMRStar/F')
-        self.ttree.Branch('zveto',zveto,'zveto/I')
+        self.defineVariables()
 
         nentries = self.nentries
         print 'total number of entries: '+str(nentries)
@@ -800,6 +976,9 @@ class scaleAndSmear:
             step = 10000
             if i > 0 and i%step == 0:
                 print str(i)+' events processed.'
+                
+            ## by default set all values to original tree
+            self.getOriginalVariables()
 
             # get the "old" lepton pt
             pt1_hold  = self.oldttree.pt1
@@ -808,140 +987,83 @@ class scaleAndSmear:
             pt2_hold  = self.oldttree.pt2
             eta2_hold = self.oldttree.eta2
             phi2_hold = self.oldttree.phi2
-
+            
             ## scale the lepton pt
             ## muon-muon channel
             if self.oldttree.channel == 0:
                 if   abs(self.oldttree.eta1) < boundaryMBME:
-                    pt1[0] = pt1_hold + pt1_hold * scaleMB
+                    self.pt1[0] = pt1_hold + pt1_hold * scaleMB
                 else :
-                    pt1[0] = pt1_hold + pt1_hold * scaleME
+                    self.pt1[0] = pt1_hold + pt1_hold * scaleME
                 if   abs(self.oldttree.eta2) < boundaryMBME:
-                    pt2[0] = pt2_hold + pt2_hold * scaleMB
+                    self.pt2[0] = pt2_hold + pt2_hold * scaleMB
                 else :
-                    pt2[0] = pt2_hold + pt2_hold * scaleME
-            ## electron-electron channel    
+                    self.pt2[0] = pt2_hold + pt2_hold * scaleME
+            ## electron-electron channel
             ## dont scale at all
             if self.oldttree.channel == 1:
-                pt1[0] = pt1_hold  ## do not scale electrons here
-                pt2[0] = pt2_hold  ## independent of "up" or "down"
+                self.pt1[0] = pt1_hold  ## do not scale electrons here
+                self.pt2[0] = pt2_hold  ## independent of "up" or "down"
             ## electron-muon channel
             if self.oldttree.channel == 2:
-                pt1[0] = pt1_hold
+                self.pt1[0] = pt1_hold
                 if   abs(self.oldttree.eta2) < boundaryMBME:
-                    pt2[0] = pt2_hold + pt2_hold * scaleMB
+                    self.pt2[0] = pt2_hold + pt2_hold * scaleMB
                 else :
-                    pt2[0] = pt2_hold + pt2_hold * scaleME
-            ## muon-electron channel    
+                    self.pt2[0] = pt2_hold + pt2_hold * scaleME
+            ## muon-electron channel
             if self.oldttree.channel == 3:
                 if   abs(self.oldttree.eta1) < boundaryMBME:
-                    pt1[0] = pt1_hold + pt1_hold * scaleMB
+                    self.pt1[0] = pt1_hold + pt1_hold * scaleMB
                 else :
-                    pt1[0] = pt1_hold + pt1_hold * scaleME
-                pt2[0] = pt2_hold 
-
-##             print '---------------------'
-##             print str(self.oldttree.channel)+': '+str(pt1_hold)+' -> '+str(pt1[0])
-##             print str(self.oldttree.channel)+': '+str(pt2_hold)+' -> '+str(pt2[0])
+                    self.pt1[0] = pt1_hold + pt1_hold * scaleME
+                self.pt2[0] = pt2_hold
 
 
-## FIXME: after the scaling one has to recalculate some variables
-##        like invariant mass etc...
-##        does delta phi, eta change? guess not...
-            l1_hold = ROOT.TLorentzVector()
-            l2_hold = ROOT.TLorentzVector()
+            ## FIXME: after the scaling one has to recalculate some variables
+            ##        like invariant mass etc...
+            ##        does delta phi, eta change? guess not...
+
             l1 = ROOT.TLorentzVector()
             l2 = ROOT.TLorentzVector()
+            l1_hold = ROOT.TLorentzVector()
+            l2_hold = ROOT.TLorentzVector()
             l1_hold.SetPtEtaPhiM(pt1_hold, eta1_hold, phi1_hold, 0)
             l2_hold.SetPtEtaPhiM(pt2_hold, eta2_hold, phi2_hold, 0)
-            l1.SetPtEtaPhiM(pt1[0], eta1_hold, phi1_hold, 0)
-            l2.SetPtEtaPhiM(pt2[0], eta2_hold, phi2_hold, 0)
-
-
-            ## correct MET
-            ## PFMET:
+            l1.SetPtEtaPhiM(self.pt1[0], eta1_hold, phi1_hold, 0)
+            l2.SetPtEtaPhiM(self.pt2[0], eta2_hold, phi2_hold, 0)
+            
+            # recompute lepton variables
+            self.computeLeptonVariables(l1, l2)
+            
+            # recompute met variables
+            ## - pfmet
             met = ROOT.TLorentzVector()
-            met.SetPtEtaPhiM(self.oldttree.pfmet, 0, self.oldttree.pfmetphi, 0)           
-            ## FIXME: cross-check this!!
-            ## add "old leptons" and subtract the "new" ones:
+            met.SetPtEtaPhiM(self.oldttree.pfmet, 0, self.oldttree.pfmetphi, 0)
             met = correctMet(met, l1_hold, l2_hold, l1, l2)
-
-            ## substitute the values
-            pfmet[0] = met.Pt()
-            pfmetphi[0] = met.Phi()
-            ## other METs:
+            self.pfmet[0] = met.Pt()
+            self.pfmetphi[0] = met.Phi()
             ## - chmet
             chmet4 = ROOT.TLorentzVector()
-            chmet4.SetPtEtaPhiM(self.oldttree.chmet, 0, self.oldttree.chmetphi, 0)      
+            chmet4.SetPtEtaPhiM(self.oldttree.chmet, 0, self.oldttree.chmetphi, 0)
             chmet4 = correctMet(chmet4, l1_hold, l2_hold, l1, l2)
-            chmet[0] = chmet4.Pt()
-            chmetphi[0] = chmet4.Phi()
+            self.chmet[0] = chmet4.Pt()
+            self.chmetphi[0] = chmet4.Phi()
             ## ## - tcmet
             ## tcmet4 = ROOT.TLorentzVector()
-            ## tcmet4.SetPtEtaPhiM(self.oldttree.tcmet, 0, self.oldttree.tcmetphi, 0)      
+            ## tcmet4.SetPtEtaPhiM(self.oldttree.tcmet, 0, self.oldttree.tcmetphi, 0)
             ## tcmet4 = correctMet(tcmet4, l1_hold, l2_hold, l1, l2)
             ## tcmet[0] = tcmet4.Pt()
             ## tcmetphi[0] = tcmet4.Phi()
-
-            ## correct projected MET
-            ppfmet[0] = projectMET(l1, l2, met)
-            pchmet[0] =projectMET(l1, l2, chmet4)
-            ## ptcmet[0] = projectMET(l1, l2, ptcmet)
-            mpmet[0] = min( ppfmet[0], pchmet[0] )
-
-            mll[0]  = invariantMass(l1, l2)
-            ptll[0] = dileptonPt(l1, l2)
-##             dphill[0] =  deltaPhi(l1,l2)
-
-##             j1 = ROOT.TLorentzVector()
-##             j1.SetPtEtaPhiM(self.oldttree.jetpt1, self.oldttree.jeteta1, self.oldttree.jetphi1, 0)
-##             dphilljet[0] =  deltaPhi(l1+l2,j1)
-
-            dphillmet[0] =  deltaPhi(l1+l2,met)
-            dphilmet1[0] =  deltaPhi(l1,met)
-            dphilmet2[0] =  deltaPhi(l2,met)
-            dphilmet[0] =  min(dphilmet1[0], dphilmet2[0])
             
-            mth[0] = transverseMass((l1+l2),met)
-            mtw1[0] = transverseMass((l1),met)
-            mtw2[0] = transverseMass((l2),met)
-
-            gammaMRStar[0] = calculateGammaMRStar(l1,l2)
-
-
-            zveto[0] = checkZveto(mll[0], self.oldttree.channel)
-
+            self.computeMETVariables(l1, l2, met, chmet4)
+                        
             if self.verbose is True:
                 print '-----------------------------------'
                 print 'event: '+str(i)
-                print 'scale: '+str(scale)
-                print 'channel: '+str(self.oldttree.channel)
-                print 'pt1: '+str(pt1_hold)+' -> '+ str(pt1[0])
-                print 'pt1: '+str(pt2_hold)+' -> '+ str(pt2[0])
-                print 'pfmet: '    +str(self.oldttree.pfmet)    +to+str(pfmet[0])
-                print 'pfmetphi: ' +str(self.oldttree.pfmetphi) +to+str(pfmetphi[0])
-                print 'chmet: '    +str(self.oldttree.chmet)    +to+str(chmet[0])
-                print 'chmetphi: ' +str(self.oldttree.chmetphi) +to+str(chmetphi[0])
-                ## print 'tcmet: '    +str(self.oldttree.tcmet)    +to+str(tcmet[0])
-                ## print 'tcmetphi: ' +str(self.oldttree.tcmetphi) +to+str(tcmetphi[0])
-                print 'mll: '    + str(self.oldttree.mll)    +to+ str(mll[0])
-                print 'ptll: '   + str(self.oldttree.ptll)   +to+ str(ptll[0])
-##                 print 'dphill: ' + str(self.oldttree.dphill) +to+ str(dphill[0])
-                print 'dphillmet: ' + str(self.oldttree.dphillmet) +to+ str(dphillmet[0])
-                print 'dphilmet: ' + str(self.oldttree.dphilmet) +to+ str(dphilmet[0])
-##                 print 'dphilljet: ' + str(self.oldttree.dphilljet) +to+ str(dphilljet[0])
-                print 'dphilmet1: ' + str(self.oldttree.dphilmet1) +to+ str(dphilmet1[0])
-                print 'dphilmet2: ' + str(self.oldttree.dphilmet2) +to+ str(dphilmet2[0])
-                print 'mth: ' + str(self.oldttree.mth) +to+ str(mth[0])
-                print 'mtw1: ' + str(self.oldttree.mtw1) +to+ str(mtw1[0])
-                print 'mtw2: ' + str(self.oldttree.mtw2) +to+ str(mtw2[0])
-                print 'ppfmet: '    +str(self.oldttree.ppfmet)    +to+str(ppfmet[0])
-                print 'pchmet: '    +str(self.oldttree.pchmet)    +to+str(pchmet[0])
-                ## print 'ptcmet: '    +str(self.oldttree.ptcmet)    +to+str(ptcmet[0])
-                print 'mpmet: '    +str(self.oldttree.mpmet)    +to+str(mpmet[0])
-                print 'gammaMRStar: '    +str(self.oldttree.gammaMRStar)    +to+str(gammaMRStar[0])
-                print 'zveto: '    +str(self.oldttree.zveto)    +to+str(zveto[0])
-
+                print 'scale MB '+str(scaleMB)
+                print 'scale ME '+str(scaleME)
+                self.printVariables()
             
             # fill old and new values
             self.ttree.Fill()
@@ -970,61 +1092,10 @@ class scaleAndSmear:
             direction = -1.0
         scaleEB = uncertaintyEB * direction
         scaleEE = uncertaintyEE * direction
-        print 'scale EB '+str(scaleEB)
-        print 'scale EE '+str(scaleEE)
                 
         ## define a new branch
-        pt1 = numpy.zeros(1, dtype=numpy.float32)
-        pt2 = numpy.zeros(1, dtype=numpy.float32)
-        mll = numpy.zeros(1, dtype=numpy.float32)
-        ptll = numpy.zeros(1, dtype=numpy.float32)
-##         dphill = numpy.zeros(1, dtype=numpy.float32)
-##         dphilljet = numpy.zeros(1, dtype=numpy.float32)
-        dphillmet = numpy.zeros(1, dtype=numpy.float32)
-        dphilmet = numpy.zeros(1, dtype=numpy.float32)
-        dphilmet1 = numpy.zeros(1, dtype=numpy.float32)
-        dphilmet2 = numpy.zeros(1, dtype=numpy.float32)
-        mth = numpy.zeros(1, dtype=numpy.float32)
-        mtw1 = numpy.zeros(1, dtype=numpy.float32)
-        mtw2 = numpy.zeros(1, dtype=numpy.float32)
-        pfmet = numpy.zeros(1, dtype=numpy.float32)
-        pfmetphi = numpy.zeros(1, dtype=numpy.float32)
-        chmet = numpy.zeros(1, dtype=numpy.float32)
-        chmetphi = numpy.zeros(1, dtype=numpy.float32)
-        ## tcmet = numpy.zeros(1, dtype=numpy.float32)
-        ## tcmetphi = numpy.zeros(1, dtype=numpy.float32)
-        ppfmet = numpy.zeros(1, dtype=numpy.float32)
-        pchmet = numpy.zeros(1, dtype=numpy.float32)
-        ## ptcmet = numpy.zeros(1, dtype=numpy.float32)
-        mpmet = numpy.zeros(1, dtype=numpy.float32)
-        gammaMRStar = numpy.zeros(1, dtype=numpy.float32)
-        zveto = numpy.zeros(1, dtype=int)        
-        self.ttree.Branch('pt1',pt1,'pt1/F')
-        self.ttree.Branch('pt2',pt2,'pt2/F')
-        self.ttree.Branch('mll',mll,'mll/F')
-        self.ttree.Branch('ptll',ptll,'ptll/F')
-##         self.ttree.Branch('dphill',dphill,'dphill/F')
-##         self.ttree.Branch('dphilljet',dphilljet,'dphilljet/F')
-        self.ttree.Branch('dphillmet',dphillmet,'dphillmet/F')
-        self.ttree.Branch('dphilmet',dphilmet,'dphilmet/F')
-        self.ttree.Branch('dphilmet1',dphilmet1,'dphilmet1/F')
-        self.ttree.Branch('dphilmet2',dphilmet2,'dphilmet2/F')
-        self.ttree.Branch('mth',mth,'mth/F')
-        self.ttree.Branch('mtw1',mtw1,'mtw1/F')
-        self.ttree.Branch('mtw2',mtw2,'mtw2/F')
-        self.ttree.Branch('pfmet',pfmet,'pfmet/F')
-        self.ttree.Branch('pfmetphi',pfmetphi,'pfmetphi/F')
-        self.ttree.Branch('chmet',chmet,'chmet/F')
-        self.ttree.Branch('chmetphi',chmetphi,'chmetphi/F')
-        ## self.ttree.Branch('tcmet',tcmet,'tcmet/F')
-        ## self.ttree.Branch('tcmetphi',tcmetphi,'tcmetphi/F')
-        self.ttree.Branch('ppfmet',ppfmet,'ppfmet/F')
-        self.ttree.Branch('pchmet',pchmet,'pchmet/F')
-        ## self.ttree.Branch('ptcmet',ptcmet,'ptcmet/F')
-        self.ttree.Branch('mpmet',mpmet,'mpmet/F')
-        self.ttree.Branch('gammaMRStar',gammaMRStar,'gammaMRStar/F')
-        self.ttree.Branch('zveto',zveto,'zveto/I')
- 
+        self.defineVariables()
+        
         nentries = self.nentries
         print 'total number of entries: '+str(nentries)
         i=0
@@ -1037,6 +1108,9 @@ class scaleAndSmear:
             if i > 0 and i%step == 0:
                 print str(i)+' events processed.'
 
+            ## by default set all values to original tree
+            self.getOriginalVariables()
+                            
             # get the "old" lepton pt
             pt1_hold  = self.oldttree.pt1
             eta1_hold = self.oldttree.eta1
@@ -1049,8 +1123,8 @@ class scaleAndSmear:
             ## muon-muon channel
             ## dont scale at all
             if self.oldttree.channel == 0:
-                pt1[0] = pt1_hold           ## do not scale electrons here  
-                pt2[0] = pt2_hold           ## independent of "up" or "down"
+                self.pt1[0] = pt1_hold           ## do not scale electrons here  
+                self.pt2[0] = pt2_hold           ## independent of "up" or "down"
             ## electron-electron channel    
             if self.oldttree.channel == 1:
                 scale = direction * electronPtScale(pt1_hold, eta1_hold, self.dataset)
@@ -1058,14 +1132,14 @@ class scaleAndSmear:
                     scale += scaleEB
                 if abs(self.oldttree.eta1) >= boundaryEBEE:
                     scale += scaleEE
-                pt1[0] = pt1_hold + pt1_hold * scale
+                self.pt1[0] = pt1_hold + pt1_hold * scale
 
                 scale = direction * electronPtScale(pt2_hold, eta2_hold, self.dataset)
                 if abs(self.oldttree.eta2) < boundaryEBEE:
                     scale += scaleEB
                 if abs(self.oldttree.eta2) >= boundaryEBEE:
                     scale += scaleEE
-                pt2[0] = pt2_hold + pt2_hold * scale
+                self.pt2[0] = pt2_hold + pt2_hold * scale
 
             ## electron-muon channel
             if self.oldttree.channel == 2:
@@ -1074,18 +1148,18 @@ class scaleAndSmear:
                     scale += scaleEB
                 if abs(self.oldttree.eta1) >= boundaryEBEE:
                     scale += scaleEE
-                pt1[0] = pt1_hold + pt1_hold * scale
-                pt2[0] = pt2_hold
+                self.pt1[0] = pt1_hold + pt1_hold * scale
+                self.pt2[0] = pt2_hold
 
             ## muon-electron channel    
             if self.oldttree.channel == 3:
-                pt1[0] = pt1_hold
+                self.pt1[0] = pt1_hold
                 scale =direction * electronPtScale(pt2_hold, eta2_hold, self.dataset)
                 if abs(self.oldttree.eta2) < boundaryEBEE:
                     scale += scaleEB
                 if abs(self.oldttree.eta2) >= boundaryEBEE:
                     scale += scaleEE
-                pt2[0] = pt2_hold + pt2_hold * scale
+                self.pt2[0] = pt2_hold + pt2_hold * scale
                 
 
             
@@ -1099,97 +1173,41 @@ class scaleAndSmear:
             l2_hold = ROOT.TLorentzVector()
             l1_hold.SetPtEtaPhiM(pt1_hold, eta1_hold, phi1_hold, 0)
             l2_hold.SetPtEtaPhiM(pt2_hold, eta2_hold, phi2_hold, 0)
-            l1.SetPtEtaPhiM(pt1[0], eta1_hold, phi1_hold, 0)
-            l2.SetPtEtaPhiM(pt2[0], eta2_hold, phi2_hold, 0)
+            l1.SetPtEtaPhiM(self.pt1[0], eta1_hold, phi1_hold, 0)
+            l2.SetPtEtaPhiM(self.pt2[0], eta2_hold, phi2_hold, 0)
 
-            ## correct MET
-            ## PFMET:
+            # recompute lepton variables
+            self.computeLeptonVariables(l1, l2)
+
+            # recompute met variables
+            ## - pfmet
             met = ROOT.TLorentzVector()
-            met.SetPtEtaPhiM(self.oldttree.pfmet, 0, self.oldttree.pfmetphi, 0)           
-            ## FIXME: cross-check this!!
-            ## add "old leptons" and subtract the "new" ones:
+            met.SetPtEtaPhiM(self.oldttree.pfmet, 0, self.oldttree.pfmetphi, 0)
             met = correctMet(met, l1_hold, l2_hold, l1, l2)
-
-            ## substitute the values
-            pfmet[0] = met.Pt()
-            pfmetphi[0] = met.Phi()
-            ## other METs:
+            self.pfmet[0] = met.Pt()
+            self.pfmetphi[0] = met.Phi()
             ## - chmet
             chmet4 = ROOT.TLorentzVector()
-            chmet4.SetPtEtaPhiM(self.oldttree.chmet, 0, self.oldttree.chmetphi, 0)      
+            chmet4.SetPtEtaPhiM(self.oldttree.chmet, 0, self.oldttree.chmetphi, 0)
             chmet4 = correctMet(chmet4, l1_hold, l2_hold, l1, l2)
-            chmet[0] = chmet4.Pt()
-            chmetphi[0] = chmet4.Phi()
+            self.chmet[0] = chmet4.Pt()
+            self.chmetphi[0] = chmet4.Phi()
             ## ## - tcmet
             ## tcmet4 = ROOT.TLorentzVector()
-            ## tcmet4.SetPtEtaPhiM(self.oldttree.tcmet, 0, self.oldttree.tcmetphi, 0)      
+            ## tcmet4.SetPtEtaPhiM(self.oldttree.tcmet, 0, self.oldttree.tcmetphi, 0)
             ## tcmet4 = correctMet(tcmet4, l1_hold, l2_hold, l1, l2)
             ## tcmet[0] = tcmet4.Pt()
             ## tcmetphi[0] = tcmet4.Phi()
-
-            ## correct projected MET
-            ppfmet[0] = projectMET(l1, l2, met)
-            pchmet[0] =projectMET(l1, l2, chmet4)
-            ## ptcmet[0] = projectMET(l1, l2, ptcmet)
-            mpmet[0] = min( ppfmet[0], pchmet[0] )
-
-            ## additional variables
-            mll[0]  = invariantMass(l1, l2)
-            ptll[0] = dileptonPt(l1, l2)
-
-##             dphill[0] =  deltaPhi(l1,l2)
-            dphillmet[0] =  deltaPhi(l1+l2,met)
-            dphilmet1[0] =  deltaPhi(l1,met)
-            dphilmet2[0] =  deltaPhi(l2,met)
-            dphilmet[0]  =  min(dphilmet1[0], dphilmet2[0])
-
-            j1 = ROOT.TLorentzVector()
-            j1.SetPtEtaPhiM(self.oldttree.jetpt1, self.oldttree.jeteta1, self.oldttree.jetphi1, 0)
-##             dphilljet[0] =  deltaPhi(l1+l2,j1)
-
-            mth[0] = transverseMass((l1+l2),met)
-            mtw1[0] = transverseMass((l1),met)
-            mtw2[0] = transverseMass((l2),met)
-
-            gammaMRStar[0] = calculateGammaMRStar(l1,l2)
-
-            zveto[0] = checkZveto(mll[0], self.oldttree.channel)
+            
+            self.computeMETVariables(l1, l2, met, chmet4)
 
             if self.verbose is True:
                 print '-----------------------------------'
                 print 'event: '+str(i)
-                print 'scale EB: '+str(scaleEB)
-                print 'scale EE: '+str(scaleEE)
-                print 'channel: '+str(self.oldttree.channel)
-                print 'pt1: '+str(pt1_hold)+' -> '+ str(pt1[0])
-                print 'pt1: '+str(pt2_hold)+' -> '+ str(pt2[0])
-                print 'pfmet: '    +str(self.oldttree.pfmet)    +to+str(pfmet[0])
-                print 'pfmetphi: ' +str(self.oldttree.pfmetphi) +to+str(pfmetphi[0])
-                print 'chmet: '    +str(self.oldttree.chmet)    +to+str(chmet[0])
-                print 'chmetphi: ' +str(self.oldttree.chmetphi) +to+str(chmetphi[0])
-                ## print 'tcmet: '    +str(self.oldttree.tcmet)    +to+str(tcmet[0])
-                ## print 'tcmetphi: ' +str(self.oldttree.tcmetphi) +to+str(tcmetphi[0])
-                print 'mll: '    + str(self.oldttree.mll)    +to+ str(mll[0])
-                print 'ptll: '   + str(self.oldttree.ptll)   +to+ str(ptll[0])
-##                 print 'dphill: ' + str(self.oldttree.dphill) +to+ str(dphill[0])
-                print 'dphillmet: ' + str(self.oldttree.dphillmet) +to+ str(dphillmet[0])
-                print 'dphilmet: ' + str(self.oldttree.dphilmet) +to+ str(dphilmet[0])
-##                 print 'dphilljet: ' + str(self.oldttree.dphilljet) +to+ str(dphilljet[0])
-                print 'dphilmet1: ' + str(self.oldttree.dphilmet1) +to+ str(dphilmet1[0])
-                print 'dphilmet2: ' + str(self.oldttree.dphilmet2) +to+ str(dphilmet2[0])
-                print 'mth: ' + str(self.oldttree.mth) +to+ str(mth[0])
-                print 'mtw1: ' + str(self.oldttree.mtw1) +to+ str(mtw1[0])
-                print 'mtw2: ' + str(self.oldttree.mtw2) +to+ str(mtw2[0])
-                print 'ppfmet: '    +str(self.oldttree.ppfmet)    +to+str(ppfmet[0])
-                print 'pchmet: '    +str(self.oldttree.pchmet)    +to+str(pchmet[0])
-                ## print 'ptcmet: '    +str(self.oldttree.ptcmet)    +to+str(ptcmet[0])
-                print 'mpmet: '    +str(self.oldttree.mpmet)    +to+str(mpmet[0])
-                print 'gammaMRStar: '    +str(self.oldttree.gammaMRStar)    +to+str(gammaMRStar[0])
-                print 'zveto: '    +str(self.oldttree.zveto)    +to+str(zveto[0])
-
-                            
-
-            
+                print 'scale MB '+str(scaleMB)
+                print 'scale ME '+str(scaleME)
+                self.printVariables()
+                
             # fill old and new values
             self.ttree.Fill()
 
@@ -1239,71 +1257,8 @@ class scaleAndSmear:
             jeu.append(s)
 
         ## define a new branch
-        jetpt1 = numpy.zeros(1, dtype=numpy.float32)
-        jetpt2 = numpy.zeros(1, dtype=numpy.float32)
-        njet = numpy.zeros(1, dtype=numpy.float32)
-        pfmet = numpy.zeros(1, dtype=numpy.float32)
-        pfmetphi = numpy.zeros(1, dtype=numpy.float32)
-        chmet = numpy.zeros(1, dtype=numpy.float32)
-        chmetphi = numpy.zeros(1, dtype=numpy.float32)
-        ## tcmet = numpy.zeros(1, dtype=numpy.float32)
-        ## tcmetphi = numpy.zeros(1, dtype=numpy.float32)
-        mth = numpy.zeros(1, dtype=numpy.float32)
-        mtw1 = numpy.zeros(1, dtype=numpy.float32)
-        mtw2 = numpy.zeros(1, dtype=numpy.float32)
-##         dphill = numpy.zeros(1, dtype=numpy.float32)
-##         dphilljet = numpy.zeros(1, dtype=numpy.float32)
-        dphilljetjet = numpy.zeros(1, dtype=numpy.float32)
-        dphillmet = numpy.zeros(1, dtype=numpy.float32)
-        dphilmet = numpy.zeros(1, dtype=numpy.float32)
-        dphilmet1 = numpy.zeros(1, dtype=numpy.float32)
-        dphilmet2 = numpy.zeros(1, dtype=numpy.float32)
-        mjj = numpy.zeros(1, dtype=numpy.float32)
-        ppfmet = numpy.zeros(1, dtype=numpy.float32)
-        pchmet = numpy.zeros(1, dtype=numpy.float32)
-        ## ptcmet = numpy.zeros(1, dtype=numpy.float32)
-        mpmet = numpy.zeros(1, dtype=numpy.float32)
-        #hardbdisctche = numpy.zeros(1, dtype=numpy.float32)
-        #softbdisctche = numpy.zeros(1, dtype=numpy.float32)
-        jetpt3 = numpy.zeros(1, dtype=numpy.float32)
-        jetpt4 = numpy.zeros(1, dtype=numpy.float32)
-        cjetpt1 = numpy.zeros(1, dtype=numpy.float32)
-        cjetpt2 = numpy.zeros(1, dtype=numpy.float32)
-        njetvbf = numpy.zeros(1, dtype=numpy.float32)
-
-        self.ttree.Branch('jetpt1',jetpt1,'jetpt1/F')
-        self.ttree.Branch('jetpt2',jetpt2,'jetpt2/F')
-        self.ttree.Branch('njet',njet,'njet/F')
-        self.ttree.Branch('mjj',mjj,'mjj/F')
-        self.ttree.Branch('dphilljetjet',dphilljetjet,'dphilljetjet/F')
-        self.ttree.Branch('jetpt3',jetpt3,'jetpt3/F')
-        self.ttree.Branch('jetpt4',jetpt4,'jetpt4/F')
-        self.ttree.Branch('cjetpt1',cjetpt1,'cjetpt1/F')
-        self.ttree.Branch('cjetpt2',cjetpt2,'cjetpt2/F')
-        self.ttree.Branch('njetvbf',njetvbf,'njetvbf/F')
-        if self.correctMETwithJES :
-           self.ttree.Branch('pfmet',pfmet,'pfmet/F')
-           self.ttree.Branch('pfmetphi',pfmetphi,'pfmetphi/F')
-           self.ttree.Branch('chmet',chmet,'chmet/F')
-           self.ttree.Branch('chmetphi',chmetphi,'chmetphi/F')
-        ## self.ttree.Branch('tcmet',tcmet,'tcmet/F')
-        ## self.ttree.Branch('tcmetphi',tcmetphi,'tcmetphi/F')
-           self.ttree.Branch('mth',mth,'mth/F')
-           self.ttree.Branch('mtw1',mtw1,'mtw1/F')
-           self.ttree.Branch('mtw2',mtw2,'mtw2/F')
-##         self.ttree.Branch('dphill',dphill,'dphill/F')
-##         self.ttree.Branch('dphilljet',dphilljet,'dphilljet/F')
-           self.ttree.Branch('dphillmet',dphillmet,'dphillmet/F')
-           self.ttree.Branch('dphilmet',dphilmet,'dphilmet/F')
-           self.ttree.Branch('dphilmet1',dphilmet1,'dphilmet1/F')
-           self.ttree.Branch('dphilmet2',dphilmet2,'dphilmet2/F')
-           self.ttree.Branch('ppfmet',ppfmet,'ppfmet/F')
-           self.ttree.Branch('pchmet',pchmet,'pchmet/F')
-        ## self.ttree.Branch('ptcmet',ptcmet,'ptcmet/F')     
-           self.ttree.Branch('mpmet',mpmet,'mpmet/F')
-        #self.ttree.Branch('hardbdisctche',hardbdisctche,'hardbdisctche/F')
-        #self.ttree.Branch('softbdisctche',softbdisctche,'softbdisctche/F')
-
+        self.defineVariables()
+        
         nentries = self.nentries
         print 'total number of entries: '+str(nentries)
         i=0
@@ -1320,6 +1275,9 @@ class scaleAndSmear:
             if i > 0 and i%step == 0:
                 print str(i)+' events processed.'
 
+            ## by default set all values to original tree
+            self.getOriginalVariables()
+                            
             ## calculate the scaled pt
             scale1 = -1. ## a dummy value...
             scale2 = -1.
@@ -1327,18 +1285,18 @@ class scaleAndSmear:
             scale4 = -1.
 
             ## get pt and eta of the jets
-            pt1  = self.oldttree.jetpt1
-            eta1 = self.oldttree.jeteta1
-            phi1 = self.oldttree.jetphi1
-            pt2  = self.oldttree.jetpt2
-            eta2 = self.oldttree.jeteta2
-            phi2 = self.oldttree.jetphi2
-            pt3  = self.oldttree.jetpt3
-            eta3 = self.oldttree.jeteta3
-            phi3 = self.oldttree.jetphi3
-            pt4  = self.oldttree.jetpt4
-            eta4 = self.oldttree.jeteta4
-            phi4 = self.oldttree.jetphi4
+            jpt1  = self.oldttree.jetpt1
+            jeta1 = self.oldttree.jeteta1
+            jphi1 = self.oldttree.jetphi1
+            jpt2  = self.oldttree.jetpt2
+            jeta2 = self.oldttree.jeteta2
+            jphi2 = self.oldttree.jetphi2
+            jpt3  = self.oldttree.jetpt3
+            jeta3 = self.oldttree.jeteta3
+            jphi3 = self.oldttree.jetphi3
+            jpt4  = self.oldttree.jetpt4
+            jeta4 = self.oldttree.jeteta4
+            jphi4 = self.oldttree.jetphi4
 
             cpt1  = self.oldttree.cjetpt1
             ceta1 = self.oldttree.cjeteta1
@@ -1350,10 +1308,10 @@ class scaleAndSmear:
  
 
             ## get the scale factor - i.e. this is the relative uncertainty!
-            scale1 = getJEUFactor(pt1, eta1, jeu) * direction
-            scale2 = getJEUFactor(pt2, eta2, jeu) * direction
-            scale3 = getJEUFactor(pt3, eta3, jeu) * direction
-            scale4 = getJEUFactor(pt4, eta4, jeu) * direction
+            scale1 = getJEUFactor(jpt1, jeta1, jeu) * direction
+            scale2 = getJEUFactor(jpt2, jeta2, jeu) * direction
+            scale3 = getJEUFactor(jpt3, jeta3, jeu) * direction
+            scale4 = getJEUFactor(jpt4, jeta4, jeu) * direction
             cscale1 = getJEUFactor(cpt1, ceta1, jeu) * direction
             cscale2 = getJEUFactor(cpt2, ceta2, jeu) * direction
 
@@ -1377,12 +1335,12 @@ class scaleAndSmear:
                 cscale2 = 0
 
             # scale the jet pt
-            jetpt1[0] = jetpt1_hold + jetpt1_hold * scale1
-            jetpt2[0] = jetpt2_hold + jetpt2_hold * scale2
-            jetpt3[0] = jetpt3_hold + jetpt3_hold * scale3
-            jetpt4[0] = jetpt4_hold + jetpt4_hold * scale4
-            cjetpt1[0] = cjetpt1_hold + cjetpt1_hold * scale1
-            cjetpt2[0] = cjetpt2_hold + cjetpt2_hold * scale2
+            self.jetpt1[0] = jetpt1_hold + jetpt1_hold * scale1
+            self.jetpt2[0] = jetpt2_hold + jetpt2_hold * scale2
+            self.jetpt3[0] = jetpt3_hold + jetpt3_hold * scale3
+            self.jetpt4[0] = jetpt4_hold + jetpt4_hold * scale4
+            self.cjetpt1[0] = cjetpt1_hold + cjetpt1_hold * scale1
+            self.cjetpt2[0] = cjetpt2_hold + cjetpt2_hold * scale2
 
 ##             print '---------------------'
 ##             print str(jetpt1_hold)+' -> '+str( jetpt1[0])
@@ -1404,23 +1362,23 @@ class scaleAndSmear:
 ##             njet[0] = n
 
             nJetOverThreshold = 0
-            if jetpt1[0] > jetthreshold :
+            if self.jetpt1[0] > jetthreshold :
                 nJetOverThreshold+=1
-            if jetpt2[0] > jetthreshold :
+            if self.jetpt2[0] > jetthreshold :
                 nJetOverThreshold+=1
-            if jetpt3[0] > jetthreshold :
+            if self.jetpt3[0] > jetthreshold :
                 nJetOverThreshold+=1
-            if jetpt4[0] > jetthreshold :
+            if self.jetpt4[0] > jetthreshold :
                 nJetOverThreshold+=1
-            njet[0] = nJetOverThreshold
+            self.njet[0] = nJetOverThreshold
 
             # calculate the number of jets between tag jets (NB: no jet order inversion is considered!)
             newnjetvbf = 0
-            if cjetpt1[0] > jetthreshold :
+            if self.cjetpt1[0] > jetthreshold :
                 newnjetvbf+=1
-            if cjetpt2[0] > jetthreshold :
+            if self.cjetpt2[0] > jetthreshold :
                 newnjetvbf+=1
-            njetvbf[0] = newnjetvbf
+            self.njetvbf[0] = newnjetvbf
 
 
             ## set hardbdisc and soft...
@@ -1455,23 +1413,32 @@ class scaleAndSmear:
             j4.SetPtEtaPhiM(0, 0, 0, 0)
 
             if jetpt1_hold > 0:
-                j1_hold.SetPtEtaPhiM(jetpt1_hold, eta1, phi1, 0)
+                j1_hold.SetPtEtaPhiM(jetpt1_hold, jeta1, jphi1, 0)
             if jetpt2_hold > 0:
-                j2_hold.SetPtEtaPhiM(jetpt2_hold, eta2, phi2, 0)
-            if jetpt1[0] > 0:
-                j1.SetPtEtaPhiM(jetpt1[0], eta1, phi1, 0)
-            if jetpt2[0] > 0:
-                j2.SetPtEtaPhiM(jetpt2[0], eta2, phi2, 0)
+                j2_hold.SetPtEtaPhiM(jetpt2_hold, jeta2, jphi2, 0)
+            if self.jetpt1[0] > 0:
+                j1.SetPtEtaPhiM(self.jetpt1[0], jeta1, jphi1, 0)
+            if self.jetpt2[0] > 0:
+                j2.SetPtEtaPhiM(self.jetpt2[0], jeta2, jphi2, 0)
             
             if jetpt3_hold > 0:
-                j3_hold.SetPtEtaPhiM(jetpt3_hold, eta3, phi3, 0)
+                j3_hold.SetPtEtaPhiM(jetpt3_hold, jeta3, jphi3, 0)
             if jetpt4_hold > 0:
-                j4_hold.SetPtEtaPhiM(jetpt4_hold, eta4, phi4, 0)
-            if jetpt3[0] > 0:
-                j3.SetPtEtaPhiM(jetpt3[0], eta3, phi3, 0)
-            if jetpt4[0] > 0:
-                j4.SetPtEtaPhiM(jetpt4[0], eta4, phi4, 0)
+                j4_hold.SetPtEtaPhiM(jetpt4_hold, jeta4, jphi4, 0)
+            if self.jetpt3[0] > 0:
+                j3.SetPtEtaPhiM(self.jetpt3[0], jeta3, jphi3, 0)
+            if self.jetpt4[0] > 0:
+                j4.SetPtEtaPhiM(self.jetpt4[0], jeta4, jphi4, 0)
 
+            
+            l1 = ROOT.TLorentzVector()
+            l2 = ROOT.TLorentzVector()
+            l1.SetPtEtaPhiM(self.oldttree.pt1, self.oldttree.eta1, self.oldttree.phi1, 0)
+            l2.SetPtEtaPhiM(self.oldttree.pt2, self.oldttree.eta2, self.oldttree.phi2, 0)
+            
+            self.dphilljet[0] = deltaPhi(l1+l2,j1)
+            self.dphilljetjet[0] =  deltaPhi(l1+l2,j1+j2)
+            self.mjj[0] = invariantMass(j1,j2)
 
             if self.correctMETwithJES :
                ## PFMET:
@@ -1481,98 +1448,35 @@ class scaleAndSmear:
                ## add "old jets" and subtract the "new" ones:
                #met = met + j1_hold - j1 + j2_hold - j2
                met = correctMet(met, j1_hold, j2_hold, j1, j2)
-               met = correctMet(met, j3_hold, j4_hold, j3, j4)
-            
+               met = correctMet(met, j3_hold, j4_hold, j3, j4)            
                ## substitute the values
-               pfmet[0] = met.Pt()
-               pfmetphi[0] = met.Phi()
-
-
-            ## changing MET means also changing transverse masses...
-            l1 = ROOT.TLorentzVector()
-            l2 = ROOT.TLorentzVector()
-            l1.SetPtEtaPhiM(self.oldttree.pt1, self.oldttree.eta1, self.oldttree.phi1, 0)
-            l2.SetPtEtaPhiM(self.oldttree.pt2, self.oldttree.eta2, self.oldttree.phi2, 0)
-            ## recalculate mth
-
-            dphilljetjet[0] =  deltaPhi(l1+l2,j1+j2)
-            mjj[0] = invariantMass(j1,j2)
-##             mjj[0] = (j1+j2).M()
-
-
-            if self.correctMETwithJES :
-               mth[0] = transverseMass((l1+l2),met)
-               mtw1[0] = transverseMass((l1),met)
-               mtw2[0] = transverseMass((l2),met)
-
-##             dphill[0] =  deltaPhi(l1,l2)
-               dphillmet[0] =  deltaPhi(l1+l2,met)
-               dphilmet1[0] =  deltaPhi(l1,met)
-               dphilmet2[0] =  deltaPhi(l2,met)
-               dphilmet[0]  = min(dphilmet1[0], dphilmet2[0])  
-##             dphilljet[0] =  deltaPhi(l1+l2,j1)
-
-            ## other METs:
-            ## - chmet
+               self.pfmet[0] = met.Pt()
+               self.pfmetphi[0] = met.Phi()
+               ## - chmet
                chmet4 = ROOT.TLorentzVector()
-               chmet4.SetPtEtaPhiM(self.oldttree.chmet, 0, self.oldttree.chmetphi, 0)      
+               chmet4.SetPtEtaPhiM(self.oldttree.chmet, 0, self.oldttree.chmetphi, 0)
                chmet4 = correctMet(chmet4, j1_hold, j2_hold, j1, j2)
-               chmet4 = correctMet(chmet4, j3_hold, j4_hold, j3, j4)            
-               chmet[0] = chmet4.Pt()
-               chmetphi[0] = chmet4.Phi()
-            ## ## - tcmet
-            ## tcmet4 = ROOT.TLorentzVector()
-            ## tcmet4.SetPtEtaPhiM(self.oldttree.tcmet, 0, self.oldttree.tcmetphi, 0)      
-            ## tcmet4 = correctMet(tcmet4, j1_hold, j2_hold, j1, j2)
-            ## tcmet4 = correctMet(tcmet4, j3_hold, j4_hold, j3, j4)
-            ## tcmet[0] = tcmet4.Pt()
-            ## tcmetphi[0] = tcmet4.Phi()
+               chmet4 = correctMet(chmet4, j3_hold, j4_hold, j3, j4)
+               self.chmet[0] = chmet4.Pt()
+               self.chmetphi[0] = chmet4.Phi()
+               ## ## - tcmet
+               ## tcmet4 = ROOT.TLorentzVector()
+               ## tcmet4.SetPtEtaPhiM(self.oldttree.tcmet, 0, self.oldttree.tcmetphi, 0)
+               ## tcmet4 = correctMet(tcmet4, j1_hold, j2_hold, j1, j2)
+               ## tcmet4 = correctMet(tcmet4, j3_hold, j4_hold, j3, j4)
+               ## tcmet[0] = tcmet4.Pt()
+               ## tcmetphi[0] = tcmet4.Phi()  
+               
+               self.computeMETVariables(l1, l2, met, chmet4)
 
-            ## correct projected MET
-               ppfmet[0] = projectMET(l1, l2, met)
-               pchmet[0] =projectMET(l1, l2, chmet4)
-               ## ptcmet[0] = projectMET(l1, l2, ptcmet)
-               mpmet[0] = min( ppfmet[0], pchmet[0] )
 
             if self.verbose is True:
                 print '-----------------------------------'
                 print 'event: '+str(i)
                 print 'scale1: '+str(scale1)
                 print 'scale2: '+str(scale2)
-                print 'channel: '+str(self.oldttree.channel)
-                print 'jetpt1: '+str(self.oldttree.jetpt1)+' -> '+ str(jetpt1[0])
-                print 'jetpt2: '+str(self.oldttree.jetpt2)+' -> '+ str(jetpt2[0])
-                print 'jetpt3: '+str(self.oldttree.jetpt3)+' -> '+ str(jetpt3[0])
-                print 'jetpt4: '+str(self.oldttree.jetpt4)+' -> '+ str(jetpt4[0])
-                print 'cjetpt1: '+str(self.oldttree.cjetpt1)+' -> '+ str(cjetpt1[0])
-                print 'cjetpt2: '+str(self.oldttree.cjetpt2)+' -> '+ str(cjetpt2[0])
-                print 'njet: '  +str(self.oldttree.njet)        +to+str(njet[0])
-                print 'njetvbf: '  +str(self.oldttree.njetvbf)        +to+str(njetvbf[0])
-                print 'pfmet: '    +str(self.oldttree.pfmet)    +to+str(pfmet[0])
-                print 'pfmetphi: ' +str(self.oldttree.pfmetphi) +to+str(pfmetphi[0])
-                print 'chmet: '    +str(self.oldttree.chmet)    +to+str(chmet[0])
-                print 'chmetphi: ' +str(self.oldttree.chmetphi) +to+str(chmetphi[0])
-                ## print 'tcmet: '    +str(self.oldttree.tcmet)    +to+str(tcmet[0])
-                ## print 'tcmetphi: ' +str(self.oldttree.tcmetphi) +to+str(tcmetphi[0])
-##                 print 'dphill: ' + str(self.oldttree.dphill) +to+ str(dphill[0])
-                print 'dphillmet: ' + str(self.oldttree.dphillmet) +to+ str(dphillmet[0])
-                print 'dphilmet: ' + str(self.oldttree.dphilmet) +to+ str(dphilmet[0])
-##                 print 'dphilljet: ' + str(self.oldttree.dphilljet) +to+ str(dphilljet[0])
-                print 'dphilljetjet: ' + str(self.oldttree.dphilljetjet) +to+ str(dphilljetjet[0])
-                print 'dphilmet1: ' + str(self.oldttree.dphilmet1) +to+ str(dphilmet1[0])
-                print 'dphilmet2: ' + str(self.oldttree.dphilmet2) +to+ str(dphilmet2[0])
-                print 'mth: ' + str(self.oldttree.mth) +to+ str(mth[0])
-                print 'mtw1: ' + str(self.oldttree.mtw1) +to+ str(mtw1[0])
-                print 'mtw2: ' + str(self.oldttree.mtw2) +to+ str(mtw2[0])
-                print 'mjj: ' + str(self.oldttree.mjj) +to+ str(mjj[0])
-                print 'ppfmet: '    +str(self.oldttree.ppfmet)    +to+str(ppfmet[0])
-                print 'pchmet: '    +str(self.oldttree.pchmet)    +to+str(pchmet[0])
-                ## print 'ptcmet: '    +str(self.oldttree.ptcmet)    +to+str(ptcmet[0])            
-                print 'mpmet: '    +str(self.oldttree.mpmet)    +to+str(mpmet[0])
-                #print 'hardbdisctche: '    +str(self.oldttree.hardbdisctche)    +to+str(hardbdisctche[0])
-                #print 'softbdisctche: '    +str(self.oldttree.softbdisctche)    +to+str(softbdisctche[0])
-
-
+                self.printVariables()
+                                                
             # fill old and new values            
             self.ttree.Fill()
 
@@ -1589,41 +1493,9 @@ class scaleAndSmear:
         if self.direction == 'down':
             direction = -1.0
         scale = direction*metUncertainty
-        
-        pfmet = numpy.zeros(1, dtype=numpy.float32)
-        pfmetphi = numpy.zeros(1, dtype=numpy.float32)
-        chmet = numpy.zeros(1, dtype=numpy.float32)
-        chmetphi = numpy.zeros(1, dtype=numpy.float32)
-        ## tcmet = numpy.zeros(1, dtype=numpy.float32)
-        ## tcmetphi = numpy.zeros(1, dtype=numpy.float32)
-        dphillmet = numpy.zeros(1, dtype=numpy.float32)
-        dphilmet = numpy.zeros(1, dtype=numpy.float32)
-        dphilmet1 = numpy.zeros(1, dtype=numpy.float32)
-        dphilmet2 = numpy.zeros(1, dtype=numpy.float32)
-        mth = numpy.zeros(1, dtype=numpy.float32)
-        mtw1 = numpy.zeros(1, dtype=numpy.float32)
-        mtw2 = numpy.zeros(1, dtype=numpy.float32)
-        ppfmet = numpy.zeros(1, dtype=numpy.float32)
-        pchmet = numpy.zeros(1, dtype=numpy.float32)
-        ## ptcmet = numpy.zeros(1, dtype=numpy.float32)
-        mpmet = numpy.zeros(1, dtype=numpy.float32)
-        self.ttree.Branch('pfmet',pfmet,'pfmet/F')
-        self.ttree.Branch('pfmetphi',pfmetphi,'pfmetphi/F')
-        self.ttree.Branch('chmet',chmet,'chmet/F')
-        self.ttree.Branch('chmetphi',chmetphi,'chmetphi/F')
-        ## self.ttree.Branch('tcmet',tcmet,'tcmet/F')
-        ## self.ttree.Branch('tcmetphi',tcmetphi,'tcmetphi/F')
-        self.ttree.Branch('dphillmet',dphillmet,'dphillmet/F')
-        self.ttree.Branch('dphilmet',dphilmet,'dphilmet/F')
-        self.ttree.Branch('dphilmet1',dphilmet1,'dphilmet1/F')
-        self.ttree.Branch('dphilmet2',dphilmet2,'dphilmet2/F')
-        self.ttree.Branch('mth',mth,'mth/F')
-        self.ttree.Branch('mtw1',mtw1,'mtw1/F')
-        self.ttree.Branch('mtw2',mtw2,'mtw2/F')
-        self.ttree.Branch('ppfmet',ppfmet,'ppfmet/F')
-        self.ttree.Branch('pchmet',pchmet,'pchmet/F')
-        ## self.ttree.Branch('ptcmet',ptcmet,'ptcmet/F')
-        self.ttree.Branch('mpmet',mpmet,'mpmet/F')
+
+        ## define a new branch
+        self.defineVariables()
         
         #nentries = self.ttree.GetEntriesFast()
         nentries = self.nentries
@@ -1637,7 +1509,9 @@ class scaleAndSmear:
             if i > 0 and i%step == 0:
                 print str(i)+' events processed.'
                 
-                
+            ## by default set all values to original tree
+            self.getOriginalVariables()
+                            
             ## get the "old" met vector and smear px and py
             ## PFMET:
             met = ROOT.TLorentzVector()
@@ -1654,56 +1528,25 @@ class scaleAndSmear:
             
                 
             ## get the variables
-            pfmet[0] = met.Pt()
-            pfmetphi[0] = met.Phi()
-            chmet[0] = chmet4.Pt()
-            chmetphi[0] = chmet4.Phi()
-                ## tcmet[0] = tcmet4.Pt()
-            ## tcmetphi[0] = tcmet4.Phi()
+            self.pfmet[0] = met.Pt()
+            self.pfmetphi[0] = met.Phi()
+            self.chmet[0] = chmet4.Pt()
+            self.chmetphi[0] = chmet4.Phi()
+            ## self.tcmet[0] = tcmet4.Pt()
+            ## self.tcmetphi[0] = tcmet4.Phi()
 
             l1 = ROOT.TLorentzVector()
             l2 = ROOT.TLorentzVector()
             l1.SetPtEtaPhiM(self.oldttree.pt1, self.oldttree.eta1, self.oldttree.phi1, 0)
             l2.SetPtEtaPhiM(self.oldttree.pt2, self.oldttree.eta2, self.oldttree.phi2, 0)
-            
-            ## correct projected MET
-            ppfmet[0] = projectMET(l1, l2, met)
-            pchmet[0] =projectMET(l1, l2, chmet4)
-            ## ptcmet[0] = projectMET(l1, l2, ptcmet)
-            mpmet[0] = min( ppfmet[0], pchmet[0] )
-                
-            ## changing MET means also changing transverse masses...
-            ## recalculate mth
-            mth[0] = transverseMass((l1+l2),met)
-            mtw1[0] = transverseMass((l1),met)
-            mtw2[0] = transverseMass((l2),met)
-            dphillmet[0] =  deltaPhi(l1+l2,met)
-            dphilmet1[0] =  deltaPhi(l1,met)
-            dphilmet2[0] =  deltaPhi(l2,met)
-            dphilmet[0]  =  min(dphilmet1[0], dphilmet2[0])
-            
+
+            self.computeMETVariables(l1, l2, met, chmet4)
+                        
             if self.verbose is True:
                 print '-----------------------------------'
                 print 'event: '    +str(i)
                 print 'scale: '    +str(scale)
-                print 'channel: '  +str(self.oldttree.channel)
-                print 'pfmet: '    +str(self.oldttree.pfmet) +to+ str(pfmet[0])
-                print 'pfmetphi: ' +str(self.oldttree.pfmetphi) +to+ str(pfmetphi[0])
-                print 'chmet: '    +str(self.oldttree.chmet) +to+ str(chmet[0])
-                print 'chmetphi: ' +str(self.oldttree.chmetphi) +to+ str(chmetphi[0])
-                ## print 'tcmet: '    +str(self.oldttree.tcmet) +to+ str(tcmet[0])
-                ## print 'tcmetphi: ' +str(self.oldttree.tcmetphi) +to+ str(tcmetphi[0])
-                print 'mth: ' + str(self.oldttree.mth) +to+ str(mth[0])
-                print 'mtw1: ' + str(self.oldttree.mtw1) +to+ str(mtw1[0])
-                print 'mtw2: ' + str(self.oldttree.mtw2) +to+ str(mtw2[0])
-                print 'dphillmet: ' + str(self.oldttree.dphillmet) +to+ str(dphillmet[0])
-                print 'dphilmet: ' + str(self.oldttree.dphilmet) +to+ str(dphilmet[0])
-                print 'dphilmet1: ' + str(self.oldttree.dphilmet1) +to+ str(dphilmet1[0])
-                print 'dphilmet2: ' + str(self.oldttree.dphilmet2) +to+ str(dphilmet2[0])
-                print 'ppfmet: '    +str(self.oldttree.ppfmet)    +to+str(ppfmet[0])
-                print 'pchmet: '    +str(self.oldttree.pchmet)    +to+str(pchmet[0])
-                ## print 'ptcmet: '    +str(self.oldttree.ptcmet)    +to+str(ptcmet[0])
-                print 'mpmet: '    +str(self.oldttree.mpmet)    +to+str(mpmet[0])
+                self.printVariables()
                     
                     
             # fill old and new values
@@ -1725,41 +1568,9 @@ class scaleAndSmear:
     def metResolution(self):
 
         sigma = metSigma # for 2012 dataset, use 1 GeV
-        
-        pfmet = numpy.zeros(1, dtype=numpy.float32)
-        pfmetphi = numpy.zeros(1, dtype=numpy.float32)
-        chmet = numpy.zeros(1, dtype=numpy.float32)
-        chmetphi = numpy.zeros(1, dtype=numpy.float32)
-        ## tcmet = numpy.zeros(1, dtype=numpy.float32)
-        ## tcmetphi = numpy.zeros(1, dtype=numpy.float32)
-        dphillmet = numpy.zeros(1, dtype=numpy.float32)
-        dphilmet = numpy.zeros(1, dtype=numpy.float32)
-        dphilmet1 = numpy.zeros(1, dtype=numpy.float32)
-        dphilmet2 = numpy.zeros(1, dtype=numpy.float32)
-        mth = numpy.zeros(1, dtype=numpy.float32)
-        mtw1 = numpy.zeros(1, dtype=numpy.float32)
-        mtw2 = numpy.zeros(1, dtype=numpy.float32)
-        ppfmet = numpy.zeros(1, dtype=numpy.float32)
-        pchmet = numpy.zeros(1, dtype=numpy.float32)
-        ## ptcmet = numpy.zeros(1, dtype=numpy.float32)
-        mpmet = numpy.zeros(1, dtype=numpy.float32)
-        self.ttree.Branch('pfmet',pfmet,'pfmet/F')
-        self.ttree.Branch('pfmetphi',pfmetphi,'pfmetphi/F')
-        self.ttree.Branch('chmet',chmet,'chmet/F')
-        self.ttree.Branch('chmetphi',chmetphi,'chmetphi/F')
-        ## self.ttree.Branch('tcmet',tcmet,'tcmet/F')
-        ## self.ttree.Branch('tcmetphi',tcmetphi,'tcmetphi/F')
-        self.ttree.Branch('dphillmet',dphillmet,'dphillmet/F')
-        self.ttree.Branch('dphilmet',dphilmet,'dphilmet/F')
-        self.ttree.Branch('dphilmet1',dphilmet1,'dphilmet1/F')
-        self.ttree.Branch('dphilmet2',dphilmet2,'dphilmet2/F')
-        self.ttree.Branch('mth',mth,'mth/F')
-        self.ttree.Branch('mtw1',mtw1,'mtw1/F')
-        self.ttree.Branch('mtw2',mtw2,'mtw2/F')
-        self.ttree.Branch('ppfmet',ppfmet,'ppfmet/F')
-        self.ttree.Branch('pchmet',pchmet,'pchmet/F')
-        ## self.ttree.Branch('ptcmet',ptcmet,'ptcmet/F')     
-        self.ttree.Branch('mpmet',mpmet,'mpmet/F')     
+
+        ## define a new branch
+        self.defineVariables()
 
         #nentries = self.ttree.GetEntriesFast()
         nentries = self.nentries
@@ -1774,6 +1585,9 @@ class scaleAndSmear:
                 print str(i)+' events processed.'
                 
 
+            ## by default set all values to original tree
+            self.getOriginalVariables()
+                            
             ## get the "old" met vector and smear px and py
             ## PFMET:
             met = ROOT.TLorentzVector()
@@ -1792,57 +1606,25 @@ class scaleAndSmear:
 
 
             ## get the variables
-            pfmet[0] = met.Pt()
-            pfmetphi[0] = met.Phi()
-            chmet[0] = chmet4.Pt()
-            chmetphi[0] = chmet4.Phi()
-            ## tcmet[0] = tcmet4.Pt()
-            ## tcmetphi[0] = tcmet4.Phi()
+            self.pfmet[0] = met.Pt()
+            self.pfmetphi[0] = met.Phi()
+            self.chmet[0] = chmet4.Pt()
+            self.chmetphi[0] = chmet4.Phi()
+            ## self.tcmet[0] = tcmet4.Pt()
+            ## self.tcmetphi[0] = tcmet4.Phi()
 
             l1 = ROOT.TLorentzVector()
             l2 = ROOT.TLorentzVector()
             l1.SetPtEtaPhiM(self.oldttree.pt1, self.oldttree.eta1, self.oldttree.phi1, 0)
             l2.SetPtEtaPhiM(self.oldttree.pt2, self.oldttree.eta2, self.oldttree.phi2, 0)
+
+            self.computeMETVariables(l1, l2, met, chmet4)
             
-            ## correct projected MET
-            ppfmet[0] = projectMET(l1, l2, met)
-            pchmet[0] = projectMET(l1, l2, chmet4)
-            ## ptcmet[0] = projectMET(l1, l2, ptcmet)
-            mpmet[0] = min( ppfmet[0], pchmet[0] )
-
-
-            ## changing MET means also changing transverse masses...
-            ## recalculate mth
-            mth[0] = transverseMass((l1+l2),met)
-            mtw1[0] = transverseMass((l1),met)
-            mtw2[0] = transverseMass((l2),met)
-            dphillmet[0] =  deltaPhi(l1+l2,met)
-            dphilmet1[0] =  deltaPhi(l1,met)
-            dphilmet2[0] =  deltaPhi(l2,met)           
-            dphilmet[0]  =  min(dphilmet1[0], dphilmet2[0])
-
             if self.verbose is True:
                 print '-----------------------------------'
-                print 'event: '    +str(i)
+                print 'event: '+str(i)
                 print 'sigma: '    +str(sigma)
-                print 'channel: '  +str(self.oldttree.channel)
-                print 'pfmet: '    +str(self.oldttree.pfmet) +to+ str(pfmet[0])
-                print 'pfmetphi: ' +str(self.oldttree.pfmetphi) +to+ str(pfmetphi[0])
-                print 'chmet: '    +str(self.oldttree.chmet) +to+ str(chmet[0])
-                print 'chmetphi: ' +str(self.oldttree.chmetphi) +to+ str(chmetphi[0])
-                ## print 'tcmet: '    +str(self.oldttree.tcmet) +to+ str(tcmet[0])
-                ## print 'tcmetphi: ' +str(self.oldttree.tcmetphi) +to+ str(tcmetphi[0])
-                print 'mth: ' + str(self.oldttree.mth) +to+ str(mth[0])
-                print 'mtw1: ' + str(self.oldttree.mtw1) +to+ str(mtw1[0])
-                print 'mtw2: ' + str(self.oldttree.mtw2) +to+ str(mtw2[0])
-                print 'dphillmet: ' + str(self.oldttree.dphillmet) +to+ str(dphillmet[0])
-                print 'dphilmet: ' + str(self.oldttree.dphilmet) +to+ str(dphilmet[0])
-                print 'dphilmet1: ' + str(self.oldttree.dphilmet1) +to+ str(dphilmet1[0])
-                print 'dphilmet2: ' + str(self.oldttree.dphilmet2) +to+ str(dphilmet2[0])
-                print 'ppfmet: '    +str(self.oldttree.ppfmet)    +to+str(ppfmet[0])
-                print 'pchmet: '    +str(self.oldttree.pchmet)    +to+str(pchmet[0])
-                ## print 'ptcmet: '    +str(self.oldttree.ptcmet)    +to+str(ptcmet[0])            
-                print 'mpmet: '    +str(self.oldttree.mpmet)    +to+str(mpmet[0])
+                self.printVariables()
 
 
             # fill old and new values            
@@ -1862,35 +1644,9 @@ class scaleAndSmear:
 
     def dyTemplate(self):
 
-
+        ## define a new branch
+        self.defineVariables()
         
-        pfmet = numpy.zeros(1, dtype=numpy.float32)
-        chmet = numpy.zeros(1, dtype=numpy.float32)
-        mth = numpy.zeros(1, dtype=numpy.float32)
-        mtw1 = numpy.zeros(1, dtype=numpy.float32)
-        mtw2 = numpy.zeros(1, dtype=numpy.float32)
-        ppfmet = numpy.zeros(1, dtype=numpy.float32)
-        pchmet = numpy.zeros(1, dtype=numpy.float32)
-        mpmet = numpy.zeros(1, dtype=numpy.float32)
-        njet = numpy.zeros(1, dtype=numpy.float32)
-        dymva0 = numpy.zeros(1, dtype=numpy.float32)
-        dymva1 = numpy.zeros(1, dtype=numpy.float32)
-        dyW = numpy.zeros(1, dtype=numpy.float32)
-        dyWUp = numpy.zeros(1, dtype=numpy.float32)
-        self.ttree.Branch('pfmet',pfmet,'pfmet/F')
-        self.ttree.Branch('chmet',chmet,'chmet/F')
-        self.ttree.Branch('mth',mth,'mth/F')
-        self.ttree.Branch('mtw1',mtw1,'mtw1/F')
-        self.ttree.Branch('mtw2',mtw2,'mtw2/F')
-        self.ttree.Branch('ppfmet',ppfmet,'ppfmet/F')
-        self.ttree.Branch('pchmet',pchmet,'pchmet/F')
-        self.ttree.Branch('mpmet',mpmet,'mpmet/F')
-        self.ttree.Branch('njet',njet,'njet/F')
-        self.ttree.Branch('dymva0',dymva0,'dymva0/F')
-        self.ttree.Branch('dymva1',dymva1,'dymva1/F')
-        self.ttree.Branch('dyW',dyW,'dyW/F')
-        self.ttree.Branch('dyWUp',dyWUp,'dyWUp/F')
-
         #nentries = self.ttree.GetEntriesFast()
         nentries = self.nentries
         print 'total number of entries: '+str(nentries)
@@ -1903,113 +1659,65 @@ class scaleAndSmear:
             if i > 0 and i%step == 0:
                 print str(i)+' events processed.'
 
-            dyW[0]=1.
-            dyWUp[0]=1.
+            ## by default set all values to original tree
+            self.getOriginalVariables()
+                            
+            self.dyW[0]=1.
+            self.dyWUp[0]=1.
 
             if self.oldttree.channel < 1.5:
 
                 # reweighting as a function of ptll
                 # preliminary (almost random) implementation for test
                 ptll_temp = self.oldttree.ptll
-                dyWUp[0] = 1.
-                dyW[0]   = 1.1*ptll_temp*(1./400.)
+                self.dyWUp[0] = 1.
+                self.dyW[0]   = 1.1*ptll_temp*(1./400.)
             
                 # get the "old" met
                 pfmet_hold  = self.oldttree.pfmet
                 chmet_hold  = self.oldttree.chmet
                 ## tcmet_hold  = self.oldttree.tcmet
 
-                pfmet[0] = pfmet_hold + 25 
-                chmet[0] = chmet_hold + 25
+                self.pfmet[0] = pfmet_hold + 25 
+                self.chmet[0] = chmet_hold + 25
                 ## tcmet[0] = tcmet_hold + 25
-                
-                ## fix met related variables
-                # get the "old" met
-                ppfmet_hold  = self.oldttree.ppfmet
-                pchmet_hold  = self.oldttree.pchmet
-                ## ptcmet_hold  = self.oldttree.ptcmet
-                ppfmet[0] = ppfmet_hold * (pfmet[0] / pfmet_hold)
-                pchmet[0] = pchmet_hold * (chmet[0] / chmet_hold)
-                ## ptcmet[0] = ptcmet_hold * (tcmet[0] / tcmet_hold)
-
-                #mpmet[0] = min( ppfmet[0], pchmet[0] )
-                mpmet_hold  = self.oldttree.mpmet
-                mpmet[0] = mpmet_hold + 25;
 
                 met = ROOT.TLorentzVector()
-                met.SetPtEtaPhiM(pfmet[0], 0, self.oldttree.pfmetphi, 0)         
+                met.SetPtEtaPhiM(self.pfmet[0], 0, self.oldttree.pfmetphi, 0)
                 chmet4 = ROOT.TLorentzVector()
-                chmet4.SetPtEtaPhiM(chmet[0], 0, self.oldttree.chmetphi, 0)         
+                chmet4.SetPtEtaPhiM(self.chmet[0], 0, self.oldttree.chmetphi, 0)
                 ## tcmet4 = ROOT.TLorentzVector()
-                ## tcmet4.SetPtEtaPhiM(tcmet[0], 0, self.oldttree.tcmetphi, 0)         
+                ## tcmet4.SetPtEtaPhiM(tcmet[0], 0, self.oldttree.tcmetphi, 0)
                 
                 ## changing MET means also changing transverse masses...
                 l1 = ROOT.TLorentzVector()
                 l2 = ROOT.TLorentzVector()
                 l1.SetPtEtaPhiM(self.oldttree.pt1, self.oldttree.eta1, self.oldttree.phi1, 0)
                 l2.SetPtEtaPhiM(self.oldttree.pt2, self.oldttree.eta2, self.oldttree.phi2, 0)
-                ## recalculate mth
-                mth[0]  = transverseMass((l1+l2),met)
-                mtw1[0] = transverseMass((l1),met)
-                mtw2[0] = transverseMass((l2),met)
-                ## assign binary to dymva based on mpmet
-                dymva0[0] = mpmet[0]>20;
-                dymva1[0] = mpmet[0]>20;
 
-                ## migrate events in jet bins, only for the systematics
-                if self.direction == 'syst':
-                    jetpt1 = self.oldttree.jetpt1
-                    jetpt2 = self.oldttree.jetpt2
-                    jetpt3 = self.oldttree.jetpt3
-                    jetpt4 = self.oldttree.jetpt4
-                    ptjets = [jetpt1,jetpt2,jetpt3,jetpt4]
-                    nj = 0
-                    for pt in ptjets:
-                        if pt > 35:
-                            nj=nj+1
-
-                    if nj <= 4:
-                        njet[0] = nj
-                    else:
-                        njet[0] = self.oldttree.njet
-                elif self.direction == 'temp':
-                    njet[0] = self.oldttree.njet
-            else:
-                pfmet[0]  = self.oldttree.pfmet
-                chmet[0]  = self.oldttree.chmet
-                mth[0]    = self.oldttree.mth
-                mtw1[0]   = self.oldttree.mtw1
-                mtw2[0]   = self.oldttree.mtw2
-                ppfmet[0] = self.oldttree.ppfmet
-                pchmet[0] = self.oldttree.pchmet
-                mpmet[0]  = self.oldttree.mpmet
-                njet[0]   = self.oldttree.njet
-                dymva0[0] = self.oldttree.dymva0
-                dymva1[0] = self.oldttree.dymva1
+                self.computeMETVariables(l1, l2, met, chmet4)            
                 
+                ## fix met related variables
+                # get the "old" met
+                ppfmet_hold  = self.oldttree.ppfmet
+                pchmet_hold  = self.oldttree.pchmet
+                ## ptcmet_hold  = self.oldttree.ptcmet
+                self.ppfmet[0] = ppfmet_hold * (self.pfmet[0] / pfmet_hold)
+                self.pchmet[0] = pchmet_hold * (self.chmet[0] / chmet_hold)
+                ## self.ptcmet[0] = ptcmet_hold * (self.tcmet[0] / tcmet_hold)
+
+                #self.mpmet[0] = min( self.ppfmet[0], self.pchmet[0] )
+                self.mpmet_hold  = self.oldttree.mpmet
+                self.mpmet[0] = mpmet_hold + 25;
+
+                self.dymva0[0] = self.mpmet[0]>20;
+                self.dymva1[0] = self.mpmet[0]>20;
 
             if self.verbose is True:
                 print '-----------------------------------'
-                print 'event: '    +str(i)
-                print 'channel: '  +str(self.oldttree.channel)
-                print 'pfmet: '    +str(self.oldttree.pfmet) +to+ str(pfmet[0])
-                print 'chmet: '    +str(self.oldttree.chmet) +to+ str(chmet[0])
-                ## print 'tcmet: '    +str(self.oldttree.tcmet) +to+ str(tcmet[0])
-                print 'mth: ' + str(self.oldttree.mth) +to+ str(mth[0])
-                print 'mtw1: ' + str(self.oldttree.mtw1) +to+ str(mtw1[0])
-                print 'mtw2: ' + str(self.oldttree.mtw2) +to+ str(mtw2[0])
-                print 'ppfmet: '    +str(self.oldttree.ppfmet)    +to+str(ppfmet[0])
-                print 'pchmet: '    +str(self.oldttree.pchmet)    +to+str(pchmet[0])
-                ## print 'ptcmet: '    +str(self.oldttree.ptcmet)    +to+str(ptcmet[0])            
-                print 'mpmet: '     +str(self.oldttree.mpmet)     +to+str(mpmet[0])
-                print 'jetpt1: '    +str(self.oldttree.jetpt1)    +to+str(self.oldttree.jetpt1)
-                print 'jetpt2: '    +str(self.oldttree.jetpt2)    +to+str(self.oldttree.jetpt2)
-                print 'jetpt3: '    +str(self.oldttree.jetpt3)    +to+str(self.oldttree.jetpt3)
-                print 'jetpt4: '    +str(self.oldttree.jetpt4)    +to+str(self.oldttree.jetpt4)
-                print 'njet: '      +str(self.oldttree.njet)      +to+str(njet[0])
-                print 'dymva0: '    +str(self.oldttree.dymva0)    +to+str(dymva0[0])
-                print 'dymva1: '    +str(self.oldttree.dymva1)    +to+str(dymva1[0])
-
+                print 'event: '+str(i)
+                self.printVariables()
+        
 
             # fill old and new values            
             self.ttree.Fill()
@@ -2151,56 +1859,7 @@ class scaleAndSmear:
     def muonResolution(self):
         
         ## define a new branch
-        pt1 = numpy.zeros(1, dtype=numpy.float32)
-        pt2 = numpy.zeros(1, dtype=numpy.float32)
-        mll = numpy.zeros(1, dtype=numpy.float32)
-        ptll = numpy.zeros(1, dtype=numpy.float32)
-        ##         dphill = numpy.zeros(1, dtype=numpy.float32)
-        ##         dphilljet = numpy.zeros(1, dtype=numpy.float32)
-        dphillmet = numpy.zeros(1, dtype=numpy.float32)
-        dphilmet = numpy.zeros(1, dtype=numpy.float32)
-        dphilmet1 = numpy.zeros(1, dtype=numpy.float32)
-        dphilmet2 = numpy.zeros(1, dtype=numpy.float32)
-        mth = numpy.zeros(1, dtype=numpy.float32)
-        mtw1 = numpy.zeros(1, dtype=numpy.float32)
-        mtw2 = numpy.zeros(1, dtype=numpy.float32)
-        pfmet = numpy.zeros(1, dtype=numpy.float32)
-        pfmetphi = numpy.zeros(1, dtype=numpy.float32)
-        chmet = numpy.zeros(1, dtype=numpy.float32)
-        chmetphi = numpy.zeros(1, dtype=numpy.float32)
-        ## tcmet = numpy.zeros(1, dtype=numpy.float32)
-        ## tcmetphi = numpy.zeros(1, dtype=numpy.float32)
-        ppfmet = numpy.zeros(1, dtype=numpy.float32)
-        pchmet = numpy.zeros(1, dtype=numpy.float32)
-        ## ptcmet = numpy.zeros(1, dtype=numpy.float32)
-        mpmet = numpy.zeros(1, dtype=numpy.float32)
-        gammaMRStar = numpy.zeros(1, dtype=numpy.float32)
-        zveto = numpy.zeros(1, dtype=int)
-        self.ttree.Branch('pt1',pt1,'pt1/F')
-        self.ttree.Branch('pt2',pt2,'pt2/F')
-        self.ttree.Branch('mll',mll,'mll/F')
-        self.ttree.Branch('ptll',ptll,'ptll/F')
-        ##         self.ttree.Branch('dphill',dphill,'dphill/F')
-        ##         self.ttree.Branch('dphilljet',dphilljet,'dphilljet/F')
-        self.ttree.Branch('dphillmet',dphillmet,'dphillmet/F')
-        self.ttree.Branch('dphilmet',dphilmet,'dphilmet/F')
-        self.ttree.Branch('dphilmet1',dphilmet1,'dphilmet1/F')
-        self.ttree.Branch('dphilmet2',dphilmet2,'dphilmet2/F')
-        self.ttree.Branch('mth',mth,'mth/F')
-        self.ttree.Branch('mtw1',mtw1,'mtw1/F')
-        self.ttree.Branch('mtw2',mtw2,'mtw2/F')
-        self.ttree.Branch('pfmet',pfmet,'pfmet/F')
-        self.ttree.Branch('pfmetphi',pfmetphi,'pfmetphi/F')
-        self.ttree.Branch('chmet',chmet,'chmet/F')
-        self.ttree.Branch('chmetphi',chmetphi,'chmetphi/F')
-        ## self.ttree.Branch('tcmet',tcmet,'tcmet/F')
-        ## self.ttree.Branch('tcmetphi',tcmetphi,'tcmetphi/F')
-        self.ttree.Branch('ppfmet',ppfmet,'ppfmet/F')
-        self.ttree.Branch('pchmet',pchmet,'pchmet/F')
-        ## self.ttree.Branch('ptcmet',ptcmet,'ptcmet/F')
-        self.ttree.Branch('mpmet',mpmet,'mpmet/F')
-        self.ttree.Branch('gammaMRStar',gammaMRStar,'gammaMRStar/F')
-        self.ttree.Branch('zveto',zveto,'zveto/I')
+        self.defineVariables()
         
         nentries = self.nentries
         print 'total number of entries: '+str(nentries)
@@ -2214,26 +1873,27 @@ class scaleAndSmear:
             if i > 0 and i%step == 0:
                 print str(i)+' events processed.'
 
-
+            ## by default set all values to original tree
+            self.getOriginalVariables()
 
             ## scale the lepton pt
             ## muon-muon channel
             ## dont scale at all
             if self.oldttree.channel == 0:
-                pt1[0] = smearPt(self.oldttree.pt1,(0.00017*self.oldttree.pt1+0.002))
-                pt2[0] = smearPt(self.oldttree.pt2,(0.00017*self.oldttree.pt1+0.002))
+                self.pt1[0] = smearPt(self.oldttree.pt1,(0.00017*self.oldttree.pt1+0.002))
+                self.pt2[0] = smearPt(self.oldttree.pt2,(0.00017*self.oldttree.pt1+0.002))
             ## electron-electron channel
             if self.oldttree.channel == 1:
-                pt1[0] = self.oldttree.pt1                  ## do not scale electrons here
-                pt2[0] = self.oldttree.pt2                  ## independent of "up" or "down"
+                self.pt1[0] = self.oldttree.pt1                  ## do not scale electrons here
+                self.pt2[0] = self.oldttree.pt2                  ## independent of "up" or "down"
             ## electron-muon channel
             if self.oldttree.channel == 2:
-                pt1[0] = self.oldttree.pt1
-                pt2[0] = smearPt(self.oldttree.pt2,(0.00017*self.oldttree.pt1+0.002))
+                self.pt1[0] = self.oldttree.pt1
+                self.pt2[0] = smearPt(self.oldttree.pt2,(0.00017*self.oldttree.pt1+0.002))
             ## muon-electron channel
             if self.oldttree.channel == 3:
-                pt1[0] = smearPt(self.oldttree.pt1,(0.00017*self.oldttree.pt1+0.002))
-                pt2[0] = self.oldttree.pt2
+                self.pt1[0] = smearPt(self.oldttree.pt1,(0.00017*self.oldttree.pt1+0.002))
+                self.pt2[0] = self.oldttree.pt2
                     
                     
 ## FIXME: after the scaling one has to recalculate some variables
@@ -2246,91 +1906,39 @@ class scaleAndSmear:
             l2_hold = ROOT.TLorentzVector()
             l1_hold.SetPtEtaPhiM(self.oldttree.pt1, self.oldttree.eta1, self.oldttree.phi1, 0)
             l2_hold.SetPtEtaPhiM(self.oldttree.pt2, self.oldttree.eta2, self.oldttree.phi2, 0)
-            l1.SetPtEtaPhiM(pt1[0], self.oldttree.eta1, self.oldttree.phi1, 0)
-            l2.SetPtEtaPhiM(pt2[0], self.oldttree.eta2, self.oldttree.phi2, 0)
+            l1.SetPtEtaPhiM(self.pt1[0], self.oldttree.eta1, self.oldttree.phi1, 0)
+            l2.SetPtEtaPhiM(self.pt2[0], self.oldttree.eta2, self.oldttree.phi2, 0)
 
-            ## correct MET
-            ## PFMET:
+            # recompute lepton variables
+            self.computeLeptonVariables(l1, l2)
+            
+            # recompute met variables
+            ## - pfmet
             met = ROOT.TLorentzVector()
             met.SetPtEtaPhiM(self.oldttree.pfmet, 0, self.oldttree.pfmetphi, 0)
-            ## FIXME: cross-check this!!
-            ## add "old leptons" and subtract the "new" ones:
             met = correctMet(met, l1_hold, l2_hold, l1, l2)
-            
-            ## substitute the values
-            pfmet[0] = met.Pt()
-            pfmetphi[0] = met.Phi()
-            ## other METs:
+            self.pfmet[0] = met.Pt()
+            self.pfmetphi[0] = met.Phi()
             ## - chmet
             chmet4 = ROOT.TLorentzVector()
             chmet4.SetPtEtaPhiM(self.oldttree.chmet, 0, self.oldttree.chmetphi, 0)
             chmet4 = correctMet(chmet4, l1_hold, l2_hold, l1, l2)
-            chmet[0] = chmet4.Pt()
-            chmetphi[0] = chmet4.Phi()
+            self.chmet[0] = chmet4.Pt()
+            self.chmetphi[0] = chmet4.Phi()
             ## ## - tcmet
             ## tcmet4 = ROOT.TLorentzVector()
             ## tcmet4.SetPtEtaPhiM(self.oldttree.tcmet, 0, self.oldttree.tcmetphi, 0)
             ## tcmet4 = correctMet(tcmet4, l1_hold, l2_hold, l1, l2)
-            ## tcmet[0] = tcmet4.Pt()
-            ## tcmetphi[0] = tcmet4.Phi()
+            ## self.tcmet[0] = tcmet4.Pt()
+            ## self.tcmetphi[0] = tcmet4.Phi()
             
-            ## correct projected MET
-            ppfmet[0] = projectMET(l1, l2, met)
-            pchmet[0] =projectMET(l1, l2, chmet4)
-            ## ptcmet[0] = projectMET(l1, l2, ptcmet)
-            mpmet[0] = min( ppfmet[0], pchmet[0] )
-            
-            ## additional variables
-            mll[0]  = invariantMass(l1, l2)
-            ptll[0] = dileptonPt(l1, l2)
-            
-            ##             dphill[0] =  deltaPhi(l1,l2)
-            dphillmet[0] =  deltaPhi(l1+l2,met)
-            dphilmet1[0] =  deltaPhi(l1,met)
-            dphilmet2[0] =  deltaPhi(l2,met)
-            dphilmet[0]  =  min(dphilmet1[0], dphilmet2[0])
-            
-            j1 = ROOT.TLorentzVector()
-            j1.SetPtEtaPhiM(self.oldttree.jetpt1, self.oldttree.jeteta1, self.oldttree.jetphi1, 0)
-            ##             dphilljet[0] =  deltaPhi(l1+l2,j1)
-            
-            mth[0] = transverseMass((l1+l2),met)
-            mtw1[0] = transverseMass((l1),met)
-            mtw2[0] = transverseMass((l2),met)
-            gammaMRStar[0] = calculateGammaMRStar(l1,l2)
-            
-            zveto[0] = checkZveto(mll[0], self.oldttree.channel)
+            self.computeMETVariables(l1, l2, met, chmet4)
+
             
             if self.verbose is True:
                 print '-----------------------------------'
                 print 'event: '+str(i)
-                print 'sigma: '+str(sigma)
-                print 'channel: '+str(self.oldttree.channel)
-                print 'pt1: '+str(self.oldttree.pt1)+' -> '+ str(pt1[0])
-                print 'pt1: '+str(self.oldttree.pt2)+' -> '+ str(pt2[0])
-                print 'pfmet: '    +str(self.oldttree.pfmet)    +to+str(pfmet[0])
-                print 'pfmetphi: ' +str(self.oldttree.pfmetphi) +to+str(pfmetphi[0])
-                print 'chmet: '    +str(self.oldttree.chmet)    +to+str(chmet[0])
-                print 'chmetphi: ' +str(self.oldttree.chmetphi) +to+str(chmetphi[0])
-                ## print 'tcmet: '    +str(self.oldttree.tcmet)    +to+str(tcmet[0])
-                ## print 'tcmetphi: ' +str(self.oldttree.tcmetphi) +to+str(tcmetphi[0])
-                print 'mll: '    + str(self.oldttree.mll)    +to+ str(mll[0])
-                print 'ptll: '   + str(self.oldttree.ptll)   +to+ str(ptll[0])
-                ##                 print 'dphill: ' + str(self.oldttree.dphill) +to+ str(dphill[0])
-                print 'dphillmet: ' + str(self.oldttree.dphillmet) +to+ str(dphillmet[0])
-                print 'dphilmet: ' + str(self.oldttree.dphilmet) +to+ str(dphilmet[0])
-                ##                 print 'dphilljet: ' + str(self.oldttree.dphilljet) +to+ str(dphilljet[0])
-                print 'dphilmet1: ' + str(self.oldttree.dphilmet1) +to+ str(dphilmet1[0])
-                print 'dphilmet2: ' + str(self.oldttree.dphilmet2) +to+ str(dphilmet2[0])
-                print 'mth: ' + str(self.oldttree.mth) +to+ str(mth[0])
-                print 'mtw1: ' + str(self.oldttree.mtw1) +to+ str(mtw1[0])
-                print 'mtw2: ' + str(self.oldttree.mtw2) +to+ str(mtw2[0])
-                print 'ppfmet: '    +str(self.oldttree.ppfmet)    +to+str(ppfmet[0])
-                print 'pchmet: '    +str(self.oldttree.pchmet)    +to+str(pchmet[0])
-                ## print 'ptcmet: '    +str(self.oldttree.ptcmet)    +to+str(ptcmet[0])
-                print 'mpmet: '    +str(self.oldttree.mpmet)    +to+str(mpmet[0])
-                print 'gammaMRStar: '    +str(self.oldttree.gammaMRStar)    +to+str(gammaMRStar[0])
-                print 'zveto: '    +str(self.oldttree.zveto)    +to+str(zveto[0])
+                self.printVariables()
                 
                 
             # fill old and new values
@@ -2362,60 +1970,9 @@ class scaleAndSmear:
             boundary1 = 1.0
             boundary2 = 2.0
 
-        print 'sigma '+str(sigmaEB)+' '+str(sigmaET)+' '+str(sigmaEE)+' '+str(boundary1)+' '+str(boundary2)
-
         ## define a new branch
-        pt1 = numpy.zeros(1, dtype=numpy.float32)
-        pt2 = numpy.zeros(1, dtype=numpy.float32)
-        mll = numpy.zeros(1, dtype=numpy.float32)
-        ptll = numpy.zeros(1, dtype=numpy.float32)
-##         dphill = numpy.zeros(1, dtype=numpy.float32)
-##         dphilljet = numpy.zeros(1, dtype=numpy.float32)
-        dphillmet = numpy.zeros(1, dtype=numpy.float32)
-        dphilmet = numpy.zeros(1, dtype=numpy.float32)
-        dphilmet1 = numpy.zeros(1, dtype=numpy.float32)
-        dphilmet2 = numpy.zeros(1, dtype=numpy.float32)
-        mth = numpy.zeros(1, dtype=numpy.float32)
-        mtw1 = numpy.zeros(1, dtype=numpy.float32)
-        mtw2 = numpy.zeros(1, dtype=numpy.float32)
-        pfmet = numpy.zeros(1, dtype=numpy.float32)
-        pfmetphi = numpy.zeros(1, dtype=numpy.float32)
-        chmet = numpy.zeros(1, dtype=numpy.float32)
-        chmetphi = numpy.zeros(1, dtype=numpy.float32)
-        ## tcmet = numpy.zeros(1, dtype=numpy.float32)
-        ## tcmetphi = numpy.zeros(1, dtype=numpy.float32)
-        ppfmet = numpy.zeros(1, dtype=numpy.float32)
-        pchmet = numpy.zeros(1, dtype=numpy.float32)
-        ## ptcmet = numpy.zeros(1, dtype=numpy.float32)
-        mpmet = numpy.zeros(1, dtype=numpy.float32)
-        gammaMRStar = numpy.zeros(1, dtype=numpy.float32)
-        zveto = numpy.zeros(1, dtype=int)        
-        self.ttree.Branch('pt1',pt1,'pt1/F')
-        self.ttree.Branch('pt2',pt2,'pt2/F')
-        self.ttree.Branch('mll',mll,'mll/F')
-        self.ttree.Branch('ptll',ptll,'ptll/F')
-##         self.ttree.Branch('dphill',dphill,'dphill/F')
-##         self.ttree.Branch('dphilljet',dphilljet,'dphilljet/F')
-        self.ttree.Branch('dphillmet',dphillmet,'dphillmet/F')
-        self.ttree.Branch('dphilmet',dphilmet,'dphilmet/F')
-        self.ttree.Branch('dphilmet1',dphilmet1,'dphilmet1/F')
-        self.ttree.Branch('dphilmet2',dphilmet2,'dphilmet2/F')
-        self.ttree.Branch('mth',mth,'mth/F')
-        self.ttree.Branch('mtw1',mtw1,'mtw1/F')
-        self.ttree.Branch('mtw2',mtw2,'mtw2/F')
-        self.ttree.Branch('pfmet',pfmet,'pfmet/F')
-        self.ttree.Branch('pfmetphi',pfmetphi,'pfmetphi/F')
-        self.ttree.Branch('chmet',chmet,'chmet/F')
-        self.ttree.Branch('chmetphi',chmetphi,'chmetphi/F')
-        ## self.ttree.Branch('tcmet',tcmet,'tcmet/F')
-        ## self.ttree.Branch('tcmetphi',tcmetphi,'tcmetphi/F')
-        self.ttree.Branch('ppfmet',ppfmet,'ppfmet/F')
-        self.ttree.Branch('pchmet',pchmet,'pchmet/F')
-        ## self.ttree.Branch('ptcmet',ptcmet,'ptcmet/F')
-        self.ttree.Branch('mpmet',mpmet,'mpmet/F')
-        self.ttree.Branch('gammaMRStar',gammaMRStar,'gammaMRStar/F')
-        self.ttree.Branch('zveto',zveto,'zveto/I')
-
+        self.defineVariables()
+        
         nentries = self.nentries
         print 'total number of entries: '+str(nentries)
         i=0
@@ -2428,47 +1985,48 @@ class scaleAndSmear:
             if i > 0 and i%step == 0:
                 print str(i)+' events processed.'
 
-
+            ## by default set all values to original tree
+            self.getOriginalVariables()
 
             ## scale the lepton pt
             ## muon-muon channel
             ## dont scale at all
             if self.oldttree.channel == 0:
-                pt1[0] = self.oldttree.pt1                  ## do not scale electrons here  
-                pt2[0] = self.oldttree.pt2                  ## independent of "up" or "down"
+                self.pt1[0] = self.oldttree.pt1                  ## do not scale electrons here  
+                self.pt2[0] = self.oldttree.pt2                  ## independent of "up" or "down"
             ## electron-electron channel    
             if self.oldttree.channel == 1:
                 if   abs(self.oldttree.eta1) < boundary1:
-                    pt1[0] = smearPt(self.oldttree.pt1,sigmaEB)
+                    self.pt1[0] = smearPt(self.oldttree.pt1,sigmaEB)
                 elif abs(self.oldttree.eta1) < boundary2:
-                    pt1[0] = smearPt(self.oldttree.pt1,sigmaET)
+                    self.pt1[0] = smearPt(self.oldttree.pt1,sigmaET)
                 elif abs(self.oldttree.eta1) >= boundary2:
-                    pt1[0] = smearPt(self.oldttree.pt1,sigmaEE)
+                    self.pt1[0] = smearPt(self.oldttree.pt1,sigmaEE)
                 if   abs(self.oldttree.eta2) < boundary1:
-                    pt2[0] = smearPt(self.oldttree.pt2,sigmaEB)
+                    self.pt2[0] = smearPt(self.oldttree.pt2,sigmaEB)
                 elif abs(self.oldttree.eta2) < boundary2:
-                    pt2[0] = smearPt(self.oldttree.pt2,sigmaET)
+                    self.pt2[0] = smearPt(self.oldttree.pt2,sigmaET)
                 elif abs(self.oldttree.eta2) >= boundary2:
-                    pt2[0] = smearPt(self.oldttree.pt2,sigmaEE)
+                    self.pt2[0] = smearPt(self.oldttree.pt2,sigmaEE)
                                         
             ## electron-muon channel
             if self.oldttree.channel == 2:
                 if   abs(self.oldttree.eta1) < boundary1:
-                    pt1[0] = smearPt(self.oldttree.pt1,sigmaEB)
+                    self.pt1[0] = smearPt(self.oldttree.pt1,sigmaEB)
                 elif abs(self.oldttree.eta1) < boundary2:
-                    pt1[0] = smearPt(self.oldttree.pt1,sigmaET)
+                    self.pt1[0] = smearPt(self.oldttree.pt1,sigmaET)
                 elif abs(self.oldttree.eta1) >= boundary2:
-                    pt1[0] = smearPt(self.oldttree.pt1,sigmaEE)
-                pt2[0] = self.oldttree.pt2
+                    self.pt1[0] = smearPt(self.oldttree.pt1,sigmaEE)
+                self.pt2[0] = self.oldttree.pt2
             ## muon-electron channel    
             if self.oldttree.channel == 3:
-                pt1[0] = self.oldttree.pt1
+                self.pt1[0] = self.oldttree.pt1
                 if   abs(self.oldttree.eta2) < boundary1:
-                    pt2[0] = smearPt(self.oldttree.pt2,sigmaEB)
+                    self.pt2[0] = smearPt(self.oldttree.pt2,sigmaEB)
                 elif abs(self.oldttree.eta2) < boundary2:
-                    pt2[0] = smearPt(self.oldttree.pt2,sigmaET)
+                    self.pt2[0] = smearPt(self.oldttree.pt2,sigmaET)
                 elif abs(self.oldttree.eta2) >= boundary2:
-                    pt2[0] = smearPt(self.oldttree.pt2,sigmaEE)
+                    self.pt2[0] = smearPt(self.oldttree.pt2,sigmaEE)
 
         
 ## FIXME: after the scaling one has to recalculate some variables
@@ -2481,96 +2039,42 @@ class scaleAndSmear:
             l2_hold = ROOT.TLorentzVector()
             l1_hold.SetPtEtaPhiM(self.oldttree.pt1, self.oldttree.eta1, self.oldttree.phi1, 0)
             l2_hold.SetPtEtaPhiM(self.oldttree.pt2, self.oldttree.eta2, self.oldttree.phi2, 0)
-            l1.SetPtEtaPhiM(pt1[0], self.oldttree.eta1, self.oldttree.phi1, 0)
-            l2.SetPtEtaPhiM(pt2[0], self.oldttree.eta2, self.oldttree.phi2, 0)
+            l1.SetPtEtaPhiM(self.pt1[0], self.oldttree.eta1, self.oldttree.phi1, 0)
+            l2.SetPtEtaPhiM(self.pt2[0], self.oldttree.eta2, self.oldttree.phi2, 0)
 
-            ## correct MET
-            ## PFMET:
+            # recompute lepton variables
+            self.computeLeptonVariables(l1, l2)
+
+            # recompute met variables
+            ## - pfmet
             met = ROOT.TLorentzVector()
-            met.SetPtEtaPhiM(self.oldttree.pfmet, 0, self.oldttree.pfmetphi, 0)           
-            ## FIXME: cross-check this!!
-            ## add "old leptons" and subtract the "new" ones:
+            met.SetPtEtaPhiM(self.oldttree.pfmet, 0, self.oldttree.pfmetphi, 0)
             met = correctMet(met, l1_hold, l2_hold, l1, l2)
-
-            ## substitute the values
-            pfmet[0] = met.Pt()
-            pfmetphi[0] = met.Phi()
-            ## other METs:
+            self.pfmet[0] = met.Pt()
+            self.pfmetphi[0] = met.Phi()
             ## - chmet
             chmet4 = ROOT.TLorentzVector()
-            chmet4.SetPtEtaPhiM(self.oldttree.chmet, 0, self.oldttree.chmetphi, 0)      
+            chmet4.SetPtEtaPhiM(self.oldttree.chmet, 0, self.oldttree.chmetphi, 0)
             chmet4 = correctMet(chmet4, l1_hold, l2_hold, l1, l2)
-            chmet[0] = chmet4.Pt()
-            chmetphi[0] = chmet4.Phi()
+            self.chmet[0] = chmet4.Pt()
+            self.chmetphi[0] = chmet4.Phi()
             ## ## - tcmet
             ## tcmet4 = ROOT.TLorentzVector()
-            ## tcmet4.SetPtEtaPhiM(self.oldttree.tcmet, 0, self.oldttree.tcmetphi, 0)      
+            ## tcmet4.SetPtEtaPhiM(self.oldttree.tcmet, 0, self.oldttree.tcmetphi, 0)
             ## tcmet4 = correctMet(tcmet4, l1_hold, l2_hold, l1, l2)
-            ## tcmet[0] = tcmet4.Pt()
-            ## tcmetphi[0] = tcmet4.Phi()
-
-            ## correct projected MET
-            ppfmet[0] = projectMET(l1, l2, met)
-            pchmet[0] =projectMET(l1, l2, chmet4)
-            ## ptcmet[0] = projectMET(l1, l2, ptcmet)
-            mpmet[0] = min( ppfmet[0], pchmet[0] )
-                                                                        
-            ## additional variables
-            mll[0]  = invariantMass(l1, l2)
-            ptll[0] = dileptonPt(l1, l2)
-
-##             dphill[0] =  deltaPhi(l1,l2)
-            dphillmet[0] =  deltaPhi(l1+l2,met)
-            dphilmet1[0] =  deltaPhi(l1,met)
-            dphilmet2[0] =  deltaPhi(l2,met)
-            dphilmet[0]  =  min(dphilmet1[0], dphilmet2[0])
-
-            j1 = ROOT.TLorentzVector()
-            j1.SetPtEtaPhiM(self.oldttree.jetpt1, self.oldttree.jeteta1, self.oldttree.jetphi1, 0)
-##             dphilljet[0] =  deltaPhi(l1+l2,j1)
-
-            mth[0] = transverseMass((l1+l2),met)
-            mtw1[0] = transverseMass((l1),met)
-            mtw2[0] = transverseMass((l2),met)
-            gammaMRStar[0] = calculateGammaMRStar(l1,l2)
-
-            zveto[0] = checkZveto(mll[0], self.oldttree.channel)
-
+            ## self.tcmet[0] = tcmet4.Pt()
+            ## self.tcmetphi[0] = tcmet4.Phi()
+            
+            self.computeMETVariables(l1, l2, met, chmet4)
 
             if self.verbose is True:
                 print '-----------------------------------'
                 print 'event: '+str(i)
-                print 'sigma: '+str(sigma)
-                print 'channel: '+str(self.oldttree.channel)
-                print 'pt1: '+str(self.oldttree.pt1)+' -> '+ str(pt1[0])
-                print 'pt1: '+str(self.oldttree.pt2)+' -> '+ str(pt2[0])
-                print 'pfmet: '    +str(self.oldttree.pfmet)    +to+str(pfmet[0])
-                print 'pfmetphi: ' +str(self.oldttree.pfmetphi) +to+str(pfmetphi[0])
-                print 'chmet: '    +str(self.oldttree.chmet)    +to+str(chmet[0])
-                print 'chmetphi: ' +str(self.oldttree.chmetphi) +to+str(chmetphi[0])
-                ## print 'tcmet: '    +str(self.oldttree.tcmet)    +to+str(tcmet[0])
-                ## print 'tcmetphi: ' +str(self.oldttree.tcmetphi) +to+str(tcmetphi[0])
-                print 'mll: '    + str(self.oldttree.mll)    +to+ str(mll[0])
-                print 'ptll: '   + str(self.oldttree.ptll)   +to+ str(ptll[0])
-##                 print 'dphill: ' + str(self.oldttree.dphill) +to+ str(dphill[0])
-                print 'dphillmet: ' + str(self.oldttree.dphillmet) +to+ str(dphillmet[0])
-                print 'dphilmet: ' + str(self.oldttree.dphilmet) +to+ str(dphilmet[0])
-##                 print 'dphilljet: ' + str(self.oldttree.dphilljet) +to+ str(dphilljet[0])
-                print 'dphilmet1: ' + str(self.oldttree.dphilmet1) +to+ str(dphilmet1[0])
-                print 'dphilmet2: ' + str(self.oldttree.dphilmet2) +to+ str(dphilmet2[0])
-                print 'mth: ' + str(self.oldttree.mth) +to+ str(mth[0])
-                print 'mtw1: ' + str(self.oldttree.mtw1) +to+ str(mtw1[0])
-                print 'mtw2: ' + str(self.oldttree.mtw2) +to+ str(mtw2[0])
-                print 'ppfmet: '    +str(self.oldttree.ppfmet)    +to+str(ppfmet[0])
-                print 'pchmet: '    +str(self.oldttree.pchmet)    +to+str(pchmet[0])
-                ## print 'ptcmet: '    +str(self.oldttree.ptcmet)    +to+str(ptcmet[0])
-                print 'mpmet: '    +str(self.oldttree.mpmet)    +to+str(mpmet[0])
-                print 'gammaMRStar: '    +str(self.oldttree.gammaMRStar)    +to+str(gammaMRStar[0])
-                print 'zveto: '    +str(self.oldttree.zveto)    +to+str(zveto[0])
+                print 'sigmaEB: '+str(sigmaEB)
+                print 'sigmaET: '+str(sigmaET)
+                print 'sigmaEE: '+str(sigmaEE)
+                self.printVariables()
 
-                            
-
-            
             # fill old and new values
             self.ttree.Fill()
                 
@@ -2961,7 +2465,10 @@ def main():
     s.openOriginalTFile()
     s.openOutputTFile()
     s.cloneTree()
-    
+
+    # dymva
+    s.createDYMVA()
+
     if s.systArgument == 'muonScale':
         s.muonScale()
     if s.systArgument == 'electronScale':
