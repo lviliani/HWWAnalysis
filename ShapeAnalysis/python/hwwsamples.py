@@ -170,6 +170,33 @@ mcsets = {
         # templates for Top estimation
         ('CHITOP-Top',     'Top'),
     ],
+   'vbf_of-mH125' : [
+        #signals
+        'ggH','qqH', #'wzttH',
+        # bkgs
+        'WW','ggWW','VgS','Vg','WJet','Top','VV','DYTT',
+        'WWewk',
+        # nuisance
+        'WWpow',
+        # systematics
+        ('WJetFakeRate-2j-template','WJetFakeRate-nominal'), # here and in the following I put the "template" distributions (relaxed cuts)
+        ('WJetFakeRate-2j-eUp',     'WJetFakeRate-nominal'),
+        ('WJetFakeRate-2j-eDn',     'WJetFakeRate-nominal'),
+        ('WJetFakeRate-2j-mUp',     'WJetFakeRate-nominal'),
+        ('WJetFakeRate-2j-mDn',     'WJetFakeRate-nominal'),
+        # top shape ---> to be checked if needed
+        #('TopTW',   'Top'),
+        #('TopCtrl', 'Top'),
+        # templates
+        'VgS-template','Vg-template',
+        # 2j specific
+        #('WJet-template',    'WJet-template-2j'),              #    A   <-   sorgente
+        #('WJet-templatesyst','WJet-templatesyst-2j')           #    mkmerged vuole "-template"
+        # templates for Top estimation
+        ('CHITOP-Top',     'Top'),
+        # mH125 as background
+        'ggH_SM', 'qqH_SM', # 'WH_SM','ZH_SM',
+    ],
    'ggH2j_of' : [
         #signals
         'ggH','qqH', #'wzttH',
@@ -427,7 +454,8 @@ def samples(mass, energytag, datatag='Data2012', sigtag='SM', mctag='all'):
     if 'mH' in mctag:
         print mctag
         # get the background-higgs mass from the tag
-        mHbkg = int(re.match('0j1j-mH(\d+)', mctag).group(1))
+        if   '0j1j'   in mctag : mHbkg = int(re.match('0j1j-mH(\d+)', mctag).group(1))
+        elif 'vbf_of' in mctag : mHbkg = int(re.match('vbf_of-mH(\d+)', mctag).group(1))
         print 'signal as background', mHbkg
         #signalbkg = sampledb.signalSamples(sigtag, mHbkg, str(mHbkg))
         signalbkg = sampledb.signalSamples(sigtag, mHbkg, "_SM")

@@ -68,6 +68,8 @@ class HiggsCPSWeightAdder(TreeCloner):
         group.add_option('-p', '--process',   dest='process',     help='Scale factor to add to the weight (default = %default)', default='ggH')
         group.add_option('-m', '--mass',      dest='mass',        type='int', help='Higgs Mass to reweight to', default=0)
         group.add_option('-k', '--kind',      dest='kind',        help='Name of the kind of ration to calculate: (default = %default), e.g. pow2new, old2new, pow2old', default='pow2new')
+        group.add_option('-s', '--spline',    dest='spline',      type='int', help='Use spline instead of histograms', default=0)
+
         parser.add_option_group(group)
         return group
 
@@ -90,78 +92,132 @@ class HiggsCPSWeightAdder(TreeCloner):
         self._kind       = opts.kind
         print " do: ",self._kind
 
+        self._spline     = opts.spline
+
+
     #---
     def process(self, **kwargs):
 
-        # get histograms
-        oldcpshistname = "mH"+str(self._mass)+"_cpsOld_8TeV_"+self._process
-        newcpshistname = "mH"+str(self._mass)+"_cpsNew_8TeV_"+self._process
-        powcpshistname = "mH"+str(self._mass)+"_Powheg_8TeV_"+self._process
-        print "oldcpshistname =",oldcpshistname
-        print "newcpshistname =",newcpshistname
-        print "powcpshistname =",powcpshistname
+       if  opts.spline != 0 :
+          #fileWght = os.environ['CMSSW_BASE']+"/src/HWWAnalysis/ShapeAnalysis/ewksinglet/data/cpsWght/cpsWght.root"
+          ROOT.gROOT.ProcessLineSync('initCPSWght("'+self._weightfile+'","'+13+'",'+str(self._mass)+','+str(int(self._mass))+')')
 
-        self.infileWeight = self._openRootFile(self._weightfile)
-        self.oldcps = self._getRootObj(self.infileWeight,oldcpshistname)
-        self.newcps = self._getRootObj(self.infileWeight,newcpshistname)
-        self.powcps = self._getRootObj(self.infileWeight,powcpshistname)
+          tree  = kwargs['tree']
+          input = kwargs['input']
+          output = kwargs['output']
 
+          self.connect(tree,input)
+          self.clone(output,[self._branch])
 
-        tree  = kwargs['tree']
-        input = kwargs['input']
-        output = kwargs['output']
+          weight = c_float(5.)
+          self.otree.Branch(self._branch, weight, '%s/F' % self._branch )
 
-        self.connect(tree,input)
-        self.clone(output,[self._branch])
+          nentries = self.itree.GetEntries()
+          print 'Total number of entries: ',nentries 
 
+          # avoid dots to go faster
+          itree     = self.itree
+          otree     = self.otree
 
-        weight = c_float(5.)
-        self.otree.Branch(self._branch, weight, '%s/F' % self._branch )
+          cl = self.__class__
 
-        nentries = self.itree.GetEntries()
-        print 'Total number of entries: ',nentries 
+          m  = c_double(0.)
 
-        # avoid dots to go faster
-        itree     = self.itree
-        otree     = self.otree
+          step = 5000
+          for i in xrange(nentries):
+              if i > 0 and i%step == 0:
+                  print i,' events processed.'
 
+              itree.GetEntry(i)
+              m.value  = getattr(itree,'MHiggs') 
 
-        cl = self.__class__
+              weight.value = 1.
 
-        m  = c_double(0.)
-
-        step = 5000
-        for i in xrange(nentries):
-            if i > 0 and i%step == 0:
-                print i,' events processed.'
-
-            itree.GetEntry(i)
-            m.value  = getattr(itree,'MHiggs') 
-
-            pow_value = self.GetValueBinWithContent(self.powcps, m.value)
-            old_value = self.GetValueBinWithContent(self.oldcps, m.value)
-            new_value = self.GetValueBinWithContent(self.newcps, m.value)
-
-            # calculate weight
-            if self._kind == "old2new" :
-              if (old_value != 0) :
-                weight.value = new_value / old_value
+              if self._process in ['qqH'] :
+                weight.value = getCPSWght(1,MHiggs)
               else :
-                weight.value = 1.
-            elif self._kind == "pow2new" :
-              if (pow_value != 0) :
-                weight.value = new_value / pow_value
-              else :
-                weight.value = 1.
-            elif self._kind == "pow2old" :
-              if (pow_value != 0) :
-                weight.value = old_value / pow_value
-              else :
-                weight.value = 1.
+                weight.value = getCPSWght(0,MHiggs)
 
-            otree.Fill()
+              otree.Fill()
 
-        self.disconnect()
-        print '- Eventloop completed'
+          self.disconnect()
+          print '- Eventloop completed'
+
+
+
+
+
+       else :
+
+          # get histograms
+          oldcpshistname = "mH"+str(self._mass)+"_cpsOld_8TeV_"+self._process
+          newcpshistname = "mH"+str(self._mass)+"_cpsNew_8TeV_"+self._process
+          powcpshistname = "mH"+str(self._mass)+"_Powheg_8TeV_"+self._process
+          print "oldcpshistname =",oldcpshistname
+          print "newcpshistname =",newcpshistname
+          print "powcpshistname =",powcpshistname
+
+          self.infileWeight = self._openRootFile(self._weightfile)
+          self.oldcps = self._getRootObj(self.infileWeight,oldcpshistname)
+          self.newcps = self._getRootObj(self.infileWeight,newcpshistname)
+          self.powcps = self._getRootObj(self.infileWeight,powcpshistname)
+
+
+          tree  = kwargs['tree']
+          input = kwargs['input']
+          output = kwargs['output']
+
+          self.connect(tree,input)
+          self.clone(output,[self._branch])
+
+
+          weight = c_float(5.)
+          self.otree.Branch(self._branch, weight, '%s/F' % self._branch )
+
+          nentries = self.itree.GetEntries()
+          print 'Total number of entries: ',nentries 
+
+          # avoid dots to go faster
+          itree     = self.itree
+          otree     = self.otree
+
+
+          cl = self.__class__
+
+          m  = c_double(0.)
+
+          step = 5000
+          for i in xrange(nentries):
+              if i > 0 and i%step == 0:
+                  print i,' events processed.'
+
+              itree.GetEntry(i)
+              m.value  = getattr(itree,'MHiggs') 
+
+              pow_value = self.GetValueBinWithContent(self.powcps, m.value)
+              old_value = self.GetValueBinWithContent(self.oldcps, m.value)
+              new_value = self.GetValueBinWithContent(self.newcps, m.value)
+
+              # calculate weight
+              if self._kind == "old2new" :
+                if (old_value != 0) :
+                  weight.value = new_value / old_value
+                else :
+                  weight.value = 1.
+              elif self._kind == "pow2new" :
+                if (pow_value != 0) :
+                  weight.value = new_value / pow_value
+                else :
+                  weight.value = 1.
+              elif self._kind == "pow2old" :
+                if (pow_value != 0) :
+                  weight.value = old_value / pow_value
+                else :
+                  weight.value = 1.
+
+              otree.Fill()
+
+          self.disconnect()
+          print '- Eventloop completed'
 
 

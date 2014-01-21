@@ -70,7 +70,7 @@ class ShapeFactory:
         self._newcps          = False
         self._ewksinglet      = False
         self._cprimesq        = 1.
-
+        self._approxewk       = False
         variables = {}
         variables['2dWithCR']             = self._getMllMth2DSpinWithControlRegion
         variables['2dWithSSmirrorRegion'] = self._getMllMth2DSpinWithSSmirrorRegion
@@ -213,8 +213,10 @@ class ShapeFactory:
 
         if mass < 300.:
             return (10,80,280,8,0,200) 
-        else:
+        elif mass < 700:
             return (10,80,380,8,0,450) 
+        else:
+            return (13,80,600,10,0,600)
 
     # _____________________________________________________________________________
     def _getMllMth2DSpinrange(self,mass,cat):
@@ -224,9 +226,10 @@ class ShapeFactory:
 
         if mass < 300.:
             return ([60,70,80,90,100,110,120,140,160,180,200,220,240,260,280],[12,30,45,60,75,100,125,150,175,200])
+        elif mass < 700.:
+            return (10,80,380,8,0,450)
         else:
-            return (10,80,410,8,0,450)
-
+            return (12,80,580,10,0,600)
 
 
     # _____________________________________________________________________________
@@ -807,23 +810,25 @@ class ShapeFactory:
        if self._ewksinglet : 
 
          # ... Change high mass H width (only ggH and qqH for now)
-         fileBWParam = os.environ['CMSSW_BASE']+"/src/HWWAnalysis/ShapeAnalysis/ewksinglet/data/BWParam.json"
-         jsf = open(fileBWParam,"r+")
-         BWParam = (json.loads(jsf.read()))
-         jsf.close()  
-
-         GamSM = 0.
-         if    prodMode == 'ggH' :
-           Mass  = BWParam['ggH'][str(mass)]['Mass']
-           GamSM = BWParam['ggH'][str(mass)]['Gamma']
-
-         elif  prodMode == 'qqH' :
-           Mass  = BWParam['qqH'][str(mass)]['Mass']
-           GamSM = BWParam['qqH'][str(mass)]['Gamma']
- 
-         Gamma = GamSM * self._cprimesq
-         
-         if prodMode in ['ggH','qqH']    : hWght += '*getBWWght(MHiggs,%f,%f,%f)'%(Mass,GamSM,Gamma)
+         if mass >= 250 :
+           fileBWParam = os.environ['CMSSW_BASE']+"/src/HWWAnalysis/ShapeAnalysis/ewksinglet/data/BWParam.json"
+           jsf = open(fileBWParam,"r+")
+           BWParam = (json.loads(jsf.read()))
+           jsf.close()  
+  
+           GamSM = 0.
+           if    prodMode == 'ggH' :
+             Mass  = BWParam['ggH'][str(mass)]['Mass']
+             GamSM = BWParam['ggH'][str(mass)]['Gamma']
+  
+           elif  prodMode == 'qqH' :
+             Mass  = BWParam['qqH'][str(mass)]['Mass']
+             GamSM = BWParam['qqH'][str(mass)]['Gamma']
+   
+           Gamma = GamSM * self._cprimesq
+           
+           #if prodMode in ['ggH','qqH']  and not self._approxewk : hWght += '*getBWWght(MHiggs,%f,%f,%f)'%(Mass,GamSM,Gamma)
+           if prodMode in ['ggH','qqH']  : hWght += '*getBWWght(MHiggs,%f,%f,%f)'%(Mass,GamSM,Gamma)
 
          # ... Change mu of both all H
          if prodMode in ['ggH','qqH','WH','ZH','ttH']                :  hWght += '*'+str(self._cprimesq)
@@ -844,8 +849,8 @@ class ShapeFactory:
               exit()
             EWKDir = os.environ['CMSSW_BASE']+'/src/HWWAnalysis/ShapeAnalysis/ewksinglet/'
             ROOT.gROOT.ProcessLineSync('initIntWght("'+EWKDir+'" ,1,'+str(iSyst)+','+str(mass)+')') 
-            hWght += '*getIntWght(1,MHiggs,'+str(self._cprimesq)+','+iFlavor+')' 
-
+            if not self._approxewk : hWght += '*getIntWght(1,MHiggs,'+str(self._cprimesq)+','+iFlavor+')' 
+            else                   : hWght += '*getIntWght(1,MHiggs,1.0,'+iFlavor+')'
 
 
 
@@ -1187,12 +1192,16 @@ if __name__ == '__main__':
     # EWK Doublet Model
     parser.add_option('--ewksinglet',    dest='ewksinglet',  help='On/Off EWK singlet model',           default=False , action='store_true')   
     parser.add_option('--cprimesq'  ,    dest='cprimesq',    help='EWK singlet C\'**2 mixing value',    default=[0.]  , type='float'  , action='callback' , callback=hwwtools.list_maker('cprimesq'))
+    parser.add_option('--approxewk'  ,    dest='approxewk',    help='EWK not scaling width/interf',   default=False , action='store_true') 
+
+
     hwwtools.addOptions(parser)
     hwwtools.loadOptDefaults(parser)
     (opt, args) = parser.parse_args()
 
     print 'EWK Singlet:' , opt.ewksinglet
     print 'CPrime**2  :' , opt.cprimesq
+    print 'Approx. EWK :' , opt.approxewk 
 
     sys.argv.append( '-b' )
     ROOT.gROOT.SetBatch()
@@ -1278,6 +1287,7 @@ if __name__ == '__main__':
  
           factory._newcps    = opt.newcps 
           factory._ewksinglet= opt.ewksinglet
+          factory._approxewk = opt.approxewk
           if not opt.ewksinglet :
             factory._cprimesq  = 1.
           else:  
