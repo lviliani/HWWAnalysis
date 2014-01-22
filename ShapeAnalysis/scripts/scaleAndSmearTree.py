@@ -4,6 +4,22 @@
 ## ./scaleAndSmearTree.py -i H140_ll.root -o blu/bla/bli.root -t latino -a leptonEfficiency -d down
 
 
+## auto:
+#ls --color=none nominals/ | grep .root | awk '{print "scaleAndSmearTree.py -i nominals/"$1" -o jetEnergyScale_up/"$1"    -a jetEnergyScale -v up"}'  | /bin/sh
+#ls --color=none nominals/ | grep .root | awk '{print "scaleAndSmearTree.py -i nominals/"$1" -o jetEnergyScale_down/"$1"  -a jetEnergyScale -v down"}'| /bin/sh
+
+#ls --color=none nominals/ | grep .root | awk '{print "scaleAndSmearTree.py -i nominals/"$1" -o electronScale_up/"$1"    -a electronScale -v up"}'| /bin/sh
+#ls --color=none nominals/ | grep .root | awk '{print "scaleAndSmearTree.py -i nominals/"$1" -o electronScale_down/"$1"  -a electronScale -v down"}'| /bin/sh
+
+#ls --color=none nominals/ | grep .root | awk '{print "scaleAndSmearTree.py -i nominals/"$1" -o muonScale_up/"$1"    -a muonScale -v up"}'| /bin/sh
+#ls --color=none nominals/ | grep .root | awk '{print "scaleAndSmearTree.py -i nominals/"$1" -o muonScale_down/"$1"  -a muonScale -v down"}'| /bin/sh
+
+#ls --color=none nominals/ | grep .root | awk '{print "scaleAndSmearTree.py -i nominals/"$1" -o metResolution/"$1"         -a metResolution"}'| /bin/sh
+#ls --color=none nominals/ | grep .root | awk '{print "scaleAndSmearTree.py -i nominals/"$1" -o electronResolution/"$1"    -a electronResolution"}'| /bin/sh
+
+
+
+
 ## FIXME:
 ## 1) make an n events argument... it's hardcoded at the moment...
 ## 2) lepton efficiency are at the moment moved up / down for electrons and muosn simultaneously
@@ -329,58 +345,59 @@ class scaleAndSmear:
         oldTree = self.inFile.Get(self.treeDir)
         ## do not clone the branches which we want to drop for systematics ntuples
         ## i.e. set status to 0
-        oldTree.SetBranchStatus('bdt1'           ,0)
-        oldTree.SetBranchStatus('bdt2'           ,0)
-        oldTree.SetBranchStatus('cjeteta1'       ,0)
-        oldTree.SetBranchStatus('cjeteta2'       ,0)
-        oldTree.SetBranchStatus('cjetid1'        ,0)
-        oldTree.SetBranchStatus('cjetid2'        ,0)
-        oldTree.SetBranchStatus('cjetmva1'       ,0)
-        oldTree.SetBranchStatus('cjetmva2'       ,0)
-        oldTree.SetBranchStatus('cjetphi1'       ,0)
-        oldTree.SetBranchStatus('cjetphi2'       ,0)
-        oldTree.SetBranchStatus('cjetpt1'        ,0)
-        oldTree.SetBranchStatus('cjetpt2'        ,0)
-        oldTree.SetBranchStatus('effAW'          ,0)
-        oldTree.SetBranchStatus('effBW'          ,0)
-        oldTree.SetBranchStatus('fakeAW'         ,0)
-        oldTree.SetBranchStatus('fakeBW'         ,0)
-        oldTree.SetBranchStatus('imet'           ,0)
-        oldTree.SetBranchStatus('iso1'           ,0)
-        oldTree.SetBranchStatus('iso2'           ,0)
-        oldTree.SetBranchStatus('jetbjpb1'       ,0)
-        oldTree.SetBranchStatus('jetbjpb2'       ,0)
-        oldTree.SetBranchStatus('jetbjpb3'       ,0)
-        oldTree.SetBranchStatus('jetid1'         ,0)
-        oldTree.SetBranchStatus('jetid2'         ,0)
-        oldTree.SetBranchStatus('jetid3'         ,0)
-        oldTree.SetBranchStatus('jetid4'         ,0)
-        oldTree.SetBranchStatus('jetmva1'        ,0)
-        oldTree.SetBranchStatus('jetmva2'        ,0)
-        oldTree.SetBranchStatus('jetmva3'        ,0)
-        oldTree.SetBranchStatus('jetmva4'        ,0)
-        oldTree.SetBranchStatus('jettche1'       ,0)
-        oldTree.SetBranchStatus('jettche2'       ,0)
-        oldTree.SetBranchStatus('jettche3'       ,0)
-        oldTree.SetBranchStatus('jettchp1'       ,0)
-        oldTree.SetBranchStatus('jettchp2'       ,0)
-        oldTree.SetBranchStatus('jettchp3'       ,0)
-        oldTree.SetBranchStatus('lh1'            ,0)
-        oldTree.SetBranchStatus('lh2'            ,0)
-        oldTree.SetBranchStatus('nbrem1'         ,0)
-        oldTree.SetBranchStatus('nbrem2'         ,0)
-        oldTree.SetBranchStatus('sceta1'         ,0)
-        oldTree.SetBranchStatus('sceta2'         ,0)
-        oldTree.SetBranchStatus('triggAW'        ,0)
-        oldTree.SetBranchStatus('triggBW'        ,0)
-        oldTree.SetBranchStatus('bveto_munj'     ,0)
-        oldTree.SetBranchStatus('bveto_munj05'   ,0)
-        oldTree.SetBranchStatus('bveto_munj30'   ,0)
-        oldTree.SetBranchStatus('bveto_munj3005' ,0)
-        oldTree.SetBranchStatus('bveto_nj'       ,0)
-        oldTree.SetBranchStatus('bveto_nj05'     ,0)
-        oldTree.SetBranchStatus('bveto_nj30'     ,0)
-        oldTree.SetBranchStatus('bveto_nj3005'   ,0)
+
+        #oldTree.SetBranchStatus('bdt1'           ,0)
+        #oldTree.SetBranchStatus('bdt2'           ,0)
+        #oldTree.SetBranchStatus('cjeteta1'       ,0)
+        #oldTree.SetBranchStatus('cjeteta2'       ,0)
+        #oldTree.SetBranchStatus('cjetid1'        ,0)
+        #oldTree.SetBranchStatus('cjetid2'        ,0)
+        #oldTree.SetBranchStatus('cjetmva1'       ,0)
+        #oldTree.SetBranchStatus('cjetmva2'       ,0)
+        #oldTree.SetBranchStatus('cjetphi1'       ,0)
+        #oldTree.SetBranchStatus('cjetphi2'       ,0)
+        #oldTree.SetBranchStatus('cjetpt1'        ,0)
+        #oldTree.SetBranchStatus('cjetpt2'        ,0)
+        #oldTree.SetBranchStatus('effAW'          ,0)
+        #oldTree.SetBranchStatus('effBW'          ,0)
+        #oldTree.SetBranchStatus('fakeAW'         ,0)
+        #oldTree.SetBranchStatus('fakeBW'         ,0)
+        #oldTree.SetBranchStatus('imet'           ,0)
+        #oldTree.SetBranchStatus('iso1'           ,0)
+        #oldTree.SetBranchStatus('iso2'           ,0)
+        #oldTree.SetBranchStatus('jetbjpb1'       ,0)
+        #oldTree.SetBranchStatus('jetbjpb2'       ,0)
+        #oldTree.SetBranchStatus('jetbjpb3'       ,0)
+        #oldTree.SetBranchStatus('jetid1'         ,0)
+        #oldTree.SetBranchStatus('jetid2'         ,0)
+        #oldTree.SetBranchStatus('jetid3'         ,0)
+        #oldTree.SetBranchStatus('jetid4'         ,0)
+        #oldTree.SetBranchStatus('jetmva1'        ,0)
+        #oldTree.SetBranchStatus('jetmva2'        ,0)
+        #oldTree.SetBranchStatus('jetmva3'        ,0)
+        #oldTree.SetBranchStatus('jetmva4'        ,0)
+        #oldTree.SetBranchStatus('jettche1'       ,0)
+        #oldTree.SetBranchStatus('jettche2'       ,0)
+        #oldTree.SetBranchStatus('jettche3'       ,0)
+        #oldTree.SetBranchStatus('jettchp1'       ,0)
+        #oldTree.SetBranchStatus('jettchp2'       ,0)
+        #oldTree.SetBranchStatus('jettchp3'       ,0)
+        #oldTree.SetBranchStatus('lh1'            ,0)
+        #oldTree.SetBranchStatus('lh2'            ,0)
+        #oldTree.SetBranchStatus('nbrem1'         ,0)
+        #oldTree.SetBranchStatus('nbrem2'         ,0)
+        #oldTree.SetBranchStatus('sceta1'         ,0)
+        #oldTree.SetBranchStatus('sceta2'         ,0)
+        #oldTree.SetBranchStatus('triggAW'        ,0)
+        #oldTree.SetBranchStatus('triggBW'        ,0)
+        #oldTree.SetBranchStatus('bveto_munj'     ,0)
+        #oldTree.SetBranchStatus('bveto_munj05'   ,0)
+        #oldTree.SetBranchStatus('bveto_munj30'   ,0)
+        #oldTree.SetBranchStatus('bveto_munj3005' ,0)
+        #oldTree.SetBranchStatus('bveto_nj'       ,0)
+        #oldTree.SetBranchStatus('bveto_nj05'     ,0)
+        #oldTree.SetBranchStatus('bveto_nj30'     ,0)
+        #oldTree.SetBranchStatus('bveto_nj3005'   ,0)
         oldTree.SetBranchStatus('puWsmurf'       ,0)
         oldTree.SetBranchStatus('puWABtrue'      ,0)
         oldTree.SetBranchStatus('puWCtrue'       ,0)

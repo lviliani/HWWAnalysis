@@ -211,7 +211,7 @@ class ShapeLoader:
 class NuisanceMapBuilder:
     _log = logging.getLogger('NuisanceMapBuilder')
 
-    def __init__(self, ddPath, noWWddAbove, shape=True, isssactive=False):
+    def __init__(self, ddPath, noWWddAbove, shape=True, isssactive=False, statmode='unified'):
         self._common       = OrderedDict()
         self._0jetOnly     = OrderedDict()
         self._1jetOnly     = OrderedDict()
@@ -221,6 +221,7 @@ class NuisanceMapBuilder:
         # to options
         self.statShapeVeto = []
         self.expShapeVeto  = OrderedDict()
+        self._statmode     = statmode
 
         # data driven reader and filter for the ww
         self._ddreader      = datadriven.DDCardReader(ddPath)
@@ -349,7 +350,7 @@ class NuisanceMapBuilder:
                   # MC extrapolation is needed for some dd
                   for nameNuis,nameNominal,nameSimilTemplate in opts['MCextrap'] :
                     # check if the name of the nuisance is correct
-                    #print "nameNuis = ",nameNuis,"   :: eff_stat = ",eff_stat
+                    #print " ::::::::: nameNuis = ",nameNuis,"   :: eff_stat = ",eff_stat
                     if (nameNuis == eff_stat) :
                       # read from file the scale factor
                       # e.g.: scaleFactor.update({110: {'CHITOP-Top': 0.02029}})
@@ -377,12 +378,18 @@ class NuisanceMapBuilder:
 
                 eff_bin1 = eff_bin1_tmpl.format(suffix,process,channel)
                 if eff_bin1 in nuisances and not doneMCextrap:
-                    del nuisances[eff_bin1]
+                    # only if not bin-by-bin, then remove statistical uncertainty for datadriven samples
+                    # for bbb it the single bin variation has already been normalized to the nominal
+                    if self._statmode != 'bybin':
+                        del nuisances[eff_bin1]
 
                 if not doneMCextrap and 'CMS%s' % suffix +'_eff_e' in nuisances and process == 'Top':
                   del nuisances['CMS%s' % suffix +'_eff_e'][1][process]
                 if not doneMCextrap and 'CMS%s' % suffix +'_eff_m' in nuisances and process == 'Top':
                   del nuisances['CMS%s' % suffix +'_eff_m'][1][process]
+                # for Top no b-mistag error (if added before)
+                if 'CMS'+suffix+'hww2j_misb' in nuisances and process == 'Top':
+                  del nuisances['CMS'+suffix+'hww2j_misb'][1][process]
 
 #             if jetcat == '2j' and tag == 'Top' :
 #                 if flagdoextracorr == 1 :
@@ -531,14 +538,18 @@ class NuisanceMapBuilder:
                 print p
                 floatN = floatNorm(p)
                 CutBased.update( floatN )
-                    
+
         common = OrderedDict()
         for k in sorted(CutBased):
             common[k] = CutBased[k]
         allNus.update( common )
 
 
-        self._addStatisticalNuisances(allNus, yields, channel, suffix)
+        # only if not bin-by-bin, then add statistical uncertainty
+        # for bbb it is already included
+        if self._statmode != 'bybin':
+            self._addStatisticalNuisances(allNus, yields, channel, suffix)
+
         self._addDataDrivenNuisances(allNus, yields, mass, channel, jetcat, suffix, opts)
 
         if self._shape:
@@ -604,6 +615,7 @@ if __name__ == '__main__':
     parser.add_option('--cutbased'      , dest='shape'       , help='Make cutbased datacards (no shapes)' , default=True , action='store_false' )
     parser.add_option('--no_wwdd_above' , dest='noWWddAbove' , help='No WW dd above this mass'            , default=None   , type='int'     )
     parser.add_option('--dataset'       , dest='dataset'     , help='Dataset to process'                  , default=None)
+    parser.add_option('--statmode'      , dest='statmode'    , help='Production mode for stat-shapes (default = %default)', default='unified')
     parser.set_defaults(MCextrap=[])
     parser.set_defaults(shapeFlags=[])
     parser.set_defaults(nuisFlags=[])
@@ -611,6 +623,7 @@ if __name__ == '__main__':
     parser.add_option('--Ish','--includeShape', dest='shapeFlags'        , help='include shapes nuisances matching the expression', action='callback', type='string', callback=incexc)
     parser.add_option('-X','--exclude',         dest='nuisFlags'         , help='exclude nuisances matching the expression',        action='callback', type='string', callback=incexc)
     parser.add_option('-I','--include',         dest='nuisFlags'         , help='include nuisances matching the expression',        action='callback', type='string', callback=incexc)
+    parser.add_option('-M','--MCextrap',        dest='MCextrap'          , help='For MC extrapolation: gmN nuisance to be scaled',  action='callback', type='string', callback=incexc)
     parser.add_option('--path_dd'           ,   dest='path_dd'           , help='Data driven path'                 , default=None)
     parser.add_option('--path_shape_merged' ,   dest='path_shape_merged' , help='Destination directory for merged' , default=None)
 #     parser.add_option('--floatN',               dest='floatN'            , help='float normalisation of particular processes, separate by space ', default=' ')
@@ -699,7 +712,7 @@ if __name__ == '__main__':
     
     
     
-        builder = NuisanceMapBuilder( opt.path_dd, opt.noWWddAbove, opt.shape, opt.isssactive )
+        builder = NuisanceMapBuilder( opt.path_dd, opt.noWWddAbove, opt.shape, opt.isssactive, opt.statmode)
         builder.statShapeVeto = mask
         builder.expShapeVeto  = maskVeto
     
