@@ -112,6 +112,7 @@ backgrounds = {
                                  'dyTemplate/latino_037_DY50toLLMad.root',
                                 ],
     'WWewk'                   : ['nominals/latino_052_WW2JetsPhantom.root'],
+    'WWewkMG'                 : ['nominals/latino_050_WWjjMadgraph.root'],
     'WWpow'                   : ['nominals/latino_006_WWJets2LPowheg.root'],
     'WWnloNorm'               : ['nominals/latino_002_WWto2L2NuMCatNLO.root'],
     'WWnlo'                   : ['nominals/latino_002_WWto2L2NuMCatNLO.root'],

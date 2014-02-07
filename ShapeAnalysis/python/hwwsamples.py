@@ -345,6 +345,7 @@ mcsets = {
         'VVV',
         # nuisance
         'WWpow',
+        'WWewkMG',
         # systematics
         ('WJetFakeRate-2j-template','WJetFakeRate-nominal-2j-fix'), # here and in the following I put the "template" distributions (relaxed cuts)
         ('WJetFakeRate-2j-eUp',     'WJetFakeRate-nominal-2j-fix'),
@@ -378,6 +379,7 @@ mcsets = {
         'VVV',
         # nuisance
         'WWpow',
+        'WWewkMG',
         # systematics
         ('WJetFakeRate-2j-template','WJetFakeRate-nominal-2j-fix'), # here and in the following I put the "template" distributions (relaxed cuts)
         ('WJetFakeRate-2j-eUp',     'WJetFakeRate-nominal-2j-fix'),
@@ -414,6 +416,7 @@ mcsets = {
         'VVV',
         # nuisance
         'WWpow',
+        'WWewkMG',
         # systematics
         ('WJetFakeRate-2j-template','WJetFakeRate-nominal-2j-fix'), # here and in the following I put the "template" distributions (relaxed cuts)
         ('WJetFakeRate-2j-eUp',     'WJetFakeRate-nominal-2j-fix'),

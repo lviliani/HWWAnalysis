@@ -370,6 +370,25 @@ class wwewk:
 
     wwewkShape  = _massindep + _sqrtDependent2012
     wwewkCut    = _massindep + _sqrtDependent2012 + _cut
+    wwewkShapeTopEnriched  = [
+        'trigger==1.',
+        '((ch1*ch2)<0 && pt1>20 && pt2>20)',  # pt2>20 !
+        'zveto==1',
+        'pfmet>20.',
+        'mpmet>20.',
+        'mll>50',
+        #'bveto_mu==1 ',
+        'nextra==0' ,
+        #'bveto_ip==1',
+        'nbjettche>=1',
+        'njet>=2',
+        '(dphilljetjet<pi/180.*165. || !sameflav )',
+# mild VBF
+        'mjj>250', # >350 # >250 #>400
+        'detajj>0.5',
+    ]
+
+
 
 
 # WW 2j
@@ -833,6 +852,8 @@ def massSelections(mass):
     sel['wwewkCut21-level']     = ' && '.join(wwewk.wwewkCut) + ' && jettche1 >= 1.00  && jettche2 >= 1.00 '
     sel['wwewkCut21-selection'] = sel['wwewkCut21-level']
 
+    sel['wwewkShape-top-enriched-level']     = ' && '.join(wwewk.wwewkShapeTopEnriched)
+    sel['wwewkShape-top-enriched-selection'] = sel['wwewkShape-top-enriched-level']
 
 
     # WW 2j
