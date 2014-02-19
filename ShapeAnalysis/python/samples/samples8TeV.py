@@ -141,6 +141,26 @@ data = {
 
 data['Data2012'] = data['Data2012A']+data['Data2012B']+data['Data2012C']+data['Data2012D']
 
+
+# ------
+def WjetSamplesVbf(mctag):
+  if 'vbf' in mctag :
+
+    backgrounds['WJet']                    = ['wjets/latino_RunA_892pbinv_LooseLoose.root',
+                                              'wjets/latino_RunB_4404pbinv_LooseLoose.root',
+                                              'wjets/latino_RunC_7032pbinv_LooseLoose.root',
+                                              'wjets/latino_RunD_7274pbinv_LooseLoose.root',
+                                             ],
+
+    backgrounds['WJetFakeRate-nominal']    = ['wjets/latino_RunA_892pbinv_LooseLoose.root',
+                                              'wjets/latino_RunB_4404pbinv_LooseLoose.root',
+                                              'wjets/latino_RunC_7032pbinv_LooseLoose.root',
+                                              'wjets/latino_RunD_7274pbinv_LooseLoose.root',
+                                             ],
+
+
+
+
 #--------------
 # signal samples labels and generation
 

@@ -75,7 +75,8 @@ mcsets = {
         #signals
         'ggH','qqH','WH','ZH',
         # bkgs
-        'WW','ggWW','VgS','Vg','WJet','Top','VV','VVV','DYTT','DYLL','WWnlo','WWnloUp','WWnloDown',
+        'WW','ggWW','VgS','Vg','WJet','Top','VV','VVV','DYTT','WWnlo','WWnloUp','WWnloDown',
+        ('DYLL','ggH'),
         # systematics
         'WJetFakeRate-nominal',
         ('WJetFakeRate-eUp', 'WJetFakeRate-nominal'),
@@ -145,7 +146,32 @@ mcsets = {
         # templates for Top estimation
         ('CHITOP-Top',     'Top'),
     ],
-   'vbf_of' : [
+    'vbf_sf-mH125' : [
+        #signals
+        'ggH','qqH', #'wzttH',
+        # bkgs
+        #'WW','ggWW','VgS','Vg','WJet','Top','VV','DYTT','DYLL',
+        'WW','ggWW','VgS','Vg','WJet','Top','VV',
+        'WWewk',
+        # dummy
+        ('DYee', 'qqH'),
+        ('DYmm', 'qqH'),
+        # nuisance
+        'WWpow',
+        # systematics
+        ('WJetFakeRate-2j-template','WJetFakeRate-nominal'), # here and in the following I put the "template" distributions (relaxed cuts)
+        ('WJetFakeRate-2j-eUp',     'WJetFakeRate-nominal'),
+        ('WJetFakeRate-2j-eDn',     'WJetFakeRate-nominal'),
+        ('WJetFakeRate-2j-mUp',     'WJetFakeRate-nominal'),
+        ('WJetFakeRate-2j-mDn',     'WJetFakeRate-nominal'),
+        # templates
+        'VgS-template','Vg-template',
+        # templates for Top estimation
+        ('CHITOP-Top',     'Top'),
+        # mH125 as background
+        'ggH_SM', 'qqH_SM', # 'WH_SM','ZH_SM',
+    ],
+    'vbf_of' : [
         #signals
         'ggH','qqH', #'wzttH',
         # bkgs
@@ -449,13 +475,27 @@ def samples(mass, energytag, datatag='Data2012', sigtag='SM', mctag='all'):
 
     mcsamples = {}
     mcsamples.update(signals)
-
+    if 'vbf' in mctag and  datatag == 'Data2012' :
+      sampledb.backgrounds['WJet'] = ['wjets/latino_RunA_892pbinv_LooseLoose.root', 
+                                      'wjets/latino_RunB_4404pbinv_LooseLoose.root', 
+                                      'wjets/latino_RunC_7032pbinv_LooseLoose.root', 
+                                      'wjets/latino_RunD_7274pbinv_LooseLoose.root']
+      sampledb.backgrounds['WJetFakeRate-nominal'] = ['wjets/latino_RunA_892pbinv_LooseLoose.root',
+                                 'wjets/latino_RunB_4404pbinv_LooseLoose.root',
+                                 'wjets/latino_RunC_7032pbinv_LooseLoose.root',
+                                 'wjets/latino_RunD_7274pbinv_LooseLoose.root']
+      print sampledb.backgrounds['WJet']
+      print sampledb.backgrounds['WJetFakeRate-nominal'] 
+       
     mcsamples.update(sampledb.backgrounds)
+
+
     if 'mH' in mctag:
         print mctag
         # get the background-higgs mass from the tag
         if   '0j1j'   in mctag : mHbkg = int(re.match('0j1j-mH(\d+)', mctag).group(1))
         elif 'vbf_of' in mctag : mHbkg = int(re.match('vbf_of-mH(\d+)', mctag).group(1))
+        elif 'vbf_sf' in mctag : mHbkg = int(re.match('vbf_sf-mH(\d+)', mctag).group(1))
         print 'signal as background', mHbkg
         #signalbkg = sampledb.signalSamples(sigtag, mHbkg, str(mHbkg))
         signalbkg = sampledb.signalSamples(sigtag, mHbkg, "_SM")

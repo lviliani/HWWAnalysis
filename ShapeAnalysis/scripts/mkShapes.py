@@ -788,13 +788,28 @@ class ShapeFactory:
 
        hWght = '1.'
 
+
        # New CPS (+ ptHiggs k-factor for 7 TeV MC)
        if self._newcps and mass >= 250 :
-         if self._energy == '7TeV' :
-           if prodMode in ['ggH','ggH_ALT'] : hWght += '*getpTHiggsWght()' 
-           if prodMode in ['qqH','qqH_ALT'] : hWght += '*getpTHiggsWght()' 
-           #if prodMode in ['ggH_SM'       ] : hWght += '*getpTHiggsWght()' 
-           #if prodMode in ['qqH_SM'       ] : hWght += '*getpTHiggsWght()' 
+         if self._energy == '7TeV' : 
+           hWght += '*kfW'
+           if prodMode in ['ggH','ggH_ALT'] : 
+             old_interf = {
+               250 : 1.0,
+               300 : 1.0,
+               350 : 1.0,
+               400 : 0.9979665200,
+               450 : 1.0264436689,
+               500 : 1.0932697009,
+               550 : 1.1622655466,
+               600 : 1.2697380560,
+               700 : 1.5160605911,
+               800 : 1.8482963461,
+               900 : 2.2618724091,
+               1000 : 2.3417787303
+             }
+             hWght += '/'+str(old_interf[mass])
+
 
          fileWght = os.environ['CMSSW_BASE']+"/src/HWWAnalysis/ShapeAnalysis/ewksinglet/data/cpsWght/cpsWght.root"
          ROOT.gROOT.ProcessLineSync('initCPSWght("'+fileWght+'","'+self._energy+'",'+str(mass)+','+str(int(self._mh_SM))+')')
