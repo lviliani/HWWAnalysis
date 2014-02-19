@@ -43,6 +43,7 @@ class ShapeFactory:
         ranges['mth-mll-hilospin'] = self._getMllMth2DSpinrange
         ranges['mth-mll-hilospin-withControlRegion']  = self._getMllMth2DSpinrangeWithControlRegion
         ranges['mth-mll-hilospin-withSSmirrorRegion'] = self._getMllMth2DSpinrangeWithSSmirrorRegion
+        ranges['vbfMll-2011-range']  = self._getMll2011VBFrange
         ranges['vbfMll-range']       = self._getMllVBFrange
         ranges['vbfMll-fish-range']  = self._getMllVBFFishrange
         ranges['vhMll-range']        = self._getMllVHrange
@@ -149,7 +150,6 @@ class ShapeFactory:
 
         #return ([0,20,40,60,80,100,120,140,160,180,250,400],)
         return ([0,40,80,120,160,200,240,300,400],)
-
 
 
 
@@ -281,6 +281,14 @@ class ShapeFactory:
         #return ([-10,0,12,30,50,70,90,120,150,200,250,300,350,400,500,600],)
         return ([-10,0,12,35,60,90,120,160,200,250,300,350,400,500,600],)
 
+    # _____________________________________________________________________________
+    def _getMll2011VBFrange(self,mass,cat):
+
+        if cat not in ['2j']:
+            print cat
+            raise RuntimeError('mll range for '+str(cat)+' not defined. Can be 0 or 1')
+
+        return ([12,45,75,100,150,200,250,300,350,400,600],)
 
     # _____________________________________________________________________________
     def _getMllVBFrange(self,mass,cat):
