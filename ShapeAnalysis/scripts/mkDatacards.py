@@ -364,7 +364,7 @@ class NuisanceMapBuilder:
                       e.alphaPrime = e.alpha * valueScaleFactor
                       doneMCextrap = True
 
-                extrUnc = 1+e.delta/e.alpha if pdf != 'gmM' else e.delta/e.alpha
+                extrUnc = 1+e.delta/e.alpha if pdf != 'gmN' else e.delta/e.alpha
 
                 if e.deltaUnCorr != 0:
                     extr_uncorr_entries[process] = 1. + e.deltaUnCorr/e.alpha
@@ -520,9 +520,12 @@ class NuisanceMapBuilder:
 
         qqWWfromData = self._wwddfilter.haswwdd(mass, channel)
 
-        # vh and vbf mapped to "2j" category
+        # vh and vbf and wwewk mapped to "2j" category
         if (jetcat == 'vh2j' or jetcat == 'whsc' or jetcat == '2jtche05') :
            jetcat = '2j'
+
+        # vh : remove some nuisances, typical of vbf only
+        if (jetcat == 'vh2j' or jetcat == 'whsc') :
            optMatt.VH = 1
         else :
            optMatt.VH = 0
@@ -736,7 +739,7 @@ if __name__ == '__main__':
     
                 # reshuffle the order
                 #order = [ 'vbfH', 'ggH', 'wzttH', 'ggWW', 'Vg', 'WJet', 'Top', 'WW', 'DYLL', 'VV', 'DYTT', 'Data']
-                order = [ 'ggH','ggH_ALT','qqH','qqH_ALT', 'wzttH','wzttH_ALT', 'WH', 'ZH', 'ttH', 'ggWW', 'VgS', 'Vg', 'WJet', 'Top', 'TopPt0', 'TopPt1', 'TopPt2', 'TopPt3', 'WW', 'WWewk', 'DYLL', 'VV', 'DYTT', 'DYee', 'DYmm', 'DYee05', 'DYmm05', 'Other', 'VVV', 'Data','ggH_SM', 'qqH_SM', 'WH_SM','ZH_SM' , 'wzttH_SM' ]
+                order = [ 'ggH','ggH_ALT','qqH','qqH_ALT', 'wzttH','wzttH_ALT', 'WH', 'ZH', 'ttH', 'ggWW', 'VgS', 'Vg', 'WJet', 'Top', 'TopPt0', 'TopPt1', 'TopPt2', 'TopPt3', 'TopPt4', 'TopPt5', 'TopPt6', 'TopPt7', 'TopPt8', 'WW', 'WWewk', 'DYLL', 'VV', 'DYTT', 'DYee', 'DYmm', 'DYee05', 'DYmm05', 'Other', 'VVV', 'Data','ggH_SM', 'qqH_SM', 'WH_SM','ZH_SM' , 'wzttH_SM' ]
     
    
                 oldYields = yields.copy()

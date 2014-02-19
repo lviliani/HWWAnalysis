@@ -830,6 +830,31 @@ class ShapeMixer:
                 wwGenDown.SetTitle('WW Gen_pow_WW Down')
                 self.generators[wwGenDown.GetTitle()] = wwGenDown
 
+        mcPhantomMGnorm = {} 
+        if 'WWewk' in self.nominals:
+            phantomWW = self.nominals['WWewk']
+            madgraphWW = ['WWewkMG']
+
+            #print " > do comparison MG / Phantom"
+            #print " > ", self.nominals
+            if set(madgraphWW).issubset(self.nominals):
+                for t in madgraphWW:
+                    mcPhantomMGnorm[t] = self.nominals[t]
+                    del self.nominals[t]
+
+                # A (nominal) and B (alternative)
+                # down = A
+                # up   = B
+
+                wwewkGenUp = mcPhantomMGnorm['WWewkMG'].Clone('histo_WWewk_Gen_MGPH_WWewkUp')
+                wwewkGenUp.SetTitle('WWewk Gen_MGPH_WWewk Up')
+                self.generators[wwewkGenUp.GetTitle()] = wwewkGenUp
+
+                #copy the nominal
+                wwewkGenDown = phantomWW.Clone('histo_WWewk_Gen_MGPH_WWewkDown')
+                wwewkGenDown.SetTitle('WWewk Gen_MGPH_WWewk Down')
+                self.generators[wwewkGenDown.GetTitle()] = wwewkGenDown
+
 
 
         # -----------------------------------------------------------------
