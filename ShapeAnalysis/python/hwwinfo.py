@@ -434,7 +434,7 @@ class ww:
         'mll>12',
         'mpmet>20.  && ( !sameflav || ( (njet!=0 || dymva1>0.88) && (njet!=1 || dymva1>0.84) && ( njet==0 || njet==1 || (pfmet > 45.0)) ) ) ',
         'zveto==1',
-        '(njet >=2 || (dphiveto || ! sameflav))',
+        #'(njet >=2 || (dphiveto || ! sameflav))',  --> if dymva, no dphi ll-jet cut
         'bveto_mu==1 ',
         'bveto_ip==1',
         'nbjettche==0',
