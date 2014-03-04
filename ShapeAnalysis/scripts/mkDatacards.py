@@ -297,6 +297,10 @@ class NuisanceMapBuilder:
             cb = ''
         else :
             cb = '_cb'
+        # XJ: doing cb as shape was remocing that prefix again !  
+        if 'sf_0j' in channel : cb = '_cb'
+        if 'sf_1j' in channel : cb = '_cb'
+        print '!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!! TEMP FIX !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!! ',cb,channel
         mapping = {
             'WW'      : ( jetcat+cb,  ['WW','ggWW'] ),
             'Top'     : ( jetcat+cb,  ['Top']       ),
