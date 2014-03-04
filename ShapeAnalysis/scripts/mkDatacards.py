@@ -517,7 +517,7 @@ class NuisanceMapBuilder:
         qqWWfromData = self._wwddfilter.haswwdd(mass, channel)
 
         # vh and vbf and wwewk mapped to "2j" category
-        if (jetcat == 'vh2j' or jetcat == 'whsc' or jetcat == '2jtche05') :
+        if (jetcat == 'vh2j' or jetcat == 'whsc' or jetcat == '2jtche05' or jetcat == '2jtche05CJ' or jetcat == '2jtche05FJ') :
            jetcat = '2j'
 
         # vh : remove some nuisances, typical of vbf only
