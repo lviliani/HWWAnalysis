@@ -120,7 +120,7 @@ class ShapeFactory:
     # _____________________________________________________________________________
     def _getWWewkrange(self,mass,cat):
 
-        if cat not in ['2j','2jtche05']:
+        if cat not in ['2j','2jtche05','2jtche05CJ','2jtche05FJ']:
             print cat
             raise RuntimeError('range for '+str(cat)+' not defined. !?!?!?')
 
@@ -132,7 +132,7 @@ class ShapeFactory:
     # _____________________________________________________________________________
     def _getWWewkrangeTop(self,mass,cat):
 
-        if cat not in ['2j','2jtche05']:
+        if cat not in ['2j','2jtche05','2jtche05CJ','2jtche05FJ']:
             print cat
             raise RuntimeError('range for '+str(cat)+' not defined. !?!?!?')
 
@@ -992,7 +992,7 @@ class ShapeFactory:
             weights['VH']             = 'puW*effW*triggW*0.0007897267'
 
 
-        if cat in ['2j','2jtche05']:
+        if cat in ['2j','2jtche05','2jtche05CJ','2jtche05FJ']:
             #weights['WW']                = self._stdWgt+'*(1+(mjj>500)*(detajj>3.5))'
             weights['WW']                = self._stdWgt
             weights['WWewk']             = self._stdWgt+'*(numbLHE==0)'
@@ -1008,8 +1008,8 @@ class ShapeFactory:
               weights['CHITOP-Top']        = self._stdWgt+'*('+hwwinfo.massSelections(mass)['vbf2011-selection-top']+')'
 
 
-            weights['TopPt0']             = self._stdWgt+'*(((abs(jeteta1)<abs(jeteta2))*(jetpt1)+((abs(jeteta1)>=abs(jeteta2))*(jetpt2)))<70)'
-            weights['TopPt1']             = self._stdWgt+'*(((abs(jeteta1)<abs(jeteta2))*(jetpt1)+((abs(jeteta1)>=abs(jeteta2))*(jetpt2)))>=70)'
+            weights['TopPt0']             = self._stdWgt+'*(((abs(jeteta1)<abs(jeteta2))*(jetpt1)+((abs(jeteta1)>=abs(jeteta2))*(jetpt2)))<100)'
+            weights['TopPt1']             = self._stdWgt+'*(((abs(jeteta1)<abs(jeteta2))*(jetpt1)+((abs(jeteta1)>=abs(jeteta2))*(jetpt2)))>=100)'
 
             if (var != 1) : # only if it's shape and not cut based
               #weights['TopPt2']           = self._stdWgt+'*(((abs(jeteta1)<abs(jeteta2))*(jetpt1)+((abs(jeteta1)>=abs(jeteta2))*(jetpt2)))<50)'
