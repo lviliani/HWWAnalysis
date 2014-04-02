@@ -106,7 +106,8 @@ def getCommonSysts(mass,channel,jets,qqWWfromData,shape,options,suffix,isssactiv
         nuisances['QCDscale_ggH1in'] = [  ['lnN'], { 'ggH':ggH_jets2[mass]['1in0'], 'ggH_SM':ggH_jets2[mh_SM]['1in0'] }]
         if not qqWWfromData:
             nuisances['QCDscale_WW']    = [ ['lnN'], {'WW': 1.042, 'ggWW': 1.042 }]
-            nuisances['QCDscale_WW1in'] = [ ['lnN'], {'WW': 0.978, 'ggWW': 0.978 }]
+            nuisances['QCDscale_WW1in'] = [ ['lnN'], {'WW': 0.974, 'ggWW': 0.974 }]
+            #nuisances['QCDscale_WW1in'] = [ ['lnN'], {'WW': 0.978, 'ggWW': 0.978 }] --> new value!
     elif jets == 1:
         k1 = pow(ggH_jets[mass]['k1'], 1+ggH_jets[mass]['f2']/ggH_jets[mass]['f1'])
         k2 = pow(ggH_jets[mass]['k2'],  -ggH_jets[mass]['f2']/ggH_jets[mass]['f1'])
@@ -174,7 +175,7 @@ def getCommonSysts(mass,channel,jets,qqWWfromData,shape,options,suffix,isssactiv
     #nuisances['CMS_hww_SMH125']  = [ ['lnN'], {'ggH125':1.30, 'vbfH125':1.30, 'wzttH125':1.30} ]
 
 
-    # -- Experimental ---------------------
+    # -- Theoretical ---------------------
     nuisances['QCDscale_ggH_ACCEPT'] = [ ['lnN'], {'ggH':1.02,  'ggH_SM':1.02}]
     nuisances['QCDscale_qqH_ACCEPT'] = [ ['lnN'], {'qqH':1.02,  'qqH_SM':1.02}]
     nuisances['QCDscale_wH_ACCEPT']  = [ ['lnN'], {'WH':1.02 ,  'WH_SM':1.02}]
@@ -190,6 +191,11 @@ def getCommonSysts(mass,channel,jets,qqWWfromData,shape,options,suffix,isssactiv
       else :
           nuisances['UEPS_hww_vbf'] = [ ['lnN'], {'ggH'   :1.20, 'qqH'   :1.10 ,
                                                   'ggH_SM':1.20, 'qqH_SM':1.10}]
+
+    # UEPS for WW 0 jet
+    if   jets == 0: nuisances['UEPS_WW'] = [ ['lnN'], {'WW':1.01}]
+
+
 
     #if ((not qqWWfromData) and (jets != 2)): nuisances['QCDscale_WW_EXTRAP'] = [ ['lnN'], {'WW':1.06}]
     # --- new ---

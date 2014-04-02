@@ -456,7 +456,9 @@ categoryCuts['2jex'] = wwcuts.twojet
 categoryCuts['2j']   = wwcuts.vh         # >=2 jets
 categoryCuts['vh2j'] = wwcuts.vh         # >=2 jets
 categoryCuts['whsc'] = wwcuts.atleastonejet     # >=1 jets
-categoryCuts['2jtche05'] = wwcuts.vh         # >=2 jets
+categoryCuts['2jtche05']   = wwcuts.vh         # >=2 jets
+categoryCuts['2jtche05CJ'] = wwcuts.vh         # >=2 jets
+categoryCuts['2jtche05FJ'] = wwcuts.vh         # >=2 jets
 
 
 flavorCuts = {}
@@ -504,6 +506,10 @@ channels['me_2j'] = ('2j','me')
 channels['of_2jtche05'] = ('2jtche05','of')
 channels['sf_2jtche05'] = ('2jtche05','sf')
 
+channels['of_2jtche05CJ'] = ('2jtche05CJ','of')
+channels['sf_2jtche05CJ'] = ('2jtche05CJ','sf')
+channels['of_2jtche05FJ'] = ('2jtche05FJ','of')
+channels['sf_2jtche05FJ'] = ('2jtche05FJ','sf')
 
 channels['2jex']    = ('2jex','ll')
 channels['of_2jex'] = ('2jex','of')
@@ -853,6 +859,13 @@ def massSelections(mass):
     sel['wwewkCut05-selection'] = sel['wwewkCut05-level']
     sel['wwewkCut21-level']     = ' && '.join(wwewk.wwewkCut) + ' && jettche1 >= 1.00  && jettche2 >= 1.00 '
     sel['wwewkCut21-selection'] = sel['wwewkCut21-level']
+
+    sel['wwewkCut05CJ-level']     = ' && '.join(wwewk.wwewkCut) + ' && (((abs(jeteta1)<abs(jeteta2))  && (jettche1<1.00)) || ((abs(jeteta1)>=abs(jeteta2))  && (jettche2<1.00))) && (((abs(jeteta1)<abs(jeteta2))  && (jettche2>1.00)) || ((abs(jeteta1)>=abs(jeteta2))  && (jettche1>1.00))) '
+    sel['wwewkCut05CJ-selection'] = sel['wwewkCut05CJ-level']
+    sel['wwewkCut05FJ-level']     = ' && '.join(wwewk.wwewkCut) + ' && (((abs(jeteta1)<abs(jeteta2))  && (jettche2<1.00)) || ((abs(jeteta1)>=abs(jeteta2))  && (jettche1<1.00))) && (((abs(jeteta1)<abs(jeteta2))  && (jettche1>1.00)) || ((abs(jeteta1)>=abs(jeteta2))  && (jettche2>1.00))) '
+    sel['wwewkCut05FJ-selection'] = sel['wwewkCut05FJ-level']
+
+
 
     sel['wwewkShape-top-enriched-level']     = ' && '.join(wwewk.wwewkShapeTopEnriched)
     sel['wwewkShape-top-enriched-selection'] = sel['wwewkShape-top-enriched-level']
