@@ -314,7 +314,7 @@ class ShapeMixer:
     def __del__(self):
         self._disconnect()
     
-    def _connect(self):
+    def _connect(self,iCP2 , iBRn):
         self._logger.debug('Opening '+self.nominalsPath)
         if not os.path.exists(self.nominalsPath):
             raise IOError('Root file '+self.nominalsPath+' doesn\'t exists.')
@@ -322,7 +322,7 @@ class ShapeMixer:
         self.systFiles = {}
         for file in glob.glob(self.systSearchPath):
             if opt.ewksinglet:
-              m = re.search('_(e|m)(e|m).EWKSinglet_CP2_'+str(opt.cprimesq[iModel]).replace('.','d')+'_(.*).root',file)
+              m = re.search('_(e|m)(e|m).EWKSinglet_CP2_'+str(opt.cprimesq[iCP2]).replace('.','d')+'_BRnew_'+str(opt.brnew[iBRn]).replace('.','d')+'_(.*).root',file)
             else:
               m = re.search('_(e|m)(e|m)_(.*).root',file)
             if m is None:
@@ -452,10 +452,10 @@ class ShapeMixer:
 
 
     # ---
-    def mix(self, chan, scale2nom):
+    def mix(self, chan, scale2nom , iCP2 , iBRn ):
         # mixing histograms
 
-        self._connect()
+        self._connect(iCP2 , iBRn)
 
         suffix = '_'+opt.energy
 
@@ -1271,7 +1271,8 @@ if __name__ == '__main__':
 
     # EWK Doublet Model
     parser.add_option('--ewksinglet',    dest='ewksinglet',  help='On/Off EWK singlet model',           default=False , action='store_true')   
-    parser.add_option('--cprimesq'  ,    dest='cprimesq',    help='EWK singlet C\'**2 mixing value',    default=[0.]  , type='float'  , action='callback' , callback=hwwtools.list_maker('cprimesq'))
+    parser.add_option('--cprimesq'  ,    dest='cprimesq',    help='EWK singlet C\'**2 mixing value',    default=[1.]  , type='string'  , action='callback' , callback=hwwtools.list_maker('cprimesq',',',float))
+    parser.add_option('--brnew'     ,    dest='brnew'   ,    help='EWK singlet BRNew values',           default=[0.]  , type='string'  , action='callback' , callback=hwwtools.list_maker('brnew',',',float))
 
 
 # discontined
@@ -1346,9 +1347,10 @@ if __name__ == '__main__':
     channels =  dict([ (k,v) for k,v in hwwinfo.channels.iteritems() if k in opt.chans])
 
     nModel = 1
-    if opt.ewksinglet : nModel = len(opt.cprimesq)
+    if opt.ewksinglet : nModel = len(opt.cprimesq)*len(opt.brnew)
     for iModel in xrange(0,nModel):
-
+      iCP2 = iModel%len(opt.cprimesq)
+      iBRn = (int(iModel/len(opt.cprimesq)))
       for mass in masses:
         if '2011' in opt.dataset and (mass==145 or mass==155): continue
         for chan,(cat,fl) in channels.iteritems():
@@ -1367,8 +1369,8 @@ if __name__ == '__main__':
                 label = 'mH{0} {1} {2}'.format(mass,cat,fl)
                 ss = ShapeMixer(label)
                 if opt.ewksinglet:
-                  ss.nominalsPath   = os.path.join(nomPath,nameTmpl.format(mass, cat, fl)+'.EWKSinglet_CP2_'+str(opt.cprimesq[iModel]).replace('.','d')+'.root')
-                  ss.systSearchPath = os.path.join(systPath,nameTmpl.format(mass, cat, fl)+'.EWKSinglet_CP2_'+str(opt.cprimesq[iModel]).replace('.','d')+'_*.root')
+                  ss.nominalsPath   = os.path.join(nomPath,nameTmpl.format(mass, cat, fl)+'.EWKSinglet_CP2_'+str(opt.cprimesq[iCP2]).replace('.','d')+'_BRnew_'+str(opt.brnew[iBRn]).replace('.','d')+'.root')
+                  ss.systSearchPath = os.path.join(systPath,nameTmpl.format(mass, cat, fl)+'.EWKSinglet_CP2_'+str(opt.cprimesq[iCP2]).replace('.','d')+'_BRnew_'+str(opt.brnew[iBRn]).replace('.','d')+'_*.root')
                 else:
                   ss.nominalsPath   = os.path.join(nomPath,nameTmpl.format(mass, cat, fl)+'.root')
                   ss.systSearchPath = os.path.join(systPath,nameTmpl.format(mass, cat, fl)+'_*.root')
@@ -1382,7 +1384,7 @@ if __name__ == '__main__':
 
                 # run
                 print '     - mixing histograms'
-                ss.mix(chan, scale2nom)
+                ss.mix(chan, scale2nom , iCP2 , iBRn)
 
                 ss.scale2Nominals( scale2nom )
 
@@ -1400,12 +1402,13 @@ if __name__ == '__main__':
                 # make a filter to remove the dd >= noWWddAbove for WW 
                 wwfilter = datadriven.DDWWFilter(reader, opt.noWWddAbove)
                 (estimates,dummy) = wwfilter.get(mass,chan)
+                print mass,estimates
                 m.applyDataDriven( mass,estimates )
 
             m.injectSignal()
             if not opt.dry:
                 if opt.ewksinglet:
-                  output = 'hww-{lumi:.2f}fb.mH{mass}.{channel}.EWKSinglet_CP2_{cprimsq}_shape.root'.format(lumi=opt.lumi,mass=mass,channel=chan,cprimsq=str(opt.cprimesq[iModel]).replace('.','d'))
+                  output = 'hww-{lumi:.2f}fb.mH{mass}.{channel}.EWKSinglet_CP2_{cprimsq}_BRnew_{brnew}_shape.root'.format(lumi=opt.lumi,mass=mass,channel=chan,cprimsq=str(opt.cprimesq[iCP2]).replace('.','d'),brnew=str(opt.brnew[iBRn]).replace('.','d')  )
                 else:
                   output = 'hww-{lumi:.2f}fb.mH{mass}.{channel}_shape.root'.format(lumi=opt.lumi,mass=mass,channel=chan)
                 path = os.path.join(mergedDir,output)

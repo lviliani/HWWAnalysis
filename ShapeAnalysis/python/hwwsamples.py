@@ -56,7 +56,8 @@ mcsets = {
         #signals
         'ggH','qqH','WH','ZH',
         # bkgs
-        'WW','ggWW','VgS','Vg','WJet','Top','VV','VVV','DYTT','DYLL','WWnlo','WWnloUp','WWnloDown',
+        'WW','ggWW','VgS','Vg','WJet','Top','VV','VVV','DYTT','WWnlo','WWnloUp','WWnloDown',
+        ('DYLL','ggH'),
         # systematics
         'WJetFakeRate-nominal',
         ('WJetFakeRate-eUp', 'WJetFakeRate-nominal'),
@@ -153,7 +154,9 @@ mcsets = {
         'ggH','qqH', #'wzttH',
         # bkgs
         #'WW','ggWW','VgS','Vg','WJet','Top','VV','DYTT','DYLL',
-        'WW','ggWW','VgS','Vg','WJet','Top','VV',
+        'WW','ggWW','VgS','Vg',
+        ('WJet', 'WJet-2j-fix'),
+        'Top','VV',
         'WWewk',
         # dummy
         ('DYee', 'qqH'),
@@ -161,11 +164,11 @@ mcsets = {
         # nuisance
         'WWpow',
         # systematics
-        ('WJetFakeRate-2j-template','WJetFakeRate-nominal'), # here and in the following I put the "template" distributions (relaxed cuts)
-        ('WJetFakeRate-2j-eUp',     'WJetFakeRate-nominal'),
-        ('WJetFakeRate-2j-eDn',     'WJetFakeRate-nominal'),
-        ('WJetFakeRate-2j-mUp',     'WJetFakeRate-nominal'),
-        ('WJetFakeRate-2j-mDn',     'WJetFakeRate-nominal'),
+        ('WJetFakeRate-2j-template','WJetFakeRate-nominal-2j-fix'), # here and in the following I put the "template" distributions (relaxed cuts)
+        ('WJetFakeRate-2j-eUp',     'WJetFakeRate-nominal-2j-fix'),
+        ('WJetFakeRate-2j-eDn',     'WJetFakeRate-nominal-2j-fix'),
+        ('WJetFakeRate-2j-mUp',     'WJetFakeRate-nominal-2j-fix'),
+        ('WJetFakeRate-2j-mDn',     'WJetFakeRate-nominal-2j-fix'),
         # templates
         'VgS-template','Vg-template',
         # templates for Top estimation

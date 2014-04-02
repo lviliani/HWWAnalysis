@@ -643,8 +643,8 @@ if __name__ == '__main__':
 
     # EWK Doublet Model
     parser.add_option('--ewksinglet',    dest='ewksinglet',  help='On/Off EWK singlet model',           default=False , action='store_true')   
-    parser.add_option('--cprimesq'  ,    dest='cprimesq',    help='EWK singlet C\'**2 mixing value',    default=[0.]  , type='float'  , action='callback' , callback=hwwtools.list_maker('cprimesq'))
-
+    parser.add_option('--cprimesq'  ,    dest='cprimesq',    help='EWK singlet C\'**2 mixing value',    default=[1.]  , type='string'  , action='callback' , callback=hwwtools.list_maker('cprimesq',',',float))
+    parser.add_option('--brnew'     ,    dest='brnew'   ,    help='EWK singlet BRNew values',           default=[0.]  , type='string'  , action='callback' , callback=hwwtools.list_maker('brnew',',',float))
 
     hwwtools.addOptions(parser)
     hwwtools.loadOptDefaults(parser)
@@ -702,11 +702,13 @@ if __name__ == '__main__':
 
 
     nModel = 1
-    if opt.ewksinglet : nModel = len(opt.cprimesq)
+    if opt.ewksinglet : nModel = len(opt.cprimesq)*len(opt.brnew)
     for iModel in xrange(0,nModel):
+        iCP2 = iModel%len(opt.cprimesq)
+        iBRn = (int(iModel/len(opt.cprimesq)))
 
         if opt.ewksinglet:
-          shapeTmpl = os.path.join(mergedPath,'hww-'+lumistr+'fb.mH{mass}.{channel}.EWKSinglet_CP2_'+str(opt.cprimesq[iModel]).replace('.','d')+'_shape.root')
+          shapeTmpl = os.path.join(mergedPath,'hww-'+lumistr+'fb.mH{mass}.{channel}.EWKSinglet_CP2_'+str(opt.cprimesq[iCP2]).replace('.','d')+'_BRnew_'+str(opt.brnew[iBRn]).replace('.','d')+'_shape.root')
         else:
           shapeTmpl = os.path.join(mergedPath,'hww-'+lumistr+'fb.mH{mass}.{channel}_shape.root')
         #mask = ['Vg','DYLL','DYTT']
@@ -761,7 +763,7 @@ if __name__ == '__main__':
     
                 #basename = 'hww-'+lumistr+'fb.mH{mass}.{bin}_shape'
                 if opt.ewksinglet:
-                  basename = 'hww-'+lumistr+'fb.mH{mass}.{bin}.EWKSinglet_CP2_'+str(opt.cprimesq[iModel]).replace('.','d')
+                  basename = 'hww-'+lumistr+'fb.mH{mass}.{bin}.EWKSinglet_CP2_'+str(opt.cprimesq[iCP2]).replace('.','d')+'_BRnew_'+str(opt.brnew[iBRn]).replace('.','d')
                 else:
                   basename = 'hww-'+lumistr+'fb.mH{mass}.{bin}'
                 if opt.shape :

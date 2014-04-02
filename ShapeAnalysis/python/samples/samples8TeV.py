@@ -157,11 +157,15 @@ data = {
     'Data2012C' : ['data/latino_RunC_7032pbinv.root'],
 
     'Data2012D' : ['data/latino_RunD_7274pbinv.root'],
+
+    'Data2012VBFFix' : [  'data/latino_RunB_4404pbinv_HACKED_2_correct_trigger.root',
+                          'data/latino_RunB_4404pbinv_HACKED_correct_trigger.root',
+                       ]
 }
 
 
 data['Data2012'] = data['Data2012A']+data['Data2012B']+data['Data2012C']+data['Data2012D']
-
+data['Data2012VBF'] = data['Data2012'] + data['Data2012VBFFix']
 
 # ------
 def WjetSamplesVbf(mctag):
