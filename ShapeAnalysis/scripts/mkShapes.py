@@ -72,6 +72,7 @@ class ShapeFactory:
         self._newcps          = False
         self._ewksinglet      = False
         self._cprimesq        = 1.
+        self._brnew           = 0.
         self._approxewk       = False
         variables = {}
         variables['2dWithCR']             = self._getMllMth2DSpinWithControlRegion
@@ -240,7 +241,8 @@ class ShapeFactory:
         elif mass < 700.:
             return (10,80,380,8,0,450)
         else:
-            return (12,80,580,10,0,600)
+            #return (12,80,580,10,0,600)
+            return ([80,110,140,170,200,230,260,290,320,350,380,600],[0,45,90,145,180,225,270,315,360,405,450,600])
 
 
     # _____________________________________________________________________________
@@ -859,13 +861,13 @@ class ShapeFactory:
              Mass  = BWParam['qqH'][str(mass)]['Mass']
              GamSM = BWParam['qqH'][str(mass)]['Gamma']
    
-           Gamma = GamSM * self._cprimesq
+           Gamma = GamSM * self._cprimesq / (1.-self._brnew)
            
            #if prodMode in ['ggH','qqH']  and not self._approxewk : hWght += '*getBWWght(MHiggs,%f,%f,%f)'%(Mass,GamSM,Gamma)
            if prodMode in ['ggH','qqH']  : hWght += '*getBWWght(MHiggs,%f,%f,%f)'%(Mass,GamSM,Gamma)
 
          # ... Change mu of both all H
-         if prodMode in ['ggH','qqH','WH','ZH','ttH']                :  hWght += '*'+str(self._cprimesq)
+         if prodMode in ['ggH','qqH','WH','ZH','ttH']                :  hWght += '*'+str(self._cprimesq)+'*(1-'+str(self._brnew)+')'
          if prodMode in ['ggH_SM','qqH_SM','WH_SM','ZH_SM','ttH_SM'] :  hWght += '*(1-'+str(self._cprimesq)+')'
 
 
@@ -919,7 +921,8 @@ class ShapeFactory:
         weights['Data']              = '(run!=201191)'
         # problem with DYTT using embedded for em/me, for ee/mm it is inlcuded in DD DY estimate
         weights['DYTT']              = self._stdWgt
-        weights['DYLL']              = self._stdWgt+'*(1-(( dataset == 36 || dataset == 37 ) && mctruth == 2 ))*(channel<1.5)'
+        #weights['DYLL']              = self._stdWgt+'*(1-(( dataset == 36 || dataset == 37 ) && mctruth == 2 ))*(channel<1.5)'
+        weights['DYLL']              = self._stdWgt+'*(channel<1.5)'
 
         # beware:
         # mumu #    channel == 0
@@ -1242,8 +1245,9 @@ if __name__ == '__main__':
     parser.add_option('--newcps',        dest='newcps',  help='On/Off New CPS weights',               default=False , action='store_true')   
     # EWK Doublet Model
     parser.add_option('--ewksinglet',    dest='ewksinglet',  help='On/Off EWK singlet model',           default=False , action='store_true')   
-    parser.add_option('--cprimesq'  ,    dest='cprimesq',    help='EWK singlet C\'**2 mixing value',    default=[0.]  , type='float'  , action='callback' , callback=hwwtools.list_maker('cprimesq'))
-    parser.add_option('--approxewk'  ,    dest='approxewk',    help='EWK not scaling width/interf',   default=False , action='store_true') 
+    parser.add_option('--cprimesq'  ,    dest='cprimesq',    help='EWK singlet C\'**2 mixing value',    default=[1.]  , type='string'  , action='callback' , callback=hwwtools.list_maker('cprimesq',',',float))
+    parser.add_option('--brnew'     ,    dest='brnew'   ,    help='EWK singlet BRNew values',           default=[0.]  , type='string'  , action='callback' , callback=hwwtools.list_maker('brnew',',',float))
+    parser.add_option('--approxewk'  ,    dest='approxewk',    help='EWK not scaling width/interf',     default=False , action='store_true') 
 
 
     hwwtools.addOptions(parser)
@@ -1252,6 +1256,7 @@ if __name__ == '__main__':
 
     print 'EWK Singlet:' , opt.ewksinglet
     print 'CPrime**2  :' , opt.cprimesq
+    print 'BRNew      :' , opt.brnew
     print 'Approx. EWK :' , opt.approxewk 
 
     sys.argv.append( '-b' )
@@ -1301,13 +1306,15 @@ if __name__ == '__main__':
         systInputDir        = '{syst}/'
 
         nModel = 1
-        if opt.ewksinglet : nModel = len(opt.cprimesq)
+        if opt.ewksinglet : nModel = len(opt.cprimesq)*len(opt.brnew)
 
         for iModel in xrange(0,nModel):
+          iCP2 = iModel%len(opt.cprimesq) 
+          iBRn = (int(iModel/len(opt.cprimesq)))
 
           if opt.ewksinglet:
-            nominalOutFile      = 'shape_Mh{mass}_{category}_'+tag+'_shapePreSel_{flavor}.EWKSinglet_CP2_'+str(opt.cprimesq[iModel]).replace('.','d')+'.root'
-            systematicsOutFile  = 'shape_Mh{mass}_{category}_'+tag+'_shapePreSel_{flavor}.EWKSinglet_CP2_'+str(opt.cprimesq[iModel]).replace('.','d')+'_{nick}.root'
+            nominalOutFile      = 'shape_Mh{mass}_{category}_'+tag+'_shapePreSel_{flavor}.EWKSinglet_CP2_'+str(opt.cprimesq[iCP2]).replace('.','d')+'_BRnew_'+str(opt.brnew[iBRn]).replace('.','d')+'.root'
+            systematicsOutFile  = 'shape_Mh{mass}_{category}_'+tag+'_shapePreSel_{flavor}.EWKSinglet_CP2_'+str(opt.cprimesq[iCP2]).replace('.','d')+'_BRnew_'+str(opt.brnew[iBRn]).replace('.','d')+'_{nick}.root'
           else: 
             nominalOutFile      = 'shape_Mh{mass}_{category}_'+tag+'_shapePreSel_{flavor}.root'
             systematicsOutFile  = 'shape_Mh{mass}_{category}_'+tag+'_shapePreSel_{flavor}_{nick}.root'
@@ -1341,8 +1348,10 @@ if __name__ == '__main__':
           factory._approxewk = opt.approxewk
           if not opt.ewksinglet :
             factory._cprimesq  = 1.
+            factory._brnew     = 0. 
           else:  
-            factory._cprimesq  = opt.cprimesq[iModel]
+            factory._cprimesq  = opt.cprimesq[iCP2]
+            factory._brnew     = opt.brnew[iBRn]
 
 
           if opt.makeNoms:
