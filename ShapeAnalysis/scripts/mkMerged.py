@@ -821,7 +821,11 @@ class ShapeMixer:
                 # down = A
                 # up   = B
 
-                wwGenUp = mcPOWnorm['WWpow'].Clone('histo_WW_Gen_pow_WWUp')
+                # if 0 events, due to low MC statistics of the alternative sample, then *do nothing*
+                if mcPOWnorm['WWpow'].Integral() > 0 :
+                    wwGenUp = mcPOWnorm['WWpow'].Clone('histo_WW_Gen_pow_WWUp')
+                else :
+                    wwGenUp = madWW.Clone('histo_WW_Gen_pow_WWUp')
                 wwGenUp.SetTitle('WW Gen_pow_WW Up')
                 self.generators[wwGenUp.GetTitle()] = wwGenUp
 

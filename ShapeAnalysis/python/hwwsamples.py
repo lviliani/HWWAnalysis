@@ -497,18 +497,18 @@ def samples(mass, energytag, datatag='Data2012', sigtag='SM', mctag='all'):
 
     mcsamples = {}
     mcsamples.update(signals)
-    if 'vbf' in mctag and  datatag == 'Data2012' :
+    if ('vbf' in mctag or 'wwewk' in mctag or 'vh' in mctag) and  datatag == 'Data2012' :
       sampledb.backgrounds['WJet'] = ['wjets/latino_RunA_892pbinv_LooseLoose.root', 
                                       'wjets/latino_RunB_4404pbinv_LooseLoose.root', 
                                       'wjets/latino_RunC_7032pbinv_LooseLoose.root', 
                                       'wjets/latino_RunD_7274pbinv_LooseLoose.root']
       sampledb.backgrounds['WJetFakeRate-nominal'] = ['wjets/latino_RunA_892pbinv_LooseLoose.root',
-                                 'wjets/latino_RunB_4404pbinv_LooseLoose.root',
-                                 'wjets/latino_RunC_7032pbinv_LooseLoose.root',
-                                 'wjets/latino_RunD_7274pbinv_LooseLoose.root']
+                                                      'wjets/latino_RunB_4404pbinv_LooseLoose.root',
+                                                      'wjets/latino_RunC_7032pbinv_LooseLoose.root',
+                                                      'wjets/latino_RunD_7274pbinv_LooseLoose.root']
       print sampledb.backgrounds['WJet']
       print sampledb.backgrounds['WJetFakeRate-nominal'] 
-       
+
     mcsamples.update(sampledb.backgrounds)
 
 
