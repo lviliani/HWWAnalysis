@@ -1025,6 +1025,8 @@ class ShapeMixer:
             m = udRegex.match(n)
             if m is not None:
                 systName = 'CMS{0}_'.format(suffix)+m.group(1)
+                if 'interf_ggH' in systName : systName = 'interf_ggH' 
+                if 'interf_VBF' in systName : systName = 'interf_VBF' 
                 systShift = m.group(2)
                 # x-check on the regex match
                 if not( n.endswith('Up') or n.endswith('Down') ):
@@ -1123,9 +1125,9 @@ class ShapeMixer:
                 if hNom.Integral() and hSys.Integral():
                     hSys.Scale(hNom.Integral()/hSys.Integral())
         
-        for ss,k in sanityCheck.iteritems():
-            if k == 0:
-                raise NameError('sample,systematic pair not found '+ss[0]+':'+ss[1])
+        #for ss,k in sanityCheck.iteritems():
+        #    if k == 0:
+        #        raise NameError('sample,systematic pair not found '+ss[0]+':'+ss[1])
 
     def jhuMixer(self,ggqqMixIn):
         ggqqMix = float(ggqqMixIn)

@@ -55,7 +55,7 @@ ggH_UEPS = dict([(m, dict(zip(['u0','u1','u2'], vals))) for m,vals in file2map(S
 
 ggH_intf = dict([(m, dict(zip(['intf'], vals))) for m,vals in file2map(SYST_PATH+"ggH_interference.txt").items()])
 
-def getCommonSysts(mass,channel,jets,qqWWfromData,shape,options,suffix,isssactive,mh_SM=125.):
+def getCommonSysts(mass,channel,jets,qqWWfromData,shape,options,suffix,isssactive,newInterf=False,mh_SM=125.):
     print '\033[0;31m FIXME:  Old Yellow Report in use, 7TeV only!!!!!  \033[m'
 
 
@@ -203,12 +203,12 @@ def getCommonSysts(mass,channel,jets,qqWWfromData,shape,options,suffix,isssactiv
     #nuisances['theoryUncXS_HighMH'] = [ ['lnN'], { 'ggH':1+1.5*pow(float(mass)/1000,3), 'vbfH':1+1.5*pow(float(mass)/1000,3), 'wzttH':1+1.5*pow(float(mass)/1000,3) } ]
     # -- Interference term ----------------
     # FIXME: Interference Error !!!!!
-    print '\033[0;31m FIXME: Interference Error !!!!!  \033[m'
-
-    if mass>=400:
-        nuisances['interf_ggH'] = [ ['lnN'], {'ggH':ggH_intf[mass]['intf']}]
-    else :
-        nuisances['interf_ggH'] = [ ['lnN'], {'ggH':1.00}]
+    if not newInterf :
+      print '\033[0;31m FIXME: Interference Error !!!!!  \033[m'
+      if mass>=400:
+         nuisances['interf_ggH'] = [ ['lnN'], {'ggH':ggH_intf[mass]['intf']}]
+      else :
+         nuisances['interf_ggH'] = [ ['lnN'], {'ggH':1.00}]
               
     #if options.WJsub:
     #    nuisances['CMS_FakeRate_e'] = [ ['lnN'], { 'WJet': 1.0+options.WJsub } ]
