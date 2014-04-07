@@ -90,7 +90,6 @@ class ShapeMerger:
         sisignals = [ n for n in self.processes if injRegex.match(n) ]
         backgrounds = [ n for n in self.histograms if n not in sisignals and n not in signals and nomRegex.match(n) ]
 
-
         # filter the sisignals on simask
         injected = [ n for n in sisignals if n[:-3] in self._simask ] if self._simask else sisignals 
 
@@ -101,9 +100,17 @@ class ShapeMerger:
         inputs.extend(injected)
         inputs.extend(backgrounds)
 
+        # remove "CHI" in the list of backgrounds for signal injection
+        #print " BEFORE   ", inputs
+        #inputs = filter(lambda a: a != "CHITOP-Top", inputs)
+        inputs = filter(lambda a: "CHI" not in a, inputs)
+        #print " FILTERED ", inputs
+
+
         for n in inputs:
             self._logger.debug('SI: adding %s',n)
             pseudo.Add(self.histograms[n])
+            #print "integral [", self.histograms[n].GetTitle(), "] = ", self.histograms[n].Integral() , " --> ", pseudo.Integral ()
 
         # remove the injected from the histograms and processes
         map(self.histograms.pop,   sisignals)
@@ -821,7 +828,11 @@ class ShapeMixer:
                 # down = A
                 # up   = B
 
-                wwGenUp = mcPOWnorm['WWpow'].Clone('histo_WW_Gen_pow_WWUp')
+                # if 0 events, due to low MC statistics of the alternative sample, then *do nothing*
+                if mcPOWnorm['WWpow'].Integral() > 0 :
+                    wwGenUp = mcPOWnorm['WWpow'].Clone('histo_WW_Gen_pow_WWUp')
+                else :
+                    wwGenUp = madWW.Clone('histo_WW_Gen_pow_WWUp')
                 wwGenUp.SetTitle('WW Gen_pow_WW Up')
                 self.generators[wwGenUp.GetTitle()] = wwGenUp
 
