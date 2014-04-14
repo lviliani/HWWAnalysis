@@ -1,13 +1,27 @@
 import os, re
 from math import *
 
-def file2map(file):
+def file2mapold(file):
     map = {}
+    print file
     for line in open(file,"r"):
         fields = [x.strip() for x in line.split()]
         if len(fields) > 1 and re.match("\d+", fields[0]):
             map[float(fields[0])] = [float(y) for y in fields[1:] if re.match(r"-?\d+.*",y) ]
     return map
+
+def file2map(x):
+        ret = {}; headers = []
+        for x in open(x,"r"):
+            cols = x.split()
+            if len(cols) < 2: continue
+            if "mH" in x:
+                headers = [i.strip() for i in cols[1:]]
+            else:
+                fields = [ float(i) for i in cols ]
+                #ret[fields[0]] = dict(zip(headers,fields[1:]))
+                ret[fields[0]] = [float(y) for y in fields[1:]]
+        return ret
 
 def juerg2map(file):
     map = {}
@@ -17,47 +31,106 @@ def juerg2map(file):
         map[fields[0]] = [float(y) for y in fields[1:]]
     return map
 
+YR_ggH         = {}
+YR_vbfH        = {}
+YR_wzttH       = {}
+YR_wH          = {}
+YR_zH          = {}
+YR_ttH         = {}
+
+ggH_pdfErrYR   = {}
+ggH_scaErrYR   = {}
+vbfH_pdfErrYR  = {}
+vbfH_scaErrYR  = {}
+wzttH_pdfErrYR = {}
+wzttH_scaErrYR = {}
+
+wH_pdfErrYR    = {}
+wH_scaErrYR    = {}
+
+zH_pdfErrYR    = {}
+zH_scaErrYR    = {}
+
+ttH_pdfErrYR   = {}
+ttH_scaErrYR   = {}
+
 SYST_PATH      = os.getenv('CMSSW_BASE')+'/src/HWWAnalysis/ShapeAnalysis/data/nuisances/'
-YR_ggH         = file2map(SYST_PATH+'YR-ggH.txt')
-YR_vbfH        = file2map(SYST_PATH+'YR-vbfH.txt')
-YR_wzttH       = file2map(SYST_PATH+'YR-wzttH.txt')
-YR_wH          = file2map(SYST_PATH+'YR-wH.txt')
-YR_zH          = file2map(SYST_PATH+'YR-zH.txt')
-YR_ttH         = file2map(SYST_PATH+'YR-ttH.txt')
-
-ggH_pdfErrYR   = dict([(m, sqrt((1+0.01*pdf_hi)/(1+0.01*pdf_lo))) for m,(xs,xs_hi,xs_lo,sca_hi,sca_lo,pdf_hi,pdf_lo) in YR_ggH.items()] )
-ggH_scaErrYR   = dict([(m, sqrt((1+0.01*sca_hi)/(1+0.01*sca_lo))) for m,(xs,xs_hi,xs_lo,sca_hi,sca_lo,pdf_hi,pdf_lo) in YR_ggH.items()] )
-vbfH_pdfErrYR  = dict([(m, sqrt((1+0.01*pdf_hi)/(1+0.01*pdf_lo))) for m,(xs,xs_hi,xs_lo,sca_hi,sca_lo,pdf_hi,pdf_lo) in YR_vbfH.items()] )
-vbfH_scaErrYR  = dict([(m, sqrt((1+0.01*sca_hi)/(1+0.01*sca_lo))) for m,(xs,xs_hi,xs_lo,sca_hi,sca_lo,pdf_hi,pdf_lo) in YR_vbfH.items()] )
-wzttH_pdfErrYR = dict([(m, sqrt((1+0.01*pdf_hi)/(1+0.01*pdf_lo))) for m,(xs,xs_hi,xs_lo,sca_hi,sca_lo,pdf_hi,pdf_lo) in YR_wzttH.items()] )
-wzttH_scaErrYR = dict([(m, sqrt((1+0.01*sca_hi)/(1+0.01*sca_lo))) for m,(xs,xs_hi,xs_lo,sca_hi,sca_lo,pdf_hi,pdf_lo) in YR_wzttH.items()] )
-
-wH_pdfErrYR = dict([(m, sqrt((1+0.01*pdf_hi)/(1+0.01*pdf_lo))) for m,(xs,xs_hi,xs_lo,sca_hi,sca_lo,pdf_hi,pdf_lo) in YR_wH.items()] )
-wH_scaErrYR = dict([(m, sqrt((1+0.01*sca_hi)/(1+0.01*sca_lo))) for m,(xs,xs_hi,xs_lo,sca_hi,sca_lo,pdf_hi,pdf_lo) in YR_wH.items()] )
-
-zH_pdfErrYR = dict([(m, sqrt((1+0.01*pdf_hi)/(1+0.01*pdf_lo))) for m,(xs,xs_hi,xs_lo,sca_hi,sca_lo,pdf_hi,pdf_lo) in YR_zH.items()] )
-zH_scaErrYR = dict([(m, sqrt((1+0.01*sca_hi)/(1+0.01*sca_lo))) for m,(xs,xs_hi,xs_lo,sca_hi,sca_lo,pdf_hi,pdf_lo) in YR_zH.items()] )
-
-ttH_pdfErrYR = dict([(m, sqrt((1+0.01*pdf_hi)/(1+0.01*pdf_lo))) for m,(xs,xs_hi,xs_lo,sca_hi,sca_lo,pdf_hi,pdf_lo) in YR_ttH.items()] )
-ttH_scaErrYR = dict([(m, sqrt((1+0.01*sca_hi)/(1+0.01*sca_lo))) for m,(xs,xs_hi,xs_lo,sca_hi,sca_lo,pdf_hi,pdf_lo) in YR_ttH.items()] )
-
-
-for X in 450, 550:
-    ggH_pdfErrYR[X]  = 0.5*(ggH_pdfErrYR[X-10] +ggH_pdfErrYR[X+10])
-    ggH_scaErrYR[X]  = 0.5*(ggH_scaErrYR[X-10] +ggH_scaErrYR[X+10])
-    vbfH_pdfErrYR[X] = 0.5*(vbfH_pdfErrYR[X-10]+vbfH_pdfErrYR[X+10])
-    vbfH_scaErrYR[X] = 0.5*(vbfH_scaErrYR[X-10]+vbfH_scaErrYR[X+10])
-
 ggH_jets = dict([(m, dict(zip(['f0','f1','f2','k1','k2'], vals))) for m,vals in file2map(SYST_PATH+"ggH_jetBins.txt").items()]) 
 ggH_jets2 = dict([(m, dict(zip(['0','1in0','1in1','2in1','2in2'], vals))) for m,vals in file2map(SYST_PATH+"ggH_jetBinNuisances.txt").items()]) 
-
 ggH_UEPS = dict([(m, dict(zip(['u0','u1','u2'], vals))) for m,vals in file2map(SYST_PATH+"ggH_UEPS.txt").items()])
-
 ggH_intf = dict([(m, dict(zip(['intf'], vals))) for m,vals in file2map(SYST_PATH+"ggH_interference.txt").items()])
 
-def getCommonSysts(mass,channel,jets,qqWWfromData,shape,options,suffix,isssactive,newInterf=False,mh_SM=125.):
-    print '\033[0;31m FIXME:  Old Yellow Report in use, 7TeV only!!!!!  \033[m'
 
+def loadYRSyst(YRVersion=3,Energy='8TeV') :
+
+    global YR_ggH   
+    global YR_vbfH  
+    global YR_wzttH  
+    global YR_wH      
+    global YR_zH       
+    global YR_ttH       
+
+    global ggH_pdfErrYR  
+    global ggH_scaErrYR   
+    global vbfH_pdfErrYR  
+    global vbfH_scaErrYR  
+    global wzttH_pdfErrYR 
+    global wzttH_scaErrYR 
+
+    global wH_pdfErrYR    
+    global wH_scaErrYR
+
+    global zH_pdfErrYR 
+    global zH_scaErrYR  
+
+    global ttH_pdfErrYR  
+    global ttH_scaErrYR   
+
+    if YRVersion == 1 :
+      print '\033[0;31m FIXME:  Old Yellow Report in use, 7TeV only!!!!!  \033[m'
+      YR_PATH      = os.getenv('CMSSW_BASE')+'/src/HWWAnalysis/ShapeAnalysis/data/nuisances/'
+      YR_ggH         = file2map(YR_PATH+'YR-ggH.txt')
+      YR_vbfH        = file2map(YR_PATH+'YR-vbfH.txt')
+      YR_wzttH       = file2map(YR_PATH+'YR-wzttH.txt')
+      YR_wH          = file2map(YR_PATH+'YR-wH.txt')
+      YR_zH          = file2map(YR_PATH+'YR-zH.txt')
+      YR_ttH         = file2map(YR_PATH+'YR-ttH.txt')
+    else:
+      YR_PATH      = os.getenv('CMSSW_BASE')+'/src/HWWAnalysis/ShapeAnalysis/data/lhc-hxswg-YR'+str(YRVersion)+'/sm/xs/'+Energy+'/'
+      YR_ggH         = file2map(YR_PATH+Energy+'-ggH.txt')
+      YR_vbfH        = file2map(YR_PATH+Energy+'-vbfH.txt')
+#     YR_wzttH       = file2map(YR_PATH+Energy+'-wzttH.txt')
+      YR_wH          = file2map(YR_PATH+Energy+'-WH.txt')
+      YR_zH          = file2map(YR_PATH+Energy+'-ZH.txt')
+      YR_ttH         = file2map(YR_PATH+Energy+'-ttH.txt')
+    
+    ggH_pdfErrYR   = dict([(m, sqrt((1+0.01*pdf_hi)/(1+0.01*pdf_lo))) for m,(xs,xs_hi,xs_lo,sca_hi,sca_lo,pdf_hi,pdf_lo) in YR_ggH.items()] )
+    ggH_scaErrYR   = dict([(m, sqrt((1+0.01*sca_hi)/(1+0.01*sca_lo))) for m,(xs,xs_hi,xs_lo,sca_hi,sca_lo,pdf_hi,pdf_lo) in YR_ggH.items()] )
+    vbfH_pdfErrYR  = dict([(m, sqrt((1+0.01*pdf_hi)/(1+0.01*pdf_lo))) for m,(xs,xs_hi,xs_lo,sca_hi,sca_lo,pdf_hi,pdf_lo) in YR_vbfH.items()] )
+    vbfH_scaErrYR  = dict([(m, sqrt((1+0.01*sca_hi)/(1+0.01*sca_lo))) for m,(xs,xs_hi,xs_lo,sca_hi,sca_lo,pdf_hi,pdf_lo) in YR_vbfH.items()] )
+    wzttH_pdfErrYR = dict([(m, sqrt((1+0.01*pdf_hi)/(1+0.01*pdf_lo))) for m,(xs,xs_hi,xs_lo,sca_hi,sca_lo,pdf_hi,pdf_lo) in YR_wzttH.items()] )
+    wzttH_scaErrYR = dict([(m, sqrt((1+0.01*sca_hi)/(1+0.01*sca_lo))) for m,(xs,xs_hi,xs_lo,sca_hi,sca_lo,pdf_hi,pdf_lo) in YR_wzttH.items()] )
+    
+    wH_pdfErrYR = dict([(m, sqrt((1+0.01*pdf_hi)/(1+0.01*pdf_lo))) for m,(xs,xs_hi,xs_lo,sca_hi,sca_lo,pdf_hi,pdf_lo) in YR_wH.items()] )
+    wH_scaErrYR = dict([(m, sqrt((1+0.01*sca_hi)/(1+0.01*sca_lo))) for m,(xs,xs_hi,xs_lo,sca_hi,sca_lo,pdf_hi,pdf_lo) in YR_wH.items()] )
+    
+    zH_pdfErrYR = dict([(m, sqrt((1+0.01*pdf_hi)/(1+0.01*pdf_lo))) for m,(xs,xs_hi,xs_lo,sca_hi,sca_lo,pdf_hi,pdf_lo) in YR_zH.items()] )
+    zH_scaErrYR = dict([(m, sqrt((1+0.01*sca_hi)/(1+0.01*sca_lo))) for m,(xs,xs_hi,xs_lo,sca_hi,sca_lo,pdf_hi,pdf_lo) in YR_zH.items()] )
+    
+    ttH_pdfErrYR = dict([(m, sqrt((1+0.01*pdf_hi)/(1+0.01*pdf_lo))) for m,(xs,xs_hi,xs_lo,sca_hi,sca_lo,pdf_hi,pdf_lo) in YR_ttH.items()] )
+    ttH_scaErrYR = dict([(m, sqrt((1+0.01*sca_hi)/(1+0.01*sca_lo))) for m,(xs,xs_hi,xs_lo,sca_hi,sca_lo,pdf_hi,pdf_lo) in YR_ttH.items()] )
+    
+    
+    for X in 450, 550:
+        ggH_pdfErrYR[X]  = 0.5*(ggH_pdfErrYR[X-10] +ggH_pdfErrYR[X+10])
+        ggH_scaErrYR[X]  = 0.5*(ggH_scaErrYR[X-10] +ggH_scaErrYR[X+10])
+        vbfH_pdfErrYR[X] = 0.5*(vbfH_pdfErrYR[X-10]+vbfH_pdfErrYR[X+10])
+        vbfH_scaErrYR[X] = 0.5*(vbfH_scaErrYR[X-10]+vbfH_scaErrYR[X+10])
+    
+
+def getCommonSysts(mass,channel,jets,qqWWfromData,shape,options,suffix,isssactive,Energy,newInterf=False,YRVersion=3,mh_SM=125.):
+
+    loadYRSyst(YRVersion,Energy)
 
     nuisances = {} 
     #MCPROC = ['ggH', 'vbfH', 'DTT', 'ggWW', 'VV', 'Vg' ]; 
@@ -77,12 +150,12 @@ def getCommonSysts(mass,channel,jets,qqWWfromData,shape,options,suffix,isssactiv
                                           'ggWW'   : 1.04 , 
                                         }]
 
-    nuisances['pdf_qqbar'] = [ ['lnN'], { 'wzttH' :(1.0 if mass>300 else wzttH_pdfErrYR[mass]),  
+    nuisances['pdf_qqbar'] = [ ['lnN'], { #'wzttH' :(1.0 if mass>300 else wzttH_pdfErrYR[mass]),  
                                           'WH'    :(1.0 if mass>300 else wH_pdfErrYR[mass]),  
                                           'ZH'    :(1.0 if mass>300 else zH_pdfErrYR[mass]), 
                                           'ttH'   :(1.0 if mass>300 else ttH_pdfErrYR[mass]), 
                                           'qqH'   :vbfH_pdfErrYR[mass], 
-                                          'wzttH_SM' :(1.0 if mh_SM>300 else wzttH_pdfErrYR[mh_SM]),  
+                                          #'wzttH_SM' :(1.0 if mh_SM>300 else wzttH_pdfErrYR[mh_SM]),  
                                           'WH_SM'    :(1.0 if mh_SM>300 else wH_pdfErrYR[mh_SM]),  
                                           'ZH_SM'    :(1.0 if mh_SM>300 else zH_pdfErrYR[mh_SM]), 
                                           'ttH_SM'   :(1.0 if mh_SM>300 else ttH_pdfErrYR[mh_SM]), 
