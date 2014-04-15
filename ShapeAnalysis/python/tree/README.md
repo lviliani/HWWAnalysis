@@ -25,7 +25,7 @@ Efficiency weight
             --muname=muonsDATAMCratio_all \
             --elname=electronsDATAMCratio_All_selec
 
-   for dytt embedded sample, we need to apply efficiency weights and not scale factors, since no special id is applied (to be checked)
+    for dytt embedded sample, we need to apply efficiency weights and not scale factors, since no special id is applied (to be checked)
             --elname=effDATA_All_selec   for dytt embeded sample
 
 PileUp weight
