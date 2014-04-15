@@ -6,7 +6,7 @@
 //////////////////////////////////////////////
 
 #include <TMath.h>
-
+# include <algorithm>
 // add dphi Z-W-lepton1,2!
 
 class ZHWW4lvari {
@@ -85,30 +85,25 @@ int ZHWW4lvari::CalcValues(){
  if(finalI6){    
   float mllZ = mlls[finalI6];
   float mllW = mlls[5-finalI6];
-  float dphillZ = TMath::Min(TMath::Abs(phis[index[0]]-phis[index[1]]),(2*TMath::Pi()-TMath::Abs(phis[index[0]]-phis[index[1]])));
-  float dphillW = TMath::Min(TMath::Abs(phis[index[2]]-phis[index[3]]),(2*TMath::Pi()-TMath::Abs(phis[index[2]]-phis[index[3]])));
+  float dphillZ = std::min(1.*fabs(phis[index[0]]-phis[index[1]]),1.*(2*TMath::Pi()-fabs(phis[index[0]]-phis[index[1]])));
+  float dphillW = std::min(1.*fabs(phis[index[2]]-phis[index[3]]),1.*(2*TMath::Pi()-fabs(phis[index[2]]-phis[index[3]])));
   float mllll = 0;
   for (int i = 0;i<6;i++){
    mllll = mllll + TMath::Power(mlls[i],2);
   }
   mllll = TMath::Sqrt(mllll);
-        
-  float pt = 0; //----> FIXME
-//   float pt = sqrt((pt1*cos(phi1) + pt2*cos(phi2))*(pt1*cos(phi1) + pt2*cos(phi2)) + (pt1*sin(phi) + pt2*sin(phi2))*(pt1*sin(phi) + pt2*sin(phi2)));  --> pt1,2,3,4 not defined
-        
-        // fill array with values
+
+  // fill array with values
   values[0] = mllZ; // mass of leptons from Z
   values[1] = dphillZ; // dphi between leptons from Z
   values[2] = flavors[index[0]]; // flavor of leptons from Z: 11 == ee, 13 == mm
-  values[3] = 0.;   //----> FIXME
-//   TMath::Sqrt(TMath::Power(pTs[index[0]]*TMath::Cos(phis[index[0]]) + TMath::Power(pTs[index[1]]*TMath::Cos(phis[index[1]]),2) + TMath::Power(pTs[index[0]]*TMath::Sin(phis[index[0]]) + TMath::Power(pTs[index[1]]*TMath::Sin(phis[index[1]]),2));// pT of leptons from Z
-        
+  values[3] = TMath::Sqrt(TMath::Power(pTs[index[0]]*TMath::Cos(phis[index[0]]) + pTs[index[1]]*TMath::Cos(phis[index[1]]),2) + TMath::Power(pTs[index[0]]*TMath::Sin(phis[index[0]]) + pTs[index[1]]*TMath::Sin(phis[index[1]]),2));// pT of leptons from Z
+
   values[4] = mllW; // mass of leptons from WW
   values[5] = dphillW; // dphi between leptons from WW
   values[6] = 0.5*(flavors[index[2]] + flavors[index[3]]); // flavor of leptons from WW: 11 == ee, 12==em, 13==mm
-  values[7] = 0.; //----> FIXME
-//   TMath::Sqrt(TMath::Power(pTs[index[2]]*TMath::Cos(phis[index[2]]) + TMath::Power(pTs[index[3]]*TMath::Cos(phis[index[3]]),2) + TMath::Power(pTs[index[2]]*TMath::Sin(phis[index[2]]) + TMath::Power(pTs[index[3]]*TMath::Sin(phis[index[3]]),2));// pT of leptons from WW
-        
+  values[7] = TMath::Sqrt(TMath::Power(pTs[index[2]]*TMath::Cos(phis[index[2]]) + pTs[index[3]]*TMath::Cos(phis[index[3]]),2) + TMath::Power(pTs[index[2]]*TMath::Sin(phis[index[2]]) + pTs[index[3]]*TMath::Sin(phis[index[3]]),2));// pT of leptons from WW
+
         // add dphi Z-W-lepton1,2
   values[8] = -99999;// dphi Z-W-lepton1
   values[9] = -99999;// dphi Z-W-lepton2
