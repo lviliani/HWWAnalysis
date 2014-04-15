@@ -19,6 +19,22 @@ ROOT.gROOT.ProcessLineSync('.L '+pathWght+'getCPSWght.C+')
 ROOT.gROOT.ProcessLineSync('.L '+pathWght+'getBWWght.C+')
 ROOT.gROOT.ProcessLineSync('.L '+pathWght+'getIntWght.C+')
 
+# ----------------------------------------------------- Read YR values from combination area --------------
+
+def file2map(x):
+        ret = {}; headers = []
+        for x in open(x,"r"):
+            cols = x.split()
+            if len(cols) < 2: continue
+            if "mH" in x:
+                headers = [i.strip() for i in cols[1:]]
+            else:
+                fields = [ float(i) for i in cols ]
+                ret[fields[0]] = dict(zip(headers,fields[1:]))
+        return ret
+
+# ----------------------------------------------------- ShapeFactory --------------------------------------
+
 class ShapeFactory:
     _logger = logging.getLogger('ShapeFactory')
  
@@ -74,6 +90,10 @@ class ShapeFactory:
         self._cprimesq        = 1.
         self._brnew           = 0.
         self._approxewk       = False
+
+        self._YR3rewght       = False
+        self._YRValues        = {}
+
         variables = {}
         variables['2dWithCR']             = self._getMllMth2DSpinWithControlRegion
         variables['2dWithSSmirrorRegion'] = self._getMllMth2DSpinWithSSmirrorRegion
@@ -804,6 +824,31 @@ class ShapeFactory:
 
             selections[process] = wgt+'*('+cut+')'
 
+    def loadYR(self):
+        if self._energy == '7TeV' or self._energy == '8TeV' :
+          path = os.getenv('CMSSW_BASE')+'/src/HWWAnalysis/ShapeAnalysis/data/' 
+          # load YR2
+          self._YRValues['YR2'] = {}
+          self._YRValues['YR2']['xs'] = {}
+          self._YRValues['YR2']['br'] = {}
+          self._YRValues['YR2']['xs']['ggH'] = file2map(path+'lhc-hxswg-YR2/sm/xs/'+self._energy+'/'+self._energy+'-ggH.txt')
+          self._YRValues['YR2']['xs']['qqH'] = file2map(path+'lhc-hxswg-YR2/sm/xs/'+self._energy+'/'+self._energy+'-vbfH.txt')
+          self._YRValues['YR2']['xs']['WH']  = file2map(path+'lhc-hxswg-YR2/sm/xs/'+self._energy+'/'+self._energy+'-WH.txt')
+          self._YRValues['YR2']['xs']['ZH']  = file2map(path+'lhc-hxswg-YR2/sm/xs/'+self._energy+'/'+self._energy+'-ZH.txt')
+          self._YRValues['YR2']['xs']['ttH'] = file2map(path+'lhc-hxswg-YR2/sm/xs/'+self._energy+'/'+self._energy+'-ttH.txt')
+          self._YRValues['YR2']['br']['VV']  = file2map(path+'lhc-hxswg-YR2/sm/br/BR.txt')
+          self._YRValues['YR2']['br']['ff']  = file2map(path+'lhc-hxswg-YR2/sm/br/BR1.txt')
+          # load YR3
+          self._YRValues['YR3'] = {}
+          self._YRValues['YR3']['xs'] = {}
+          self._YRValues['YR3']['br'] = {}
+          self._YRValues['YR3']['xs']['ggH'] = file2map(path+'lhc-hxswg-YR3/sm/xs/'+self._energy+'/'+self._energy+'-ggH.txt')
+          self._YRValues['YR3']['xs']['qqH'] = file2map(path+'lhc-hxswg-YR3/sm/xs/'+self._energy+'/'+self._energy+'-vbfH.txt')
+          self._YRValues['YR3']['xs']['WH']  = file2map(path+'lhc-hxswg-YR3/sm/xs/'+self._energy+'/'+self._energy+'-WH.txt')
+          self._YRValues['YR3']['xs']['ZH']  = file2map(path+'lhc-hxswg-YR3/sm/xs/'+self._energy+'/'+self._energy+'-ZH.txt')
+          self._YRValues['YR3']['xs']['ttH'] = file2map(path+'lhc-hxswg-YR3/sm/xs/'+self._energy+'/'+self._energy+'-ttH.txt')
+          self._YRValues['YR3']['br']['VV']  = file2map(path+'lhc-hxswg-YR3/sm/br/BR.txt')
+          self._YRValues['YR3']['br']['ff']  = file2map(path+'lhc-hxswg-YR3/sm/br/BR1.txt')
 
     #
     # X. Janssen: Function to implement Higgs weigthing and replace old "kfw" from tree:
@@ -823,6 +868,44 @@ class ShapeFactory:
 
        hWght = '1.'
 
+       # Goto YR3 (from YR2)
+
+       if self._YR3rewght :
+         xs_Scale = 1.
+         br_Scale = 1.
+         if self._energy == '7TeV' or self._energy == '8TeV' :
+           if prodMode in ['ggH','qqH','WH','ZH','ttH'] :
+             xs_Scale = self._YRValues['YR3']['xs'][prodMode][mass]['XS_pb']/self._YRValues['YR2']['xs'][prodMode][mass]['XS_pb']
+             br_Scale = self._YRValues['YR3']['br']['VV'][mass]['H_WW']/self._YRValues['YR2']['br']['VV'][mass]['H_WW']
+           elif prodMode == 'ggH_ALT' :
+             xs_Scale = self._YRValues['YR3']['xs']['ggH'][mass]['XS_pb']/self._YRValues['YR2']['xs']['ggH'][mass]['XS_pb']
+             br_Scale = self._YRValues['YR3']['br']['VV'][mass]['H_WW']/self._YRValues['YR2']['br']['VV'][mass]['H_WW']
+           elif prodMode == 'qqH_ALT' :
+             xs_Scale = self._YRValues['YR3']['xs']['qqH'][mass]['XS_pb']/self._YRValues['YR2']['xs']['qqH'][mass]['XS_pb']
+             br_Scale = self._YRValues['YR3']['br']['VV'][mass]['H_WW']/self._YRValues['YR2']['br']['VV'][mass]['H_WW']
+           elif prodMode in ['ggH_SM','qqH_SM','WH_SM','ZH_SM','ttH_SM'] :
+             prodModeStrip = prodMode.split('_')[0]
+             massSMSample  = 125. 
+             xs_Scale = self._YRValues['YR3']['xs'][prodModeStrip][massSMSample]['XS_pb']/self._YRValues['YR2']['xs'][prodModeStrip][massSMSample]['XS_pb']
+             br_Scale = self._YRValues['YR3']['br']['VV'][massSMSample]['H_WW']/self._YRValues['YR2']['br']['VV'][massSMSample]['H_WW']
+           else:
+             print 'YR3 reweight: UNKNW prodMode : '+prodMode
+         hWght += '*'+str(xs_Scale)+'*'+str(br_Scale)
+
+       # Scale _SM samples at exact mass  
+
+       if prodMode in ['ggH_SM','qqH_SM','WH_SM','ZH_SM','ttH_SM'] :
+         xs_Scale = 1.
+         br_Scale = 1.
+         if self._energy == '7TeV' or self._energy == '8TeV' :
+           YR = 'YR2'
+           if self._YR3rewght : YR = 'YR3'
+           prodModeStrip = prodMode.split('_')[0]
+           massSMSample  = 125.
+           massMeasured  = self._mHSM
+           xs_Scale = self._YRValues[YR]['xs'][prodModeStrip][massMeasured]['XS_pb']/self._YRValues[YR]['xs'][prodModeStrip][massSMSample]['XS_pb']
+           br_Scale = self._YRValues[YR]['br']['VV'][massMeasured]['H_WW']/self._YRValues[YR]['br']['VV'][massSMSample]['H_WW']
+         hWght += '*'+str(xs_Scale)+'*'+str(br_Scale)
 
        # New CPS (+ ptHiggs k-factor for 7 TeV MC)
        if self._newcps and mass >= 250 :
@@ -851,8 +934,6 @@ class ShapeFactory:
  
          if prodMode in ['ggH','ggH_ALT'] : hWght += '*getCPSWght(0,MHiggs)' 
          if prodMode in ['qqH','qqH_ALT'] : hWght += '*getCPSWght(1,MHiggs)' 
-         #if prodMode in ['ggH_SM'       ] : hWght += '*getCPSWght(2,MHiggs)' 
-         #if prodMode in ['qqH_SM'       ] : hWght += '*getCPSWght(3,MHiggs)' 
        else:
          if prodMode in ['ggH','ggH_ALT','ggH_SM','qqH','qqH_ALT','qqH_SM'] : hWght += '*kfW'
 
@@ -1262,7 +1343,8 @@ if __name__ == '__main__':
     parser.add_option('--cprimesq'  ,    dest='cprimesq',    help='EWK singlet C\'**2 mixing value',    default=[1.]  , type='string'  , action='callback' , callback=hwwtools.list_maker('cprimesq',',',float))
     parser.add_option('--brnew'     ,    dest='brnew'   ,    help='EWK singlet BRNew values',           default=[0.]  , type='string'  , action='callback' , callback=hwwtools.list_maker('brnew',',',float))
     parser.add_option('--approxewk'  ,    dest='approxewk',    help='EWK not scaling width/interf',     default=False , action='store_true') 
-
+    parser.add_option('--YR3'        ,    dest='YR3rewght',    help='Rewhgt from YR2 to YR3' ,          default=False , action='store_true')  
+    parser.add_option('--mHSM'      ,    dest='mHSM',        help='Mass of the SM Higgs boson@125',     default=125.6 , type='float')
 
     hwwtools.addOptions(parser)
     hwwtools.loadOptDefaults(parser)
@@ -1367,7 +1449,11 @@ if __name__ == '__main__':
           else:  
             factory._cprimesq  = opt.cprimesq[iCP2]
             factory._brnew     = opt.brnew[iBRn]
+          factory._YR3rewght   = opt.YR3rewght
+          factory._mHSM        = opt.mHSM
 
+          # load YR if needed
+          if opt.YR3rewght : factory.loadYR()
 
           if opt.makeNoms:
               # nominal shapes
