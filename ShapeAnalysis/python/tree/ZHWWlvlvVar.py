@@ -76,9 +76,9 @@ class ZhwwlvlvVarFiller(TreeCloner):
         # change this part into correct path structure... 
         cmssw_base = os.getenv('CMSSW_BASE')
         try:
-            ROOT.gROOT.LoadMacro(cmssw_base+'/src/HWWAnalysis/ShapeAnalysis/python/tree/unBoostedVar.C+g')
+            ROOT.gROOT.LoadMacro(cmssw_base+'/src/HWWAnalysis/ShapeAnalysis/python/tree/ZHWWlvlvVar.C+g')
         except RuntimeError:
-            ROOT.gROOT.LoadMacro(cmssw_base+'/src/HWWAnalysis/ShapeAnalysis/python/tree/unBoostedVar.C++g')
+            ROOT.gROOT.LoadMacro(cmssw_base+'/src/HWWAnalysis/ShapeAnalysis/python/tree/ZHWWlvlvVar.C++g')
         #----------------------------------------------------------------------------------------------------
         print '- Starting eventloop'
         step = 5000
