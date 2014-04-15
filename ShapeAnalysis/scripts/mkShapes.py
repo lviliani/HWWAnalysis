@@ -519,6 +519,12 @@ class ShapeFactory:
         nicks = kwargs['nicks'] if 'nicks' in kwargs else None
         # mass dependent sample list, can be in the mass loop
         for mass in self._masses:
+            # interference systematic only at high mass:
+            if 'interferenceGGH' in syst and mass <  350 : continue
+            if 'interferenceVBF' in syst and mass <  350 : continue
+            if 'interference'    in syst and not self._newcps : continue
+            if 'interference'    in syst and mass >= 350 : self._interfSyst = syst
+
             #samples = hwwsamples.samples(mass, self._dataTag, self._sigTag, self._mcTag)
             
             # mass and variable selection
@@ -604,6 +610,7 @@ class ShapeFactory:
                     # - then disconnect the files
                     self._disconnectInputs(inputs)
                 shapeFiles.append(output)
+            self._interfSyst = 'NONE' 
         return shapeFiles
     
     # _____________________________________________________________________________
@@ -805,7 +812,14 @@ class ShapeFactory:
     #       * EWK Singlet
     #       * Interference with WW (+systematics ?)
     #
-    def _HiggsWgt(self,prodMode,mass,flavor,iSyst=0):
+    def _HiggsWgt(self,prodMode,mass,flavor):
+
+       iSystGGH = 0
+       if self._interfSyst == 'interferenceGGH_up'   : iSystGGH =  1
+       if self._interfSyst == 'interferenceGGH_down' : iSystGGH = -1
+       iSystVBF = 0
+       if self._interfSyst == 'interferenceVBF_up'   : iSystVBF =  1
+       if self._interfSyst == 'interferenceVBF_down' : iSystVBF = -1
 
        hWght = '1.'
 
@@ -873,9 +887,9 @@ class ShapeFactory:
 
        # Inteference (Only meaningfull with new CPS as kfW already contains it otherwise)
        if self._newcps :
-         if prodMode in ['ggH'] and mass  >= 300 : 
+         if prodMode in ['ggH'] and mass >= 300 : 
             fileInt = os.environ['CMSSW_BASE']+'/src/HWWAnalysis/ShapeAnalysis/ewksinglet/data/Interference_ggH/1.0SMWidth/h_MWW_IonS_NNLO_'+str(mass)+'.root'
-            ROOT.gROOT.ProcessLineSync('initIntWght("'+fileInt+'",0,'+str(iSyst)+','+str(mass)+')')
+            ROOT.gROOT.ProcessLineSync('initIntWght("'+fileInt+'",0,'+str(iSystGGH)+','+str(mass)+')')
             hWght += '*getIntWght(0,MHiggs,'+str(self._cprimesq)+')' 
          if prodMode in ['qqH'] and mass >= 350 : 
             if   flavor in ['of','em','me'] : iFlavor = '0'
@@ -884,7 +898,7 @@ class ShapeFactory:
               print '_HiggsWgt: Unknown flavor : ',flavor
               exit()
             EWKDir = os.environ['CMSSW_BASE']+'/src/HWWAnalysis/ShapeAnalysis/ewksinglet/'
-            ROOT.gROOT.ProcessLineSync('initIntWght("'+EWKDir+'" ,1,'+str(iSyst)+','+str(mass)+')') 
+            ROOT.gROOT.ProcessLineSync('initIntWght("'+EWKDir+'" ,1,'+str(iSystVBF)+','+str(mass)+')') 
             if not self._approxewk : hWght += '*getIntWght(1,MHiggs,'+str(self._cprimesq)+','+iFlavor+')' 
             else                   : hWght += '*getIntWght(1,MHiggs,1.0,'+iFlavor+')'
 
@@ -1344,6 +1358,7 @@ if __name__ == '__main__':
           factory._muVal     = opt.muVal 
  
           factory._newcps    = opt.newcps 
+          factory._interfSyst= "NONE" 
           factory._ewksinglet= opt.ewksinglet
           factory._approxewk = opt.approxewk
           if not opt.ewksinglet :
@@ -1382,8 +1397,11 @@ if __name__ == '__main__':
                   ('metScale_up'             , 'p_scale_metUp'),
                   ('muonScale_down'          , 'p_scale_mDown'),
                   ('muonScale_up'            , 'p_scale_mUp'),
-                  ('chargeResolution'        , 'ch_res'),
+                  ('chargeResolution'        , 'ch_res'), 
+                  ('interferenceGGH_up'      , 'interf_ggHUp'),
+                  ('interferenceGGH_down'    , 'interf_ggHDown'),
               ])
+
   
               # remove skip-syst list
   #             if opt.skipSyst!='':
@@ -1404,6 +1422,8 @@ if __name__ == '__main__':
               systByWeight['muonEfficiency_up']   = 'effWMuUp/effW'
               systByWeight['electronEfficiency_down'] = 'effWElDown/effW'
               systByWeight['electronEfficiency_up']   = 'effWElUp/effW'
+              systByWeight['interferenceGGH_up']   = '1.0'
+              systByWeight['interferenceGGH_down'] = '1.0'
 
               systByWeight['puW_down'] = 'puWup/puW'
               systByWeight['puW_up']   = 'puWdown/puW'
@@ -1416,6 +1436,9 @@ if __name__ == '__main__':
                   processMask = ['ggH', 'ggH_ALT', 'qqH', 'qqH_ALT', 'VH' , 'wzttH', 'ZH', 'WH', 'ttH', 'ggWW', 'Top', 'WW', 'VV', 'CHITOP-Top', 'ggH_SM', 'qqH_SM','VH_SM', 'wzttH_SM', 'ZH_SM', 'WH_SM', 'ttH_SM']
 
               systMasks = dict([(s,processMask[:]) for s in systematics])
+              # interference is only on signal samples:
+              systMasks['interferenceGGH_up'  ] = ['ggH', 'ggH_ALT']
+              systMasks['interferenceGGH_down'] = ['ggH', 'ggH_ALT']
               systDirs  = dict([(s,systInputDir if s not in systByWeight else 'templates/' ) for s in systematics])
               #systDirs  = dict([(s,systInputDir if s not in systByWeight else 'nominals/' ) for s in systematics])
               print "systDirs = ",systDirs

@@ -197,7 +197,6 @@ class ShapeLoader:
             elif var == 'Down':
                 if effect not in downs: downs[effect]= []
                 downs[effect].append(process)
-
         # check 
         for effect in ups:
             if set(ups[effect]) != set(downs[effect]):
@@ -446,6 +445,17 @@ class NuisanceMapBuilder:
             if tag in nuisances: del nuisances[tag]
             nuisances[tag] = (['shapeN2'],dict([ (p,1) for p in processes]) )
 
+    def _addInterfShapeNuisances(self,nuisances, effects):
+        '''Interference related shape nuisances'''
+        wwRegex  = re.compile('interf_(.+)$')
+        for eff,processes in effects.iteritems():
+            # select the experimental effects only (starting with gen)
+            if not wwRegex.match(eff):
+                continue
+
+            tag = eff
+            if tag in nuisances: del nuisances[tag]
+            nuisances[tag] = (['shapeN2'],dict([ (p,1) for p in processes]) )
 
     def _addExperimentalShapeNuisances(self, nuisances, effects, suffix, yields):
         '''Experimental Shape-based nuisances'''
@@ -485,6 +495,7 @@ class NuisanceMapBuilder:
         shapeNu = OrderedDict()
 
         self._addWWShapeNuisances(shapeNu, effects)
+        self._addInterfShapeNuisances(shapeNu, effects)
         self._addExperimentalShapeNuisances(shapeNu, effects, suffix, yields)
 
         if 'shapeFlags' not in opts:
@@ -510,7 +521,7 @@ class NuisanceMapBuilder:
     # | .` | || | (_-</ _` | ' \/ _/ -_|_-<
     # |_|\_|\_,_|_/__/\__,_|_||_\__\___/__/
     #                                      
-    def nuisances(self, yields, effects, mass, channel, jetcat, flavor, opts):
+    def nuisances(self, yields, effects, mass, channel, jetcat, flavor, opts ):
         '''Add the nuisances according to the options'''
         allNus = OrderedDict()
 
@@ -536,8 +547,7 @@ class NuisanceMapBuilder:
 #         if '2011' in opt.dataset: suffix = '_7TeV'
 
         suffix = '_'+opt.energy
-
-        CutBased = getCommonSysts(int(mass),flavor,int(jetcat[0]),qqWWfromData, self._shape, optMatt, suffix, self._isssactive)
+        CutBased = getCommonSysts(int(mass),flavor,int(jetcat[0]),qqWWfromData, self._shape, optMatt, suffix, self._isssactive, opt.energy,opts['newInterf'],opt.YRSysVer)
         if self._shape:
             # float WW+ggWW background normalisation float together
 #             for p in opts['floatN'].split(' '):
@@ -640,12 +650,12 @@ if __name__ == '__main__':
     parser.add_option('--lSg','--listSignals',  dest='listSignals'       , help='list of signal samples', action='callback', type='string', callback=incexc)
 
 
-
+    parser.add_option('--newcps',        dest='newcps',  help='On/Off New CPS weights',               default=False , action='store_true')
     # EWK Doublet Model
     parser.add_option('--ewksinglet',    dest='ewksinglet',  help='On/Off EWK singlet model',           default=False , action='store_true')   
     parser.add_option('--cprimesq'  ,    dest='cprimesq',    help='EWK singlet C\'**2 mixing value',    default=[1.]  , type='string'  , action='callback' , callback=hwwtools.list_maker('cprimesq',',',float))
     parser.add_option('--brnew'     ,    dest='brnew'   ,    help='EWK singlet BRNew values',           default=[0.]  , type='string'  , action='callback' , callback=hwwtools.list_maker('brnew',',',float))
-
+    parser.add_option('--YRSysVer'  ,    dest='YRSysVer',    help='Yellow Report Version (Syst)',       default=3     , type='int' )   
     hwwtools.addOptions(parser)
     hwwtools.loadOptDefaults(parser)
 
@@ -698,6 +708,7 @@ if __name__ == '__main__':
     optsNuis['shapeFlags'] = opt.shapeFlags
     optsNuis['nuisFlags'] = opt.nuisFlags
     optsNuis['floatN'] = opt.floatN
+    optsNuis['newInterf'] = opt.newcps
     lumistr = '{0:.2f}'.format(opt.lumi)
 
 
@@ -749,7 +760,7 @@ if __name__ == '__main__':
                 
                 # lista systematiche sperimentali (dal file. root)
                 effects = loader.effects()
-    
+
                 print '   + making nuisance map'
                 nuisances = builder.nuisances( yields, effects , mass, ch, jcat, fl, optsNuis)
     
