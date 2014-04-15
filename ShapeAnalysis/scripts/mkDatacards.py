@@ -547,7 +547,7 @@ class NuisanceMapBuilder:
 #         if '2011' in opt.dataset: suffix = '_7TeV'
 
         suffix = '_'+opt.energy
-        CutBased = getCommonSysts(int(mass),flavor,int(jetcat[0]),qqWWfromData, self._shape, optMatt, suffix, self._isssactive, opt.energy,opts['newInterf'],opt.YRSysVer)
+        CutBased = getCommonSysts(int(mass),flavor,int(jetcat[0]),qqWWfromData, self._shape, optMatt, suffix, self._isssactive, opt.energy,opts['newInterf'],opt.YRSysVer,opt.mHSM)
         if self._shape:
             # float WW+ggWW background normalisation float together
 #             for p in opts['floatN'].split(' '):
@@ -656,6 +656,7 @@ if __name__ == '__main__':
     parser.add_option('--cprimesq'  ,    dest='cprimesq',    help='EWK singlet C\'**2 mixing value',    default=[1.]  , type='string'  , action='callback' , callback=hwwtools.list_maker('cprimesq',',',float))
     parser.add_option('--brnew'     ,    dest='brnew'   ,    help='EWK singlet BRNew values',           default=[0.]  , type='string'  , action='callback' , callback=hwwtools.list_maker('brnew',',',float))
     parser.add_option('--YRSysVer'  ,    dest='YRSysVer',    help='Yellow Report Version (Syst)',       default=3     , type='int' )   
+    parser.add_option('--mHSM'      ,    dest='mHSM',        help='Mass of the SM Higgs boson@125',     default=125.6 , type='float')
     hwwtools.addOptions(parser)
     hwwtools.loadOptDefaults(parser)
 

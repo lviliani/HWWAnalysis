@@ -128,7 +128,7 @@ def loadYRSyst(YRVersion=3,Energy='8TeV') :
         vbfH_scaErrYR[X] = 0.5*(vbfH_scaErrYR[X-10]+vbfH_scaErrYR[X+10])
     
 
-def getCommonSysts(mass,channel,jets,qqWWfromData,shape,options,suffix,isssactive,Energy,newInterf=False,YRVersion=3,mh_SM=125.):
+def getCommonSysts(mass,channel,jets,qqWWfromData,shape,options,suffix,isssactive,Energy,newInterf=False,YRVersion=3,mh_SM=125.,mh_SM2=125. ):
 
     loadYRSyst(YRVersion,Energy)
 
@@ -171,12 +171,12 @@ def getCommonSysts(mass,channel,jets,qqWWfromData,shape,options,suffix,isssactiv
         k0 = pow(ggH_scaErrYR[mass],     1/ggH_jets[mass]['f0'])
         k1 = pow(ggH_jets[mass]['k1'], 1-1/ggH_jets[mass]['f0']) # -f1-f2=f0-1
         # ... and _SM:
-        k0_SM = pow(ggH_scaErrYR[mh_SM],     1/ggH_jets[mh_SM]['f0'])
-        k1_SM = pow(ggH_jets[mh_SM]['k1'], 1-1/ggH_jets[mh_SM]['f0']) # -f1-f2=f0-1
+        k0_SM = pow(ggH_scaErrYR[mh_SM2],     1/ggH_jets[mh_SM2]['f0'])
+        k1_SM = pow(ggH_jets[mh_SM2]['k1'], 1-1/ggH_jets[mh_SM2]['f0']) # -f1-f2=f0-1
         #nuisances['QCDscale_ggH']    = [  ['lnN'], { 'ggH':k0, 'ggH_SM':k0_SM }]
         #nuisances['QCDscale_ggH1in'] = [  ['lnN'], { 'ggH':k1, 'ggH_SM':k1_SM }]
-        nuisances['QCDscale_ggH']    = [  ['lnN'], { 'ggH':ggH_jets2[mass]['0'],    'ggH_SM':ggH_jets2[mh_SM]['0'] }]
-        nuisances['QCDscale_ggH1in'] = [  ['lnN'], { 'ggH':ggH_jets2[mass]['1in0'], 'ggH_SM':ggH_jets2[mh_SM]['1in0'] }]
+        nuisances['QCDscale_ggH']    = [  ['lnN'], { 'ggH':ggH_jets2[mass]['0'],    'ggH_SM':ggH_jets2[mh_SM2]['0'] }]
+        nuisances['QCDscale_ggH1in'] = [  ['lnN'], { 'ggH':ggH_jets2[mass]['1in0'], 'ggH_SM':ggH_jets2[mh_SM2]['1in0'] }]
         if not qqWWfromData:
             nuisances['QCDscale_WW']    = [ ['lnN'], {'WW': 1.042, 'ggWW': 1.042 }]
             nuisances['QCDscale_WW1in'] = [ ['lnN'], {'WW': 0.974, 'ggWW': 0.974 }]
@@ -185,12 +185,12 @@ def getCommonSysts(mass,channel,jets,qqWWfromData,shape,options,suffix,isssactiv
         k1 = pow(ggH_jets[mass]['k1'], 1+ggH_jets[mass]['f2']/ggH_jets[mass]['f1'])
         k2 = pow(ggH_jets[mass]['k2'],  -ggH_jets[mass]['f2']/ggH_jets[mass]['f1'])
         # ... and _SM:
-        k1_SM = pow(ggH_jets[mh_SM]['k1'], 1+ggH_jets[mh_SM]['f2']/ggH_jets[mh_SM]['f1'])
-        k2_SM = pow(ggH_jets[mh_SM]['k2'],  -ggH_jets[mh_SM]['f2']/ggH_jets[mh_SM]['f1'])
+        k1_SM = pow(ggH_jets[mh_SM2]['k1'], 1+ggH_jets[mh_SM]['f2']/ggH_jets[mh_SM2]['f1'])
+        k2_SM = pow(ggH_jets[mh_SM2]['k2'],  -ggH_jets[mh_SM]['f2']/ggH_jets[mh_SM2]['f1'])
         #nuisances['QCDscale_ggH1in'] = [  ['lnN'], { 'ggH':k1, 'ggH_SM':k1_SM }]
         #nuisances['QCDscale_ggH2in'] = [  ['lnN'], { 'ggH':k2, 'ggH_SM':k2_SM }]
-        nuisances['QCDscale_ggH1in'] = [  ['lnN'], { 'ggH':ggH_jets2[mass]['1in1'], 'ggH_SM':ggH_jets2[mh_SM]['1in1'] }]
-        nuisances['QCDscale_ggH2in'] = [  ['lnN'], { 'ggH':ggH_jets2[mass]['2in1'], 'ggH_SM':ggH_jets2[mh_SM]['2in1'] }]
+        nuisances['QCDscale_ggH1in'] = [  ['lnN'], { 'ggH':ggH_jets2[mass]['1in1'], 'ggH_SM':ggH_jets2[mh_SM2]['1in1'] }]
+        nuisances['QCDscale_ggH2in'] = [  ['lnN'], { 'ggH':ggH_jets2[mass]['2in1'], 'ggH_SM':ggH_jets2[mh_SM2]['2in1'] }]
         if not qqWWfromData:
             nuisances['QCDscale_WW1in'] = [ ['lnN'], {'WW': 1.076, 'ggWW': 1.076 }]
             nuisances['QCDscale_WW2in'] = [ ['lnN'], {'WW': 0.914, 'ggWW': 0.914 }]
@@ -254,8 +254,8 @@ def getCommonSysts(mass,channel,jets,qqWWfromData,shape,options,suffix,isssactiv
     nuisances['QCDscale_wH_ACCEPT']  = [ ['lnN'], {'WH':1.02 ,  'WH_SM':1.02}]
     nuisances['QCDscale_zH_ACCEPT']  = [ ['lnN'], {'ZH':1.02 ,  'ZH_SM':1.02}]
     nuisances['QCDscale_ttH_ACCEPT'] = [ ['lnN'], {'ttH':1.02,  'ttH_SM':1.02}]
-    if   jets == 0: nuisances['UEPS'] = [ ['lnN'], {'ggH':ggH_UEPS[mass]['u0'], 'ggH_SM':ggH_UEPS[mh_SM]['u0']}]
-    elif jets == 1: nuisances['UEPS'] = [ ['lnN'], {'ggH':ggH_UEPS[mass]['u1'], 'ggH_SM':ggH_UEPS[mh_SM]['u1']}]
+    if   jets == 0: nuisances['UEPS'] = [ ['lnN'], {'ggH':ggH_UEPS[mass]['u0'], 'ggH_SM':ggH_UEPS[mh_SM2]['u0']}]
+    elif jets == 1: nuisances['UEPS'] = [ ['lnN'], {'ggH':ggH_UEPS[mass]['u1'], 'ggH_SM':ggH_UEPS[mh_SM2]['u1']}]
     #elif jets == 2: nuisances['UEPS'] = [ ['lnN'], {'ggH':ggH_UEPS[mass]['u2'], 'ggH125':ggH_UEPS[mass]['u2']}]
     elif jets == 2:
       if options.VH:
