@@ -25,8 +25,6 @@ Efficiency weight
             --muname=muonsDATAMCratio_all \
             --elname=electronsDATAMCratio_All_selec
 
-    #   --elname=../../data/muons_scale_factors.root
-
 
 PileUp weight
 
