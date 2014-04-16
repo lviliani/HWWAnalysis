@@ -93,6 +93,7 @@ class FakeWVarFiller(TreeCloner):
         except RuntimeError:
             ROOT.gROOT.LoadMacro(cmssw_base+'/src/HWWAnalysis/ShapeAnalysis/python/tree/fakeW.C++g')
 
+        FakeProb = ROOT.FakeProbabilities()
 
         print '- Starting eventloop'
         step = 5000
@@ -103,9 +104,9 @@ class FakeWVarFiller(TreeCloner):
             if i > 0 and i%step == 0.:
                 print i,'events processed.'
 
-            #                                  <----          l1          --->  <----          l2          --->   <----          l3          --->   <----          l4          --->
-#           FakeProb = ROOT.FakeProbabilities(itree.pt1, itree.eta1, itree.id1, itree.pt2, itree.eta2, itree.id2, itree.pt3, itree.eta3, itree.id3, itree.pt4, itree.eta4, itree.id4 )
-            FakeProb = ROOT.FakeProbabilities(itree.pt1, itree.eta1, 0        , itree.pt2, itree.eta2,       0  , itree.pt3, itree.eta3,       0  , itree.pt4, itree.eta4, 0         )
+            #                     <----               l1                   ---> <----               l1                   --->  <----               l1                   --->  <----               l1                   --->
+          #FakeProb.SetKinematic(itree.pt1, itree.eta1, itree.id1, itree.type1, itree.pt2, itree.eta2, itree.id2, itree.type2, itree.pt3, itree.eta3, itree.id3, itree.type3, itree.pt4, itree.eta4, itree.id4, itree.type4 )
+            FakeProb.SetKinematic(itree.pt1, itree.eta1, 0        , 1         , itree.pt2, itree.eta2,       0  ,      1,      itree.pt3, itree.eta3,       0  ,     1      ,      itree.pt4, itree.eta4, 0   ,     1       )
 
             newFakeW[0] = FakeProb.FakeW4l()
 
