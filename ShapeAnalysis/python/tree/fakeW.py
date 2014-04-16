@@ -65,14 +65,16 @@ class FakeWVarFiller(TreeCloner):
         output = kwargs['output']
 
         self.connect(tree,input)
-        newbranches = ['newFakeW', 'newFakeWup']
+        newbranches = ['fakeWjet4l', 'fakeWjet4lUp',  'fakeWjet4lDown']
         self.clone(output,newbranches)
 
-        newFakeW      = numpy.ones(1, dtype=numpy.float32)
-        newFakeWup    = numpy.ones(1, dtype=numpy.float32)
+        fakeWjet4l      = numpy.ones(1, dtype=numpy.float32)
+        fakeWjet4lUp    = numpy.ones(1, dtype=numpy.float32)
+        fakeWjet4lDown  = numpy.ones(1, dtype=numpy.float32)
 
-        self.otree.Branch('newFakeW'    ,  newFakeW    ,  'newFakeW/F'    )
-        self.otree.Branch('newFakeWup'  ,  newFakeWup  ,  'newFakeWup/F'  )
+        self.otree.Branch('fakeWjet4l'      ,  fakeWjet4l      ,  'fakeWjet4l/F'  )
+        self.otree.Branch('fakeWjet4lUp'    ,  fakeWjet4lUp    ,  'fakeWjet4lUp/F'  )
+        self.otree.Branch('fakeWjet4lDown'  ,  fakeWjet4lDown  ,  'fakeWjet4lDown/F'  )
 
         nentries = self.itree.GetEntries()
         print 'Total number of entries: ',nentries 
@@ -104,11 +106,16 @@ class FakeWVarFiller(TreeCloner):
             if i > 0 and i%step == 0.:
                 print i,'events processed.'
 
+            #---- since different thresholds are used for different jet bin categories
+            FakeProb.SetNjet(itree.njet)
+
             #                     <----               l1                   ---> <----               l1                   --->  <----               l1                   --->  <----               l1                   --->
           #FakeProb.SetKinematic(itree.pt1, itree.eta1, itree.id1, itree.type1, itree.pt2, itree.eta2, itree.id2, itree.type2, itree.pt3, itree.eta3, itree.id3, itree.type3, itree.pt4, itree.eta4, itree.id4, itree.type4 )
             FakeProb.SetKinematic(itree.pt1, itree.eta1, 0        , 1         , itree.pt2, itree.eta2,       0  ,      1,      itree.pt3, itree.eta3,       0  ,     1      ,      itree.pt4, itree.eta4, 0   ,     1       )
 
-            newFakeW[0] = FakeProb.FakeW4l()
+            fakeWjet4l[0] = FakeProb.FakeW4l(0)
+            fakeWjet4lDown[0] = FakeProb.FakeW4l(-1)
+            fakeWjet4lUp[0]   = FakeProb.FakeW4l(1)
 
             otree.Fill()
 

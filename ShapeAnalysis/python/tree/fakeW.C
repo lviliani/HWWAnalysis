@@ -22,22 +22,28 @@ class FakeProbabilities {
   void setPRMuons(TH2F* promptH2Mu, TFile *PR_file);
 
   void SetKinematic(float pt1, float eta1, float id1, float type1, float pt2, float eta2, float id2, float type2, float pt3, float eta3, float id3, float type3, float pt4, float eta4, float id4, float type4);
+  void SetNjet(float njet);
   //! probability fuctions
-  double FakeW4l();
-  double FakeW4l(float pt1, float eta1, float id1, float type1, float pt2, float eta2, float id2, float type2, float pt3, float eta3, float id3, float type3, float pt4, float eta4, float id4, float type4);
-  double FakeW3l();
-  double FakeW3l(float pt1, float eta1, float id1, float type1, float pt2, float eta2, float id2, float type2, float pt3, float eta3, float id3, float type3);
+  double FakeW3l(int syst);  //---- syst = -1 down, 0 nominal, 1 up
+  double FakeW3l(int syst, float pt1, float eta1, float id1, float type1, float pt2, float eta2, float id2, float type2, float pt3, float eta3, float id3, float type3);
   double GetPPFWeight(int muonJetPt, int elecJetPt);
   double GetPFFWeight(int muonJetPt, int elecJetPt);
   double GetFFFWeight(int muonJetPt, int elecJetPt);
+  double GetPPPWeight(int muonJetPt, int elecJetPt);
+
+  double FakeW4l(int syst);
+  double FakeW4l(int syst, float pt1, float eta1, float id1, float type1, float pt2, float eta2, float id2, float type2, float pt3, float eta3, float id3, float type3, float pt4, float eta4, float id4, float type4);
+  double GetPPPPWeight(int muonJetPt, int elecJetPt);
 
   double GetFakeElectron(float pt, float eta, int jetit);
   double GetFakeMuon(float pt, float eta, int jetit);
-  double GetPromptElectron(float pt, float eta, int jetit);
-  double GetPromptMuon(float pt, float eta, int jetit);
+  double GetPromptElectron(float pt, float eta);
+  double GetPromptMuon(float pt, float eta);
 
 
  private:
+
+  int njet_;
 
   float pt1_;
   float eta1_;
@@ -138,8 +144,8 @@ FakeProbabilities::FakeProbabilities() {
  etaBinsElPrompt[3] = 2.5;
 
  // histograms for FR (with different jet ET thresholds) and PR 
- int muJetETdn = 2, muJetETnom = 3, muJetETup = 6; // 15/20/35 for 0jet (+05 for 1-jet, +10 for 2-jet for nominal)
- int elJetETdn = 0, elJetETnom = 1, elJetETup = 2; // 15/35/50
+//  int muJetETdn = 2, muJetETnom = 3, muJetETup = 6; // 15/20/35 for 0jet (+05 for 1-jet, +10 for 2-jet for nominal)
+//  int elJetETdn = 0, elJetETnom = 1, elJetETup = 2; // 15/35/50
  TString muJetET[nMuJetET] = { "05", "10", "15", "20", "25", "30", "35", "40", "45", "50" };
  TString elJetET[nElJetET] = { "15", "35", "50" };
 
@@ -331,6 +337,32 @@ void FakeProbabilities::setFRElectrons(TH2F* fakeH2El,  TFile *FR_file){
 
 
 
+///---- actual "get fake/prompt" ----
+
+double FakeProbabilities::GetFakeElectron(float pt, float eta, int jetit) {
+ float result = 1.;
+ result = fakeElH2[jetit]->GetBinContent(fakeElH2[jetit]->FindBin(std::min(1.*pt,35.),eta));
+ return result;
+}
+
+double FakeProbabilities::GetFakeMuon(float pt, float eta, int jetit) {
+ float result = 1.;
+ result = fakeMuH2[jetit]->GetBinContent(fakeMuH2[jetit]->FindBin(std::min(1.*pt,35.),eta));
+ return result;
+}
+
+double FakeProbabilities::GetPromptElectron(float pt, float eta) {
+ float result = 1.;
+ result = promptElH2->GetBinContent(promptElH2->FindBin(std::min(1.*pt,35.),eta));
+ return result;
+}
+
+double FakeProbabilities::GetPromptMuon(float pt, float eta) {
+ float result = 1.;
+ result = promptMuH2->GetBinContent(promptMuH2->FindBin(std::min(1.*pt,35.),eta));
+ return result;
+}
+
 
 //---- init kinematic ----
 
@@ -358,17 +390,45 @@ void FakeProbabilities::SetKinematic(float pt1, float eta1, float id1, float typ
 }
 
 
+void FakeProbabilities::SetNjet(float njet) {
+ njet_ = int(njet);
+}
+
+
+
 //---- 3 leptons case ----
 
-double FakeProbabilities::FakeW3l(){
-
+double FakeProbabilities::FakeW3l(int syst){
  float weight = 1.;
+
+ int muonJetPt = -1;
+ int elecJetPt = -1;
+
+ if (njet_ == 0  &&  syst == -1) { muonJetPt = 2;   elecJetPt = 0;  }
+ if (njet_ == 0  &&  syst ==  0) { muonJetPt = 3;   elecJetPt = 1;  }
+ if (njet_ == 0  &&  syst ==  1) { muonJetPt = 6;   elecJetPt = 2;  }
+
+ if (njet_ == 1  &&  syst == -1) { muonJetPt = 3;   elecJetPt = 0;  }
+ if (njet_ == 1  &&  syst ==  0) { muonJetPt = 4;   elecJetPt = 1;  }
+ if (njet_ == 1  &&  syst ==  1) { muonJetPt = 7;   elecJetPt = 2;  }
+
+ if (njet_ >= 2  &&  syst == -1) { muonJetPt = 4;   elecJetPt = 0;  }
+ if (njet_ >= 2  &&  syst ==  0) { muonJetPt = 5;   elecJetPt = 1;  }
+ if (njet_ >= 2  &&  syst ==  1) { muonJetPt = 8;   elecJetPt = 2;  }
+
+ //---- muons:  15/20/35 for 0jet (+05 for 1-jet, +10 for 2-jet for nominal)
+ //---- electrons:    15/35/50
+ //                                  0     1     2     3     4     5     6     7     8     9
+ //  TString muJetET[nMuJetET] = { "05", "10", "15", "20", "25", "30", "35", "40", "45", "50" };
+ //  TString elJetET[nElJetET] = { "15", "35", "50" };
+
+ weight = GetPPPWeight( muonJetPt,    elecJetPt);
  return weight;
 
 }
 
 
-double FakeProbabilities::FakeW3l(float pt1, float eta1, float id1, float type1, float pt2, float eta2, float id2, float type2, float pt3, float eta3, float id3, float type3){
+double FakeProbabilities::FakeW3l(int syst, float pt1, float eta1, float id1, float type1, float pt2, float eta2, float id2, float type2, float pt3, float eta3, float id3, float type3){
  pt1_   = pt1;
  eta1_  = eta1;
  id1_   = id1;
@@ -384,34 +444,7 @@ double FakeProbabilities::FakeW3l(float pt1, float eta1, float id1, float type1,
  id3_   = id3;
  type3_ = type3;
 
- return FakeW3l();
-}
-
-
-///---- actual "get fake/prompt" ----
-
-double FakeProbabilities::GetFakeElectron(float pt, float eta, int jetit) {
- float result = 1.;
- result = fakeElH2[jetit]->GetBinContent(fakeElH2[jetit]->FindBin(std::min(1.*pt,35.),eta));
- return result;
-}
-
-double FakeProbabilities::GetFakeMuon(float pt, float eta, int jetit) {
- float result = 1.;
- result = fakeMuH2[jetit]->GetBinContent(fakeMuH2[jetit]->FindBin(std::min(1.*pt,35.),eta));
- return result;
-}
-
-double FakeProbabilities::GetPromptElectron(float pt, float eta, int jetit) {
- float result = 1.;
- result = promptElH2->GetBinContent(promptElH2->FindBin(std::min(1.*pt,35.),eta));
- return result;
-}
-
-double FakeProbabilities::GetPromptMuon(float pt, float eta, int jetit) {
- float result = 1.;
- result = promptMuH2->GetBinContent(promptMuH2->FindBin(std::min(1.*pt,35.),eta));
- return result;
+ return FakeW3l(syst);
 }
 
 
@@ -437,7 +470,7 @@ double FakeProbabilities::GetPPFWeight(int muonJetPt, int elecJetPt) {
 
  for (int ilep = 0; ilep<3; ilep++) {
   f = (abs(id[ilep]) == 13)   ?   GetFakeMuon(pt[ilep], eta[ilep], muonJetPt)    :   GetFakeElectron(pt[ilep], eta[ilep], elecJetPt);
-  p = (abs(id[ilep]) == 13)   ?   GetPromptMuon(pt[ilep], eta[ilep], muonJetPt)  :   GetPromptElectron(pt[ilep], eta[ilep], elecJetPt);
+  p = (abs(id[ilep]) == 13)   ?   GetPromptMuon(pt[ilep], eta[ilep])             :   GetPromptElectron(pt[ilep], eta[ilep]);
 
   if (type[ilep] == 1){
    promptProbability[ilep] = p * (1 - f);
@@ -489,7 +522,7 @@ double FakeProbabilities::GetPFFWeight(int muonJetPt, int elecJetPt) {
 
  for (int ilep = 0; ilep<3; ilep++) {
   f = (abs(id[ilep]) == 13)   ?   GetFakeMuon(pt[ilep], eta[ilep], muonJetPt)    :   GetFakeElectron(pt[ilep], eta[ilep], elecJetPt);
-  p = (abs(id[ilep]) == 13)   ?   GetPromptMuon(pt[ilep], eta[ilep], muonJetPt)  :   GetPromptElectron(pt[ilep], eta[ilep], elecJetPt);
+  p = (abs(id[ilep]) == 13)   ?   GetPromptMuon(pt[ilep], eta[ilep])             :   GetPromptElectron(pt[ilep], eta[ilep]);
 
   if (type[ilep] == 1){
    promptProbability[ilep] = p * (1 - f);
@@ -540,7 +573,7 @@ double FakeProbabilities::GetFFFWeight(int muonJetPt, int elecJetPt) {
 
  for (int ilep = 0; ilep<3; ilep++) {
   f = (abs(id[ilep]) == 13)   ?   GetFakeMuon(pt[ilep], eta[ilep], muonJetPt)    :   GetFakeElectron(pt[ilep], eta[ilep], elecJetPt);
-  p = (abs(id[ilep]) == 13)   ?   GetPromptMuon(pt[ilep], eta[ilep], muonJetPt)  :   GetPromptElectron(pt[ilep], eta[ilep], elecJetPt);
+  p = (abs(id[ilep]) == 13)   ?   GetPromptMuon(pt[ilep], eta[ilep])             :   GetPromptElectron(pt[ilep], eta[ilep]);
 
   if (type[ilep] == 1){
    promptProbability[ilep] = p * (1 - f);
@@ -568,16 +601,88 @@ double FakeProbabilities::GetFFFWeight(int muonJetPt, int elecJetPt) {
 
 
 
+//----------------------
+//---- GetPPPWeight ----
+//----------------------
+double FakeProbabilities::GetPPPWeight(int muonJetPt, int elecJetPt) {
+ double promptProbability[3];
+ double fakeProbability[3];
 
-//---- 4 leptons case ----
+ double pt[3];
+ double eta[3];
+ double id[3];
+ double type[3];
 
-double FakeProbabilities::FakeW4l(){
+ pt[0] = pt1_;        pt[1] = pt2_;        pt[2] = pt3_;
+ eta[0] = eta1_;      eta[1] = eta2_;      eta[2] = eta3_;
+ id[0] = id1_;        id[1] = id2_;        id[2] = id3_;
+ type[0] = type1_;    type[1] = type2_;    type[2] = type3_;
 
- return 1.;
+ double f;
+ double p;
+
+ for (int ilep = 0; ilep<3; ilep++) {
+  f = (abs(id[ilep]) == 13)   ?   GetFakeMuon(pt[ilep], eta[ilep], muonJetPt)    :   GetFakeElectron(pt[ilep], eta[ilep], elecJetPt);
+  p = (abs(id[ilep]) == 13)   ?   GetPromptMuon(pt[ilep], eta[ilep])             :   GetPromptElectron(pt[ilep], eta[ilep]);
+
+  if (type[ilep] == 1){
+   promptProbability[ilep] = p * (1 - f);
+   fakeProbability[ilep] = f * (1 - p);
+  }
+  else {
+   promptProbability[ilep] = p * f;
+   fakeProbability[ilep] = p * f;
+  }
+  promptProbability[ilep] /= (p - f);
+  fakeProbability[ilep] /= (p - f);
+ }
+
+ //---- now combine properly
+ Double_t PPP = promptProbability[0] * promptProbability[1] * promptProbability[2];
+
+ double result = PPP;
+
+ int nTight = type1_+type2_+type3_;
+ if ( nTight == 0 || nTight == 2) result *= -1.;
+
+ return result;
 }
 
 
-double FakeProbabilities::FakeW4l(float pt1, float eta1, float id1, float type1, float pt2, float eta2, float id2, float type2, float pt3, float eta3, float id3, float type3, float pt4, float eta4, float id4, float type4){
+
+
+//---- 4 leptons case ----
+
+double FakeProbabilities::FakeW4l(int syst){
+ float weight = 1.;
+
+ int muonJetPt = -1;
+ int elecJetPt = -1;
+
+ if (njet_ == 0  &&  syst == -1) { muonJetPt = 2;   elecJetPt = 0;  }
+ if (njet_ == 0  &&  syst ==  0) { muonJetPt = 3;   elecJetPt = 1;  }
+ if (njet_ == 0  &&  syst ==  1) { muonJetPt = 6;   elecJetPt = 2;  }
+
+ if (njet_ == 1  &&  syst == -1) { muonJetPt = 3;   elecJetPt = 0;  }
+ if (njet_ == 1  &&  syst ==  0) { muonJetPt = 4;   elecJetPt = 1;  }
+ if (njet_ == 1  &&  syst ==  1) { muonJetPt = 7;   elecJetPt = 2;  }
+
+ if (njet_ >= 2  &&  syst == -1) { muonJetPt = 4;   elecJetPt = 0;  }
+ if (njet_ >= 2  &&  syst ==  0) { muonJetPt = 5;   elecJetPt = 1;  }
+ if (njet_ >= 2  &&  syst ==  1) { muonJetPt = 8;   elecJetPt = 2;  }
+
+ //---- muons:  15/20/35 for 0jet (+05 for 1-jet, +10 for 2-jet for nominal)
+ //---- electrons:    15/35/50
+ //                                  0     1     2     3     4     5     6     7     8     9
+ //  TString muJetET[nMuJetET] = { "05", "10", "15", "20", "25", "30", "35", "40", "45", "50" };
+ //  TString elJetET[nElJetET] = { "15", "35", "50" };
+
+ weight = GetPPPPWeight( muonJetPt,    elecJetPt);
+ return weight;
+}
+
+
+double FakeProbabilities::FakeW4l(int syst, float pt1, float eta1, float id1, float type1, float pt2, float eta2, float id2, float type2, float pt3, float eta3, float id3, float type3, float pt4, float eta4, float id4, float type4){
  pt1_   = pt1;
  eta1_  = eta1;
  id1_   = id1;
@@ -598,6 +703,56 @@ double FakeProbabilities::FakeW4l(float pt1, float eta1, float id1, float type1,
  id4_   = id4;
  type4_ = type4;
 
- return FakeW4l();
+ return FakeW4l(syst);
+}
+
+
+
+
+//----------------------
+//---- GetPPPPWeight ----
+//----------------------
+double FakeProbabilities::GetPPPPWeight(int muonJetPt, int elecJetPt) {
+ double promptProbability[4];
+ double fakeProbability[4];
+
+ double pt[4];
+ double eta[4];
+ double id[4];
+ double type[4];
+
+ pt[0] = pt1_;        pt[1] = pt2_;        pt[2] = pt3_;        pt[3] = pt4_;
+ eta[0] = eta1_;      eta[1] = eta2_;      eta[2] = eta3_;      eta[3] = eta4_;
+ id[0] = id1_;        id[1] = id2_;        id[2] = id3_;        id[3] = id4_;
+ type[0] = type1_;    type[1] = type2_;    type[2] = type3_;    type[3] = type4_;
+
+ double f;
+ double p;
+
+ for (int ilep = 0; ilep<4; ilep++) {
+  f = (abs(id[ilep]) == 13)   ?   GetFakeMuon(pt[ilep], eta[ilep], muonJetPt)    :   GetFakeElectron(pt[ilep], eta[ilep], elecJetPt);
+  p = (abs(id[ilep]) == 13)   ?   GetPromptMuon(pt[ilep], eta[ilep])             :   GetPromptElectron(pt[ilep], eta[ilep]);
+
+  if (type[ilep] == 1){
+   promptProbability[ilep] = p * (1 - f);
+   fakeProbability[ilep] = f * (1 - p);
+  }
+  else {
+   promptProbability[ilep] = p * f;
+   fakeProbability[ilep] = p * f;
+  }
+  promptProbability[ilep] /= (p - f);
+  fakeProbability[ilep] /= (p - f);
+ }
+
+ //---- now combine properly
+ Double_t PPPP = promptProbability[0] * promptProbability[1] * promptProbability[2] * promptProbability[3];
+
+ double result = PPPP;
+
+ int nTight = type1_+type2_+type3_+type4_;
+ if ( nTight == 1 || nTight == 3) result *= -1.;
+
+ return result;
 }
 
