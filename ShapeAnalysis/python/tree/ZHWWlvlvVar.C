@@ -1,12 +1,13 @@
 //////////////////////////////////////////////
 //
-// Written and designed by M. franke 04-04-14
+// Written and designed by M. franke 04-15-14
 // Northeastern University
 //
 //////////////////////////////////////////////
 
-#include <TMath.h>
+# include <TMath.h>
 # include <algorithm>
+
 // add dphi Z-W-lepton1,2!
 
 class ZHWW4lvari {
@@ -14,7 +15,7 @@ class ZHWW4lvari {
   //! constructor
   ZHWW4lvari(float pt1,float pt2,float pt3,float pt4,float eta1,float eta2,float eta3,float eta4,float phi1,float phi2,float phi3,float phi4,float ch1,float ch2,float ch3,float ch4,float fl1,float fl2,float fl3,float fl4);
   virtual ~ZHWW4lvari() {}
-  
+
   //! functions
   int CalcValues();
   float GetMllZ();
@@ -47,8 +48,8 @@ ZHWW4lvari::ZHWW4lvari(float pt1,float pt2,float pt3,float pt4,float eta1,float 
  pTs[0] = pt1; pTs[1] = pt2; pTs[2] = pt3; pTs[3] = pt4;
  etas[0] = eta1; etas[1] = eta2; etas[2] = eta3; etas[3] = eta4;
  phis[0] = phi1; phis[1] = phi2; phis[2] = phi3; phis[3] = phi4;
- charges[0] = ch1; charges[1] = ch2; charges[2] = ch3; charges[3] = ch4;  // +/- 1
- flavors[0] = fl1; flavors[1] = fl2; flavors[2] = fl3; flavors[3] = fl4;  // flavor: 13 = Muon, 11 = Electron
+ charges[0] = ch1; charges[1] = ch2; charges[2] = ch3; charges[3] = ch4; // +/- 1
+ flavors[0] = fl1; flavors[1] = fl2; flavors[2] = fl3; flavors[3] = fl4; // flavor: 13 = Muon, 11 = Electron
 
  CalcValues();
 }
@@ -60,12 +61,12 @@ int ZHWW4lvari::CalcValues(){
  float dmlls[6]; // difference in invariant mass from Z-mass
  float mindmll = 600;
  int index[4] = {0,0,0,0}; // 0 + 1 -> Z, 2 + 3 -> W
-
+ int Z = 0;
  if(charges[0] + charges[1] + charges[2] + charges[3] == 0){
   int I6 = 0;
   for(int i = 0; i<3;i++){
    for(int j = i+1; j<4;j++){
-    mlls[I6] = TMath::Sqrt(2*pTs[i]*pTs[j]*(TMath::CosH(etas[i]-etas[j]) - TMath::Cos(phis[i]-phis[j]))); // invariant mass of i and j 
+    mlls[I6] = TMath::Sqrt(2*pTs[i]*pTs[j]*(TMath::CosH(etas[i]-etas[j]) - TMath::Cos(phis[i]-phis[j]))); // invariant mass of i and j
     dmlls[I6] = TMath::Abs(91.1876-mlls[I6]); // difference to Z mass
     int i3 = getIndex(i,j);
     if (i3>= 0 && (mindmll > dmlls[I6]) && (charges[i] != charges[j]) && (charges[i3] != charges[6 - i3-i-j])){
@@ -76,13 +77,14 @@ int ZHWW4lvari::CalcValues(){
       index[2] = i3; // W_lepton_1
       index[3] = 6 - i-j-i3; // W_lepton_2
       finalI6 = I6;
+      Z = 1;
      }
     }
     I6++;
    }
   }
  }
- if(finalI6){    
+ if(Z){
   float mllZ = mlls[finalI6];
   float mllW = mlls[5-finalI6];
   float dphillZ = std::min(1.*fabs(phis[index[0]]-phis[index[1]]),1.*(2*TMath::Pi()-fabs(phis[index[0]]-phis[index[1]])));
@@ -127,7 +129,7 @@ int ZHWW4lvari::CalcValues(){
         
   values[10] = -9999; // invariant mass of 4-lepton system
   return 1;
- }  
+ }
 }
 
 float ZHWW4lvari::GetMllZ(){
@@ -167,13 +169,15 @@ float ZHWW4lvari::GetM4l(){
 int ZHWW4lvari::getIndex(int a, int b){
     // takes index 1 + 2 of a 4 variable system
     // returns index 3 so that 1 != 2 != 3
-    // index 4 = 6 - a - b - getIndex(a,b) 
- switch( 6 - a - b ){ 
+    // index 4 = 6 - a - b - getIndex(a,b)
+ switch( 6 - a - b ){
   case 5: return 2;
-  case 4: return 1; 
+  case 4: return 1;
   case 3: if(a == 0){return 1;} else{return 0;}
   case 2: return 0;
-  case 1: return 0; 
+  case 1: return 0;
  }
  return -1;
 }
+
+ 
