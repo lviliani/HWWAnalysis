@@ -25,6 +25,7 @@ from tree.wwGenInfo         import WWGenFiller
 from tree.higgsCPS          import HiggsCPSWeightAdder
 from tree.fakeW             import FakeWVarFiller
 from tree.ZHWWlvlvVar       import ZhwwlvlvVarFiller
+from tree.leptonTypeVar     import LeptonTypeVarFiller
 
 
 
@@ -58,9 +59,11 @@ if __name__ == '__main__':
     modules['wwGenInfo']        = WWGenFiller()
     modules['higgsCPS']         = HiggsCPSWeightAdder()
 
-#   Fake backgroud
+# Fake backgroud
     modules['fakeW']            =  FakeWVarFiller()
 # zhwwlvlv
     modules['zhwwlvlvVar']      =  ZhwwlvlvVarFiller()
+# add if a lepton pass/fail id+iso
+    modules['leptonTypeVar']    =  LeptonTypeVarFiller()
 
     gardener_cli( modules )
