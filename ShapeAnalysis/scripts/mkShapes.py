@@ -874,9 +874,14 @@ class ShapeFactory:
          xs_Scale = 1.
          br_Scale = 1.
          if self._energy == '7TeV' or self._energy == '8TeV' :
-           if prodMode in ['ggH','qqH','WH','ZH','ttH'] :
+           if prodMode in ['ggH','qqH'] :
+             print prodMode,mass 
              xs_Scale = self._YRValues['YR3']['xs'][prodMode][mass]['XS_pb']/self._YRValues['YR2']['xs'][prodMode][mass]['XS_pb']
              br_Scale = self._YRValues['YR3']['br']['VV'][mass]['H_WW']/self._YRValues['YR2']['br']['VV'][mass]['H_WW']
+           elif prodMode in ['WH','ZH','ttH'] :
+             if mass <= 300 :
+               xs_Scale = self._YRValues['YR3']['xs'][prodMode][mass]['XS_pb']/self._YRValues['YR2']['xs'][prodMode][mass]['XS_pb']
+               br_Scale = self._YRValues['YR3']['br']['VV'][mass]['H_WW']/self._YRValues['YR2']['br']['VV'][mass]['H_WW']
            elif prodMode == 'ggH_ALT' :
              xs_Scale = self._YRValues['YR3']['xs']['ggH'][mass]['XS_pb']/self._YRValues['YR2']['xs']['ggH'][mass]['XS_pb']
              br_Scale = self._YRValues['YR3']['br']['VV'][mass]['H_WW']/self._YRValues['YR2']['br']['VV'][mass]['H_WW']
@@ -885,9 +890,9 @@ class ShapeFactory:
              br_Scale = self._YRValues['YR3']['br']['VV'][mass]['H_WW']/self._YRValues['YR2']['br']['VV'][mass]['H_WW']
            elif prodMode in ['ggH_SM','qqH_SM','WH_SM','ZH_SM','ttH_SM'] :
              prodModeStrip = prodMode.split('_')[0]
-             massSMSample  = 125. 
-             xs_Scale = self._YRValues['YR3']['xs'][prodModeStrip][massSMSample]['XS_pb']/self._YRValues['YR2']['xs'][prodModeStrip][massSMSample]['XS_pb']
-             br_Scale = self._YRValues['YR3']['br']['VV'][massSMSample]['H_WW']/self._YRValues['YR2']['br']['VV'][massSMSample]['H_WW']
+             massSM = 125
+             xs_Scale = self._YRValues['YR3']['xs'][prodModeStrip][massSM]['XS_pb']/self._YRValues['YR2']['xs'][prodModeStrip][massSM]['XS_pb']
+             br_Scale = self._YRValues['YR3']['br']['VV'][massSM]['H_WW']/self._YRValues['YR2']['br']['VV'][massSM]['H_WW']
            else:
              print 'YR3 reweight: UNKNW prodMode : '+prodMode
          hWght += '*'+str(xs_Scale)+'*'+str(br_Scale)
@@ -1343,7 +1348,7 @@ if __name__ == '__main__':
     parser.add_option('--cprimesq'  ,    dest='cprimesq',    help='EWK singlet C\'**2 mixing value',    default=[1.]  , type='string'  , action='callback' , callback=hwwtools.list_maker('cprimesq',',',float))
     parser.add_option('--brnew'     ,    dest='brnew'   ,    help='EWK singlet BRNew values',           default=[0.]  , type='string'  , action='callback' , callback=hwwtools.list_maker('brnew',',',float))
     parser.add_option('--approxewk'  ,    dest='approxewk',    help='EWK not scaling width/interf',     default=False , action='store_true') 
-    parser.add_option('--YR3'        ,    dest='YR3rewght',    help='Rewhgt from YR2 to YR3' ,          default=False , action='store_true')  
+    parser.add_option('--YR3'        ,    dest='YR3rewght',    help='Rewhgt from YR2 to YR3' ,          default=True , action='store_true')  
     parser.add_option('--mHSM'      ,    dest='mHSM',        help='Mass of the SM Higgs boson@125',     default=125.6 , type='float')
 
     hwwtools.addOptions(parser)

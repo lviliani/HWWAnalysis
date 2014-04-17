@@ -185,8 +185,8 @@ def getCommonSysts(mass,channel,jets,qqWWfromData,shape,options,suffix,isssactiv
         k1 = pow(ggH_jets[mass]['k1'], 1+ggH_jets[mass]['f2']/ggH_jets[mass]['f1'])
         k2 = pow(ggH_jets[mass]['k2'],  -ggH_jets[mass]['f2']/ggH_jets[mass]['f1'])
         # ... and _SM:
-        k1_SM = pow(ggH_jets[mh_SM2]['k1'], 1+ggH_jets[mh_SM]['f2']/ggH_jets[mh_SM2]['f1'])
-        k2_SM = pow(ggH_jets[mh_SM2]['k2'],  -ggH_jets[mh_SM]['f2']/ggH_jets[mh_SM2]['f1'])
+        k1_SM = pow(ggH_jets[mh_SM2]['k1'], 1+ggH_jets[mh_SM2]['f2']/ggH_jets[mh_SM2]['f1'])
+        k2_SM = pow(ggH_jets[mh_SM2]['k2'],  -ggH_jets[mh_SM2]['f2']/ggH_jets[mh_SM2]['f1'])
         #nuisances['QCDscale_ggH1in'] = [  ['lnN'], { 'ggH':k1, 'ggH_SM':k1_SM }]
         #nuisances['QCDscale_ggH2in'] = [  ['lnN'], { 'ggH':k2, 'ggH_SM':k2_SM }]
         nuisances['QCDscale_ggH1in'] = [  ['lnN'], { 'ggH':ggH_jets2[mass]['1in1'], 'ggH_SM':ggH_jets2[mh_SM2]['1in1'] }]
