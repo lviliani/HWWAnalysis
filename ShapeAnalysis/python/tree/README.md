@@ -66,6 +66,15 @@ add useful variables, if not already available:
                /tmp/amassiro/latino_RunA_892pbinv_LooseLoose_NEW.root /tmp/amassiro/latino_RunA_892pbinv_LooseLoose_NEW_idx.root 
 
 
+    echo y | ./gardener.py  adder \
+               -v 'type1/F=pass2012ICHEP1'  \
+               -v 'type2/F=pass2012ICHEP2'  \
+               -v 'type3/F=pass2012ICHEP3'  \
+               -v 'type4/F=pass2012ICHEP4'  \
+               /tmp/amassiro/latino_RunA_892pbinv_LooseLoose_NEW.root /tmp/amassiro/latino_RunA_892pbinv_LooseLoose_NEW_pass.root 
+
+
+
 
 Fake W+jets
 ====
