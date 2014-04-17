@@ -56,23 +56,36 @@ class FakeWVarFiller(TreeCloner):
     def checkOptions(self,opts):
         self._mc     = opts.mc
         #self._dt     = opts.dt
-        pass
+        #pass
 
 
     def process(self,**kwargs):
+
+        # prepare
+        cmssw_base = os.getenv('CMSSW_BASE')
+        try:
+            ROOT.gROOT.LoadMacro(cmssw_base+'/src/HWWAnalysis/ShapeAnalysis/python/tree/fakeW.C+g')
+        except RuntimeError:
+            ROOT.gROOT.LoadMacro(cmssw_base+'/src/HWWAnalysis/ShapeAnalysis/python/tree/fakeW.C++g')
+
+        FakeProb = ROOT.FakeProbabilities()
+        # end preparation
+
         tree  = kwargs['tree']
         input = kwargs['input']
         output = kwargs['output']
 
         self.connect(tree,input)
-        newbranches = ['newFakeW', 'newFakeWup']
+        newbranches = ['fakeWjet4l', 'fakeWjet4lUp',  'fakeWjet4lDown']
         self.clone(output,newbranches)
 
-        newFakeW      = numpy.ones(1, dtype=numpy.float32)
-        newFakeWup    = numpy.ones(1, dtype=numpy.float32)
+        fakeWjet4l      = numpy.ones(1, dtype=numpy.float32)
+        fakeWjet4lUp    = numpy.ones(1, dtype=numpy.float32)
+        fakeWjet4lDown  = numpy.ones(1, dtype=numpy.float32)
 
-        self.otree.Branch('newFakeW'    ,  newFakeW    ,  'newFakeW/F'    )
-        self.otree.Branch('newFakeWup'  ,  newFakeWup  ,  'newFakeWup/F'  )
+        self.otree.Branch('fakeWjet4l'      ,  fakeWjet4l      ,  'fakeWjet4l/F'  )
+        self.otree.Branch('fakeWjet4lUp'    ,  fakeWjet4lUp    ,  'fakeWjet4lUp/F'  )
+        self.otree.Branch('fakeWjet4lDown'  ,  fakeWjet4lDown  ,  'fakeWjet4lDown/F'  )
 
         nentries = self.itree.GetEntries()
         print 'Total number of entries: ',nentries 
@@ -86,14 +99,6 @@ class FakeWVarFiller(TreeCloner):
         itree     = self.itree
         otree     = self.otree
 
-
-        cmssw_base = os.getenv('CMSSW_BASE')
-        try:
-            ROOT.gROOT.LoadMacro(cmssw_base+'/src/HWWAnalysis/ShapeAnalysis/python/tree/fakeW.C+g')
-        except RuntimeError:
-            ROOT.gROOT.LoadMacro(cmssw_base+'/src/HWWAnalysis/ShapeAnalysis/python/tree/fakeW.C++g')
-
-
         print '- Starting eventloop'
         step = 5000
         for i in xrange(nentries):
@@ -103,11 +108,16 @@ class FakeWVarFiller(TreeCloner):
             if i > 0 and i%step == 0.:
                 print i,'events processed.'
 
-            #                                  <----          l1          --->  <----          l2          --->   <----          l3          --->   <----          l4          --->
-#           FakeProb = ROOT.FakeProbabilities(itree.pt1, itree.eta1, itree.id1, itree.pt2, itree.eta2, itree.id2, itree.pt3, itree.eta3, itree.id3, itree.pt4, itree.eta4, itree.id4 )
-            FakeProb = ROOT.FakeProbabilities(itree.pt1, itree.eta1, 0        , itree.pt2, itree.eta2,       0  , itree.pt3, itree.eta3,       0  , itree.pt4, itree.eta4, 0         )
+            #---- since different thresholds are used for different jet bin categories
+            FakeProb.SetNjet(itree.njet)
 
-            newFakeW[0] = FakeProb.FakeW4l()
+            #                     <----               l1                   ---> <----               l1                   --->  <----               l1                   --->  <----               l1                   --->
+          #FakeProb.SetKinematic(itree.pt1, itree.eta1, itree.id1, itree.type1, itree.pt2, itree.eta2, itree.id2, itree.type2, itree.pt3, itree.eta3, itree.id3, itree.type3, itree.pt4, itree.eta4, itree.id4, itree.type4 )
+            FakeProb.SetKinematic(itree.pt1, itree.eta1, 0        , 1         , itree.pt2, itree.eta2,       0  ,      1,      itree.pt3, itree.eta3,       0  ,     1      ,      itree.pt4, itree.eta4, 0   ,     1       )
+
+            fakeWjet4l[0]     = FakeProb.FakeW4l(0)
+            fakeWjet4lDown[0] = FakeProb.FakeW4l(-1)
+            fakeWjet4lUp[0]   = FakeProb.FakeW4l(1)
 
             otree.Fill()
 

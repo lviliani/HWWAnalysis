@@ -24,6 +24,8 @@ from tree.manyJetsHiggsVar  import ManyJetsHiggsVarFiller
 from tree.wwGenInfo         import WWGenFiller
 from tree.higgsCPS          import HiggsCPSWeightAdder
 from tree.fakeW             import FakeWVarFiller
+from tree.ZHWWlvlvVar       import ZhwwlvlvVarFiller
+
 
 
 if __name__ == '__main__':
@@ -58,5 +60,7 @@ if __name__ == '__main__':
 
 #   Fake backgroud
     modules['fakeW']            =  FakeWVarFiller()
+# zhwwlvlv
+    modules['zhwwlvlvVar']      =  ZhwwlvlvVarFiller()
 
     gardener_cli( modules )
