@@ -49,7 +49,7 @@ ZHWW4lvari::ZHWW4lvari(float pt1,float pt2,float pt3,float pt4,float eta1,float 
  etas[0] = eta1; etas[1] = eta2; etas[2] = eta3; etas[3] = eta4;
  phis[0] = phi1; phis[1] = phi2; phis[2] = phi3; phis[3] = phi4;
  charges[0] = ch1; charges[1] = ch2; charges[2] = ch3; charges[3] = ch4; // +/- 1
- flavors[0] = fl1; flavors[1] = fl2; flavors[2] = fl3; flavors[3] = fl4; // flavor: 13 = Muon, 11 = Electron
+ flavors[0] = abs(fl1); flavors[1] = abs(fl2); flavors[2] = abs(fl3); flavors[3] = abs(fl4); // flavor: 13 = Muon, 11 = Electron
 
  CalcValues();
 }
@@ -106,7 +106,8 @@ int ZHWW4lvari::CalcValues(){
   values[6] = 0.5*(flavors[index[2]] + flavors[index[3]]); // flavor of leptons from WW: 11 == ee, 12==em, 13==mm
   values[7] = TMath::Sqrt(TMath::Power(pTs[index[2]]*TMath::Cos(phis[index[2]]) + pTs[index[3]]*TMath::Cos(phis[index[3]]),2) + TMath::Power(pTs[index[2]]*TMath::Sin(phis[index[2]]) + pTs[index[3]]*TMath::Sin(phis[index[3]]),2));// pT of leptons from WW
 
-        // add dphi Z-W-lepton1,2
+  //---- add dphi Z-W-lepton1,2
+//   FIXME
   values[8] = -99999;// dphi Z-W-lepton1
   values[9] = -99999;// dphi Z-W-lepton2
         

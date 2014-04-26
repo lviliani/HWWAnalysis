@@ -51,18 +51,18 @@ add useful variables, if not already available:
 
 
     echo y | ./gardener.py  adder \
-               -v 'id1/F=11*(bdt1<100)*(-ch1)+13*(bdt1>=100)*(-ch1)'  \
-               -v 'id2/F=11*(bdt2<100)*(-ch2)+13*(bdt2>=100)*(-ch2)'  \
-               -v 'id3/F=11*(bdt3<100)*(-ch3)+13*(bdt3>=100)*(-ch3)'  \
-               -v 'id4/F=11*(bdt4<100)*(-ch4)+13*(bdt4>=100)*(-ch4)'  \
+               -v 'id1/F=11.*(bdt1<100)*(-ch1)+13.*(bdt1>=100)*(-ch1)'  \
+               -v 'id2/F=11.*(bdt2<100)*(-ch2)+13.*(bdt2>=100)*(-ch2)'  \
+               -v 'id3/F=11.*(bdt3<100)*(-ch3)+13.*(bdt3>=100)*(-ch3)'  \
+               -v 'id4/F=11.*(bdt4<100)*(-ch4)+13.*(bdt4>=100)*(-ch4)'  \
                -r input output
 
 
     echo y | ./gardener.py  adder \
-               -v 'id1/F=11*(bdt1<100)*(-ch1)+13*(bdt1>=100)*(-ch1)'  \
-               -v 'id2/F=11*(bdt2<100)*(-ch2)+13*(bdt2>=100)*(-ch2)'  \
-               -v 'id3/F=11*(bdt3<100)*(-ch3)+13*(bdt3>=100)*(-ch3)'  \
-               -v 'id4/F=11*(bdt4<100)*(-ch4)+13*(bdt4>=100)*(-ch4)'  \
+               -v 'id1/F=11.*(bdt1<100)*(-ch1)+13.*(bdt1>=100)*(-ch1)'  \
+               -v 'id2/F=11.*(bdt2<100)*(-ch2)+13.*(bdt2>=100)*(-ch2)'  \
+               -v 'id3/F=11.*(bdt3<100)*(-ch3)+13.*(bdt3>=100)*(-ch3)'  \
+               -v 'id4/F=11.*(bdt4<100)*(-ch4)+13.*(bdt4>=100)*(-ch4)'  \
                /tmp/amassiro/latino_RunA_892pbinv_LooseLoose_NEW.root /tmp/amassiro/latino_RunA_892pbinv_LooseLoose_NEW_idx.root 
 
 
@@ -71,7 +71,7 @@ add useful variables, if not already available:
                -v 'type2/F=pass2012ICHEP2'  \
                -v 'type3/F=pass2012ICHEP3'  \
                -v 'type4/F=pass2012ICHEP4'  \
-               /tmp/amassiro/latino_RunA_892pbinv_LooseLoose_NEW.root /tmp/amassiro/latino_RunA_892pbinv_LooseLoose_NEW_pass.root 
+               /tmp/amassiro/latino_RunA_892pbinv_LooseLoose_NEW_idx.root /tmp/amassiro/latino_RunA_892pbinv_LooseLoose_NEW_idx_pass.root 
 
 
 
@@ -82,7 +82,7 @@ Fake W+jets
 fakeW
 
     ./gardener.py  fakeW  /tmp/amassiro/latino_RunA_892pbinv_LooseLoose.root   /tmp/amassiro/latino_RunA_892pbinv_LooseLoose_NEW.root
-
+    ./gardener.py  fakeW  /tmp/amassiro/latino_RunA_892pbinv_LooseLoose_NEW_idx_pass.root   /tmp/amassiro/latino_RunA_892pbinv_LooseLoose_NEW_idx_pass_NEW.root
 
 
 
