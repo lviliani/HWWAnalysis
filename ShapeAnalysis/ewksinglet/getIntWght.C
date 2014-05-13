@@ -175,7 +175,7 @@ float getIntWght(int iType, float mass , float cpsq, float kind = 0)
    }
    else if ( iType == 1 ) { //---- qqH
     wInt = 1.;
-    wInt = crystal_Icorr_qqH->Eval(mass,1.0); //---- 0 is c'=1.0 --> SM
+    wInt = crystal_Icorr_qqH->Eval(mass);
 
     if ( cpsq < 1. ) wInt = 1.+(wInt-1.)/cpsq; //---- needed also here?
    }
@@ -186,7 +186,7 @@ float getIntWght(int iType, float mass , float cpsq, float kind = 0)
 // iSyst =  0 : Cent
 //         +1 :
 //         -1 : 
-void initIntWght(std::string wFile , int iType , int iSyst, float Hmass = 350) {
+void initIntWght(std::string wFile , int iType , int iSyst, float Hmass = 350, float cprime = 1.0) { // c'=1.0 --> SM
 
    if ( iType == 0 ) { //---- ggH 
      TFile* f = new TFile(wFile.c_str() , "READ");
@@ -248,6 +248,9 @@ void initIntWght(std::string wFile , int iType , int iSyst, float Hmass = 350) {
    }
    else if ( iType ==1 ) { //---- qqH
 
+    ,1.0); //---- 0 is 
+       
+    
     TString *readfile = new TString ("data/InterferenceVBF/file_for_interpolation.root"); //file with the values of the all parameters
     TFile* SI = new TFile(readfile->Data());
     Double_t fill_param[16]; // 9 + 7 = 16
@@ -266,10 +269,10 @@ void initIntWght(std::string wFile , int iType , int iSyst, float Hmass = 350) {
     crystal_Icorr_qqH = new TF1("crystal_Icorr_qqH",CrystalBallLowHighPlusExpDividedByCrystalBallLowHigh,0,3000,16);
 
     for (int iVar = 0; iVar<9; iVar++) {
-     crystal_Icorr_qqH->SetParameter(iVar, exp(variables_SI[iVar]->Eval(Hmass)));
+     crystal_Icorr_qqH->SetParameter(iVar, variables_SI[iVar]->Interpolate(Hmass, cprime));
     }
     for (int iVar = 0; iVar<7; iVar++) {
-     crystal_Icorr_qqH->SetParameter(iVar+9, exp(variables_S[iVar]->Eval(Hmass)));
+     crystal_Icorr_qqH->SetParameter(iVar+9, variables_S[iVar]->Interpolate(Hmass, cprime));
     }
 
    }
