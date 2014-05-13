@@ -248,9 +248,6 @@ void initIntWght(std::string wFile , int iType , int iSyst, float Hmass = 350, f
    }
    else if ( iType ==1 ) { //---- qqH
 
-    ,1.0); //---- 0 is 
-       
-    
     TString *readfile = new TString ("data/InterferenceVBF/file_for_interpolation.root"); //file with the values of the all parameters
     TFile* SI = new TFile(readfile->Data());
     Double_t fill_param[16]; // 9 + 7 = 16
