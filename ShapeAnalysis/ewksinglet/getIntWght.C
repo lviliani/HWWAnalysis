@@ -260,6 +260,18 @@ void initIntWght(std::string wFile , int iType , int iSyst, float Hmass = 350) {
     for (int i=0; i<7; i++) {
      TString *name = new TString (parameters_normal[i]);
      name->Append("_S.txt");
+     variables_S[i] = (TGraph2D*)SI->Get(name->Data());
     }
+
+    crystal_Icorr_qqH = new TF1("crystal_Icorr_qqH",CrystalBallLowHighPlusExpDividedByCrystalBallLowHigh,0,3000,16);
+
+    for (int iVar = 0; iVar<9; iVar++) {
+     crystal_Icorr_qqH->SetParameter(iVar, exp(variables_SI[iVar]->Eval(Hmass)));
+    }
+    for (int iVar = 0; iVar<7; iVar++) {
+     crystal_Icorr_qqH->SetParameter(iVar+9, exp(variables_S[iVar]->Eval(Hmass)));
+    }
+
    }
+
 }
