@@ -266,10 +266,20 @@ void initIntWght(std::string wFile , int iType , int iSyst, float Hmass = 350, f
     crystal_Icorr_qqH = new TF1("crystal_Icorr_qqH",CrystalBallLowHighPlusExpDividedByCrystalBallLowHigh,0,3000,16);
 
     for (int iVar = 0; iVar<9; iVar++) {
-     crystal_Icorr_qqH->SetParameter(iVar, variables_SI[iVar]->Interpolate(Hmass, cprime));
+     if (parameters_normal[iVar].Contains("Norm")){
+      crystal_Icorr_qqH->SetParameter(iVar, exp(variables_S[iVar]->Interpolate(Hmass, cprime)));
+     }
+     else {
+      crystal_Icorr_qqH->SetParameter(iVar, variables_S[iVar]->Interpolate(Hmass, cprime));
+     }
     }
     for (int iVar = 0; iVar<7; iVar++) {
-     crystal_Icorr_qqH->SetParameter(iVar+9, variables_S[iVar]->Interpolate(Hmass, cprime));
+     if (parameters_normal[iVar].Contains("Norm")){
+      crystal_Icorr_qqH->SetParameter(iVar+9, exp(variables_S[iVar]->Interpolate(Hmass, cprime)));   
+     }
+     else {
+      crystal_Icorr_qqH->SetParameter(iVar+9, variables_S[iVar]->Interpolate(Hmass, cprime));
+     }
     }
 
    }
