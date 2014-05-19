@@ -270,7 +270,15 @@ void initIntWght(std::string wFile , int iType , int iSyst, float Hmass = 350, f
    }
    else if ( iType ==1 ) { //---- qqH
 
-    TString *readfile = new TString ("data/InterferenceVBF/file_for_interpolation.root"); //file with the values of the all parameters
+    TString *readfile;
+    readfile = new TString ("data/InterferenceVBF/file_for_interpolation.root"); //file with the values of the all parameters
+    if (iSyst ==  1) {
+     readfile = new TString ("data/InterferenceVBF/file_for_interpolation_up.root");
+    }
+    if (iSyst == -1) {
+     readfile = new TString ("data/InterferenceVBF/file_for_interpolation_dn.root");
+    }
+
     TFile* SI = new TFile(readfile->Data());
     Double_t fill_param[16]; // 9 + 7 = 16
 
