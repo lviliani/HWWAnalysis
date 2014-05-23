@@ -92,7 +92,19 @@ Double_t CrystalBallLowHighPlusExpDividedByCrystalBallLowHigh(Double_t *x,Double
  double den = crystalBallLowHigh (x, par + 9) ; // signal only
  if (den == 0) return -1. ;
  double num = doubleGausCrystalBallLowHighPlusExp (x, par) ; // signal and interference
- return num / den ;
+
+ float alpha = par[16];
+ float beta  = par[17];
+//  num = alpha*S + sqrt(alpha)*I 
+//  den = S
+
+ float S = den; 
+ float I = (num - alpha*S)/sqrt(alpha);
+
+ if (S != 0) {
+  return (alpha*S + sqrt(alpha)*I) / S;
+ }
+
 }
 
 
@@ -145,7 +157,9 @@ Double_t CrystalBallLowHighDivideCrystalBallLowHigh(Double_t *x,Double_t *par) {
  Double_t den = 1;
  den = crystalBallLowHigh(x,&par[7]);
 
- if (den != 0) return num/den;
+ if (den != 0) {
+  return num / den;
+ }
  else return 1.;
 
 }
@@ -186,7 +200,15 @@ float getIntWght(int iType, float mass , float cpsq, float kind = 0)
 // iSyst =  0 : Cent
 //         +1 :
 //         -1 : 
-void initIntWght(std::string wFile , int iType , int iSyst, float Hmass = 350, float cprime = 1.0) { // c'=1.0 --> SM
+void initIntWght(std::string wFile , int iType , int iSyst, float Hmass = 350, float cprime = 1.0, float BRnew = 0.0) { // c'=1.0 --> SM   BRnew = 0.0 --> SM
+
+//    mu -> mu * cprime * (1-BRnew)        = alpha * mu
+//    Gamma -> Gamma * cprime / (1-BRnew)  = beta * Gamma
+//    alpha = cprime * (1-BRnew)
+//    beta  = cprime / (1-BRnew)
+
+   float alpha = cprime * (1-BRnew);
+   float beta  = cprime / (1-BRnew);
 
    if ( iType == 0 ) { //---- ggH 
      TFile* f = new TFile(wFile.c_str() , "READ");
@@ -248,7 +270,15 @@ void initIntWght(std::string wFile , int iType , int iSyst, float Hmass = 350, f
    }
    else if ( iType ==1 ) { //---- qqH
 
-    TString *readfile = new TString ("data/InterferenceVBF/file_for_interpolation.root"); //file with the values of the all parameters
+    TString *readfile;
+    readfile = new TString ("data/InterferenceVBF/file_for_interpolation.root"); //file with the values of the all parameters
+    if (iSyst ==  1) {
+     readfile = new TString ("data/InterferenceVBF/file_for_interpolation_up.root");
+    }
+    if (iSyst == -1) {
+     readfile = new TString ("data/InterferenceVBF/file_for_interpolation_dn.root");
+    }
+
     TFile* SI = new TFile(readfile->Data());
     Double_t fill_param[16]; // 9 + 7 = 16
 
@@ -263,15 +293,30 @@ void initIntWght(std::string wFile , int iType , int iSyst, float Hmass = 350, f
      variables_S[i] = (TGraph2D*)SI->Get(name->Data());
     }
 
-    crystal_Icorr_qqH = new TF1("crystal_Icorr_qqH",CrystalBallLowHighPlusExpDividedByCrystalBallLowHigh,0,3000,16);
+    crystal_Icorr_qqH = new TF1("crystal_Icorr_qqH",CrystalBallLowHighPlusExpDividedByCrystalBallLowHigh,0,3000,16+2);
 
     for (int iVar = 0; iVar<9; iVar++) {
-     crystal_Icorr_qqH->SetParameter(iVar, variables_SI[iVar]->Interpolate(Hmass, cprime));
+     if (parameters_normal[iVar].Contains("Norm")){
+      crystal_Icorr_qqH->SetParameter(iVar, exp(variables_S[iVar]->Interpolate(Hmass, beta)));
+     }
+     else {
+      crystal_Icorr_qqH->SetParameter(iVar, variables_S[iVar]->Interpolate(Hmass, beta));
+     }
     }
     for (int iVar = 0; iVar<7; iVar++) {
-     crystal_Icorr_qqH->SetParameter(iVar+9, variables_S[iVar]->Interpolate(Hmass, cprime));
+     if (parameters_normal[iVar].Contains("Norm")){
+      crystal_Icorr_qqH->SetParameter(iVar+9, exp(variables_S[iVar]->Interpolate(Hmass, beta)));   
+     }
+     else {
+      crystal_Icorr_qqH->SetParameter(iVar+9, variables_S[iVar]->Interpolate(Hmass, beta));
+     }
     }
+    crystal_Icorr_qqH->SetParameter(6+9+1, alpha);
+    crystal_Icorr_qqH->SetParameter(6+9+2, beta);
 
    }
 
 }
+
+
+
