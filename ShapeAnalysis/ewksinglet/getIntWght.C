@@ -200,7 +200,7 @@ float getIntWght(int iType, float mass , float cpsq, float kind = 0)
 // iSyst =  0 : Cent
 //         +1 :
 //         -1 : 
-void initIntWght(std::string wFile , int iType , int iSyst, float Hmass = 350, float cprime = 1.0, float BRnew = 0.0) { // c'=1.0 --> SM   BRnew = 0.0 --> SM
+void initIntWght(std::string wFile , int iType , int iSyst, float Hmass = 350, float cprime = 1.0, float BRnew = 0.0, int EWKcase = 1) { // c'=1.0 --> SM   BRnew = 0.0 --> SM
 
 //    mu -> mu * cprime * (1-BRnew)        = alpha * mu
 //    Gamma -> Gamma * cprime / (1-BRnew)  = beta * Gamma
@@ -271,12 +271,23 @@ void initIntWght(std::string wFile , int iType , int iSyst, float Hmass = 350, f
    else if ( iType ==1 ) { //---- qqH
 
     TString *readfile;
-    readfile = new TString ("data/InterferenceVBF/file_for_interpolation.root"); //file with the values of the all parameters
-    if (iSyst ==  1) {
-     readfile = new TString ("data/InterferenceVBF/file_for_interpolation_up.root");
+    if (EWKcase) { //---- for c'=1 background is H-10 TeV
+     readfile = new TString ("data/InterferenceVBF/EWK_SINGLET/file_for_interpolation.root"); //file with the values of the all parameters
+     if (iSyst ==  1) {
+      readfile = new TString ("data/InterferenceVBF/EWK_SINGLET/file_for_interpolation_up.root");
+     }
+     if (iSyst == -1) {
+      readfile = new TString ("data/InterferenceVBF/EWK_SINGLET/file_for_interpolation_dn.root");
+     }
     }
-    if (iSyst == -1) {
-     readfile = new TString ("data/InterferenceVBF/file_for_interpolation_dn.root");
+    else { //---- for c'=1 background is H-126 GeV
+     readfile = new TString ("data/InterferenceVBF/SM/file_for_interpolation.root"); //file with the values of the all parameters
+     if (iSyst ==  1) {
+      readfile = new TString ("data/InterferenceVBF/SM/file_for_interpolation_up.root");
+     }
+     if (iSyst == -1) {
+      readfile = new TString ("data/InterferenceVBF/SM/file_for_interpolation_dn.root");
+     }
     }
 
     TFile* SI = new TFile(readfile->Data());
