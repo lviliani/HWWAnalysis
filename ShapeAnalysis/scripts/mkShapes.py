@@ -1009,6 +1009,7 @@ class ShapeFactory:
               print '_HiggsWgt: Unknown flavor : ',flavor
               exit()
             EWKDir = os.environ['CMSSW_BASE']+'/src/HWWAnalysis/ShapeAnalysis/ewksinglet/'
+            print EWKDir
             ROOT.gROOT.ProcessLineSync('initIntWght("'+EWKDir+'" ,1,'+str(iSystVBF)+','+str(mass)+','+str(self._cprimesq)+','+str(self._brnew)+','+EWKcase+')') 
             if not self._approxewk : hWght += '*getIntWght(1,MHiggs,'+str(self._cprimesq)+','+str(self._brnew)+','+iFlavor+')' 
             else                   : hWght += '*getIntWght(1,MHiggs,1.0,0.0,'+iFlavor+')'

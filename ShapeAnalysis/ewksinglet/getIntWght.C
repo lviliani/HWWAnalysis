@@ -166,7 +166,7 @@ TF1* crystal_Icorr_qqH;
 // iType = 0 : ggH
 //         1 : qqH
 
-float getIntWght(int iType, float mass , float cpsq , float BRnew = 0.0 , float kind = 0)
+float getIntWght(int iType, float mass , float cpsq , float BRnew = 0.0, int EWKcase = 1,  float kind = 0)
 {
    float wInt=1.;
    if ( iType == 0 ) { //---- ggH
@@ -263,27 +263,28 @@ void initIntWght(std::string wFile , int iType , int iSyst, float Hmass = 350, f
 
     TString *readfile;
     if (EWKcase) { //---- for c'=1 background is H-10 TeV
-     readfile = new TString ("data/InterferenceVBF/EWK_SINGLET/file_for_interpolation.root"); //file with the values of the all parameters
+     readfile = new TString (wFile+"data/InterferenceVBF/EWK_SINGLET/file_for_interpolation.root"); //file with the values of the all parameters
      if (iSyst ==  1) {
-      readfile = new TString ("data/InterferenceVBF/EWK_SINGLET/file_for_interpolation_up.root");
+      readfile = new TString (wFile+"data/InterferenceVBF/EWK_SINGLET/file_for_interpolation_up.root");
      }
      if (iSyst == -1) {
-      readfile = new TString ("data/InterferenceVBF/EWK_SINGLET/file_for_interpolation_dn.root");
+      readfile = new TString (wFile+"data/InterferenceVBF/EWK_SINGLET/file_for_interpolation_dn.root");
      }
     }
     else { //---- for c'=1 background is H-126 GeV
-     readfile = new TString ("data/InterferenceVBF/SM/file_for_interpolation.root"); //file with the values of the all parameters
+     readfile = new TString (wFile+"data/InterferenceVBF/SM/file_for_interpolation.root"); //file with the values of the all parameters
      if (iSyst ==  1) {
-      readfile = new TString ("data/InterferenceVBF/SM/file_for_interpolation_up.root");
+      readfile = new TString (wFile+"data/InterferenceVBF/SM/file_for_interpolation_up.root");
      }
      if (iSyst == -1) {
-      readfile = new TString ("data/InterferenceVBF/SM/file_for_interpolation_dn.root");
+      readfile = new TString (wFile+"data/InterferenceVBF/SM/file_for_interpolation_dn.root");
      }
     }
 
     TFile* SI = new TFile(readfile->Data());
     Double_t fill_param[16]; // 9 + 7 = 16
 
+    TString parameters_normal [9] = {"Norm","Mean_CB","Sigma_CB","alphaR_CB","nR_CB","alphaL_CB","nL_CB","R","Tau"};
     for (int i=0; i<9; i++) {
      TString *name = new TString (parameters_normal[i]);
      name->Append("_SI.txt");
