@@ -13,6 +13,7 @@ import logging
 from HWWAnalysis.Misc.odict import OrderedDict
 from HWWAnalysis.Misc.ROOTAndUtils import TH1AddDirSentry
 import traceback
+from array import array
 
 pathWght = os.environ['CMSSW_BASE']+"/src/HWWAnalysis/ShapeAnalysis/ewksinglet/"
 ROOT.gROOT.ProcessLineSync('.L '+pathWght+'getCPSWght.C+')
@@ -32,6 +33,25 @@ def file2map(x):
                 fields = [ float(i) for i in cols ]
                 ret[fields[0]] = dict(zip(headers,fields[1:]))
         return ret
+
+# ----------------------------------------------------- Add point if needed to YR ------------------------
+
+def GetYRVal(YRDic,iMass,Key):
+
+    if iMass in YRDic :
+       #print iMass,YRDic[iMass][Key]
+       return YRDic[iMass][Key]
+    else:
+       n=len(YRDic.keys())
+       x=[]
+       y=[]
+       for jMass in sorted(YRDic.keys()):
+         x.append(jMass)
+         y.append(YRDic[jMass][Key])
+       gr = ROOT.TGraph(n,array('f',x),array('f',y));
+       sp = ROOT.TSpline3("YR",gr);
+       #print iMass,sp.Eval(iMass)
+       return sp.Eval(iMass)
 
 # ----------------------------------------------------- ShapeFactory --------------------------------------
 
@@ -642,7 +662,9 @@ class ShapeFactory:
         inputs :    the process-input files map
         '''
         self._logger.info('Yields by process')
+        print output
         outFile = ROOT.TFile.Open(output,'recreate')
+        print outFile
         vdim = var.count(':')+1
 #         hproto,hdim = ShapeFactory._projexpr(rng)
         # 3 items per dimention
@@ -872,22 +894,23 @@ class ShapeFactory:
 
        if self._YR3rewght :
          xs_Scale = 1.
-         br_Scale = 1.
+         br_Scale = 1.  # YR2 stops at 600 for BR->WW !
          if self._energy == '7TeV' or self._energy == '8TeV' :
            if prodMode in ['ggH','qqH'] :
              print prodMode,mass 
-             xs_Scale = self._YRValues['YR3']['xs'][prodMode][mass]['XS_pb']/self._YRValues['YR2']['xs'][prodMode][mass]['XS_pb']
-             br_Scale = self._YRValues['YR3']['br']['VV'][mass]['H_WW']/self._YRValues['YR2']['br']['VV'][mass]['H_WW']
+             xs_Scale = GetYRVal(self._YRValues['YR3']['xs'][prodMode],mass,'XS_pb')/GetYRVal(self._YRValues['YR2']['xs'][prodMode],mass,'XS_pb')
+             if mass <= 600 : br_Scale = GetYRVal(self._YRValues['YR3']['br']['VV'],mass,'H_WW')/GetYRVal(self._YRValues['YR2']['br']['VV'],mass,'H_WW')
            elif prodMode in ['WH','ZH','ttH'] :
+             # Only up to 300 ofc
              if mass <= 300 :
-               xs_Scale = self._YRValues['YR3']['xs'][prodMode][mass]['XS_pb']/self._YRValues['YR2']['xs'][prodMode][mass]['XS_pb']
-               br_Scale = self._YRValues['YR3']['br']['VV'][mass]['H_WW']/self._YRValues['YR2']['br']['VV'][mass]['H_WW']
+               xs_Scale = GetYRVal(self._YRValues['YR3']['xs'][prodMode],mass, 'XS_pb')/GetYRVal(self._YRValues['YR2']['xs'][prodMode],mass, 'XS_pb')
+               br_Scale = GetYRVal(self._YRValues['YR3']['br']['VV'],mass, 'H_WW')/GetYRVal(self._YRValues['YR2']['br']['VV'],mass ,'H_WW')
            elif prodMode == 'ggH_ALT' :
-             xs_Scale = self._YRValues['YR3']['xs']['ggH'][mass]['XS_pb']/self._YRValues['YR2']['xs']['ggH'][mass]['XS_pb']
-             br_Scale = self._YRValues['YR3']['br']['VV'][mass]['H_WW']/self._YRValues['YR2']['br']['VV'][mass]['H_WW']
+             xs_Scale = GetYRVal(self._YRValues['YR3']['xs']['ggH'],mass ,'XS_pb')/GetYRVal(self._YRValues['YR2']['xs']['ggH'],mass,'XS_pb')
+             if mass <= 600 : br_Scale = GetYRVal(self._YRValues['YR3']['br']['VV'],mass,'H_WW')/GetYRVal(self._YRValues['YR2']['br']['VV'],mass,'H_WW')
            elif prodMode == 'qqH_ALT' :
-             xs_Scale = self._YRValues['YR3']['xs']['qqH'][mass]['XS_pb']/self._YRValues['YR2']['xs']['qqH'][mass]['XS_pb']
-             br_Scale = self._YRValues['YR3']['br']['VV'][mass]['H_WW']/self._YRValues['YR2']['br']['VV'][mass]['H_WW']
+             xs_Scale = GetYRVal(self._YRValues['YR3']['xs']['qqH'],mass, 'XS_pb')/GetYRVal(self._YRValues['YR2']['xs']['qqH'],mass, 'XS_pb')
+             if mass <= 600 : br_Scale = GetYRVal(self._YRValues['YR3']['br']['VV'],mass, 'H_WW')/GetYRVal(self._YRValues['YR2']['br']['VV'],mass, 'H_WW')
            elif prodMode in ['ggH_SM','qqH_SM','WH_SM','ZH_SM','ttH_SM'] :
              prodModeStrip = prodMode.split('_')[0]
              massSM = 125
@@ -908,8 +931,8 @@ class ShapeFactory:
            prodModeStrip = prodMode.split('_')[0]
            massSMSample  = 125.
            massMeasured  = self._mHSM
-           xs_Scale = self._YRValues[YR]['xs'][prodModeStrip][massMeasured]['XS_pb']/self._YRValues[YR]['xs'][prodModeStrip][massSMSample]['XS_pb']
-           br_Scale = self._YRValues[YR]['br']['VV'][massMeasured]['H_WW']/self._YRValues[YR]['br']['VV'][massSMSample]['H_WW']
+           xs_Scale = GetYRVal(self._YRValues[YR]['xs'][prodModeStrip],massMeasured, 'XS_pb')/GetYRVal(self._YRValues[YR]['xs'][prodModeStrip],massSMSample,'XS_pb')
+           br_Scale = GetYRVal(self._YRValues[YR]['br']['VV'],massMeasured, 'H_WW')/GetYRVal(self._YRValues[YR]['br']['VV'],massSMSample,'H_WW')
          hWght += '*'+str(xs_Scale)+'*'+str(br_Scale)
 
        # New CPS (+ ptHiggs k-factor for 7 TeV MC)

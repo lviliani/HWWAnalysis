@@ -1,3 +1,5 @@
+import ROOT
+from array import array
 import os, re
 from math import *
 
@@ -126,7 +128,26 @@ def loadYRSyst(YRVersion=3,Energy='8TeV') :
         ggH_scaErrYR[X]  = 0.5*(ggH_scaErrYR[X-10] +ggH_scaErrYR[X+10])
         vbfH_pdfErrYR[X] = 0.5*(vbfH_pdfErrYR[X-10]+vbfH_pdfErrYR[X+10])
         vbfH_scaErrYR[X] = 0.5*(vbfH_scaErrYR[X-10]+vbfH_scaErrYR[X+10])
-    
+
+# ----------------------------------------------------- Add point if needed to YR ------------------------
+
+def GetYRVal(YRDic,iMass):
+
+    if iMass in YRDic :
+       #print iMass,YRDic[iMass][Key]
+       return YRDic[iMass]
+    else:
+       n=len(YRDic.keys())
+       x=[]
+       y=[]
+       for jMass in sorted(YRDic.keys()):
+         x.append(jMass)
+         y.append(YRDic[jMass])
+       gr = ROOT.TGraph(n,array('f',x),array('f',y));
+       sp = ROOT.TSpline3("YR",gr);
+       #print iMass,sp.Eval(iMass)
+       return sp.Eval(iMass)
+      
 
 def getCommonSysts(mass,channel,jets,qqWWfromData,shape,options,suffix,isssactive,Energy,newInterf=False,YRVersion=3,mh_SM=125.,mh_SM2=125. ):
 
@@ -145,21 +166,21 @@ def getCommonSysts(mass,channel,jets,qqWWfromData,shape,options,suffix,isssactiv
     nuisances['lumi'+suffix] = [ ['lnN'], dict([(p,lumiunc) for p in MCPROC if p!='DYTT' and p!='Top'])]
     # -- PDF ---------------------
     #nuisances['pdf_gg']    = [ ['lnN'], { 'ggH':ggH_pdfErrYR[mass], 'ggWW':(1.00 if qqWWfromData else 1.04) }]
-    nuisances['pdf_gg']    = [ ['lnN'], { 'ggH'    : ggH_pdfErrYR[mass], 
-                                          'ggH_SM' : ggH_pdfErrYR[mh_SM],
+    nuisances['pdf_gg']    = [ ['lnN'], { 'ggH'    : GetYRVal(ggH_pdfErrYR,mass), 
+                                          'ggH_SM' : GetYRVal(ggH_pdfErrYR,mh_SM),
                                           'ggWW'   : 1.04 , 
                                         }]
 
     nuisances['pdf_qqbar'] = [ ['lnN'], { #'wzttH' :(1.0 if mass>300 else wzttH_pdfErrYR[mass]),  
-                                          'WH'    :(1.0 if mass>300 else wH_pdfErrYR[mass]),  
-                                          'ZH'    :(1.0 if mass>300 else zH_pdfErrYR[mass]), 
-                                          'ttH'   :(1.0 if mass>300 else ttH_pdfErrYR[mass]), 
-                                          'qqH'   :vbfH_pdfErrYR[mass], 
+                                          'WH'    :(1.0 if mass>300 else GetYRVal(wH_pdfErrYR,mass)),  
+                                          'ZH'    :(1.0 if mass>300 else GetYRVal(zH_pdfErrYR,mass)), 
+                                          'ttH'   :(1.0 if mass>300 else GetYRVal(ttH_pdfErrYR,mass)), 
+                                          'qqH'   :GetYRVal(vbfH_pdfErrYR,mass), 
                                           #'wzttH_SM' :(1.0 if mh_SM>300 else wzttH_pdfErrYR[mh_SM]),  
-                                          'WH_SM'    :(1.0 if mh_SM>300 else wH_pdfErrYR[mh_SM]),  
-                                          'ZH_SM'    :(1.0 if mh_SM>300 else zH_pdfErrYR[mh_SM]), 
-                                          'ttH_SM'   :(1.0 if mh_SM>300 else ttH_pdfErrYR[mh_SM]), 
-                                          'qqH_SM'   :vbfH_pdfErrYR[mh_SM], 
+                                          'WH_SM'    :(1.0 if mh_SM>300 else GetYRVal(wH_pdfErrYR,mh_SM)),  
+                                          'ZH_SM'    :(1.0 if mh_SM>300 else GetYRVal(zH_pdfErrYR,mh_SM)), 
+                                          'ttH_SM'   :(1.0 if mh_SM>300 else GetYRVal(ttH_pdfErrYR,mh_SM)), 
+                                          'qqH_SM'   :GetYRVal(vbfH_pdfErrYR,mh_SM), 
                                           'VV':1.04, 
                                           'WW':(1.0 if qqWWfromData else 1.04), 
  
@@ -168,10 +189,10 @@ def getCommonSysts(mass,channel,jets,qqWWfromData,shape,options,suffix,isssactiv
     # -- Theory ---------------------
     if jets == 0:
         # appendix D of https://indico.cern.ch/getFile.py/access?contribId=0&resId=0&materialId=0&confId=135333
-        k0 = pow(ggH_scaErrYR[mass],     1/ggH_jets[mass]['f0'])
+        k0 = pow(GetYRVal(ggH_scaErrYR,mass),     1/ggH_jets[mass]['f0'])
         k1 = pow(ggH_jets[mass]['k1'], 1-1/ggH_jets[mass]['f0']) # -f1-f2=f0-1
         # ... and _SM:
-        k0_SM = pow(ggH_scaErrYR[mh_SM2],     1/ggH_jets[mh_SM2]['f0'])
+        k0_SM = pow(GetYRVal(ggH_scaErrYR,mh_SM),    1/ggH_jets[mh_SM2]['f0'])
         k1_SM = pow(ggH_jets[mh_SM2]['k1'], 1-1/ggH_jets[mh_SM2]['f0']) # -f1-f2=f0-1
         #nuisances['QCDscale_ggH']    = [  ['lnN'], { 'ggH':k0, 'ggH_SM':k0_SM }]
         #nuisances['QCDscale_ggH1in'] = [  ['lnN'], { 'ggH':k1, 'ggH_SM':k1_SM }]
@@ -209,7 +230,7 @@ def getCommonSysts(mass,channel,jets,qqWWfromData,shape,options,suffix,isssactiv
                nuisances['QCDscale_WWewk']     = [ ['lnN'], {'WWewk':1.20 }]
 
     nuisances['QCDscale_ggWW'] = [ ['lnN'], {'ggWW': 1.30}]
-    nuisances['QCDscale_qqH']  = [ ['lnN'], { 'qqH':vbfH_scaErrYR[mass] , 'qqH_SM':vbfH_scaErrYR[mh_SM] }]
+    nuisances['QCDscale_qqH']  = [ ['lnN'], { 'qqH':GetYRVal(vbfH_scaErrYR,mass) , 'qqH_SM':GetYRVal(vbfH_scaErrYR,mh_SM) }]
 
     nuisances['QCDscale_VH']  = [ ['lnN'] , {} ]
     nuisances['QCDscale_wH']  = [ ['lnN'] , {} ]
