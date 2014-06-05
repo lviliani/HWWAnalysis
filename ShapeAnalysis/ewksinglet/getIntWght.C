@@ -22,6 +22,94 @@
 //---- functions ----
 //-------------------
 
+
+//---- division of CBLowHigh+ExponentialFall with CBLowHigh ----
+double doubleGausCrystalBallLowHighPlusExp (double* x, double* par) {
+  //[0] = N
+  //[1] = mean
+  //[2] = sigma
+  //[3] = alpha
+  //[4] = n
+  //[5] = alpha2
+  //[6] = n2
+
+  //[7] = R = ratio between exponential and CB
+  //[8] = tau = tau falling of exponential
+
+ double xx = x[0];
+
+// double mean = par[1] ; // mean
+// double sigmaP = par[2] ; // sigma of the positive side of the gaussian
+// double sigmaN = par[3] ; // sigma of the negative side of the gaussian
+// double alpha = par[4] ; // junction point on the positive side of the gaussian
+// double n = par[5] ; // power of the power law on the positive side of the gaussian
+// double alpha2 = par[6] ; // junction point on the negative side of the gaussian
+// double n2 = par[7] ; // power of the power law on the negative side of the gaussian
+
+ double mean = par[1] ; // mean
+ double sigmaP = par[2] ; // sigma of the positive side of the gaussian | they are the same!!!
+ double sigmaN = par[2] ; // sigma of the negative side of the gaussian |
+ double alpha = par[3] ; // junction point on the positive side of the gaussian
+ double n = par[4] ; // power of the power law on the positive side of the gaussian
+ double alpha2 = par[5] ; // junction point on the negative side of the gaussian
+ double n2 = par[6] ; // power of the power law on the negative side of the gaussian
+
+ double R = par[7] ;
+ double tau = par[8] ;
+
+ 
+ if ((xx-mean)/sigmaP > fabs(alpha)) {
+  double A = pow(n/fabs(alpha), n) * exp(-0.5 * alpha*alpha);
+  double B = n/fabs(alpha) - fabs(alpha);
+
+  return par[0] * ( (1-R)*(A * pow(B + (xx-mean)/sigmaP, -1.*n)) + R * exp(-xx/tau));
+ }
+
+ else if ((xx-mean)/sigmaN < -1.*fabs(alpha2)) {
+  double A = pow(n2/fabs(alpha2), n2) * exp(-0.5 * alpha2*alpha2);
+  double B = n2/fabs(alpha2) - fabs(alpha2);
+
+  return par[0] * ( (1-R)*(A * pow(B - (xx-mean)/sigmaN, -1.*n2)) + R * exp(-xx/tau));
+ }
+
+ else if ((xx-mean) > 0) {
+  return par[0] * ( (1-R)*exp(-1. * (xx-mean)*(xx-mean) / (2*sigmaP*sigmaP) ) + R * exp(-xx/tau));
+ }
+
+ else {
+  return par[0] * ( (1-R)*exp(-1. * (xx-mean)*(xx-mean) / (2*sigmaN*sigmaN) ) + R * exp(-xx/tau));
+ }
+
+}
+
+
+
+
+
+
+//---- division of CBLowHighPlusExp with CBLowHigh ----
+Double_t CrystalBallLowHighPlusExpDividedByCrystalBallLowHigh(Double_t *x,Double_t *par) {
+ double den = crystalBallLowHigh (x, par + 9) ; // signal only
+ if (den == 0) return -1. ;
+ double num = doubleGausCrystalBallLowHighPlusExp (x, par) ; // signal and interference
+
+ float alpha = par[16];
+ float beta  = par[17];
+//  num = alpha*S + sqrt(alpha)*I 
+//  den = S
+
+ float S = den; 
+ float I = (num - alpha*S)/sqrt(alpha);
+
+ if (S != 0) {
+  return (alpha*S + sqrt(alpha)*I) / S;
+ }
+
+}
+
+
+
+
 double crystalBallLowHigh (double* x, double* par) {
   //[0] = N
   //[1] = mean
@@ -69,7 +157,9 @@ Double_t CrystalBallLowHighDivideCrystalBallLowHigh(Double_t *x,Double_t *par) {
  Double_t den = 1;
  den = crystalBallLowHigh(x,&par[7]);
 
- if (den != 0) return num/den;
+ if (den != 0) {
+  return num / den;
+ }
  else return 1.;
 
 }
@@ -77,19 +167,12 @@ Double_t CrystalBallLowHighDivideCrystalBallLowHigh(Double_t *x,Double_t *par) {
 TH1F*     hInt_ggH = 0 ;
 TSpline3* wInt_ggH = 0 ;
 
-TGraph* em_variables_S[7];
-TGraph* em_variables_SI[7];
-TGraph* mm_variables_S[7];
-TGraph* mm_variables_SI[7];
-TF1* em_crystal_Icorr_qqH;
-TF1* mm_crystal_Icorr_qqH;
+TGraph2D* variables_S[7];
+TGraph2D* variables_SI[9];
+TF1* crystal_Icorr_qqH;
 
 // iType = 0 : ggH
 //         1 : qqH
-
-//---- for qqH only
-// kind = 0 : em
-//        1 : mm/ee
 
 float getIntWght(int iType, float mass , float cpsq, float kind = 0)
 {
@@ -106,8 +189,7 @@ float getIntWght(int iType, float mass , float cpsq, float kind = 0)
    }
    else if ( iType == 1 ) { //---- qqH
     wInt = 1.;
-    if (kind == 0) wInt = em_crystal_Icorr_qqH->Eval(mass);
-    if (kind == 1) wInt = mm_crystal_Icorr_qqH->Eval(mass);
+    wInt = crystal_Icorr_qqH->Eval(mass);
 
     if ( cpsq < 1. ) wInt = 1.+(wInt-1.)/cpsq; //---- needed also here?
    }
@@ -118,7 +200,15 @@ float getIntWght(int iType, float mass , float cpsq, float kind = 0)
 // iSyst =  0 : Cent
 //         +1 :
 //         -1 : 
-void initIntWght(std::string wFile , int iType , int iSyst, float Hmass = 350) {
+void initIntWght(std::string wFile , int iType , int iSyst, float Hmass = 350, float cprime = 1.0, float BRnew = 0.0, int EWKcase = 1) { // c'=1.0 --> SM   BRnew = 0.0 --> SM
+
+//    mu -> mu * cprime * (1-BRnew)        = alpha * mu
+//    Gamma -> Gamma * cprime / (1-BRnew)  = beta * Gamma
+//    alpha = cprime * (1-BRnew)
+//    beta  = cprime / (1-BRnew)
+
+   float alpha = cprime * (1-BRnew);
+   float beta  = cprime / (1-BRnew);
 
    if ( iType == 0 ) { //---- ggH 
      TFile* f = new TFile(wFile.c_str() , "READ");
@@ -180,177 +270,64 @@ void initIntWght(std::string wFile , int iType , int iSyst, float Hmass = 350) {
    }
    else if ( iType ==1 ) { //---- qqH
 
-    for (int kind = 0; kind < 2; kind ++) { 
-    //---- 0 = em,   1 = mm/ee
-
-     std::string buffer;
-     float num;
-     int counter;
-
-     float S_mass[100];
-     float S_N[100];
-     float S_Mean[100];
-     float S_sigma[100];
-     float S_alphaR[100];
-     float S_nR[100];
-     float S_alphaL[100];
-     float S_nL[100];
-
-     float SI_mass[100];
-     float SI_N[100];
-     float SI_Mean[100];
-     float SI_sigma[100];
-     float SI_alphaR[100];
-     float SI_nR[100];
-     float SI_alphaL[100];
-     float SI_nL[100];
-
-     TString nameS;
-     if (kind == 0) nameS = wFile+"/data/InterferenceVBF/results_em_S.txt";
-     if (kind == 1) nameS = wFile+"/data/InterferenceVBF/results_mm_S.txt";
-     std::ifstream file_S (nameS.Data());
-     counter = 0;
-     while(!file_S.eof()) {
-      getline(file_S,buffer);
-      std::cout << "buffer = " << buffer << std::endl;
-      if (buffer != "" && buffer.at(0) != '#'){ ///---> save from empty line at the end! And comments!
-       std::stringstream line( buffer );
-       line >> S_mass[counter];
-       line >> S_N[counter];
-       line >> S_Mean[counter];
-       line >> S_sigma[counter];
-       line >> S_alphaR[counter];
-       line >> S_nR[counter];
-       line >> S_alphaL[counter];
-       line >> S_nL[counter];
-       counter++;
-       std::cout << std::endl;
-      }
+    TString *readfile;
+    if (EWKcase) { //---- for c'=1 background is H-10 TeV
+     readfile = new TString ("data/InterferenceVBF/EWK_SINGLET/file_for_interpolation.root"); //file with the values of the all parameters
+     if (iSyst ==  1) {
+      readfile = new TString ("data/InterferenceVBF/EWK_SINGLET/file_for_interpolation_up.root");
      }
-
-     TString nameSI;
-     if (kind == 0) nameSI = wFile+"/data/InterferenceVBF/results_em_SI.txt";
-     if (kind == 1) nameSI = wFile+"/data/InterferenceVBF/results_mm_SI.txt";
-     std::ifstream file_SI (nameSI.Data());
-     counter = 0;
-     while(!file_SI.eof()) {
-      getline(file_SI,buffer);
-      std::cout << "buffer = " << buffer << std::endl;
-      if (buffer != "" && buffer.at(0) != '#'){ ///---> save from empty line at the end! And comments!
-       std::stringstream line( buffer );
-       line >> SI_mass[counter];
-       line >> SI_N[counter];
-       line >> SI_Mean[counter];
-       line >> SI_sigma[counter];
-       line >> SI_alphaR[counter];
-       line >> SI_nR[counter];
-       line >> SI_alphaL[counter];
-       line >> SI_nL[counter];
-       counter++;
-       std::cout << std::endl;
-      }
+     if (iSyst == -1) {
+      readfile = new TString ("data/InterferenceVBF/EWK_SINGLET/file_for_interpolation_dn.root");
      }
-
-    //---- build functions to interpolate ----
-     float log_S_N[100];
-     float log_SI_N[100];
-
-     for (int i=0; i<5; i++) {
-      double tempMass = 0;
-      if (i==0) tempMass = 350;
-      if (i==1) tempMass = 500;
-      if (i==2) tempMass = 650;
-      if (i==3) tempMass = 800;
-      if (i==4) tempMass = 1000;
-
-      int NBIN = 500;
-      if (tempMass<350) NBIN = 500;
-      if (tempMass>400) NBIN = 120;
-      if (tempMass>500) NBIN =  70;
-      if (tempMass>700) NBIN = 120;
-      if (tempMass>900) NBIN =  40;
-
-      int MAX = 800;
-      if (tempMass<350) MAX =   500;
-      if (tempMass>400) MAX =  1500;
-      if (tempMass>500) MAX =  2000;
-      if (tempMass>700) MAX =  4000;
-      if (tempMass>900) MAX =  4000;
-
-      float scale = 1./ (MAX/NBIN);
-      log_S_N[i]  = log(S_N[i]  * scale);
-      log_SI_N[i] = log(SI_N[i] * scale);
+    }
+    else { //---- for c'=1 background is H-126 GeV
+     readfile = new TString ("data/InterferenceVBF/SM/file_for_interpolation.root"); //file with the values of the all parameters
+     if (iSyst ==  1) {
+      readfile = new TString ("data/InterferenceVBF/SM/file_for_interpolation_up.root");
      }
-
-     if (kind == 0) {
-      for (int iVar=0; iVar<7; iVar++) {
-       if (iVar == 0) em_variables_S[iVar] = new TGraph (5,S_mass,log_S_N);
-       if (iVar == 1) em_variables_S[iVar] = new TGraph (5,S_mass,S_Mean);
-       if (iVar == 2) em_variables_S[iVar] = new TGraph (5,S_mass,S_sigma);
-       if (iVar == 3) em_variables_S[iVar] = new TGraph (5,S_mass,S_alphaR);
-       if (iVar == 4) em_variables_S[iVar] = new TGraph (5,S_mass,S_nR);
-       if (iVar == 5) em_variables_S[iVar] = new TGraph (5,S_mass,S_alphaL);
-       if (iVar == 6) em_variables_S[iVar] = new TGraph (5,S_mass,S_nL);
-      }
-
-      for (int iVar=0; iVar<7; iVar++) {
-       if (iVar == 0) em_variables_SI[iVar] = new TGraph (5,SI_mass,log_SI_N);
-       if (iVar == 1) em_variables_SI[iVar] = new TGraph (5,SI_mass,SI_Mean);
-       if (iVar == 2) em_variables_SI[iVar] = new TGraph (5,SI_mass,SI_sigma);
-       if (iVar == 3) em_variables_SI[iVar] = new TGraph (5,SI_mass,SI_alphaR);
-       if (iVar == 4) em_variables_SI[iVar] = new TGraph (5,SI_mass,SI_nR);
-       if (iVar == 5) em_variables_SI[iVar] = new TGraph (5,SI_mass,SI_alphaL);
-       if (iVar == 6) em_variables_SI[iVar] = new TGraph (5,SI_mass,SI_nL);
-      }
-
-      em_crystal_Icorr_qqH = new TF1("em_crystal_Icorr_qqH",CrystalBallLowHighDivideCrystalBallLowHigh,0,3000,14);
-
-      for (int iVar = 0; iVar<7; iVar++) {
-       if (iVar == 0) {
-        em_crystal_Icorr_qqH->SetParameter(iVar,   exp(em_variables_SI[iVar]->Eval(Hmass)));
-        em_crystal_Icorr_qqH->SetParameter(iVar+7, exp(em_variables_S[iVar]->Eval(Hmass)));
-       }
-       else {
-        em_crystal_Icorr_qqH->SetParameter(iVar,   em_variables_SI[iVar]->Eval(Hmass));
-        em_crystal_Icorr_qqH->SetParameter(iVar+7, em_variables_S[iVar]->Eval(Hmass));
-       }
-      }
-     }
-     else if (kind == 1) {
-      for (int iVar=0; iVar<7; iVar++) {
-       if (iVar == 0) mm_variables_S[iVar] = new TGraph (5,S_mass,log_S_N);
-       if (iVar == 1) mm_variables_S[iVar] = new TGraph (5,S_mass,S_Mean);
-       if (iVar == 2) mm_variables_S[iVar] = new TGraph (5,S_mass,S_sigma);
-       if (iVar == 3) mm_variables_S[iVar] = new TGraph (5,S_mass,S_alphaR);
-       if (iVar == 4) mm_variables_S[iVar] = new TGraph (5,S_mass,S_nR);
-       if (iVar == 5) mm_variables_S[iVar] = new TGraph (5,S_mass,S_alphaL);
-       if (iVar == 6) mm_variables_S[iVar] = new TGraph (5,S_mass,S_nL);
-      }
-
-      for (int iVar=0; iVar<7; iVar++) {
-       if (iVar == 0) mm_variables_SI[iVar] = new TGraph (5,SI_mass,log_SI_N);
-       if (iVar == 1) mm_variables_SI[iVar] = new TGraph (5,SI_mass,SI_Mean);
-       if (iVar == 2) mm_variables_SI[iVar] = new TGraph (5,SI_mass,SI_sigma);
-       if (iVar == 3) mm_variables_SI[iVar] = new TGraph (5,SI_mass,SI_alphaR);
-       if (iVar == 4) mm_variables_SI[iVar] = new TGraph (5,SI_mass,SI_nR);
-       if (iVar == 5) mm_variables_SI[iVar] = new TGraph (5,SI_mass,SI_alphaL);
-       if (iVar == 6) mm_variables_SI[iVar] = new TGraph (5,SI_mass,SI_nL);
-      }
-
-      mm_crystal_Icorr_qqH = new TF1("mm_crystal_Icorr_qqH",CrystalBallLowHighDivideCrystalBallLowHigh,0,3000,14);
-
-      for (int iVar = 0; iVar<7; iVar++) {
-       if (iVar == 0) {
-        mm_crystal_Icorr_qqH->SetParameter(iVar,   exp(mm_variables_SI[iVar]->Eval(Hmass)));
-        mm_crystal_Icorr_qqH->SetParameter(iVar+7, exp(mm_variables_S[iVar]->Eval(Hmass)));
-       }
-       else {
-        mm_crystal_Icorr_qqH->SetParameter(iVar,   mm_variables_SI[iVar]->Eval(Hmass));
-        mm_crystal_Icorr_qqH->SetParameter(iVar+7, mm_variables_S[iVar]->Eval(Hmass));
-       }
-      }
+     if (iSyst == -1) {
+      readfile = new TString ("data/InterferenceVBF/SM/file_for_interpolation_dn.root");
      }
     }
 
+    TFile* SI = new TFile(readfile->Data());
+    Double_t fill_param[16]; // 9 + 7 = 16
+
+    for (int i=0; i<9; i++) {
+     TString *name = new TString (parameters_normal[i]);
+     name->Append("_SI.txt");
+     variables_SI[i] = (TGraph2D*)SI->Get(name->Data());
+    }
+    for (int i=0; i<7; i++) {
+     TString *name = new TString (parameters_normal[i]);
+     name->Append("_S.txt");
+     variables_S[i] = (TGraph2D*)SI->Get(name->Data());
+    }
+
+    crystal_Icorr_qqH = new TF1("crystal_Icorr_qqH",CrystalBallLowHighPlusExpDividedByCrystalBallLowHigh,0,3000,16+2);
+
+    for (int iVar = 0; iVar<9; iVar++) {
+     if (parameters_normal[iVar].Contains("Norm")){
+      crystal_Icorr_qqH->SetParameter(iVar, exp(variables_S[iVar]->Interpolate(Hmass, beta)));
+     }
+     else {
+      crystal_Icorr_qqH->SetParameter(iVar, variables_S[iVar]->Interpolate(Hmass, beta));
+     }
+    }
+    for (int iVar = 0; iVar<7; iVar++) {
+     if (parameters_normal[iVar].Contains("Norm")){
+      crystal_Icorr_qqH->SetParameter(iVar+9, exp(variables_S[iVar]->Interpolate(Hmass, beta)));   
+     }
+     else {
+      crystal_Icorr_qqH->SetParameter(iVar+9, variables_S[iVar]->Interpolate(Hmass, beta));
+     }
+    }
+    crystal_Icorr_qqH->SetParameter(6+9+1, alpha);
+    crystal_Icorr_qqH->SetParameter(6+9+2, beta);
+
    }
+
 }
+
+
+
