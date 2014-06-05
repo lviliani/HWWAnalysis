@@ -174,7 +174,7 @@ TF1* crystal_Icorr_qqH;
 // iType = 0 : ggH
 //         1 : qqH
 
-float getIntWght(int iType, float mass , float cpsq, float kind = 0)
+float getIntWght(int iType, float mass , float cpsq , float BRnew = 0.0, int EWKcase = 1,  float kind = 0)
 {
    float wInt=1.;
    if ( iType == 0 ) { //---- ggH
@@ -182,7 +182,7 @@ float getIntWght(int iType, float mass , float cpsq, float kind = 0)
        wInt = wInt_ggH->Eval(mass) ;
        if ( cpsq < 1. ) wInt = wInt/cpsq;
        wInt += 1;
-       if (wInt < 0) wInt = 0;
+       if (wInt < 0) wInt = 0.01;
      } else {
        std::cout << "Missing Interference !!!!" << std::endl;
      }
@@ -191,7 +191,7 @@ float getIntWght(int iType, float mass , float cpsq, float kind = 0)
     wInt = 1.;
     wInt = crystal_Icorr_qqH->Eval(mass);
 
-    if ( cpsq < 1. ) wInt = 1.+(wInt-1.)/cpsq; //---- needed also here?
+    // Done in inputs now : if ( cpsq < 1. ) wInt = 1.+(wInt-1.)/cpsq; //---- needed also here?
    }
    return wInt;
 }
@@ -293,6 +293,7 @@ void initIntWght(std::string wFile , int iType , int iSyst, float Hmass = 350, f
     TFile* SI = new TFile(readfile->Data());
     Double_t fill_param[16]; // 9 + 7 = 16
 
+    TString parameters_normal [9] = {"Norm","Mean_CB","Sigma_CB","alphaR_CB","nR_CB","alphaL_CB","nL_CB","R","Tau"};
     for (int i=0; i<9; i++) {
      TString *name = new TString (parameters_normal[i]);
      name->Append("_SI.txt");
