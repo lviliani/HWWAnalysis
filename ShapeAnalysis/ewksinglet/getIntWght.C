@@ -7,6 +7,7 @@
 #include <TCanvas.h>
 #include <TH1F.h>
 #include <TF1.h>
+#include <TGraph2D.h>
 #include <TSpline.h>
 #include <TFile.h>
 #include <string>
@@ -21,6 +22,63 @@
 //-------------------
 //---- functions ----
 //-------------------
+
+double crystalBallLowHigh (double* x, double* par) {
+  //[0] = N
+  //[1] = mean
+  //[2] = sigma
+  //[3] = alpha on the right-hand side
+  //[4] = n
+  //[5] = alpha2 on the left-hand side
+  //[6] = n2
+
+ double xx = x[0];
+ double mean = par[1];
+ double sigma = fabs (par[2]);
+ double alpha = par[3];
+ double n = par[4];
+ double alpha2 = par[5];
+ double n2 = par[6];
+
+ if( (xx-mean)/sigma > fabs(alpha) ) {
+  double A = pow(n/fabs(alpha), n) * exp(-0.5 * alpha*alpha);
+  double B = n/fabs(alpha) - fabs(alpha);
+
+  return par[0] * A * pow(B + (xx-mean)/sigma, -1.*n);
+ }
+
+ else if( (xx-mean)/sigma < -1.*fabs(alpha2) ) {
+  double A = pow(n2/fabs(alpha2), n2) * exp(-0.5 * alpha2*alpha2);
+  double B = n2/fabs(alpha2) - fabs(alpha2);
+
+  return par[0] * A * pow(B - (xx-mean)/sigma, -1.*n2);
+ }
+
+ else {
+  return par[0] * exp(-1. * (xx-mean)*(xx-mean) / (2*sigma*sigma) );
+ }
+
+}
+
+
+//---- division of CBLowHigh with CBLowHigh ----
+
+Double_t CrystalBallLowHighDivideCrystalBallLowHigh(Double_t *x,Double_t *par) {
+ Double_t num = 0;
+ num = crystalBallLowHigh(x,par);
+
+ Double_t den = 1;
+ den = crystalBallLowHigh(x,&par[7]);
+
+ if (den != 0) return num/den;
+ else return 1.;
+
+}
+
+
+
+
+
 
 
 //---- division of CBLowHigh+ExponentialFall with CBLowHigh ----
@@ -92,77 +150,11 @@ Double_t CrystalBallLowHighPlusExpDividedByCrystalBallLowHigh(Double_t *x,Double
  double den = crystalBallLowHigh (x, par + 9) ; // signal only
  if (den == 0) return -1. ;
  double num = doubleGausCrystalBallLowHighPlusExp (x, par) ; // signal and interference
-
- float alpha = par[16];
- float beta  = par[17];
-//  num = alpha*S + sqrt(alpha)*I 
-//  den = S
-
- float S = den; 
- float I = (num - alpha*S)/sqrt(alpha);
-
- if (S != 0) {
-  return (alpha*S + sqrt(alpha)*I) / S;
- }
-
+ return num / den ;
 }
 
 
 
-
-double crystalBallLowHigh (double* x, double* par) {
-  //[0] = N
-  //[1] = mean
-  //[2] = sigma
-  //[3] = alpha on the right-hand side
-  //[4] = n
-  //[5] = alpha2 on the left-hand side
-  //[6] = n2
-
- double xx = x[0];
- double mean = par[1];
- double sigma = fabs (par[2]);
- double alpha = par[3];
- double n = par[4];
- double alpha2 = par[5];
- double n2 = par[6];
-
- if( (xx-mean)/sigma > fabs(alpha) ) {
-  double A = pow(n/fabs(alpha), n) * exp(-0.5 * alpha*alpha);
-  double B = n/fabs(alpha) - fabs(alpha);
-
-  return par[0] * A * pow(B + (xx-mean)/sigma, -1.*n);
- }
-
- else if( (xx-mean)/sigma < -1.*fabs(alpha2) ) {
-  double A = pow(n2/fabs(alpha2), n2) * exp(-0.5 * alpha2*alpha2);
-  double B = n2/fabs(alpha2) - fabs(alpha2);
-
-  return par[0] * A * pow(B - (xx-mean)/sigma, -1.*n2);
- }
-
- else {
-  return par[0] * exp(-1. * (xx-mean)*(xx-mean) / (2*sigma*sigma) );
- }
-
-}
-
-
-//---- division of CBLowHigh with CBLowHigh ----
-
-Double_t CrystalBallLowHighDivideCrystalBallLowHigh(Double_t *x,Double_t *par) {
- Double_t num = 0;
- num = crystalBallLowHigh(x,par);
-
- Double_t den = 1;
- den = crystalBallLowHigh(x,&par[7]);
-
- if (den != 0) {
-  return num / den;
- }
- else return 1.;
-
-}
 
 TH1F*     hInt_ggH = 0 ;
 TSpline3* wInt_ggH = 0 ;
@@ -174,7 +166,7 @@ TF1* crystal_Icorr_qqH;
 // iType = 0 : ggH
 //         1 : qqH
 
-float getIntWght(int iType, float mass , float cpsq, float kind = 0)
+float getIntWght(int iType, float mass , float cpsq , float BRnew = 0.0 , float kind = 0)
 {
    float wInt=1.;
    if ( iType == 0 ) { //---- ggH
@@ -182,7 +174,7 @@ float getIntWght(int iType, float mass , float cpsq, float kind = 0)
        wInt = wInt_ggH->Eval(mass) ;
        if ( cpsq < 1. ) wInt = wInt/cpsq;
        wInt += 1;
-       if (wInt < 0) wInt = 0;
+       if (wInt < 0) wInt = 0.01;
      } else {
        std::cout << "Missing Interference !!!!" << std::endl;
      }
@@ -190,8 +182,7 @@ float getIntWght(int iType, float mass , float cpsq, float kind = 0)
    else if ( iType == 1 ) { //---- qqH
     wInt = 1.;
     wInt = crystal_Icorr_qqH->Eval(mass);
-
-    if ( cpsq < 1. ) wInt = 1.+(wInt-1.)/cpsq; //---- needed also here?
+    // Done in inputs now : if ( cpsq < 1. ) wInt = 1.+(wInt-1.)/cpsq; //---- needed also here?
    }
    return wInt;
 }

@@ -996,10 +996,12 @@ class ShapeFactory:
 
        # Inteference (Only meaningfull with new CPS as kfW already contains it otherwise)
        if self._newcps :
+         EWKcase='0' 
+         if self._ewksinglet : EWKcase='1' 
          if prodMode in ['ggH'] and mass >= 300 : 
             fileInt = os.environ['CMSSW_BASE']+'/src/HWWAnalysis/ShapeAnalysis/ewksinglet/data/Interference_ggH/1.0SMWidth/h_MWW_IonS_NNLO_'+str(mass)+'.root'
-            ROOT.gROOT.ProcessLineSync('initIntWght("'+fileInt+'",0,'+str(iSystGGH)+','+str(mass)+')')
-            hWght += '*getIntWght(0,MHiggs,'+str(self._cprimesq)+')' 
+            ROOT.gROOT.ProcessLineSync('initIntWght("'+fileInt+'",0,'+str(iSystGGH)+','+str(mass)+','+str(self._cprimesq)+','+str(self._brnew)+','+EWKcase+')')
+            hWght += '*getIntWght(0,MHiggs,'+str(self._cprimesq)+','+str(self._brnew)+')' 
          if prodMode in ['qqH'] and mass >= 350 : 
             if   flavor in ['of','em','me'] : iFlavor = '0'
             elif flavor in ['sf','mm','ee'] : iFlavor = '1'
@@ -1007,9 +1009,9 @@ class ShapeFactory:
               print '_HiggsWgt: Unknown flavor : ',flavor
               exit()
             EWKDir = os.environ['CMSSW_BASE']+'/src/HWWAnalysis/ShapeAnalysis/ewksinglet/'
-            ROOT.gROOT.ProcessLineSync('initIntWght("'+EWKDir+'" ,1,'+str(iSystVBF)+','+str(mass)+')') 
-            if not self._approxewk : hWght += '*getIntWght(1,MHiggs,'+str(self._cprimesq)+','+iFlavor+')' 
-            else                   : hWght += '*getIntWght(1,MHiggs,1.0,'+iFlavor+')'
+            ROOT.gROOT.ProcessLineSync('initIntWght("'+EWKDir+'" ,1,'+str(iSystVBF)+','+str(mass)+','+str(self._cprimesq)+','+str(self._brnew)+','+EWKcase+')') 
+            if not self._approxewk : hWght += '*getIntWght(1,MHiggs,'+str(self._cprimesq)+','+str(self._brnew)+','+iFlavor+')' 
+            else                   : hWght += '*getIntWght(1,MHiggs,1.0,0.0,'+iFlavor+')'
 
 
 
