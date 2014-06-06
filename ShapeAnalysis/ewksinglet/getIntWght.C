@@ -182,6 +182,7 @@ float getIntWght(int iType, float mass , float cpsq , float BRnew = 0.0, int EWK
    else if ( iType == 1 ) { //---- qqH
     wInt = 1.;
     wInt = crystal_Icorr_qqH->Eval(mass);
+//     std::cout << " qqHinterference calculated "  << std::endl;
     // Done in inputs now : if ( cpsq < 1. ) wInt = 1.+(wInt-1.)/cpsq; //---- needed also here?
    }
    return wInt;
@@ -197,6 +198,8 @@ void initIntWght(std::string wFile , int iType , int iSyst, float Hmass = 350, f
 //    Gamma -> Gamma * cprime / (1-BRnew)  = beta * Gamma
 //    alpha = cprime * (1-BRnew)
 //    beta  = cprime / (1-BRnew)
+
+//    std::cout << " initialization interference "  << std::endl;
 
    float alpha = cprime * (1-BRnew);
    float beta  = cprime / (1-BRnew);
@@ -260,7 +263,7 @@ void initIntWght(std::string wFile , int iType , int iSyst, float Hmass = 350, f
      f->Close();
    }
    else if ( iType ==1 ) { //---- qqH
-
+//     std::cout << " initialization interference for qqH "  << std::endl;
     TString *readfile;
     if (EWKcase) { //---- for c'=1 background is H-10 TeV
      readfile = new TString (wFile+"data/InterferenceVBF/EWK_SINGLET/file_for_interpolation.root"); //file with the values of the all parameters
@@ -282,28 +285,31 @@ void initIntWght(std::string wFile , int iType , int iSyst, float Hmass = 350, f
     }
 
     TFile* SI = new TFile(readfile->Data());
-    Double_t fill_param[16]; // 9 + 7 = 16
-
+//     Double_t fill_param[16]; // 9 + 7 = 16
+//     std::cout << " file = " << readfile->Data() << std::endl;
     TString parameters_normal [9] = {"Norm","Mean_CB","Sigma_CB","alphaR_CB","nR_CB","alphaL_CB","nL_CB","R","Tau"};
     for (int i=0; i<9; i++) {
      TString *name = new TString (parameters_normal[i]);
      name->Append("_SI.txt");
+//      std::cout << " i = " << i << " name = " << name -> Data()  << std::endl;
      variables_SI[i] = (TGraph2D*)SI->Get(name->Data());
     }
     for (int i=0; i<7; i++) {
      TString *name = new TString (parameters_normal[i]);
      name->Append("_S.txt");
+//      std::cout << " i = " << i << " name = " << name -> Data()  << std::endl;
      variables_S[i] = (TGraph2D*)SI->Get(name->Data());
     }
 
     crystal_Icorr_qqH = new TF1("crystal_Icorr_qqH",CrystalBallLowHighPlusExpDividedByCrystalBallLowHigh,0,3000,16+2);
 
     for (int iVar = 0; iVar<9; iVar++) {
+//      std::cout << " iVar = " << iVar << " parameters_normal[" << iVar << "] = " << parameters_normal[iVar] << std::endl;
      if (parameters_normal[iVar].Contains("Norm")){
-      crystal_Icorr_qqH->SetParameter(iVar, exp(variables_S[iVar]->Interpolate(Hmass, beta)));
+      crystal_Icorr_qqH->SetParameter(iVar, exp(variables_SI[iVar]->Interpolate(Hmass, beta)));
      }
      else {
-      crystal_Icorr_qqH->SetParameter(iVar, variables_S[iVar]->Interpolate(Hmass, beta));
+      crystal_Icorr_qqH->SetParameter(iVar, variables_SI[iVar]->Interpolate(Hmass, beta));
      }
     }
     for (int iVar = 0; iVar<7; iVar++) {
