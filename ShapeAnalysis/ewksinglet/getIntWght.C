@@ -146,14 +146,33 @@ double doubleGausCrystalBallLowHighPlusExp (double* x, double* par) {
 
 
 //---- division of CBLowHighPlusExp with CBLowHigh ----
+// Double_t CrystalBallLowHighPlusExpDividedByCrystalBallLowHigh(Double_t *x,Double_t *par) {
+//  double den = crystalBallLowHigh (x, par + 9) ; // signal only
+//  if (den == 0) return -1. ;
+//  double num = doubleGausCrystalBallLowHighPlusExp (x, par) ; // signal and interference
+//  return num / den ;
+// }
+
+
+//---- division of CBLowHighPlusExp with CBLowHigh ----
 Double_t CrystalBallLowHighPlusExpDividedByCrystalBallLowHigh(Double_t *x,Double_t *par) {
  double den = crystalBallLowHigh (x, par + 9) ; // signal only
  if (den == 0) return -1. ;
  double num = doubleGausCrystalBallLowHighPlusExp (x, par) ; // signal and interference
- return num / den ;
+
+ float alpha = par[16];
+ float beta = par[17];
+// num = alpha*S + sqrt(alpha)*I
+// den = S
+
+ float S = den;
+ float I = (num - alpha*S)/sqrt(alpha);
+
+ if (S != 0) {
+  return (alpha*S + sqrt(alpha)*I) / S;
+ }
+
 }
-
-
 
 
 TH1F*     hInt_ggH = 0 ;
