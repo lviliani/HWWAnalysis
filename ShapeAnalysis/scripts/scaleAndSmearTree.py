@@ -66,6 +66,11 @@ electronUncertaintyEE2012 = 0.02 # abseta > 2.0
 sigmaChargeElectron = (0.000240123, 7.55615e-05, 0.000144796, 2.52092e-05, 0.00120842, 0.00236264)
 sigmaChargeMuon     = 0.0002
 
+## JER: jet energy resolution
+sigmaJetResolution = (0.0390, 0.0427, 0.0601, 0.0601, 0.0675, 0.1090)
+
+
+
 ## pu uncertainty
 puUp   = "puDATAup.root"
 puDown = "puDATAdown.root"
@@ -119,6 +124,29 @@ def smearMET(met,sigma):
     ## and replace the vector
     met.SetPxPyPzE(newpx, newpy,0,0)
     return met
+
+def smearJet(pt,eta):
+    if abs(eta)<=0.5 :
+      sigma = sigmaJetResolution[0]
+    if abs(eta)>0.5 and abs(eta)<=1.1 :
+      sigma = sigmaJetResolution[1]
+    if abs(eta)>1.1 and abs(eta)<=1.7 :
+      sigma = sigmaJetResolution[2]
+    if abs(eta)>1.7 and abs(eta)<=2.3 :
+      sigma = sigmaJetResolution[3]
+    if abs(eta)>2.3 :
+      sigma = sigmaJetResolution[4]
+
+    scale = -1
+    while scale < 0  :
+      scale = ROOT.gRandom.Gaus(1, sigma)
+
+    newpt = pt
+    if pt > 0 :
+     newpt = scale * pt
+
+    return newpt
+
 
 def smearPt(pt, sigma):
     pt = ROOT.gRandom.Gaus(pt, sigma*pt)
@@ -503,6 +531,8 @@ class scaleAndSmear:
         
         self.ttree.Branch('jetpt1',self.jetpt1,'jetpt1/F')
         self.ttree.Branch('jetpt2',self.jetpt2,'jetpt2/F')
+        self.ttree.Branch('jetpt3',self.jetpt3,'jetpt3/F')
+        self.ttree.Branch('jetpt4',self.jetpt4,'jetpt4/F')
         self.ttree.Branch('njet',self.njet,'njet/F')
         self.ttree.Branch('mjj',self.mjj,'mjj/F')
         self.ttree.Branch('dphilljetjet',self.dphilljetjet,'dphilljetjet/F')
@@ -556,6 +586,8 @@ class scaleAndSmear:
         
         self.jetpt1[0] = self.oldttree.jetpt1
         self.jetpt2[0] = self.oldttree.jetpt2
+        self.jetpt3[0] = self.oldttree.jetpt3
+        self.jetpt4[0] = self.oldttree.jetpt4
         self.njet[0] = self.oldttree.njet
         self.dphilljetjet[0] = self.oldttree.dphilljetjet
         self.mjj[0] = self.oldttree.mjj
@@ -1496,6 +1528,81 @@ class scaleAndSmear:
                                                 
             # fill old and new values            
             self.ttree.Fill()
+
+
+
+
+
+
+
+###############################################################################################
+## jet energy resolution, a.k.a. JER
+
+
+
+    def jetEnergyResolution(self):
+
+        ## define a new branch
+        self.defineVariables()
+
+        jetthreshold = 30.
+
+        #nentries = self.ttree.GetEntriesFast()
+        nentries = self.nentries
+        print 'total number of entries: '+str(nentries)
+        i=0
+        for ientry in xrange(0,nentries):
+            i+=1
+            self.oldttree.GetEntry(ientry)
+            ## print event count
+            step = 10000
+            if i > 0 and i%step == 0:
+                print str(i)+' events processed.'
+
+            ## by default set all values to original tree
+            self.getOriginalVariables()
+
+            ## get the variables
+            tmp_jetpt1 = smearJet(self.oldttree.jetpt1,self.oldttree.jeteta1)
+            tmp_jetpt2 = smearJet(self.oldttree.jetpt2,self.oldttree.jeteta2)
+            tmp_jetpt3 = smearJet(self.oldttree.jetpt3,self.oldttree.jeteta3)
+            tmp_jetpt4 = smearJet(self.oldttree.jetpt4,self.oldttree.jeteta4)
+
+            # re-order the jets
+            # FIXME
+            # neglected as for the JES
+            self.jetpt1[0] = tmp_jetpt1
+            self.jetpt2[0] = tmp_jetpt2
+            self.jetpt3[0] = tmp_jetpt3
+            self.jetpt4[0] = tmp_jetpt4
+
+            # fill new values
+            #
+            nJetOverThreshold = 0
+            if self.jetpt1[0] > jetthreshold :
+                nJetOverThreshold+=1
+            if self.jetpt2[0] > jetthreshold :
+                nJetOverThreshold+=1
+            if self.jetpt3[0] > jetthreshold :
+                nJetOverThreshold+=1
+            if self.jetpt4[0] > jetthreshold :
+                nJetOverThreshold+=1
+            self.njet[0] = nJetOverThreshold
+            # no more than 4 considered
+            # calculate the number of jets between tag jets (NB: no jet order inversion is considered!)
+            newnjetvbf = 0
+            if self.cjetpt1[0] > jetthreshold :
+                newnjetvbf+=1
+            if self.cjetpt2[0] > jetthreshold :
+                newnjetvbf+=1
+            self.njetvbf[0] = newnjetvbf
+
+            # fill old and new values
+            self.ttree.Fill()
+
+
+
+
 
 
 ###############################################################################################
@@ -2449,7 +2556,7 @@ def main():
         parser.error('No output file defined')
     if opt.systArgument is None:
         parser.error('No systematic argument given')
-    possibleSystArguments = ['muonScale','electronScale','leptonEfficiency','jetEnergyScale','metScale','metResolution','muonResolution','electronResolution','dyTemplate','puVariation','chargeResolution']
+    possibleSystArguments = ['muonScale','electronScale','leptonEfficiency','jetEnergyScale','jetEnergyResolution','metScale','metResolution','muonResolution','electronResolution','dyTemplate','puVariation','chargeResolution']
     if opt.systArgument not in possibleSystArguments:
         parser.error('Wrong systematic argument')        
     possibleDirections = ['up','down','temp','syst']
@@ -2494,6 +2601,8 @@ def main():
         s.leptonEfficiency()
     if s.systArgument == 'jetEnergyScale':
         s.jetEnergyScale()
+    if s.systArgument == 'jetEnergyResolution':
+        s.jetEnergyResolution()
     if s.systArgument == 'metScale':
         s.metScale()
     if s.systArgument == 'metResolution':
