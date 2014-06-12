@@ -173,7 +173,8 @@ Double_t CrystalBallLowHighPlusExpDividedByCrystalBallLowHigh(Double_t *x,Double
  double den = crystalBallLowHigh (x, par + 9) ; // signal only
  if (den == 0) return -1. ;
  double num = doubleGausCrystalBallLowHighPlusExp (x, par) ; // signal + I@800 +I@126
- double I126 = exponential (x,par+16); //interference from H126
+ double I126 = - exponential (x,par+16); //interference from H126
+ //I126 is fitted as positive (BnoH-SBI125), so need to change the sign
 
  float alpha = par[18];
  float beta = par[19];
@@ -181,8 +182,9 @@ Double_t CrystalBallLowHighPlusExpDividedByCrystalBallLowHigh(Double_t *x,Double
 // num = beta*S + sqrt(beta)*I@800 + sqrt(zeta)*I@126
 // den = S
 
- float S = den;
- float I = (num - beta*S- sqrt(1-beta)*I126)/sqrt(beta);
+ double S_par[7] = {par[9],par[10],beta*par[11],par[12],par[13],par[14],par[15]};
+ double S = crystalBallLowHigh (x, S_par) ; //SM signal with width rescaled for c',BRnew
+ float I = (num - beta*S - sqrt(1-beta)*I126)/sqrt(beta);
 
  float w = 0;
  if (S>0) w = (alpha*S + sqrt(alpha)*I + sqrt(zeta)*I126) / S;
@@ -204,7 +206,7 @@ TF1* crystal_Icorr_qqH;
 // iType = 0 : ggH
 //         1 : qqH
 
-float getIntWght(int iType, float mass , float cpsq)
+float getIntWght(int iType, float mass , float cpsq , float BRnew = 0.0, int EWKcase = 1,  float kind = 0)
 {
    float wInt=1.;
    if ( iType == 0 ) { //---- ggH
