@@ -1037,7 +1037,7 @@ class ShapeMixer:
             if m is not None:
                 systName = 'CMS{0}_'.format(suffix)+m.group(1)
                 if 'interf_ggH' in systName : systName = 'interf_ggH' 
-                if 'interf_VBF' in systName : systName = 'interf_VBF' 
+                if 'interf_qqH' in systName : systName = 'interf_qqH' 
                 systShift = m.group(2)
                 # x-check on the regex match
                 if not( n.endswith('Up') or n.endswith('Down') ):

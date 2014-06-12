@@ -172,7 +172,7 @@ float getIntWght(int iType, float mass , float cpsq , float BRnew = 0.0, int EWK
    if ( iType == 0 ) { //---- ggH
      if ( wInt_ggH ) {
        wInt = wInt_ggH->Eval(mass) ;
-       if ( cpsq < 1. ) wInt = wInt/cpsq;
+       if ( cpsq < 1. ) wInt = (1-BRnew)*wInt/cpsq;
        wInt += 1;
        if (wInt < 0) wInt = 0.01;
      } else {

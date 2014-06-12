@@ -1517,6 +1517,8 @@ if __name__ == '__main__':
                   ('chargeResolution'        , 'ch_res'), 
                   ('interferenceGGH_up'      , 'interf_ggHUp'),
                   ('interferenceGGH_down'    , 'interf_ggHDown'),
+                  ('interferenceVBF_up'      , 'interf_qqHUp'),
+                  ('interferenceVBF_down'    , 'interf_qqHDown'),
               ])
 
   
@@ -1541,6 +1543,8 @@ if __name__ == '__main__':
               systByWeight['electronEfficiency_up']   = 'effWElUp/effW'
               systByWeight['interferenceGGH_up']   = '1.0'
               systByWeight['interferenceGGH_down'] = '1.0'
+              systByWeight['interferenceVBF_up']   = '1.0'
+              systByWeight['interferenceVBF_down'] = '1.0'
 
               systByWeight['puW_down'] = 'puWup/puW'
               systByWeight['puW_up']   = 'puWdown/puW'
@@ -1556,6 +1560,8 @@ if __name__ == '__main__':
               # interference is only on signal samples:
               systMasks['interferenceGGH_up'  ] = ['ggH', 'ggH_ALT']
               systMasks['interferenceGGH_down'] = ['ggH', 'ggH_ALT']
+              systMasks['interferenceVBF_up'  ] = ['qqH', 'qqH_ALT']
+              systMasks['interferenceVBF_down'] = ['qqH', 'qqH_ALT']
               systDirs  = dict([(s,systInputDir if s not in systByWeight else 'templates/' ) for s in systematics])
               #systDirs  = dict([(s,systInputDir if s not in systByWeight else 'nominals/' ) for s in systematics])
               print "systDirs = ",systDirs
