@@ -67,8 +67,11 @@ sigmaChargeElectron = (0.000240123, 7.55615e-05, 0.000144796, 2.52092e-05, 0.001
 sigmaChargeMuon     = 0.0002
 
 ## JER: jet energy resolution
-sigmaJetResolution = (0.0390, 0.0427, 0.0601, 0.0601, 0.0675, 0.1090)
+#sigmaJetResolution = (0.0390, 0.0427, 0.0601, 0.0675, 0.1090 )   # from WZ
 
+sigmaJetResolution     = (0.0342, 0.0363, 0.0504, 0.0534, 0.0898 )   # from WW    nominal
+sigmaJetResolutionDown = (0.0000, 0.0047, 0.0286, 0.0293, 0.0477 )   # from WW    down
+sigmaJetResolutionUp   = (0.0516, 0.0521, 0.0663, 0.0712, 0.1220 )   # from WW    up
 
 
 ## pu uncertainty
@@ -125,17 +128,42 @@ def smearMET(met,sigma):
     met.SetPxPyPzE(newpx, newpy,0,0)
     return met
 
-def smearJet(pt,eta):
-    if abs(eta)<=0.5 :
-      sigma = sigmaJetResolution[0]
-    if abs(eta)>0.5 and abs(eta)<=1.1 :
-      sigma = sigmaJetResolution[1]
-    if abs(eta)>1.1 and abs(eta)<=1.7 :
-      sigma = sigmaJetResolution[2]
-    if abs(eta)>1.7 and abs(eta)<=2.3 :
-      sigma = sigmaJetResolution[3]
-    if abs(eta)>2.3 :
-      sigma = sigmaJetResolution[4]
+def smearJet(pt,eta,nominal):
+    if nominal==0:
+      if abs(eta)<=0.5 :
+        sigma = sigmaJetResolution[0]
+      if abs(eta)>0.5 and abs(eta)<=1.1 :
+        sigma = sigmaJetResolution[1]
+      if abs(eta)>1.1 and abs(eta)<=1.7 :
+        sigma = sigmaJetResolution[2]
+      if abs(eta)>1.7 and abs(eta)<=2.3 :
+        sigma = sigmaJetResolution[3]
+      if abs(eta)>2.3 :
+        sigma = sigmaJetResolution[4]
+
+    if nominal==-1:
+      if abs(eta)<=0.5 :
+        sigma = sigmaJetResolutionDown[0]
+      if abs(eta)>0.5 and abs(eta)<=1.1 :
+        sigma = sigmaJetResolutionDown[1]
+      if abs(eta)>1.1 and abs(eta)<=1.7 :
+        sigma = sigmaJetResolutionDown[2]
+      if abs(eta)>1.7 and abs(eta)<=2.3 :
+        sigma = sigmaJetResolutionDown[3]
+      if abs(eta)>2.3 :
+        sigma = sigmaJetResolutionDown[4]
+
+    if nominal==1:
+      if abs(eta)<=0.5 :
+        sigma = sigmaJetResolutionUp[0]
+      if abs(eta)>0.5 and abs(eta)<=1.1 :
+        sigma = sigmaJetResolutionUp[1]
+      if abs(eta)>1.1 and abs(eta)<=1.7 :
+        sigma = sigmaJetResolutionUp[2]
+      if abs(eta)>1.7 and abs(eta)<=2.3 :
+        sigma = sigmaJetResolutionUp[3]
+      if abs(eta)>2.3 :
+        sigma = sigmaJetResolutionUp[4]
 
     scale = -1
     while scale < 0  :
@@ -616,12 +644,15 @@ class scaleAndSmear:
         self.mpmet[0] = self.oldttree.mpmet
         self.pfmetSignificance[0] = self.oldttree.pfmetSignificance
         self.pfmetMEtSig[0] = self.oldttree.pfmetMEtSig
-        self.dphimetjet1[0] = -999 #self.oldttree.dphimetjet1
-        self.dphilljet1[0] = -999
-        self.recoil[0] = -999 #self.oldttree.recoil
         self.dymva0[0] = self.oldttree.dymva0
         self.dymva1[0] = self.oldttree.dymva1 
-                                                                                                                                                                                        
+
+        # these variables were not defined in a previous version of the ntuples, then default values needed
+        self.dphimetjet1[0] = self.oldttree.dphimetjet1   #-999 #self.oldttree.dphimetjet1
+        self.dphilljet1[0] = self.oldttree.dphilljet1    # -999
+        self.recoil[0] = self.oldttree.recoil  #-999 #self.oldttree.recoil
+
+
 
 ## recompute lepton related variables from already corrected leptons
     def computeLeptonVariables(self,l1,l2):
@@ -1562,11 +1593,16 @@ class scaleAndSmear:
             ## by default set all values to original tree
             self.getOriginalVariables()
 
+            nuisance = 0.
+            if self.direction == 'up':
+              nuisance = 1.
+            if self.direction == 'down':
+              nuisance = -1.
             ## get the variables
-            tmp_jetpt1 = smearJet(self.oldttree.jetpt1,self.oldttree.jeteta1)
-            tmp_jetpt2 = smearJet(self.oldttree.jetpt2,self.oldttree.jeteta2)
-            tmp_jetpt3 = smearJet(self.oldttree.jetpt3,self.oldttree.jeteta3)
-            tmp_jetpt4 = smearJet(self.oldttree.jetpt4,self.oldttree.jeteta4)
+            tmp_jetpt1 = smearJet(self.oldttree.jetpt1,self.oldttree.jeteta1,nuisance)
+            tmp_jetpt2 = smearJet(self.oldttree.jetpt2,self.oldttree.jeteta2,nuisance)
+            tmp_jetpt3 = smearJet(self.oldttree.jetpt3,self.oldttree.jeteta3,nuisance)
+            tmp_jetpt4 = smearJet(self.oldttree.jetpt4,self.oldttree.jeteta4,nuisance)
 
             # re-order the jets
             # FIXME

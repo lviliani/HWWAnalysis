@@ -10,8 +10,12 @@ Scale and smear trees
 
 ## Example:
 
-   ./scaleAndSmearTree.py -i H140_ll.root -o blu/bla/bli.root -t latino -a leptonEfficiency -d down
+    source test/env.sh
+
+    ./scaleAndSmearTree.py -i H140_ll.root -o blu/bla/bli.root -t latino -a leptonEfficiency -d down
     scaleAndSmearTree.py -a jetEnergyResolution   -i   /home/amassiro/Latinos/Shape/tree_skim_all/nominals/latino_8004_SMH125ToWW2Tau2Nu.root   -o test.root
+    scaleAndSmearTree.py -a jetEnergyResolution   -i   /home/amassiro/Latinos/Shape/tree_skim_all/nominals/latino_8004_SMH125ToWW2Tau2Nu.root   -o test.root   --variation="up"
+    scaleAndSmearTree.py -a jetEnergyResolution   -i   /home/amassiro/Latinos/Shape/tree_skim_all/nominals/latino_8004_SMH125ToWW2Tau2Nu.root   -o test.root   --variation="down"
 
 
 ## auto:
