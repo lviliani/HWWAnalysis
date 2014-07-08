@@ -32,6 +32,8 @@ Scale and smear trees
     ls --color=none nominals/ | grep .root | awk '{print "scaleAndSmearTree.py -i nominals/"$1" -o metResolution/"$1"         -a metResolution"}'| /bin/sh
     ls --color=none nominals/ | grep .root | awk '{print "scaleAndSmearTree.py -i nominals/"$1" -o electronResolution/"$1"    -a electronResolution"}'| /bin/sh
 
+    ls --color=none nominals/ | grep .root | awk '{print "scaleAndSmearTree.py -i nominals/"$1" -o JER_up/"$1"    -a jetEnergyResolution -v up"}'| /bin/sh
+    ls --color=none nominals/ | grep .root | awk '{print "scaleAndSmearTree.py -i nominals/"$1" -o JER_down/"$1"  -a jetEnergyResolution -v down"}'| /bin/sh
 
 
 
