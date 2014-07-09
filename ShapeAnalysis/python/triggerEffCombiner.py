@@ -46,17 +46,17 @@ class TriggerEff:
     def getMMeff(self):
         # works only with 2012 data for the moment
         triggers = self.getTriggersForRun(190456)
-        return DiMuEventEfficiency(triggers,mode='onlyDouble')
+        return DiMuEventEfficiency(triggers)
 
     def getEEeff(self):
         # works only with 2012 data for the moment
         triggers = self.getTriggersForRun(190456)
-        return DiElEventEfficiency(triggers,mode='onlyDouble')
+        return DiElEventEfficiency(triggers)
 
     def getEMeff(self):
         # works only with 2012 data for the moment
         triggers = self.getTriggersForRun(190456)
-        return ElMuEventEfficiency(triggers,mode='onlyDouble')
+        return ElMuEventEfficiency(triggers)
 
     def getTriggersForRun(self, run, verbose=0):
         ret = {}
@@ -96,7 +96,7 @@ class LegEfficiency:
             (etalow,etahigh) = bin['etarange']
             if pt >= ptlow and pt < pthigh and abs(eta) >= etalow and abs(eta) < etahigh:
                 # no linear interpolation
-                return bin['efficiency']
+                # return bin['efficiency']
                 # comment out above line to run with linear interpolation in pt
                 ptcen = (ptlow + pthigh) / 2
                 eff = bin['efficiency']
@@ -108,7 +108,7 @@ class LegEfficiency:
                         neff = nbin['efficiency']
                         return eff + (pt - ptcen) * (neff - eff) / (nptcen - ptcen)
                 return eff
-        print pt, eta
+        #print pt, eta
         return 0.0
 
 class ZeroEfficiency:
