@@ -48,7 +48,7 @@ electronSigmaEB2012 = 0.015 # 0.0 < abseta < 1.0
 electronSigmaET2012 = 0.025 # 1.0 < abseta < 2.0
 electronSigmaEE2012 = 0.035 # abseta > 2.0
 ## muon scale uncertainty
-muonUncertainty = 0.01 
+muonUncertainty = 0.01
 muonUncertaintyMB2012 = 0.005 # abseta < 2.2
 muonUncertaintyME2012 = 0.015 # abseta > 2.2
 ## electron scale uncertainty
@@ -298,6 +298,7 @@ class scaleAndSmear:
         self.nentries = 0
         self.systArgument = ''
         self.direction = ''
+        self.strength = -99.
         self.correctMETwithJES = False
         self.dataset = ''
         
@@ -1036,9 +1037,9 @@ class scaleAndSmear:
             boundaryMBME = 2.2
                                                         
         if self.direction == 'up':
-            direction = +1.0
+            direction = self.strength
         if self.direction == 'down':
-            direction = -1.0
+            direction = self.strength
         scaleMB = uncertaintyMB * direction
         scaleME = uncertaintyME * direction
 
@@ -1167,9 +1168,9 @@ class scaleAndSmear:
             uncertaintyEE = electronUncertaintyEE2012
             boundaryEBEE = 2.0
         if self.direction == 'up':
-            direction = +1.0
+            direction = self.strength
         if self.direction == 'down':
-            direction = -1.0
+            direction = self.strength
         scaleEB = uncertaintyEB * direction
         scaleEE = uncertaintyEE * direction
                 
@@ -1308,9 +1309,9 @@ class scaleAndSmear:
 
         jetthreshold = 30.
         if self.direction == 'up':
-            direction = +1.0
+            direction = self.strength
         if self.direction == 'down':
-            direction = -1.0
+            direction = self.strength
 
         ## read the JES corrections
         jeu = []
@@ -1649,9 +1650,9 @@ class scaleAndSmear:
         # offset seen at ~1 GeV at MET = 20GeV and ~0.5 GeV at MET = 40 GeV
         metUncertainty = 1.0 # GeV
         if self.direction == 'up':
-            direction = +1.0
+            direction = self.strength
         if self.direction == 'down':
-            direction = -1.0
+            direction = self.strength
         scale = direction*metUncertainty
 
         ## define a new branch
@@ -2578,6 +2579,7 @@ def main():
     parser.add_option('-o', '--outputFileName',     dest='outputFileName',  help='Name of the output *.root file.',)
     parser.add_option('-a', '--systematicArgument', dest='systArgument',    help='Argument to specify systematic (possible arguments are: "muonScale","electronScale","leptonEfficiency","jetEnergyScale","metScale","metResolution","muonResolution","electronResolution","dyTemplate","puVariation","chargeResolution",)',)
     parser.add_option('-v', '--variation',          dest='variation',       help='Direction of the scale variation ("up"/"down") or type of DY template ("temp"/"syst"), works only in combination with "-a dyTemplate". In the case of "metResolution" and "muonResolution" and "electronResolution" and "chargeResolution" this is ommitted.',)
+    parser.add_option('-s', '--strength',           dest='strength',  type="float",    help='Intensity of the scale variation (1 = "up", -1 = "down", 0.5, 0.6, ...)', default=-99.)
     parser.add_option('-t', '--treeDir',            dest='treeDir',         help='TDirectry structure to the tree to scale and smear.',default="latino")
 #    parser.add_option('-n', '--nEvents',           dest='nEvents',         help='Number of events to run over',)
     parser.add_option('-y', '--dataset',            dest='dataset',         help='dataset: 2011, 2012 or 2012rereco', default='2012')
@@ -2617,10 +2619,18 @@ def main():
     s.treeDir = opt.treeDir
     s.systArgument = opt.systArgument
     s.direction = opt.variation
+    s.strength = opt.strength
     s.verbose = opt.debug
     s.dataset = opt.dataset
-    
+
+    if s.strength == -99.:
+      if s.direction == 'up':
+        s.strength = 1.
+      if s.direction == 'down':
+        s.strength = -1.
+
     print s.systArgument
+    print s.strength
 
     s.openOriginalTFile()
     s.openOutputTFile()
