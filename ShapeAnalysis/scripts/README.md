@@ -17,6 +17,8 @@ Scale and smear trees
     scaleAndSmearTree.py -a jetEnergyResolution   -i   /home/amassiro/Latinos/Shape/tree_skim_all/nominals/latino_8004_SMH125ToWW2Tau2Nu.root   -o test.root   --variation="up"
     scaleAndSmearTree.py -a jetEnergyResolution   -i   /home/amassiro/Latinos/Shape/tree_skim_all/nominals/latino_8004_SMH125ToWW2Tau2Nu.root   -o test.root   --variation="down"
 
+    scaleAndSmearTree.py -i nominals/latino_8008_Higgs0M125ToWWLTau2Nu.root -o latino_8008_Higgs0M125ToWWLTau2Nu.root    -a muonScale -v up   -s 0.3
+       -> "-s 0.3" means variation in positive side with an intensity of 0.3 * standard deviation. Used for unfolded distributions.
 
 ## auto:
 
