@@ -27,6 +27,9 @@ from tree.fakeW             import FakeWVarFiller
 from tree.ZHWWlvlvVar       import ZhwwlvlvVarFiller
 from tree.leptonTypeVar     import LeptonTypeVarFiller
 
+from tree.qq2vvEWKcorrectionsWeight       import qq2vvEWKcorrectionsWeightFiller
+
+
 
 
 if __name__ == '__main__':
@@ -65,5 +68,12 @@ if __name__ == '__main__':
     modules['zhwwlvlvVar']      =  ZhwwlvlvVarFiller()
 # add if a lepton pass/fail id+iso
     modules['leptonTypeVar']    =  LeptonTypeVarFiller()
+# add electroweak corrections for ww
+    modules['qq2vvEWKcorrections']      =  qq2vvEWKcorrectionsWeightFiller()
+
 
     gardener_cli( modules )
+
+
+
+
