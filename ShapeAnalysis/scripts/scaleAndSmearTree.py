@@ -646,12 +646,23 @@ class scaleAndSmear:
         self.pfmetSignificance[0] = self.oldttree.pfmetSignificance
         self.pfmetMEtSig[0] = self.oldttree.pfmetMEtSig
         self.dymva0[0] = self.oldttree.dymva0
-        self.dymva1[0] = self.oldttree.dymva1 
+        self.dymva1[0] = self.oldttree.dymva1
 
         # these variables were not defined in a previous version of the ntuples, then default values needed
-        self.dphimetjet1[0] = self.oldttree.dphimetjet1   #-999 #self.oldttree.dphimetjet1
-        self.dphilljet1[0] = self.oldttree.dphilljet1    # -999
-        self.recoil[0] = self.oldttree.recoil  #-999 #self.oldttree.recoil
+        if hasattr(self.oldttree, 'dphimetjet1') :
+          self.dphimetjet1[0] = self.oldttree.dphimetjet1   #-999 #self.oldttree.dphimetjet1
+        else :
+          self.dphimetjet1[0] = -999
+
+        if hasattr(self.oldttree, 'dphilljet1') :
+          self.dphilljet1[0] = self.oldttree.dphilljet1   #-999 #self.oldttree.dphimetjet1
+        else :
+          self.dphilljet1[0] = -999
+
+        if hasattr(self.oldttree, 'recoil') :
+          self.recoil[0] = self.oldttree.recoil   #-999 #self.oldttree.dphimetjet1
+        else :
+          self.recoil[0] = -999
 
 
 
