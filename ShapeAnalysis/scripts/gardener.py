@@ -25,6 +25,7 @@ from tree.wwGenInfo         import WWGenFiller
 from tree.higgsCPS          import HiggsCPSWeightAdder
 from tree.fakeW             import FakeWVarFiller
 from tree.ZHWWlvlvVar       import ZhwwlvlvVarFiller
+from tree.WW2jVar           import WW2jVarFiller
 from tree.leptonTypeVar     import LeptonTypeVarFiller
 
 from tree.qq2vvEWKcorrectionsWeight       import qq2vvEWKcorrectionsWeightFiller
@@ -34,7 +35,7 @@ from tree.qq2vvEWKcorrectionsWeight       import qq2vvEWKcorrectionsWeightFiller
 
 if __name__ == '__main__':
 
-    
+
     modules = ModuleManager()
     modules['filter']           = Pruner()
     modules['adder']            = Grafter()
@@ -70,6 +71,8 @@ if __name__ == '__main__':
     modules['leptonTypeVar']    =  LeptonTypeVarFiller()
 # add electroweak corrections for ww
     modules['qq2vvEWKcorrections']      =  qq2vvEWKcorrectionsWeightFiller()
+# ww2j
+    modules['ww2jVar']          =  WW2jVarFiller()
 
 
     gardener_cli( modules )
