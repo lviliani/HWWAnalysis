@@ -103,3 +103,31 @@ Electroweak corrections for WW
     /afs/cern.ch/work/d/dmeister/public/LatinoTrees/NoSkim_puW_effW_triggW/latino000.root
     gardener.py  qq2vvEWKcorrections  /tmp/amassiro/latino000.root    /tmp/amassiro/latino000_ewk.root
 
+
+
+
+WW+2j
+====
+
+new variables
+
+
+    gardener.py  ww2jVar  /tmp/amassiro/latino_006_WWJets2LPowheg.root       /tmp/amassiro/latino_006_WWJets2LPowheg_new.root
+
+    gardener.py  ww2jVar  -r  /data/amassiro/LatinosTrees/2j/nominals_all/      /data/amassiro/LatinosTrees/2jewk/nominals_all/
+    gardener.py  ww2jVar  -r  /data/amassiro/LatinosTrees/2j/wjets/             /data/amassiro/LatinosTrees/2jewk/wjets/
+    gardener.py  ww2jVar  -r  /data/amassiro/LatinosTrees/2j/data/              /data/amassiro/LatinosTrees/2jewk/data/
+
+
+Filter
+====
+
+How to filter folders with a TFormula string
+
+    gardener.py  filter -f "njet>=2 && pfmet>20"   -r    /data/amassiro/LatinosTrees/nominals_all/      /data/amassiro/LatinosTrees/2j/nominals_all/
+    gardener.py  filter -f "njet>=2 && pfmet>20"   -r    /data/amassiro/LatinosTrees/wjets/             /data/amassiro/LatinosTrees/2j/wjets/
+    gardener.py  filter -f "njet>=2 && pfmet>20"   -r    /data/amassiro/LatinosTrees/data/              /data/amassiro/LatinosTrees/2j/data/
+
+
+
+
