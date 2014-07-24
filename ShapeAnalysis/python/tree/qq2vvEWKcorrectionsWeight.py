@@ -45,6 +45,9 @@ class qq2vvEWKcorrectionsWeightFiller(TreeCloner):
         except RuntimeError:
             ROOT.gROOT.LoadMacro(cmssw_base+'/src/HWWAnalysis/ShapeAnalysis/python/tree/qq2vvEWKcorrections.C++g')
         #----------------------------------------------------------------------------------------------------
+
+        qq2vvEWKcorrections = ROOT.qq2vvEWKcorrections(cmssw_base+'/src/HWWAnalysis/ShapeAnalysis/python/tree/out_qqbww_EW_L8_200_forCMS.dat')
+
         print '- Starting eventloop'
         step = 5000
         for i in xrange(nentries):
@@ -95,8 +98,6 @@ class qq2vvEWKcorrectionsWeightFiller(TreeCloner):
     #float x1   , float x2 ,                              // parton x-Bjorken
     #int   id1  , int   id2 ,                             // parton PDG id's
 
-
-            qq2vvEWKcorrections = ROOT.qq2vvEWKcorrections(cmssw_base+'/src/HWWAnalysis/ShapeAnalysis/python/tree/out_qqbww_EW_L8_200_forCMS.dat')
             ewkW[0] = qq2vvEWKcorrections.getqq2WWEWKCorr(ptl1, etal1, phil1, idl1, ptl2, etal2, phil2, idl2, ptv1, etav1, phiv1, ptv2, etav2, phiv2, x1, x2, id1, id2)
 
             #print "itree.pdfid1 = ",itree.pdfid1,"   itree.pdfid2 = ",itree.pdfid2
