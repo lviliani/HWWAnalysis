@@ -13,6 +13,7 @@ class WW2j {
   //! functions
   float Mljcloser();
   float Mljfarther();
+  float Mlj(int l, int j);
 
  private:
   //! variables
@@ -100,6 +101,35 @@ float WW2j::Mljfarther(){
  }
 
 }
+
+
+
+
+float WW2j::Mlj(int l, int j){
+
+ if (J2.Pt() > 0) {
+  if (l==1 && j==1) {
+   return (L1+J1).M();
+  }
+  else if (l==1 && j==2) {
+   return (L1+J2).M();
+  }
+  else if (l==2 && j==1) {
+   return (L2+J1).M();
+  }
+  else if (l==2 && j==2) {
+   return (L2+J2).M();
+  }
+  else {
+   return -1;
+  }
+ }
+ else {
+  return -1;
+ }
+}
+
+
 
 
 

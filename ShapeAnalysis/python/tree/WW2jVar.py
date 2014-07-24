@@ -39,14 +39,22 @@ class WW2jVarFiller(TreeCloner):
 
         # does that work so easily and give new variable itree and otree?
         self.connect(tree,input)
-        newbranches = ['Mljcloser', 'Mljfarther']
+        newbranches = ['Mljcloser', 'Mljfarther', 'Ml1j1', 'Ml1j2', 'Ml2j1', 'Ml2j2']
         self.clone(output,newbranches)
 
         Mljcloser    = numpy.ones(1, dtype=numpy.float32)
         Mljfarther   = numpy.ones(1, dtype=numpy.float32)
+        Ml1j1        = numpy.ones(1, dtype=numpy.float32)
+        Ml1j2        = numpy.ones(1, dtype=numpy.float32)
+        Ml2j1        = numpy.ones(1, dtype=numpy.float32)
+        Ml2j2        = numpy.ones(1, dtype=numpy.float32)
 
         self.otree.Branch('Mljcloser'  , Mljcloser  , 'Mljcloser/F')
         self.otree.Branch('Mljfarther' , Mljfarther , 'Mljfarther/F')
+        self.otree.Branch('Ml1j1' , Ml1j1 , 'Ml1j1/F')
+        self.otree.Branch('Ml1j2' , Ml1j2 , 'Ml1j2/F')
+        self.otree.Branch('Ml2j1' , Ml2j1 , 'Ml2j1/F')
+        self.otree.Branch('Ml2j2' , Ml2j2 , 'Ml2j2/F')
 
         nentries = self.itree.GetEntries()
         print 'Total number of entries: ',nentries 
@@ -90,6 +98,10 @@ class WW2jVarFiller(TreeCloner):
 
             Mljcloser[0]   = WW2j.Mljcloser()
             Mljfarther[0]  = WW2j.Mljfarther()
+            Ml1j1[0]       = WW2j.Mlj(1,1)
+            Ml1j2[0]       = WW2j.Mlj(1,2)
+            Ml2j1[0]       = WW2j.Mlj(2,1)
+            Ml2j2[0]       = WW2j.Mlj(2,2)
 
             otree.Fill()
 
