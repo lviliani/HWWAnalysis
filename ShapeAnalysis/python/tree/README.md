@@ -131,3 +131,12 @@ How to filter folders with a TFormula string
 
 
 
+NLL corrections for WW
+====
+
+    /afs/cern.ch/work/d/dmeister/public/LatinoTrees/NoSkim_puW_effW_triggW/latino000.root
+    gardener.py  wwNLLcorrections  /tmp/amassiro/latino000.root    /tmp/amassiro/latino000_ewk.root
+
+
+
+
