@@ -135,7 +135,10 @@ NLL corrections for WW
 ====
 
     /afs/cern.ch/work/d/dmeister/public/LatinoTrees/NoSkim_puW_effW_triggW/latino000.root
-    gardener.py  wwNLLcorrections  /tmp/amassiro/latino000.root    /tmp/amassiro/latino000_ewk.root
+    gardener.py  wwNLLcorrections  -d ../../data/ratio_output_nnlo.root  -m powheg  /tmp/amassiro/latino000.root    /tmp/amassiro/latino000_ewk.root
+
+
+
 
 
 
