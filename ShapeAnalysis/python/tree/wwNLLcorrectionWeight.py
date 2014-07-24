@@ -54,12 +54,20 @@ class wwNLLcorrectionWeightFiller(TreeCloner):
 
         # does that work so easily and give new variable itree and otree?
         self.connect(tree,input)
-        newbranches = ['nllW']
+        newbranches = ['nllW', 'nllW_Rup', 'nllW_Qup', 'nllW_Rdown', 'nllW_Qdown']
         self.clone(output,newbranches)
 
         nllW    = numpy.ones(1, dtype=numpy.float32)
+        nllW_Rup    = numpy.ones(1, dtype=numpy.float32)
+        nllW_Qup    = numpy.ones(1, dtype=numpy.float32)
+        nllW_Rdown    = numpy.ones(1, dtype=numpy.float32)
+        nllW_Qdown    = numpy.ones(1, dtype=numpy.float32)
 
         self.otree.Branch('nllW'  , nllW  , 'nllW/F')
+        self.otree.Branch('nllW_Rup'  , nllW_Rup  , 'nllW_Rup/F')
+        self.otree.Branch('nllW_Qup'  , nllW_Qup  , 'nllW_Qup/F')
+        self.otree.Branch('nllW_Rdown'  , nllW_Rdown  , 'nllW_Rdown/F')
+        self.otree.Branch('nllW_Qdown'  , nllW_Qdown  , 'nllW_Qdown/F')
 
         nentries = self.itree.GetEntries()
         print 'Total number of entries: ',nentries 
@@ -102,6 +110,10 @@ class wwNLLcorrectionWeightFiller(TreeCloner):
             wwNLL.SetPTWW(ptl1, phil1, ptl2, phil2, ptv1, phiv1, ptv2, phiv2)
 
             nllW[0]   = wwNLL.nllWeight(0)
+            nllW_Rup[0]   = wwNLL.nllWeight(1,1)
+            nllW_Qup[0]   = wwNLL.nllWeight(1,0)
+            nllW_Rdown[0] = wwNLL.nllWeight(-1,1)
+            nllW_Qdown[0] = wwNLL.nllWeight(-1,0)
 
             otree.Fill()
 

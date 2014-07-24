@@ -15,7 +15,7 @@ class wwNLL {
 
   //! functions
   void SetPTWW( float ptl1 , float phil1,   float ptl2 , float phil2,   float ptv1 , float phiv1 ,   float ptv2 , float phiv2);
-  float nllWeight(int variation, int kind = 0); //---- variation = -1, 0, 1 for down, central, up    and kind is Q or R
+  float nllWeight(int variation, int kind = 0); //---- variation = -1, 0, 1 for down, central, up    and kind is 0=Q or 1=R
 
  private:
   //! variables
@@ -37,11 +37,11 @@ wwNLL::wwNLL(std::string filename, std::string mcsample) {
  fileInput = new TFile(filename.c_str(),"READ");
 //  "../../data/ratio_output_nnlo.root"
  gDirectory->cd();
- h_cen    = (TH1F*) fileInput -> Get("ratio_powheg_central");
- h_Q_down = (TH1F*) fileInput -> Get("ratio_powheg_Qdown");
- h_Q_up   = (TH1F*) fileInput -> Get("ratio_powheg_Qup");
- h_R_down = (TH1F*) fileInput -> Get("ratio_powheg_Rdown");
- h_R_up   = (TH1F*) fileInput -> Get("ratio_powheg_Rup");
+ h_cen    = (TH1F*) fileInput -> Get((std::string("ratio_") + mcsample + std::string("_central")).c_str());
+ h_Q_down = (TH1F*) fileInput -> Get((std::string("ratio_") + mcsample + std::string("_Qdown")).c_str());
+ h_Q_up   = (TH1F*) fileInput -> Get((std::string("ratio_") + mcsample + std::string("_Qup")).c_str());
+ h_R_down = (TH1F*) fileInput -> Get((std::string("ratio_") + mcsample + std::string("_Rdown")).c_str());
+ h_R_up   = (TH1F*) fileInput -> Get((std::string("ratio_") + mcsample + std::string("_Rup")).c_str());
 
 //    ratio_powheg_central
 //    ratio_powheg_Qdown
@@ -68,8 +68,32 @@ float wwNLL::nllWeight(int variation, int kind){
  float weight = -1;
 
  int bin = -1;
- bin = h_cen -> FindBin(ptww);
- weight = h_cen -> GetBinContent (bin);
+ if (variation == 0) {
+  bin = h_cen -> FindBin(ptww);
+  weight = h_cen -> GetBinContent (bin);
+ }
+ else if (variation == -1) {
+  if (kind == 0) {
+   bin = h_Q_down -> FindBin(ptww);
+   weight = h_Q_down -> GetBinContent (bin);
+  }
+  if (kind == 1) {
+   bin = h_R_down -> FindBin(ptww);
+   weight = h_R_down -> GetBinContent (bin);
+  }
+ }
+ else if (variation == 1) {
+  if (kind == 0) {
+   bin = h_Q_up -> FindBin(ptww);
+   weight = h_Q_up -> GetBinContent (bin);
+  }
+  if (kind == 1) {
+   bin = h_R_up -> FindBin(ptww);
+   weight = h_R_up -> GetBinContent (bin);
+  }
+ }
+
+
 //  std::cout << " ptww = " << ptww << " bin = " << bin << " weight = " << weight << std::endl;
  return weight;
 }
