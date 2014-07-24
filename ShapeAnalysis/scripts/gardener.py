@@ -29,6 +29,8 @@ from tree.WW2jVar           import WW2jVarFiller
 from tree.leptonTypeVar     import LeptonTypeVarFiller
 
 from tree.qq2vvEWKcorrectionsWeight       import qq2vvEWKcorrectionsWeightFiller
+from tree.wwNLLcorrectionWeight           import wwNLLcorrectionWeightFiller
+
 
 
 
@@ -73,7 +75,8 @@ if __name__ == '__main__':
     modules['qq2vvEWKcorrections']      =  qq2vvEWKcorrectionsWeightFiller()
 # ww2j
     modules['ww2jVar']          =  WW2jVarFiller()
-
+# add nll re-weight for ww
+    modules['wwNLLcorrections']      =  wwNLLcorrectionWeightFiller()
 
     gardener_cli( modules )
 
