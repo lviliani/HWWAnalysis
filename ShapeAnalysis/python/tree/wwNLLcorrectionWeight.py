@@ -97,15 +97,32 @@ class wwNLLcorrectionWeightFiller(TreeCloner):
             if i > 0 and i%step == 0.:
                 print i,'events processed.'
 
-            ptl1 = itree.genVV_lepton1_LHE_pt
-            ptl2 = itree.genVV_lepton2_LHE_pt
-            phil1 = itree.genVV_lepton1_LHE_phi
-            phil2 = itree.genVV_lepton2_LHE_phi
+            #ptl1 = itree.genVV_lepton1_LHE_pt
+            #ptl2 = itree.genVV_lepton2_LHE_pt
+            #phil1 = itree.genVV_lepton1_LHE_phi
+            #phil2 = itree.genVV_lepton2_LHE_phi
 
-            ptv1 = itree.genVV_neutrino1_LHE_pt
-            ptv2 = itree.genVV_neutrino2_LHE_pt
-            phiv1 = itree.genVV_neutrino1_LHE_phi
-            phiv2 = itree.genVV_neutrino2_LHE_phi
+            #ptv1 = itree.genVV_neutrino1_LHE_pt
+            #ptv2 = itree.genVV_neutrino2_LHE_pt
+            #phiv1 = itree.genVV_neutrino1_LHE_phi
+            #phiv2 = itree.genVV_neutrino2_LHE_phi
+
+            # after ISR but before QED FSR
+            # because at calculation step these are not defined
+            # and they don't know about photons
+            # use lvlv status=3 (?? why not 1??) particles
+
+            ptl1 = itree.genVV_lepton1_pt
+            ptl2 = itree.genVV_lepton2_pt
+            phil1 = itree.genVV_lepton1_phi
+            phil2 = itree.genVV_lepton2_phi
+
+            ptv1 = itree.genVV_neutrino1_pt
+            ptv2 = itree.genVV_neutrino2_pt
+            phiv1 = itree.genVV_neutrino1_phi
+            phiv2 = itree.genVV_neutrino2_phi
+
+
 
             wwNLL.SetPTWW(ptl1, phil1, ptl2, phil2, ptv1, phiv1, ptv2, phiv2)
 
