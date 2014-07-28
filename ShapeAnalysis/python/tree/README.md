@@ -103,7 +103,9 @@ Electroweak corrections for WW
     /afs/cern.ch/work/d/dmeister/public/LatinoTrees/NoSkim_puW_effW_triggW/latino000.root
     gardener.py  qq2vvEWKcorrections  /tmp/amassiro/latino000.root    /tmp/amassiro/latino000_ewk.root
 
-
+    gardener.py  qq2vvEWKcorrections  /data/amassiro/LatinosTrees/ww/latino000_nll.root    /data/amassiro/LatinosTrees/ww/latino000_nll_ewk.root
+    gardener.py  qq2vvEWKcorrections  /data/amassiro/LatinosTrees/ww/latino002_nll.root    /data/amassiro/LatinosTrees/ww/latino002_nll_ewk.root
+    gardener.py  qq2vvEWKcorrections  /data/amassiro/LatinosTrees/ww/latino006_nll.root    /data/amassiro/LatinosTrees/ww/latino006_nll_ewk.root
 
 
 WW+2j
