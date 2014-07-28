@@ -34,7 +34,7 @@ class wwNLL {
 //! constructor
 wwNLL::wwNLL(std::string filename, std::string mcsample) {
 
- gDirectory->cd(0);
+//  gDirectory->cd(0);
  fileInput = new TFile(filename.c_str(),"READ");
 //  "../../data/ratio_output_nnlo.root"
  gDirectory->cd(0);
@@ -53,8 +53,8 @@ wwNLL::wwNLL(std::string filename, std::string mcsample) {
 }
 
 wwNLL::~wwNLL() {
- fileInput -> Close();
- delete fileInput;
+//  fileInput -> Close();
+//  delete fileInput;
 }
 
 //! functions

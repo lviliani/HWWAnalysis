@@ -48,6 +48,20 @@ class wwNLLcorrectionWeightFiller(TreeCloner):
         self.mcsample = opts.mcsample
 
     def process(self,**kwargs):
+
+        # change this part into correct path structure... 
+        cmssw_base = os.getenv('CMSSW_BASE')
+        try:
+            ROOT.gROOT.LoadMacro(cmssw_base+'/src/HWWAnalysis/ShapeAnalysis/python/tree/wwNLLcorrectionWeight.C+g')
+        except RuntimeError:
+            ROOT.gROOT.LoadMacro(cmssw_base+'/src/HWWAnalysis/ShapeAnalysis/python/tree/wwNLLcorrectionWeight.C++g')
+        #----------------------------------------------------------------------------------------------------
+
+        print " file = ",self.datafile
+        wwNLL = ROOT.wwNLL(self.datafile,self.mcsample)
+
+
+
         tree  = kwargs['tree']
         input = kwargs['input']
         output = kwargs['output']
@@ -76,21 +90,11 @@ class wwNLLcorrectionWeightFiller(TreeCloner):
         itree     = self.itree
         otree     = self.otree
 
-        # change this part into correct path structure... 
-        cmssw_base = os.getenv('CMSSW_BASE')
-        try:
-            ROOT.gROOT.LoadMacro(cmssw_base+'/src/HWWAnalysis/ShapeAnalysis/python/tree/wwNLLcorrectionWeight.C+g')
-        except RuntimeError:
-            ROOT.gROOT.LoadMacro(cmssw_base+'/src/HWWAnalysis/ShapeAnalysis/python/tree/wwNLLcorrectionWeight.C++g')
-        #----------------------------------------------------------------------------------------------------
-
-        print " file = ",self.datafile
-        wwNLL = ROOT.wwNLL(self.datafile,self.mcsample)
-
         print '- Starting eventloop'
         step = 5000
 
         for i in xrange(nentries):
+        #for i in xrange(100):
 
             itree.GetEntry(i)
 
