@@ -41,8 +41,11 @@ class WWewkMVAVarFiller(TreeCloner):
         #self.getWWewkMVA.AddVariable("ptll",                    (self.var7))
         self.getWWewkMVA.AddVariable("abs(eta1-(jeteta1+jeteta2)/2)/detajj",            (self.var8))
         self.getWWewkMVA.AddVariable("abs(eta2-(jeteta1+jeteta2)/2)/detajj",            (self.var9))
-        self.getWWewkMVA.AddVariable("abs(yll-(jeteta1+jeteta2)/2)/detajj",             (self.var10))
+        #self.getWWewkMVA.AddVariable("abs(yll-(jeteta1+jeteta2)/2)/detajj",             (self.var10))
         #self.getWWewkMVA.AddVariable("dphilljetjet",            (self.var11))
+
+        self.getWWewkMVA.AddVariable("sqrt((Ml1j1-100)*(Ml1j1-100)+(Ml1j2-100)*(Ml1j2-100))",             (self.var12))
+        self.getWWewkMVA.AddVariable("sqrt((Ml2j1-100)*(Ml2j1-100)+(Ml2j2-100)*(Ml2j2-100))",             (self.var13))
 
 
         baseCMSSW = os.getenv('CMSSW_BASE')
@@ -83,6 +86,8 @@ class WWewkMVAVarFiller(TreeCloner):
         self.var9  = numpy.ones(1, dtype=numpy.float32)
         self.var10 = numpy.ones(1, dtype=numpy.float32)
         self.var11 = numpy.ones(1, dtype=numpy.float32)
+        self.var12 = numpy.ones(1, dtype=numpy.float32)
+        self.var13 = numpy.ones(1, dtype=numpy.float32)
 
         tree  = kwargs['tree']
         input = kwargs['input']
@@ -133,6 +138,9 @@ class WWewkMVAVarFiller(TreeCloner):
                 self.var9[0]  =  0.
                 self.var10[0] =  0.
             self.var11[0] =  itree.dphilljetjet
+            self.var12[0] =  sqrt((itree.Ml1j1-100)*(itree.Ml1j1-100)+(itree.Ml1j2-100)*(itree.Ml1j2-100))
+            self.var13[0] =  sqrt((itree.Ml2j1-100)*(itree.Ml2j1-100)+(itree.Ml2j2-100)*(itree.Ml2j2-100))
+
 
             if  itree.njet>=2 :
                 WWewkMVABDTG[0] = self.getWWewkMVA.EvaluateMVA("BDTG")

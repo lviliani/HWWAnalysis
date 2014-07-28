@@ -148,5 +148,19 @@ NLL corrections for WW
 
 
 
+WW+2j
+====
+
+mva addition
+
+    gardener.py  wwewkMVAVar  /data/amassiro/LatinosTrees/2jewk/nominals_all/latino_006_WWJets2LPowheg.root       /tmp/amassiro/latino_006_WWJets2LPowheg_new.root
+    gardener.py  wwewkMVAVar  /data/amassiro/LatinosTrees/2jewk/nominals_all/latino_052_WW2JetsPhantom.root       /tmp/amassiro/latino_052_WW2JetsPhantom_new.root
+
+
+    gardener.py  ww2jVar -F -r  /data/amassiro/LatinosTrees/2j/nominals_all/      /data/amassiro/LatinosTrees/2jewk_mva/nominals_all/
+    gardener.py  ww2jVar -F -r  /data/amassiro/LatinosTrees/2j/wjets/             /data/amassiro/LatinosTrees/2jewk_mva/wjets/
+    gardener.py  ww2jVar -F -r  /data/amassiro/LatinosTrees/2j/data/              /data/amassiro/LatinosTrees/2jewk_mva/data/
+
+
 
 
