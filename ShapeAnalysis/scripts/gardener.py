@@ -30,7 +30,7 @@ from tree.leptonTypeVar     import LeptonTypeVarFiller
 
 from tree.qq2vvEWKcorrectionsWeight       import qq2vvEWKcorrectionsWeightFiller
 from tree.wwNLLcorrectionWeight           import wwNLLcorrectionWeightFiller
-
+from tree.higgsWWVar        import higgsWWVarFiller
 
 
 
@@ -77,6 +77,8 @@ if __name__ == '__main__':
     modules['ww2jVar']          =  WW2jVarFiller()
 # add nll re-weight for ww
     modules['wwNLLcorrections']      =  wwNLLcorrectionWeightFiller()
+# ww invariant mass -> for Higgs width
+    modules['higgsWWVar']          =  higgsWWVarFiller()
 
     gardener_cli( modules )
 
