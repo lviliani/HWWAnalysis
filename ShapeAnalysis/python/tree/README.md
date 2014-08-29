@@ -168,5 +168,16 @@ mva addition
 
 
 
+ww invariant mass for Higgs width
+====
+
+mva addition
+
+    gardener.py  higgsWWVar  /tmp/amassiro/latinogg2vv_Hw1_SigOnPeak_8TeV.root     /tmp/amassiro/latinogg2vv_Hw1_SigOnPeak_8TeV_mww.root
+
+
+
+
+
 
 
