@@ -175,6 +175,10 @@ mva addition
 
     gardener.py  higgsWWVar  /tmp/amassiro/latinogg2vv_Hw1_SigOnPeak_8TeV.root     /tmp/amassiro/latinogg2vv_Hw1_SigOnPeak_8TeV_mww.root
 
+    gardener.py  higgsWWVar -r /tmp/amassiro/gg2vv/     /tmp/amassiro/gg2vv_mww/
+
+
+
 
 
 
