@@ -302,10 +302,15 @@ def getCommonSysts(mass,channel,jets,qqWWfromData,shape,options,suffix,isssactiv
     if not newInterf :
       print '\033[0;31m FIXME: Interference Error !!!!!  \033[m'
       if mass>=400:
-         nuisances['interf_ggH'] = [ ['lnN'], {'ggH':ggH_intf[mass]['intf']}]
+         nuisances['interf_ggH'] = [ ['lnN'], {'ggH':ggH_intf[mass]['intf']}] # --> high mass paper, new interference uncertainty (see below)
       else :
          nuisances['interf_ggH'] = [ ['lnN'], {'ggH':1.00}]
-              
+    else :
+      if mass>=400:
+         nuisances['interf_ggH'] = [ ['lnN'], {'ggH':1.10, 'WW':1.15}]
+      else :
+         nuisances['interf_ggH'] = [ ['lnN'], {'ggH':1.00}]
+
     #if options.WJsub:
     #    nuisances['CMS_FakeRate_e'] = [ ['lnN'], { 'WJet': 1.0+options.WJsub } ]
     #    nuisances['CMS_FakeRate_m'] = [ ['lnN'], { 'WJet': 1.0+options.WJsub } ]

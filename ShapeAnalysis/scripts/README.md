@@ -10,9 +10,15 @@ Scale and smear trees
 
 ## Example:
 
-   ./scaleAndSmearTree.py -i H140_ll.root -o blu/bla/bli.root -t latino -a leptonEfficiency -d down
-    scaleAndSmearTree.py -a jetEnergyResolution   -i   /home/amassiro/Latinos/Shape/tree_skim_all/nominals/latino_8004_SMH125ToWW2Tau2Nu.root   -o test.root
+    source test/env.sh
 
+    ./scaleAndSmearTree.py -i H140_ll.root -o blu/bla/bli.root -t latino -a leptonEfficiency -d down
+    scaleAndSmearTree.py -a jetEnergyResolution   -i   /home/amassiro/Latinos/Shape/tree_skim_all/nominals/latino_8004_SMH125ToWW2Tau2Nu.root   -o test.root
+    scaleAndSmearTree.py -a jetEnergyResolution   -i   /home/amassiro/Latinos/Shape/tree_skim_all/nominals/latino_8004_SMH125ToWW2Tau2Nu.root   -o test.root   --variation="up"
+    scaleAndSmearTree.py -a jetEnergyResolution   -i   /home/amassiro/Latinos/Shape/tree_skim_all/nominals/latino_8004_SMH125ToWW2Tau2Nu.root   -o test.root   --variation="down"
+
+    scaleAndSmearTree.py -i nominals/latino_8008_Higgs0M125ToWWLTau2Nu.root -o latino_8008_Higgs0M125ToWWLTau2Nu.root    -a muonScale -v up   -s 0.3
+       -> "-s 0.3" means variation in positive side with an intensity of 0.3 * standard deviation. Used for unfolded distributions.
 
 ## auto:
 
@@ -28,6 +34,8 @@ Scale and smear trees
     ls --color=none nominals/ | grep .root | awk '{print "scaleAndSmearTree.py -i nominals/"$1" -o metResolution/"$1"         -a metResolution"}'| /bin/sh
     ls --color=none nominals/ | grep .root | awk '{print "scaleAndSmearTree.py -i nominals/"$1" -o electronResolution/"$1"    -a electronResolution"}'| /bin/sh
 
+    ls --color=none nominals/ | grep .root | awk '{print "scaleAndSmearTree.py -i nominals/"$1" -o JER_up/"$1"    -a jetEnergyResolution -v up"}'| /bin/sh
+    ls --color=none nominals/ | grep .root | awk '{print "scaleAndSmearTree.py -i nominals/"$1" -o JER_down/"$1"  -a jetEnergyResolution -v down"}'| /bin/sh
 
 
 

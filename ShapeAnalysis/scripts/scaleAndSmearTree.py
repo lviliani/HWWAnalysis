@@ -48,7 +48,7 @@ electronSigmaEB2012 = 0.015 # 0.0 < abseta < 1.0
 electronSigmaET2012 = 0.025 # 1.0 < abseta < 2.0
 electronSigmaEE2012 = 0.035 # abseta > 2.0
 ## muon scale uncertainty
-muonUncertainty = 0.01 
+muonUncertainty = 0.01
 muonUncertaintyMB2012 = 0.005 # abseta < 2.2
 muonUncertaintyME2012 = 0.015 # abseta > 2.2
 ## electron scale uncertainty
@@ -67,8 +67,11 @@ sigmaChargeElectron = (0.000240123, 7.55615e-05, 0.000144796, 2.52092e-05, 0.001
 sigmaChargeMuon     = 0.0002
 
 ## JER: jet energy resolution
-sigmaJetResolution = (0.0390, 0.0427, 0.0601, 0.0601, 0.0675, 0.1090)
+#sigmaJetResolution = (0.0390, 0.0427, 0.0601, 0.0675, 0.1090 )   # from WZ
 
+sigmaJetResolution     = (0.0342, 0.0363, 0.0504, 0.0534, 0.0898 )   # from WW    nominal
+sigmaJetResolutionDown = (0.0000, 0.0047, 0.0286, 0.0293, 0.0477 )   # from WW    down
+sigmaJetResolutionUp   = (0.0516, 0.0521, 0.0663, 0.0712, 0.1220 )   # from WW    up
 
 
 ## pu uncertainty
@@ -125,17 +128,42 @@ def smearMET(met,sigma):
     met.SetPxPyPzE(newpx, newpy,0,0)
     return met
 
-def smearJet(pt,eta):
-    if abs(eta)<=0.5 :
-      sigma = sigmaJetResolution[0]
-    if abs(eta)>0.5 and abs(eta)<=1.1 :
-      sigma = sigmaJetResolution[1]
-    if abs(eta)>1.1 and abs(eta)<=1.7 :
-      sigma = sigmaJetResolution[2]
-    if abs(eta)>1.7 and abs(eta)<=2.3 :
-      sigma = sigmaJetResolution[3]
-    if abs(eta)>2.3 :
-      sigma = sigmaJetResolution[4]
+def smearJet(pt,eta,nominal):
+    if nominal==0:
+      if abs(eta)<=0.5 :
+        sigma = sigmaJetResolution[0]
+      if abs(eta)>0.5 and abs(eta)<=1.1 :
+        sigma = sigmaJetResolution[1]
+      if abs(eta)>1.1 and abs(eta)<=1.7 :
+        sigma = sigmaJetResolution[2]
+      if abs(eta)>1.7 and abs(eta)<=2.3 :
+        sigma = sigmaJetResolution[3]
+      if abs(eta)>2.3 :
+        sigma = sigmaJetResolution[4]
+
+    if nominal==-1:
+      if abs(eta)<=0.5 :
+        sigma = sigmaJetResolutionDown[0]
+      if abs(eta)>0.5 and abs(eta)<=1.1 :
+        sigma = sigmaJetResolutionDown[1]
+      if abs(eta)>1.1 and abs(eta)<=1.7 :
+        sigma = sigmaJetResolutionDown[2]
+      if abs(eta)>1.7 and abs(eta)<=2.3 :
+        sigma = sigmaJetResolutionDown[3]
+      if abs(eta)>2.3 :
+        sigma = sigmaJetResolutionDown[4]
+
+    if nominal==1:
+      if abs(eta)<=0.5 :
+        sigma = sigmaJetResolutionUp[0]
+      if abs(eta)>0.5 and abs(eta)<=1.1 :
+        sigma = sigmaJetResolutionUp[1]
+      if abs(eta)>1.1 and abs(eta)<=1.7 :
+        sigma = sigmaJetResolutionUp[2]
+      if abs(eta)>1.7 and abs(eta)<=2.3 :
+        sigma = sigmaJetResolutionUp[3]
+      if abs(eta)>2.3 :
+        sigma = sigmaJetResolutionUp[4]
 
     scale = -1
     while scale < 0  :
@@ -270,6 +298,7 @@ class scaleAndSmear:
         self.nentries = 0
         self.systArgument = ''
         self.direction = ''
+        self.strength = -99.
         self.correctMETwithJES = False
         self.dataset = ''
         
@@ -616,12 +645,26 @@ class scaleAndSmear:
         self.mpmet[0] = self.oldttree.mpmet
         self.pfmetSignificance[0] = self.oldttree.pfmetSignificance
         self.pfmetMEtSig[0] = self.oldttree.pfmetMEtSig
-        self.dphimetjet1[0] = -999 #self.oldttree.dphimetjet1
-        self.dphilljet1[0] = -999
-        self.recoil[0] = -999 #self.oldttree.recoil
         self.dymva0[0] = self.oldttree.dymva0
-        self.dymva1[0] = self.oldttree.dymva1 
-                                                                                                                                                                                        
+        self.dymva1[0] = self.oldttree.dymva1
+
+        # these variables were not defined in a previous version of the ntuples, then default values needed
+        if hasattr(self.oldttree, 'dphimetjet1') :
+          self.dphimetjet1[0] = self.oldttree.dphimetjet1   #-999 #self.oldttree.dphimetjet1
+        else :
+          self.dphimetjet1[0] = -999
+
+        if hasattr(self.oldttree, 'dphilljet1') :
+          self.dphilljet1[0] = self.oldttree.dphilljet1   #-999 #self.oldttree.dphimetjet1
+        else :
+          self.dphilljet1[0] = -999
+
+        if hasattr(self.oldttree, 'recoil') :
+          self.recoil[0] = self.oldttree.recoil   #-999 #self.oldttree.dphimetjet1
+        else :
+          self.recoil[0] = -999
+
+
 
 ## recompute lepton related variables from already corrected leptons
     def computeLeptonVariables(self,l1,l2):
@@ -1005,9 +1048,9 @@ class scaleAndSmear:
             boundaryMBME = 2.2
                                                         
         if self.direction == 'up':
-            direction = +1.0
+            direction = self.strength
         if self.direction == 'down':
-            direction = -1.0
+            direction = self.strength
         scaleMB = uncertaintyMB * direction
         scaleME = uncertaintyME * direction
 
@@ -1136,9 +1179,9 @@ class scaleAndSmear:
             uncertaintyEE = electronUncertaintyEE2012
             boundaryEBEE = 2.0
         if self.direction == 'up':
-            direction = +1.0
+            direction = self.strength
         if self.direction == 'down':
-            direction = -1.0
+            direction = self.strength
         scaleEB = uncertaintyEB * direction
         scaleEE = uncertaintyEE * direction
                 
@@ -1277,9 +1320,9 @@ class scaleAndSmear:
 
         jetthreshold = 30.
         if self.direction == 'up':
-            direction = +1.0
+            direction = self.strength
         if self.direction == 'down':
-            direction = -1.0
+            direction = self.strength
 
         ## read the JES corrections
         jeu = []
@@ -1562,11 +1605,16 @@ class scaleAndSmear:
             ## by default set all values to original tree
             self.getOriginalVariables()
 
+            nuisance = 0.
+            if self.direction == 'up':
+              nuisance = 1.
+            if self.direction == 'down':
+              nuisance = -1.
             ## get the variables
-            tmp_jetpt1 = smearJet(self.oldttree.jetpt1,self.oldttree.jeteta1)
-            tmp_jetpt2 = smearJet(self.oldttree.jetpt2,self.oldttree.jeteta2)
-            tmp_jetpt3 = smearJet(self.oldttree.jetpt3,self.oldttree.jeteta3)
-            tmp_jetpt4 = smearJet(self.oldttree.jetpt4,self.oldttree.jeteta4)
+            tmp_jetpt1 = smearJet(self.oldttree.jetpt1,self.oldttree.jeteta1,nuisance)
+            tmp_jetpt2 = smearJet(self.oldttree.jetpt2,self.oldttree.jeteta2,nuisance)
+            tmp_jetpt3 = smearJet(self.oldttree.jetpt3,self.oldttree.jeteta3,nuisance)
+            tmp_jetpt4 = smearJet(self.oldttree.jetpt4,self.oldttree.jeteta4,nuisance)
 
             # re-order the jets
             # FIXME
@@ -1613,9 +1661,9 @@ class scaleAndSmear:
         # offset seen at ~1 GeV at MET = 20GeV and ~0.5 GeV at MET = 40 GeV
         metUncertainty = 1.0 # GeV
         if self.direction == 'up':
-            direction = +1.0
+            direction = self.strength
         if self.direction == 'down':
-            direction = -1.0
+            direction = self.strength
         scale = direction*metUncertainty
 
         ## define a new branch
@@ -2542,6 +2590,7 @@ def main():
     parser.add_option('-o', '--outputFileName',     dest='outputFileName',  help='Name of the output *.root file.',)
     parser.add_option('-a', '--systematicArgument', dest='systArgument',    help='Argument to specify systematic (possible arguments are: "muonScale","electronScale","leptonEfficiency","jetEnergyScale","metScale","metResolution","muonResolution","electronResolution","dyTemplate","puVariation","chargeResolution",)',)
     parser.add_option('-v', '--variation',          dest='variation',       help='Direction of the scale variation ("up"/"down") or type of DY template ("temp"/"syst"), works only in combination with "-a dyTemplate". In the case of "metResolution" and "muonResolution" and "electronResolution" and "chargeResolution" this is ommitted.',)
+    parser.add_option('-s', '--strength',           dest='strength',  type="float",    help='Intensity of the scale variation (1 = "up", -1 = "down", 0.5, 0.6, ...)', default=-99.)
     parser.add_option('-t', '--treeDir',            dest='treeDir',         help='TDirectry structure to the tree to scale and smear.',default="latino")
 #    parser.add_option('-n', '--nEvents',           dest='nEvents',         help='Number of events to run over',)
     parser.add_option('-y', '--dataset',            dest='dataset',         help='dataset: 2011, 2012 or 2012rereco', default='2012')
@@ -2581,10 +2630,18 @@ def main():
     s.treeDir = opt.treeDir
     s.systArgument = opt.systArgument
     s.direction = opt.variation
+    s.strength = opt.strength
     s.verbose = opt.debug
     s.dataset = opt.dataset
-    
+
+    if s.strength == -99.:
+      if s.direction == 'up':
+        s.strength = 1.
+      if s.direction == 'down':
+        s.strength = -1.
+
     print s.systArgument
+    print s.strength
 
     s.openOriginalTFile()
     s.openOutputTFile()
