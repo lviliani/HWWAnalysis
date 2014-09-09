@@ -218,6 +218,27 @@ def signalSamples(sigtag,mass=125,suffix=''):
                     'nominals/latino_8012_Graviton2PMqqbarToWWLTau2nu.root'
                    ]
 
+    # FIXME the names
+    ggH_sbi      = ['nominals/latino_8010_gg2vvhighmass.root',
+                    'nominals/latino_8010_gg2vvhighmass.root'
+                   ]
+    ggH_b        = ['nominals/latino_8010_gg2vvhighmass.root',
+                    'nominals/latino_8010_gg2vvhighmass.root'
+                   ]
+    ggH_s        = ['nominals/latino_8010_gg2vvhighmass.root',
+                    'nominals/latino_8010_gg2vvhighmass.root'
+                   ]
+    qqH_sbi      = ['nominals/latino_8010_gg2vvhighmass.root',
+                    'nominals/latino_8010_gg2vvhighmass.root'
+                   ]
+    qqH_b        = ['nominals/latino_8010_gg2vvhighmass.root',
+                    'nominals/latino_8010_gg2vvhighmass.root'
+                   ]
+    qqH_s        = ['nominals/latino_8010_gg2vvhighmass.root',
+                    'nominals/latino_8010_gg2vvhighmass.root'
+                   ]
+
+
     if sigtag == 'SM':
         ggH   = ['nominals/latino_1{mass}_ggToH{mass}toWWTo2LAndTau2Nu.root',
                 ]

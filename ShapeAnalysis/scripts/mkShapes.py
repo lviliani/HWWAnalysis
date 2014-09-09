@@ -119,6 +119,7 @@ class ShapeFactory:
         variables['2dWithSSmirrorRegion'] = self._getMllMth2DSpinWithSSmirrorRegion
         variables['vhMllBanana']          = self._getMllVHWithControlRegion
         variables['vbfMllBanana']         = self._getMllVBFWithControlRegion
+        variables['wwewk']                = self._getVarWWewk
 
         self._variables = variables
 
@@ -168,7 +169,15 @@ class ShapeFactory:
         #return ([-1.0, -0.5, 0.0, 0.2, 0.5, 0.6, 0.7, 0.8, 0.9, 1.0],)
         #return ([-1.0, -0.75, -0.5, -0.25, 0.0, 0.25, 0.5, 0.6, 0.7, 0.8, 0.9, 1.0],)
         #return ([-1.0, -0.75, -0.5, -0.25, 0.0, 0.30, 0.50, 0.70, 0.90, 1.0],)
-        return ([-1.0, -0.80, -0.60, -0.40, -0.20, 0.00, 0.20, 0.40, 0.60, 0.80, 1.00],)
+
+        #return ([-1.0, -0.80, -0.60, -0.40, -0.20, 0.00, 0.20, 0.40, 0.60, 0.80, 1.00],)
+        #return ([-1.0, -0.50, -0.00, 0.30, 0.60, 1.00],)
+        return ([-1.0, -0.50, -0.00, 0.50, 1.00],)
+
+        #                 mva jets                             mll
+        #return ([-1.0, -0.50, -0.00, 0.30, 0.60, 1.00],[50.00, 150.00, 250.00])
+
+
 
     # _____________________________________________________________________________
     def _getWWewkrangeTop(self,mass,cat):
@@ -179,7 +188,9 @@ class ShapeFactory:
 
         #return ([-1.0, -0.80, -0.60, -0.40, -0.20, 0.00, 0.20, 0.40, 0.60, 0.80, 1.00],)
         #return ([-1.0, -0.90, -0.80, -0.70, -0.60, -0.50, -0.40, -0.30, -0.20, -0.10, 0.00, 0.10, 0.20, 0.30, 0.40, 0.50, 0.60, 0.70, 0.80, 0.90, 1.00],)
-        return ([-1.0, -0.95, -0.90, -0.85, -0.80, -0.75, -0.70, -0.65, -0.60, -0.55, -0.50, -0.45, -0.40, -0.35, -0.30, -0.25, -0.20, -0.15, -0.10, -0.05, 0.00, 0.05, 0.10, 0.15, 0.20, 0.25, 0.30, 0.35, 0.40, 0.45, 0.50, 0.55, 0.60, 0.65, 0.70, 0.75, 0.80, 0.85, 0.90, 0.95, 1.00],)
+        #return ([-1.0, -0.95, -0.90, -0.85, -0.80, -0.75, -0.70, -0.65, -0.60, -0.55, -0.50, -0.45, -0.40, -0.35, -0.30, -0.25, -0.20, -0.15, -0.10, -0.05, 0.00, 0.05, 0.10, 0.15, 0.20, 0.25, 0.30, 0.35, 0.40, 0.45, 0.50, 0.55, 0.60, 0.65, 0.70, 0.75, 0.80, 0.85, 0.90, 0.95, 1.00],)
+
+        return ([-1.0, -0.50, -0.00, 0.50, 1.00],)
 
 
     # _____________________________________________________________________________
@@ -192,6 +203,14 @@ class ShapeFactory:
         #return ([0,20,40,60,80,100,120,140,160,180,250,400],)
         return ([0,40,80,120,160,200,240,300,400],)
 
+
+
+
+    # _____________________________________________________________________________
+    def _getVarWWewk(self,mass,cat):
+
+        return 'WWewkMVABDTG'
+        #return 'mll:WWewkMVABDTG'
 
 
     # _____________________________________________________________________________
@@ -1136,11 +1155,21 @@ class ShapeFactory:
             weights['VH']             = 'puW*effW*triggW*0.0007897267'
 
 
+        # for Higgs width measurements
+        weights['ggH_sbi']            = self._stdWgt+'*((dataset == 37) - (dataset == 37) + (dataset == 37))'
+        weights['ggH_s']              = self._stdWgt+'*((dataset == 37) - (dataset == 37) + (dataset == 37))'
+        weights['ggH_b']              = self._stdWgt+'*((dataset == 37) - (dataset == 37) + (dataset == 37))'
+
+        weights['qqH_sbi']            = self._stdWgt+'*((dataset == 37) - (dataset == 37) + (dataset == 37))'
+        weights['qqH_s']              = self._stdWgt+'*((dataset == 37) - (dataset == 37) + (dataset == 37))'
+        weights['qqH_b']              = self._stdWgt+'*((dataset == 37) - (dataset == 37) + (dataset == 37))'
+
+
         if cat in ['2j','2jtche05','2jtche05CJ','2jtche05FJ']:
             #weights['WW']                = self._stdWgt+'*(1+(mjj>500)*(detajj>3.5))'
             weights['WW']                = self._stdWgt
-            weights['WWewk']             = self._stdWgt+'*(numbLHE==0)'
-            #weights['WWewk']             = self._stdWgt+'*(abs(jetLHEPartonpid1)!=6 && abs(jetLHEPartonpid2)!=6 && abs(jetLHEPartonpid3)!=6)*(abs(jetLHEPartonpid1)!=5 && abs(jetLHEPartonpid2)!=5 && abs(jetLHEPartonpid3)!=5)'
+            #weights['WWewk']             = self._stdWgt+'*(numbLHE==0)'
+            weights['WWewk']             = self._stdWgt+'*(abs(jetLHEPartonpid1)!=6 && abs(jetLHEPartonpid2)!=6 && abs(jetLHEPartonpid3)!=6)*(abs(jetLHEPartonpid1)!=5 && abs(jetLHEPartonpid2)!=5 && abs(jetLHEPartonpid3)!=5)'
 
             if (sel == 'vbf' or sel == 'vbf-shape') :
               weights['CHITOP-Top']        = self._stdWgt+'*('+hwwinfo.massSelections(mass)['vbf-selection-top']+')'
@@ -1519,9 +1548,11 @@ if __name__ == '__main__':
                   ('interferenceGGH_down'    , 'interf_ggHDown'),
                   ('interferenceVBF_up'      , 'interf_qqHUp'),
                   ('interferenceVBF_down'    , 'interf_qqHDown'),
+                  ('JER_down'                , 'p_res_jDown'),
+                  ('JER_up'                  , 'p_res_jUp'),
               ])
 
-  
+
               # remove skip-syst list
   #             if opt.skipSyst!='':
   #                for s in opt.skipSyst.split(','):
@@ -1535,6 +1566,15 @@ if __name__ == '__main__':
               systByWeight = {}
               # use only leptonEfficiency or muonEfficiency+electronEfficiency
               # skipSyst = ['leptonEfficiency_down', 'leptonEfficiency_up']
+              AdditionalSkipSyst = ['JER_down', 'JER_up', 'chargeResolution', 'puW_up', 'puW_down']  # -> temporary fix
+              for s in AdditionalSkipSyst:
+                print 'skipping systematics: ',s
+                if s in systematics.keys() :
+                  systematics.pop(s)
+                else :
+                  print '>> Beware! you are trying to remove a nuisance that is not even there: ',s
+
+
               systByWeight['leptonEfficiency_down'] = 'effWDown/effW'
               systByWeight['leptonEfficiency_up']   = 'effWUp/effW'
               systByWeight['muonEfficiency_down'] = 'effWMuDown/effW'
@@ -1562,6 +1602,20 @@ if __name__ == '__main__':
               systMasks['interferenceGGH_down'] = ['ggH', 'ggH_ALT']
               systMasks['interferenceVBF_up'  ] = ['qqH', 'qqH_ALT']
               systMasks['interferenceVBF_down'] = ['qqH', 'qqH_ALT']
+
+              # remove selected nuisances for some samples
+              processMaskNoDYTT = processMask
+              processMaskNoDYTT = filter(lambda a: a != 'DYTT', processMaskNoDYTT)
+              for syst,mask in systMasks.iteritems():
+                if syst == 'JER_down' or syst == 'JER_up' :
+                  #print ' >>> Old ', mask
+                  mask = processMaskNoDYTT
+                  #print ' >>> New ', mask
+                  #print 'processMaskNoDYTT  = ',processMaskNoDYTT
+                  systMasks[syst] = mask
+
+
+
               systDirs  = dict([(s,systInputDir if s not in systByWeight else 'templates/' ) for s in systematics])
               #systDirs  = dict([(s,systInputDir if s not in systByWeight else 'nominals/' ) for s in systematics])
               print "systDirs = ",systDirs
