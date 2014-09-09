@@ -987,10 +987,13 @@ class ShapeFactory:
            Gamma = GamSM * self._cprimesq / (1.-self._brnew)
            
            #if prodMode in ['ggH','qqH']  and not self._approxewk : hWght += '*getBWWght(MHiggs,%f,%f,%f)'%(Mass,GamSM,Gamma)
-           if prodMode in ['ggH','qqH']  : hWght += '*getBWWght(MHiggs,%f,%f,%f)'%(Mass,GamSM,Gamma)
+           #if prodMode in ['ggH','qqH']  : hWght += '*getBWWght(MHiggs,%f,%f,%f)'%(Mass,GamSM,Gamma)
+           if prodMode in ['ggH'] : hWght += '*getBWWght(MHiggs,%f,%f,%f)'%(Mass,GamSM,Gamma)
+           if prodMode in ['qqH'] and mass < 350 : hWght += '*getBWWght(MHiggs,%f,%f,%f)'%(Mass,GamSM,Gamma)
 
          # ... Change mu of both all H
-         if prodMode in ['ggH','qqH','WH','ZH','ttH']                :  hWght += '*'+str(self._cprimesq)+'*(1-'+str(self._brnew)+')'
+         if prodMode in ['ggH','WH','ZH','ttH']                      :  hWght += '*'+str(self._cprimesq)+'*(1-'+str(self._brnew)+')'
+         if prodMode in ['qqH'] and mass < 350                       :  hWght += '*'+str(self._cprimesq)+'*(1-'+str(self._brnew)+')'
          if prodMode in ['ggH_SM','qqH_SM','WH_SM','ZH_SM','ttH_SM'] :  hWght += '*(1-'+str(self._cprimesq)+')'
 
 
