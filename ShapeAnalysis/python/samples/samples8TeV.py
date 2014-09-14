@@ -219,14 +219,20 @@ def signalSamples(sigtag,mass=125,suffix=''):
                    ]
 
     # FIXME the names
-    ggH_sbi      = ['nominals/latino_8010_gg2vvhighmass.root',
-                    'nominals/latino_8010_gg2vvhighmass.root'
+
+    ggH_sbi      = [
+                    #'nominals/latinogg2vv_Hw1_IntOnPeak_8TeV.root', --> only off-shell must be considered
+                    'nominals/latinogg2vv_Hw1_IntShoulder_8TeV.root',
+                    'nominals/latinogg2vv_Hw1_IntTail_8TeV.root'
                    ]
-    ggH_b        = ['nominals/latino_8010_gg2vvhighmass.root',
-                    'nominals/latino_8010_gg2vvhighmass.root'
+    ggH_b        = [
+                    'nominals/latinogg2vv_Hw25_CotHead_8TeV.root',
+                    'nominals/latinogg2vv_Hw25_CotTail_8TeV.root'
                    ]
-    ggH_s        = ['nominals/latino_8010_gg2vvhighmass.root',
-                    'nominals/latino_8010_gg2vvhighmass.root'
+    ggH_s        = [
+                    #'nominals/latinogg2vv_Hw1_SigOnPeak_8TeV.root',  -> only off-shell must be considered
+                    'nominals/latinogg2vv_Hw1_SigShoulder_8TeV.root',
+                    'nominals/latinogg2vv_Hw1_SigTail_8TeV.root'
                    ]
     qqH_sbi      = ['nominals/latino_8010_gg2vvhighmass.root',
                     'nominals/latino_8010_gg2vvhighmass.root'
@@ -239,7 +245,7 @@ def signalSamples(sigtag,mass=125,suffix=''):
                    ]
 
 
-    if sigtag == 'SM':
+    if sigtag == 'SM' or sigtag == 'Hwidth' :
         ggH   = ['nominals/latino_1{mass}_ggToH{mass}toWWTo2LAndTau2Nu.root',
                 ]
         qqH   = ['nominals/latino_2{mass}_vbfToH{mass}toWWTo2LAndTau2Nu.root',
@@ -264,6 +270,11 @@ def signalSamples(sigtag,mass=125,suffix=''):
         else:
             signals['ggH'+suffix]   = [f.format(mass = mass) for f in ggH]
             signals['qqH'+suffix]   = [f.format(mass = mass) for f in qqH]
+
+        if sigtag == 'Hwidth' :
+            signals['ggH_sbi'] = ggH_sbi
+            signals['ggH_s']   = ggH_s
+            signals['ggH_b']   = ggH_b
 
 
 # and the JHU case:

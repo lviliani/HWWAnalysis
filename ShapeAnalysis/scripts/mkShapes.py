@@ -88,6 +88,7 @@ class ShapeFactory:
         ranges['whsc-range']         = self._getWHSCrange
         ranges['wwewk-range']        = self._getWWewkrange
         ranges['wwewk-range-top']    = self._getWWewkrangeTop
+        ranges['Hwidth-range']       = self._getHwidthrange
 
         self._ranges = ranges
 
@@ -120,6 +121,7 @@ class ShapeFactory:
         variables['vhMllBanana']          = self._getMllVHWithControlRegion
         variables['vbfMllBanana']         = self._getMllVBFWithControlRegion
         variables['wwewk']                = self._getVarWWewk
+        variables['Hwidth']               = self._getVarHwidth
 
         self._variables = variables
 
@@ -157,6 +159,18 @@ class ShapeFactory:
             #return theVariable[mass][cat]
         #elif callable(theVariable):
             #return theVariable(mass,cat)
+
+    # _____________________________________________________________________________
+    def _getHwidthrange(self,mass,cat):
+
+        if cat not in ['0j','1j']:
+            print cat
+            raise RuntimeError('range for '+str(cat)+' not defined. !?!?!?')
+
+        #return ([-300, -250, -200, -150, -100, -75, -50, -20, 0, 20, 50, 75, 100, 150, 200, 250, 300],)
+        #return ([-300, -250, -200, -150, -100, -75, -50, -20, 0, 20, 50, 75, 100, 150, 200, 250, 300],[30,60,130,150,200,250,400])
+        return ([0, 20, 50, 75, 100, 150, 200, 250, 300],[30,60,130,150,200,250,400])
+
 
 
     # _____________________________________________________________________________
@@ -255,6 +269,19 @@ class ShapeFactory:
             return 'mll:mth*((ch1*ch2)<0)-mth*((ch1*ch2)>0)'
         else:
             return 'mll:mth*((ch1*ch2)<0)-mth*((ch1*ch2)>0)'
+
+
+
+    # _____________________________________________________________________________
+    def _getVarHwidth(self,mass,cat):
+
+        if cat not in ['0j','1j']:
+            raise RuntimeError('mll range for '+str(cat)+' not defined. Can be 0 or 1')
+
+        return '(mth*((mth>=130&&pt2>20&&pt1>10)+(mth<130&&ptll>30&&pfmet>30))):mll'
+        #return 'mth:(mll*(mth>=130&&pt2>20&&pt1>10)-mll*(mth<130&&ptll>30&&pfmet>30))'
+        #return 'mll*(mth>=125)-mll*(mth<125)'
+
 
 
     # _____________________________________________________________________________
@@ -510,7 +537,8 @@ class ShapeFactory:
                         if 'DYLL-templatesyst' in samples: samples.pop('DYLL-templatesyst')
                     if (flavor=='ee' or flavor=='mm'):
                         if 'DYTT'              in samples: samples.pop('DYTT')
-                    
+
+                    #print '----> samples = ',samples
                     # - define the source paths 
                     activeInputPaths = ['base']
                     # - if the current var is listes among the known paths,
@@ -1156,9 +1184,10 @@ class ShapeFactory:
 
 
         # for Higgs width measurements
-        weights['ggH_sbi']            = self._stdWgt+'*((dataset == 37) - (dataset == 37) + (dataset == 37))'
-        weights['ggH_s']              = self._stdWgt+'*((dataset == 37) - (dataset == 37) + (dataset == 37))'
-        weights['ggH_b']              = self._stdWgt+'*((dataset == 37) - (dataset == 37) + (dataset == 37))'
+        #                                              2.1 from LO -> NNLO scaling
+        weights['ggH_sbi']            = self._stdWgt+'*2.1' # +'*((dataset == 37) - (dataset == 37) + (dataset == 37))'
+        weights['ggH_s']              = self._stdWgt+'*2.1' # +'*((dataset == 37) - (dataset == 37) + (dataset == 37))'
+        weights['ggH_b']              = self._stdWgt+'*2.1' # +'*((dataset == 37) - (dataset == 37) + (dataset == 37))'
 
         weights['qqH_sbi']            = self._stdWgt+'*((dataset == 37) - (dataset == 37) + (dataset == 37))'
         weights['qqH_s']              = self._stdWgt+'*((dataset == 37) - (dataset == 37) + (dataset == 37))'
@@ -1591,7 +1620,7 @@ if __name__ == '__main__':
 
               factory._systByWeight = systByWeight
 
-              processMask = ['ggH', 'ggH_ALT',  'qqH',  'qqH_ALT', 'wzttH', 'ZH', 'WH', 'ttH', 'ggWW', 'Top', 'TopPt0', 'TopPt1', 'TopPt2', 'TopPt3', 'TopPt4', 'TopPt5', 'TopPt6', 'TopPt7', 'TopPt8', 'WW', 'VV', 'VgS', 'Vg', 'DYTT', 'Other', 'VVV', 'WWewk', 'CHITOP-Top' , 'ggH_SM', 'qqH_SM', 'wzttH_SM' , 'WH_SM','ZH_SM','ttH_SM']
+              processMask = ['ggH', 'ggH_ALT',  'qqH',  'qqH_ALT', 'wzttH', 'ZH', 'WH', 'ttH', 'ggWW', 'Top', 'TopPt0', 'TopPt1', 'TopPt2', 'TopPt3', 'TopPt4', 'TopPt5', 'TopPt6', 'TopPt7', 'TopPt8', 'WW', 'VV', 'VgS', 'Vg', 'DYTT', 'Other', 'VVV', 'WWewk', 'CHITOP-Top' , 'ggH_SM', 'qqH_SM', 'wzttH_SM' , 'WH_SM','ZH_SM','ttH_SM','ggH_sbi','ggH_b','ggH_s']
 
               if '2011' in opt.dataset:
                   processMask = ['ggH', 'ggH_ALT', 'qqH', 'qqH_ALT', 'VH' , 'wzttH', 'ZH', 'WH', 'ttH', 'ggWW', 'Top', 'WW', 'VV', 'CHITOP-Top', 'ggH_SM', 'qqH_SM','VH_SM', 'wzttH_SM', 'ZH_SM', 'WH_SM', 'ttH_SM']

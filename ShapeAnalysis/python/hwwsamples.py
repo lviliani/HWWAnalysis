@@ -475,17 +475,19 @@ mcsets = {
         'ggH','qqH','wzttH',
         # backgrounds
         'WW','ggWW','VgS','Vg','WJet','ttbar','tW','VV','DYTT','DYLL',
-   ]
+   ],
 
    'Hwidth_01j' : [
         #signals
         'ggH','qqH',
-        'ggH_sbi','qqH_sbi',
-        'ggH_b','qqH_b',
-        'ggH_s','qqH_s',
+        'ggH_sbi',#'qqH_sbi',
+        'ggH_b',#'qqH_b',
+        'ggH_s',#'qqH_s',
         #'ggHminlo',
         # bkgs
-        'WW','ggWW','VgS','Vg','WJet','Top','VV','VVV','DYTT','WWnlo','WWnloUp','WWnloDown',
+        'WW',
+        #'ggWW',
+        'VgS','Vg','WJet','Top','VV','VVV','DYTT','WWnlo','WWnloUp','WWnloDown',
         ('DYLL','ggH'),
         # systematics
         'WJetFakeRate-nominal',
