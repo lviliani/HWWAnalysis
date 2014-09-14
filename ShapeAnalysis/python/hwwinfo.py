@@ -444,6 +444,36 @@ class ww:
     wwCut    = _massindep
 
 
+
+
+
+# Higgs width
+class Hwidth:
+
+
+    _massindep = [
+        'trigger==1.',
+        '((ch1*ch2)<0 && pt1>20 && pt2>10)',
+        'zveto==1',
+        'pfmet>20.',
+        'mpmet>20.',
+        'mll>12',
+        'bveto_mu==1 ',
+        'nextra==0' ,
+        'bveto_ip==1',
+        'nbjettche==0',
+        'mth>30',
+        'ptll>10'
+    ]
+
+    HwidthCut    = _massindep
+
+
+
+
+
+
+
 masses = [110, 115, 120, 125, 130, 135, 140, 145, 150, 155, 160, 170, 180, 190, 200, 250, 300, 350, 400, 450, 500, 550, 600, 700, 800, 900, 1000]
 #masses = [110, 115, 120, 125, 130, 135, 140, 150, 155, 160, 170, 180, 190, 200, 250, 300, 350, 400, 450, 500, 550, 600]  
 
@@ -885,6 +915,12 @@ def massSelections(mass):
 
     sel['CutWW-level']     = ' && '.join(ww.wwCut)
     sel['CutWW-selection'] = sel['CutWW-level']
+
+
+
+    # Higgs width
+    sel['Hwidth-level']     = ' && '.join(Hwidth.HwidthCut)
+    sel['Hwidth-selection'] = sel['Hwidth-level']
 
 
     return sel
