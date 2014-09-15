@@ -1192,11 +1192,11 @@ class ShapeFactory:
         #                                             only-offshell            1 sm                     9 sm                    25 sm
         weights['qqH_sbi']            = self._stdWgt+'*(mWW>130)*( 1.000*(dataset == 150) - 0.000*(dataset == 151) + 0.000*(dataset == 152))'
         weights['qqH_s']              = self._stdWgt+'*(mWW>130)*( 0.125*(dataset == 150) - 0.250*(dataset == 151) + 0.125*(dataset == 152))'
-        weights['qqH_b']              = self._stdWgt+'*(mWW>130)*(-1.000*(dataset == 150) + 1.500*(dataset == 151) - 0.500*(dataset == 152))'
+        weights['qqH_b']              = self._stdWgt+'*(mWW>130)*( 1.875*(dataset == 150) - 1.250*(dataset == 151) + 0.375*(dataset == 152))'
 
    #Double_t S =  0.125 * P1 -0.250 *P9 + 0.125 * P25;
-   #Double_t B = -1.000 * P1 +1.500 *P9 - 0.500 * P25;
-   #Double_t I =  1.875 * P1 -1.250 *P9 + 0.375 * P25;
+   #Double_t I = -1.000 * P1 +1.500 *P9 - 0.500 * P25;
+   #Double_t B =  1.875 * P1 -1.250 *P9 + 0.375 * P25;
 
 
         if cat in ['2j','2jtche05','2jtche05CJ','2jtche05FJ']:
