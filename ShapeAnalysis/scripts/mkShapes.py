@@ -163,7 +163,7 @@ class ShapeFactory:
     # _____________________________________________________________________________
     def _getHwidthrange(self,mass,cat):
 
-        if cat not in ['0j','1j']:
+        if cat not in ['0j','1j','2j']:
             print cat
             raise RuntimeError('range for '+str(cat)+' not defined. !?!?!?')
 
@@ -275,7 +275,7 @@ class ShapeFactory:
     # _____________________________________________________________________________
     def _getVarHwidth(self,mass,cat):
 
-        if cat not in ['0j','1j']:
+        if cat not in ['0j','1j','2j']:
             raise RuntimeError('mll range for '+str(cat)+' not defined. Can be 0 or 1')
 
         return '(mth*((mth>=130&&pt2>20&&pt1>10)+(mth<130&&ptll>30&&pfmet>30))):mll'
@@ -1189,9 +1189,14 @@ class ShapeFactory:
         weights['ggH_s']              = self._stdWgt+'*2.1' # +'*((dataset == 37) - (dataset == 37) + (dataset == 37))'
         weights['ggH_b']              = self._stdWgt+'*2.1' # +'*((dataset == 37) - (dataset == 37) + (dataset == 37))'
 
-        weights['qqH_sbi']            = self._stdWgt+'*((dataset == 37) - (dataset == 37) + (dataset == 37))'
-        weights['qqH_s']              = self._stdWgt+'*((dataset == 37) - (dataset == 37) + (dataset == 37))'
-        weights['qqH_b']              = self._stdWgt+'*((dataset == 37) - (dataset == 37) + (dataset == 37))'
+        #                                             only-offshell            1 sm                     9 sm                    25 sm
+        weights['qqH_sbi']            = self._stdWgt+'*(mWW>130)*( 1.000*(dataset == 150) - 0.000*(dataset == 151) + 0.000*(dataset == 152))'
+        weights['qqH_s']              = self._stdWgt+'*(mWW>130)*( 0.125*(dataset == 150) - 0.250*(dataset == 151) + 0.125*(dataset == 152))'
+        weights['qqH_b']              = self._stdWgt+'*(mWW>130)*(-1.000*(dataset == 150) + 1.500*(dataset == 151) - 0.500*(dataset == 152))'
+
+   #Double_t S =  0.125 * P1 -0.250 *P9 + 0.125 * P25;
+   #Double_t B = -1.000 * P1 +1.500 *P9 - 0.500 * P25;
+   #Double_t I =  1.875 * P1 -1.250 *P9 + 0.375 * P25;
 
 
         if cat in ['2j','2jtche05','2jtche05CJ','2jtche05FJ']:
@@ -1620,7 +1625,7 @@ if __name__ == '__main__':
 
               factory._systByWeight = systByWeight
 
-              processMask = ['ggH', 'ggH_ALT',  'qqH',  'qqH_ALT', 'wzttH', 'ZH', 'WH', 'ttH', 'ggWW', 'Top', 'TopPt0', 'TopPt1', 'TopPt2', 'TopPt3', 'TopPt4', 'TopPt5', 'TopPt6', 'TopPt7', 'TopPt8', 'WW', 'VV', 'VgS', 'Vg', 'DYTT', 'Other', 'VVV', 'WWewk', 'CHITOP-Top' , 'ggH_SM', 'qqH_SM', 'wzttH_SM' , 'WH_SM','ZH_SM','ttH_SM','ggH_sbi','ggH_b','ggH_s']
+              processMask = ['ggH', 'ggH_ALT',  'qqH',  'qqH_ALT', 'wzttH', 'ZH', 'WH', 'ttH', 'ggWW', 'Top', 'TopPt0', 'TopPt1', 'TopPt2', 'TopPt3', 'TopPt4', 'TopPt5', 'TopPt6', 'TopPt7', 'TopPt8', 'WW', 'VV', 'VgS', 'Vg', 'DYTT', 'Other', 'VVV', 'WWewk', 'CHITOP-Top' , 'ggH_SM', 'qqH_SM', 'wzttH_SM' , 'WH_SM','ZH_SM','ttH_SM','ggH_sbi','ggH_b','ggH_s','qqH_sbi','qqH_b','qqH_s']
 
               if '2011' in opt.dataset:
                   processMask = ['ggH', 'ggH_ALT', 'qqH', 'qqH_ALT', 'VH' , 'wzttH', 'ZH', 'WH', 'ttH', 'ggWW', 'Top', 'WW', 'VV', 'CHITOP-Top', 'ggH_SM', 'qqH_SM','VH_SM', 'wzttH_SM', 'ZH_SM', 'WH_SM', 'ttH_SM']

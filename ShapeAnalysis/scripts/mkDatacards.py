@@ -191,6 +191,7 @@ class ShapeLoader:
         for name,process,effect,var in self._systematics:
             # check for Up/Down
 #             (process,effect,var) = self._systRegex.match(name).group(1,2,3)
+            print "process,effect,var = ", process,effect,var
             if var == 'Up': 
                 if effect not in ups: ups[effect]= []
                 ups[effect].append(process)
@@ -198,6 +199,9 @@ class ShapeLoader:
                 if effect not in downs: downs[effect]= []
                 downs[effect].append(process)
         # check 
+        print " ups = ", ups
+        print " downs = ", downs
+
         for effect in ups:
             if set(ups[effect]) != set(downs[effect]):
                 sUp = set(ups[effect])
@@ -753,7 +757,7 @@ if __name__ == '__main__':
     
                 # reshuffle the order
                 #order = [ 'vbfH', 'ggH', 'wzttH', 'ggWW', 'Vg', 'WJet', 'Top', 'WW', 'DYLL', 'VV', 'DYTT', 'Data']
-                order = [ 'ggH','ggH_ALT','qqH','qqH_ALT', 'wzttH','wzttH_ALT', 'WH', 'ZH', 'ttH', 'ggWW', 'VgS', 'Vg', 'WJet', 'Top', 'TopPt0', 'TopPt1', 'TopPt2', 'TopPt3', 'TopPt4', 'TopPt5', 'TopPt6', 'TopPt7', 'TopPt8', 'WW', 'WWewk', 'DYLL', 'VV', 'DYTT', 'DYee', 'DYmm', 'DYee05', 'DYmm05', 'Other', 'VVV', 'Data','ggH_SM', 'qqH_SM', 'WH_SM','ZH_SM' , 'wzttH_SM' ]
+                order = [ 'ggH','ggH_ALT','qqH','qqH_ALT', 'wzttH','wzttH_ALT', 'WH', 'ZH', 'ttH', 'ggWW', 'VgS', 'Vg', 'WJet', 'Top', 'TopPt0', 'TopPt1', 'TopPt2', 'TopPt3', 'TopPt4', 'TopPt5', 'TopPt6', 'TopPt7', 'TopPt8', 'WW', 'WWewk', 'DYLL', 'VV', 'DYTT', 'DYee', 'DYmm', 'DYee05', 'DYmm05', 'Other', 'VVV', 'Data','ggH_SM', 'qqH_SM', 'WH_SM','ZH_SM' , 'wzttH_SM', 'ggH_sbi', 'ggH_s', 'ggH_b', 'qqH_sbi', 'qqH_s', 'qqH_b' ]
     
    
                 oldYields = yields.copy()

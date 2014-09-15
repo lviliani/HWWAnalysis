@@ -234,14 +234,15 @@ def signalSamples(sigtag,mass=125,suffix=''):
                     'nominals/latinogg2vv_Hw1_SigShoulder_8TeV.root',
                     'nominals/latinogg2vv_Hw1_SigTail_8TeV.root'
                    ]
-    qqH_sbi      = ['nominals/latino_8010_gg2vvhighmass.root',
-                    'nominals/latino_8010_gg2vvhighmass.root'
+    qqH_sbi      = ['nominals/latino_150_qqww1sm.root'
                    ]
-    qqH_b        = ['nominals/latino_8010_gg2vvhighmass.root',
-                    'nominals/latino_8010_gg2vvhighmass.root'
+    qqH_b        = ['nominals/latino_150_qqww1sm.root',
+                    'nominals/latino_151_qqww9sm.root',
+                    'nominals/latino_152_qqww25sm.root'
                    ]
-    qqH_s        = ['nominals/latino_8010_gg2vvhighmass.root',
-                    'nominals/latino_8010_gg2vvhighmass.root'
+    qqH_s        = ['nominals/latino_150_qqww1sm.root',
+                    'nominals/latino_151_qqww9sm.root',
+                    'nominals/latino_152_qqww25sm.root'
                    ]
 
 
@@ -275,6 +276,9 @@ def signalSamples(sigtag,mass=125,suffix=''):
             signals['ggH_sbi'] = ggH_sbi
             signals['ggH_s']   = ggH_s
             signals['ggH_b']   = ggH_b
+            signals['qqH_sbi'] = qqH_sbi
+            signals['qqH_s']   = qqH_s
+            signals['qqH_b']   = qqH_b
 
 
 # and the JHU case:
