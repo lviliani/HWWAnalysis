@@ -169,7 +169,7 @@ class ShapeFactory:
 
         #return ([-300, -250, -200, -150, -100, -75, -50, -20, 0, 20, 50, 75, 100, 150, 200, 250, 300],)
         #return ([-300, -250, -200, -150, -100, -75, -50, -20, 0, 20, 50, 75, 100, 150, 200, 250, 300],[30,60,130,150,200,250,400])
-        return ([0, 20, 50, 75, 100, 150, 200, 250, 300],[30,60,130,150,200,250,400])
+        return ([0, 20, 50, 75, 100, 150, 200, 250, 300],[30,60,130,150,200,300,400])
 
 
 
@@ -278,7 +278,7 @@ class ShapeFactory:
         if cat not in ['0j','1j','2j']:
             raise RuntimeError('mll range for '+str(cat)+' not defined. Can be 0 or 1')
 
-        return '(mth*((mth>=130&&pt2>20&&pt1>10)+(mth<130&&ptll>30&&pfmet>30))):mll'
+        return '(mth*((mth>=130&&pt2>20&&pt1>20)+(mth<130&&ptll>30&&pfmet>30))):mll'
         #return 'mth:(mll*(mth>=130&&pt2>20&&pt1>10)-mll*(mth<130&&ptll>30&&pfmet>30))'
         #return 'mll*(mth>=125)-mll*(mth<125)'
 

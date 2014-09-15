@@ -157,6 +157,8 @@ def getCommonSysts(mass,channel,jets,qqWWfromData,shape,options,suffix,isssactiv
     #MCPROC = ['ggH', 'vbfH', 'DTT', 'ggWW', 'VV', 'Vg' ]; 
     MCPROC = ['ggH', 'qqH', 'wzttH', 'WH', 'ZH', 'ttH', 'DYTT', 'VV', 'VgS', 'Vg', 'Other', 'VVV', 'WWewk', 'ggH_SM', 'qqH_SM', 'wzttH_SM' , 'WH_SM', 'ZH_SM', 'ttH_SM' ];
     MCPROC+=['Top']
+    MCPROC+=['ggH_sbi', 'ggH_b', 'ggH_s'] # for Higgs width
+    MCPROC+=['qqH_sbi', 'qqH_b', 'qqH_s'] # for Higgs width
     if channel == 'elmu' or channel == 'muel': MCPROC+=['DYMM','DYEE']
     if channel == 'of': MCPROC += ['DYLL']
     if not qqWWfromData: MCPROC+=['WW','ggWW']
@@ -168,7 +170,11 @@ def getCommonSysts(mass,channel,jets,qqWWfromData,shape,options,suffix,isssactiv
     #nuisances['pdf_gg']    = [ ['lnN'], { 'ggH':ggH_pdfErrYR[mass], 'ggWW':(1.00 if qqWWfromData else 1.04) }]
     nuisances['pdf_gg']    = [ ['lnN'], { 'ggH'    : GetYRVal(ggH_pdfErrYR,mass), 
                                           'ggH_SM' : GetYRVal(ggH_pdfErrYR,mh_SM),
-                                          'ggWW'   : 1.04 , 
+                                          'ggWW'   : 1.04 ,
+                                          # for Higgsw width
+                                          'ggH_sbi'   : 1.04 ,
+                                          'ggH_b'     : 1.04 ,
+                                          'ggH_s'     : 1.04 ,
                                         }]
 
     nuisances['pdf_qqbar'] = [ ['lnN'], { #'wzttH' :(1.0 if mass>300 else wzttH_pdfErrYR[mass]),  
@@ -183,10 +189,16 @@ def getCommonSysts(mass,channel,jets,qqWWfromData,shape,options,suffix,isssactiv
                                           'qqH_SM'   :GetYRVal(vbfH_pdfErrYR,mh_SM), 
                                           'VV':1.04, 
                                           'WW':(1.0 if qqWWfromData else 1.04), 
- 
+                                          # for Higgsw width
+                                          'qqH_sbi'   : 1.04 ,
+                                          'qqH_b'     : 1.04 ,
+                                          'qqH_s'     : 1.04 ,
+
                                         }]
 
     # -- Theory ---------------------
+    nuisances['QCDscale_ggH_offshell']    = [  ['lnN'], { 'ggH_sbi':1.15,  'ggH_b':1.15,  'ggH_s':1.15 }]
+
     if jets == 0:
         # appendix D of https://indico.cern.ch/getFile.py/access?contribId=0&resId=0&materialId=0&confId=135333
         k0 = pow(GetYRVal(ggH_scaErrYR,mass),     1/ggH_jets[mass]['f0'])
@@ -291,6 +303,8 @@ def getCommonSysts(mass,channel,jets,qqWWfromData,shape,options,suffix,isssactiv
     # UEPS for WW 0 jet
     if   jets == 0: nuisances['UEPS_WW'] = [ ['lnN'], {'WW':1.01}]
 
+    # UEPS for offshell part
+    nuisances['UEPS_off'] = [ ['lnN'], {'ggH_sbi':1.10, 'ggH_b':1.10, 'ggH_s':1.10, 'qqH_sbi':1.10, 'qqH_b':1.10, 'qqH_s':1.10  }]
 
 
     #if ((not qqWWfromData) and (jets != 2)): nuisances['QCDscale_WW_EXTRAP'] = [ ['lnN'], {'WW':1.06}]
