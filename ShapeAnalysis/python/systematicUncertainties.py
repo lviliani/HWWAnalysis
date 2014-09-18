@@ -305,7 +305,7 @@ def getCommonSysts(mass,channel,jets,qqWWfromData,shape,options,suffix,isssactiv
 
     # UEPS for offshell part
     #nuisances['UEPS_off'] = [ ['lnN'], {'ggH_sbi':1.10, 'ggH_b':1.10, 'ggH_s':1.10, 'qqH_sbi':1.10, 'qqH_b':1.10, 'qqH_s':1.10  }]
-    if nuisances['UEPS'] :
+    if 'UEPS' in nuisances.keys() :
       nuisances['UEPS'][1].update( {'ggH_sbi':1.10, 'ggH_b':1.10, 'ggH_s':1.10, 'qqH_sbi':1.10, 'qqH_b':1.10, 'qqH_s':1.10  } )
     else :
       nuisances['UEPS'] = [ ['lnN'], {'ggH_sbi':1.10, 'ggH_b':1.10, 'ggH_s':1.10, 'qqH_sbi':1.10, 'qqH_b':1.10, 'qqH_s':1.10  }]
