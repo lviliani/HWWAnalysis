@@ -304,7 +304,11 @@ def getCommonSysts(mass,channel,jets,qqWWfromData,shape,options,suffix,isssactiv
     if   jets == 0: nuisances['UEPS_WW'] = [ ['lnN'], {'WW':1.01}]
 
     # UEPS for offshell part
-    nuisances['UEPS_off'] = [ ['lnN'], {'ggH_sbi':1.10, 'ggH_b':1.10, 'ggH_s':1.10, 'qqH_sbi':1.10, 'qqH_b':1.10, 'qqH_s':1.10  }]
+    #nuisances['UEPS_off'] = [ ['lnN'], {'ggH_sbi':1.10, 'ggH_b':1.10, 'ggH_s':1.10, 'qqH_sbi':1.10, 'qqH_b':1.10, 'qqH_s':1.10  }]
+    if nuisances['UEPS'] :
+      nuisances['UEPS'][1].update( {'ggH_sbi':1.10, 'ggH_b':1.10, 'ggH_s':1.10, 'qqH_sbi':1.10, 'qqH_b':1.10, 'qqH_s':1.10  } )
+    else :
+      nuisances['UEPS'] = [ ['lnN'], {'ggH_sbi':1.10, 'ggH_b':1.10, 'ggH_s':1.10, 'qqH_sbi':1.10, 'qqH_b':1.10, 'qqH_s':1.10  }]
 
 
     #if ((not qqWWfromData) and (jets != 2)): nuisances['QCDscale_WW_EXTRAP'] = [ ['lnN'], {'WW':1.06}]
