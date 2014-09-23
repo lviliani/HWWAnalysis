@@ -177,7 +177,9 @@ class XYShiftVarFiller(TreeCloner):
 
         pfmetMEtSig      = numpy.ones(1, dtype=numpy.float32)
 
-
+        # default values
+        dymva0[0] = -999.
+        dymva1[0] = -999.
 
         self.otree.Branch('dphillmet',  dphillmet,  'dphillmet/F')
         self.otree.Branch('dphilmet',   dphilmet,   'dphilmet/F')
@@ -279,94 +281,96 @@ class XYShiftVarFiller(TreeCloner):
 
 
 
+            # while met is always defined, leptons are not!
+            # if we don't have 2 leptons, then skip:
+            if itree.pt2 > 0 :
+
+               l1 = ROOT.TLorentzVector()
+               l2 = ROOT.TLorentzVector()
+               l1.SetPtEtaPhiM(itree.pt1, itree.eta1, itree.phi1, 0)
+               l2.SetPtEtaPhiM(itree.pt2, itree.eta2, itree.phi2, 0)
+
+               dphillmet[0] = self.deltaPhi(l1+l2,met)
+               dphilmet1[0] = self.deltaPhi(l1   ,met)
+               dphilmet2[0] = self.deltaPhi(   l2,met)
+               dphilmet [0] = min (dphilmet1[0], dphilmet2[0])
+
+               mth      [0] = sqrt( 2 * itree.ptll * pfmet[0] * ( 1 - cos(dphillmet[0]) ) );
+               mtw1     [0] = sqrt( 2 * itree.pt1  * pfmet[0] * ( 1 - cos(dphilmet1[0]) ) );
+               mtw2     [0] = sqrt( 2 * itree.pt2  * pfmet[0] * ( 1 - cos(dphilmet2[0]) ) );
+
+               if dphilmet [0] < math.pi/2.:
+                  ppfmet   [0] = pfmet[0] * sin(dphilmet [0])
+               else :
+                  ppfmet   [0] = pfmet[0]
 
 
-            l1 = ROOT.TLorentzVector()
-            l2 = ROOT.TLorentzVector()
-            l1.SetPtEtaPhiM(itree.pt1, itree.eta1, itree.phi1, 0)
-            l2.SetPtEtaPhiM(itree.pt2, itree.eta2, itree.phi2, 0)
+               mpmet[0] = min(ppfmet[0],itree.pchmet)
 
-            dphillmet[0] = self.deltaPhi(l1+l2,met)
-            dphilmet1[0] = self.deltaPhi(l1   ,met)
-            dphilmet2[0] = self.deltaPhi(   l2,met)
-            dphilmet [0] = min (dphilmet1[0], dphilmet2[0])
+               #### correct dymva ####
 
-            mth      [0] = sqrt( 2 * itree.ptll * pfmet[0] * ( 1 - cos(dphillmet[0]) ) );
-            mtw1     [0] = sqrt( 2 * itree.pt1  * pfmet[0] * ( 1 - cos(dphilmet1[0]) ) );
-            mtw2     [0] = sqrt( 2 * itree.pt2  * pfmet[0] * ( 1 - cos(dphilmet2[0]) ) );
+               #dphilljet1  = numpy.ones(1, dtype=numpy.float32)
+               #dphimetjet1 = numpy.ones(1, dtype=numpy.float32)
 
-            if dphilmet [0] < math.pi/2.:
-               ppfmet   [0] = pfmet[0] * sin(dphilmet [0])
-            else :
-               ppfmet   [0] = pfmet[0]
-
-
-            mpmet[0] = min(ppfmet[0],itree.pchmet)
-
-           #### correct dymva ####
-
-            #dphilljet1  = numpy.ones(1, dtype=numpy.float32)
-            #dphimetjet1 = numpy.ones(1, dtype=numpy.float32)
-
-            jetpt1 = itree.jetpt1
-            if itree.jetpt1 < 15 :
-                jetpt1 = 15
-                dphilljet1[0]  = -0.1;
-                dphimetjet1[0] = -0.1;
-            else :
-                jet1 = ROOT.TLorentzVector()
-                jet1.SetPtEtaPhiM(itree.jetpt1, itree.jeteta1, itree.jetphi1, 0)
-                dphilljet1[0]  = self.deltaPhi(l1+l2,jet1)
-                dphimetjet1[0] = self.deltaPhi(met,jet1)
+               jetpt1 = itree.jetpt1
+               if itree.jetpt1 < 15 :
+                  jetpt1 = 15
+                  dphilljet1[0]  = -0.1;
+                  dphimetjet1[0] = -0.1;
+               else :
+                  jet1 = ROOT.TLorentzVector()
+                  jet1.SetPtEtaPhiM(itree.jetpt1, itree.jeteta1, itree.jetphi1, 0)
+                  dphilljet1[0]  = self.deltaPhi(l1+l2,jet1)
+                  dphimetjet1[0] = self.deltaPhi(met,jet1)
 
 
 
-            self.var1[0] =  pfmet[0] 
-            self.var2[0] =  itree.chmet
-            self.var3[0] =  jetpt1
-            self.var4[0] =  itree.pfmetSignificance #pfMetSignificance
-            self.var5[0] =  dphilljet1[0]
-            self.var6[0] =  dphimetjet1[0]
-            self.var7[0] =  mth[0]
+               self.var1[0] =  pfmet[0] 
+               self.var2[0] =  itree.chmet
+               self.var3[0] =  jetpt1
+               self.var4[0] =  itree.pfmetSignificance #pfMetSignificance
+               self.var5[0] =  dphilljet1[0]
+               self.var6[0] =  dphimetjet1[0]
+               self.var7[0] =  mth[0]
 
 
-            if itree.njet == 0:
+               if itree.njet == 0:
                   dymva0[0] = self.getDYMVAV0j0.EvaluateMVA("BDTB")
-            elif itree.njet == 1:
+               elif itree.njet == 1:
                   dymva0[0] = self.getDYMVAV0j1.EvaluateMVA("BDTB")
-            else :
+               else :
                   dymva0[0] = -999
 
-            #recoil = numpy.ones(1, dtype=numpy.float32)
-            px_rec = pfmet[0] * cos(pfmetphi[0]) + (l1+l2).Px()
-            py_rec = pfmet[0] * sin(pfmetphi[0]) + (l1+l2).Py()
+               #recoil = numpy.ones(1, dtype=numpy.float32)
+               px_rec = pfmet[0] * cos(pfmetphi[0]) + (l1+l2).Px()
+               py_rec = pfmet[0] * sin(pfmetphi[0]) + (l1+l2).Py()
 
-            recoil[0] = sqrt(px_rec*px_rec + py_rec*py_rec)
-
-
-            #pfmetMEtSig[0] = pfmet[0] / sqrt( itree.pfSumEt)
-            pfmetMEtSig[0] = pfmet[0] / itree.pfmet * itree.pfmetMEtSig
-
-            self.var1[0]  =  ppfmet[0]
-            self.var2[0]  =  itree.pchmet
-            self.var3[0]  =  itree.nvtx
-            self.var4[0]  =  itree.ptll
-            self.var5[0]  =  jetpt1
-            self.var6[0]  =  pfmetMEtSig[0]  #pfMetMEtSig
-            #self.var6[0]  =  itree.pfmetMEtSig #pfMetMEtSig
-            self.var7[0]  =  dphilljet1[0]
-            self.var8[0]  =  dphillmet[0]
-            self.var9[0]  =  dphimetjet1[0]
-            self.var10[0] =  recoil[0]
-            self.var11[0] =  mth[0]
+               recoil[0] = sqrt(px_rec*px_rec + py_rec*py_rec)
 
 
-            if itree.njet == 0:
-                  dymva1[0] = self.getDYMVAV1j0.EvaluateMVA("BDTG")
-            elif itree.njet == 1:
-                  dymva1[0] = self.getDYMVAV1j1.EvaluateMVA("BDTG")
-            else :
-                  dymva1[0] = -999
+               #pfmetMEtSig[0] = pfmet[0] / sqrt( itree.pfSumEt)
+               pfmetMEtSig[0] = pfmet[0] / itree.pfmet * itree.pfmetMEtSig
+
+               self.var1[0]  =  ppfmet[0]
+               self.var2[0]  =  itree.pchmet
+               self.var3[0]  =  itree.nvtx
+               self.var4[0]  =  itree.ptll
+               self.var5[0]  =  jetpt1
+               self.var6[0]  =  pfmetMEtSig[0]  #pfMetMEtSig
+               #self.var6[0]  =  itree.pfmetMEtSig #pfMetMEtSig
+               self.var7[0]  =  dphilljet1[0]
+               self.var8[0]  =  dphillmet[0]
+               self.var9[0]  =  dphimetjet1[0]
+               self.var10[0] =  recoil[0]
+               self.var11[0] =  mth[0]
+
+
+               if itree.njet == 0:
+                     dymva1[0] = self.getDYMVAV1j0.EvaluateMVA("BDTG")
+               elif itree.njet == 1:
+                     dymva1[0] = self.getDYMVAV1j1.EvaluateMVA("BDTG")
+               else :
+                     dymva1[0] = -999
 
             otree.Fill()
         self.disconnect()
