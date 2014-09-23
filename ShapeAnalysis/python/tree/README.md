@@ -40,6 +40,17 @@ PileUp weight
 
 
 
+Useful corrections
+====
+
+xyshift for met
+
+    mkdir /tmp/amassiro/ww-xyshift/
+    ./gardener.py  xyShift  /tmp/amassiro/latino000_nll_ewk.root     /tmp/amassiro/ww-xyshift/latino000_nll_ewk.root
+    ./gardener.py  xyShift  /tmp/amassiro/latino002_nll_ewk.root     /tmp/amassiro/ww-xyshift/latino002_nll_ewk.root
+    ./gardener.py  xyShift  /tmp/amassiro/latino006_nll_ewk.root     /tmp/amassiro/ww-xyshift/latino006_nll_ewk.root
+
+
 
 Useful variables
 ====
