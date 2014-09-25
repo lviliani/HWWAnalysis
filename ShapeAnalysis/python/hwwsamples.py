@@ -113,6 +113,30 @@ mcsets = {
         #('DYLL-template',    'DYLL-template-0j1j'),              #    A   <-   sorgente
         #('DYLL-templatesyst','DYLL-templatesyst-0j1j')           #    mkmerged vuole "-template"
     ],
+    '0j1jWW' : [
+        #signals
+        'ggH','qqH','WH','ZH',
+        # bkgs
+        #('WW', 'WW_mad')
+        ('WW', 'WW_pow')
+        #('WW', 'WW_mc')
+        'ggWW','VgS','Vg','WJet','Top','VV','VVV','DYTT','WWnlo','WWnloUp','WWnloDown',
+        #
+        ('DYLL','ggH'),
+        # systematics
+        'WJetFakeRate-nominal',
+        ('WJetFakeRate-eUp', 'WJetFakeRate-nominal'),
+        ('WJetFakeRate-eDn', 'WJetFakeRate-nominal'),
+        ('WJetFakeRate-mUp', 'WJetFakeRate-nominal'),
+        ('WJetFakeRate-mDn', 'WJetFakeRate-nominal'),
+        ('TopTW',   'Top'),
+        ('TopCtrl', 'Top'),
+        # templates
+        'VgS-template','Vg-template',
+        # 0j1j specific
+        #('DYLL-template',    'DYLL-template-0j1j'),              #    A   <-   sorgente
+        #('DYLL-templatesyst','DYLL-templatesyst-0j1j')           #    mkmerged vuole "-template"
+    ],
     'cutbased' : [
         #signals
         'ggH','qqH','WH','ZH',

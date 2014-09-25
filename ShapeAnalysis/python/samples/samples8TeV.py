@@ -144,6 +144,18 @@ backgrounds = {
                                 ],
     'ggHminlo'                : [ 'nominals/latino_4125_ggToH125toWWTo2LAndTau2NuMinlo.root'
                                 ],
+
+    'WW_mad'                  : [
+                                  'nominals/latino000_nll_ewk.root'
+                                ]
+    'WW_pow'                  : [
+                                  'nominals/latino006_nll_ewk.root'
+                                ]
+    'WW_mc'                   : [
+                                  'nominals/latino002_nll_ewk.root'
+                                ]
+
+
 }
 
 backgrounds['Other'] = backgrounds['WW']+backgrounds['ggWW']+backgrounds['Top']+backgrounds['VV']+backgrounds['DYTT']+backgrounds['DYLL']
