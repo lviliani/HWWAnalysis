@@ -1076,6 +1076,8 @@ class ShapeFactory:
     # define here the mass-dependent weights
     def _sampleWeights(self,mass,var,cat,sel,flavor):
         weights = {}
+        #                                                            pow                      mc@nlo                   MG             NLO x-sec     nnll weight
+        weights['WW']              = self._stdWgt+'*(((dataset==6)*1./999860.)+((dataset==2)*1./539594.)+((dataset==0)*1./1933232.))*5.8123*1000./baseW*nllW'
         # tocheck
         weights['WJet']              = self._stdWgt+'*kfW*fakeW*(run!=201191)'
         weights['WJetFakeRate-nominal']  = self._stdWgt+'*kfW*fakeW*(run!=201191)'
@@ -1590,6 +1592,11 @@ if __name__ == '__main__':
                   ('interferenceVBF_down'    , 'interf_qqHDown'),
                   ('JER_down'                , 'p_res_jDown'),
                   ('JER_up'                  , 'p_res_jUp'),
+                  ('JER_down'                , 'p_res_jDown'),
+                  ('NNLL_up'                 , 'nnllUp'),
+                  ('NNLL_down'               , 'nnllDown'),
+                  ('NNLLR_up'                , 'nnllRUp'),
+                  ('NNLLR_down'              , 'nnllRDown'),
               ])
 
 
@@ -1629,6 +1636,11 @@ if __name__ == '__main__':
               systByWeight['puW_down'] = 'puWup/puW'
               systByWeight['puW_up']   = 'puWdown/puW'
 
+              systByWeight['NNLL_down']  = 'nllW_Qdown/nllW'
+              systByWeight['NNLL_up']    = 'nllW_Qup/nllW'
+              systByWeight['NNLLR_down'] = 'nllW_Rdown/nllW'
+              systByWeight['NNLLR_up']   = 'nllW_Rup/nllW'
+
               factory._systByWeight = systByWeight
 
               processMask = ['ggH', 'ggH_ALT',  'qqH',  'qqH_ALT', 'wzttH', 'ZH', 'WH', 'ttH', 'ggWW', 'Top', 'TopPt0', 'TopPt1', 'TopPt2', 'TopPt3', 'TopPt4', 'TopPt5', 'TopPt6', 'TopPt7', 'TopPt8', 'WW', 'VV', 'VgS', 'Vg', 'DYTT', 'Other', 'VVV', 'WWewk', 'CHITOP-Top' , 'ggH_SM', 'qqH_SM', 'wzttH_SM' , 'WH_SM','ZH_SM','ttH_SM','ggH_sbi','ggH_b','ggH_s','qqH_sbi','qqH_b','qqH_s']
@@ -1642,6 +1654,12 @@ if __name__ == '__main__':
               systMasks['interferenceGGH_down'] = ['ggH', 'ggH_ALT']
               systMasks['interferenceVBF_up'  ] = ['qqH', 'qqH_ALT']
               systMasks['interferenceVBF_down'] = ['qqH', 'qqH_ALT']
+
+              # NNLL reweight and unceratinty only if WW
+              systMasks['NNLL_up']    = ['WW']
+              systMasks['NNLL_down']  = ['WW']
+              systMasks['NNLLR_up']   = ['WW']
+              systMasks['NNLLR_down'] = ['WW']
 
               # remove selected nuisances for some samples
               processMaskNoDYTT = processMask
