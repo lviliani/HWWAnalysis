@@ -301,7 +301,7 @@ def getCommonSysts(mass,channel,jets,qqWWfromData,shape,options,suffix,isssactiv
                                                   'ggH_SM':1.20, 'qqH_SM':1.10}]
 
     # UEPS for WW 0 jet
-    if   jets == 0: nuisances['UEPS_WW'] = [ ['lnN'], {'WW':1.01}]
+    if   jets == 0: nuisances['UEPS_WW'] = [ ['lnN'], {'WW':1.035}]   # see AN 2014/077
 
     # UEPS for offshell part
     #nuisances['UEPS_off'] = [ ['lnN'], {'ggH_sbi':1.10, 'ggH_b':1.10, 'ggH_s':1.10, 'qqH_sbi':1.10, 'qqH_b':1.10, 'qqH_s':1.10  }]
