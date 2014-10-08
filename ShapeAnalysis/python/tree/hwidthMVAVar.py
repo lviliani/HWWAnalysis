@@ -55,7 +55,7 @@ class HwidthMVAVarFiller(TreeCloner):
     def addOptions(self,parser):
         description = self.help()
         group = optparse.OptionGroup(parser,self.label, description)
-        group.add_option('-k', '--kindOfMVA',   dest='kindOfMVA', help='kind of sample: 0 = off-shell vs on-shell, 1 = off-shell vs background', default='0')
+        group.add_option('-k', '--kindOfMVA',   dest='kindOfMVA', type='int', help='kind of sample: 0 = off-shell vs on-shell, 1 = off-shell vs background', default=0)
         parser.add_option_group(group)
         return group
 
@@ -81,6 +81,8 @@ class HwidthMVAVarFiller(TreeCloner):
         output = kwargs['output']
 
         self.connect(tree,input)
+
+        print "self.kindOfMVA = ", self.kindOfMVA
 
         if self.kindOfMVA == 0 :
           newbranches = ['HwidthMVAggH']
