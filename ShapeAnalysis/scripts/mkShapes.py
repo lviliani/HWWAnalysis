@@ -1077,7 +1077,9 @@ class ShapeFactory:
     def _sampleWeights(self,mass,var,cat,sel,flavor):
         weights = {}
         #                                                            pow                      mc@nlo                   MG             NLO x-sec     nnll weight
-        weights['WW']              = self._stdWgt+'*(((dataset==6)*1./999860.)+((dataset==2)*1./539594.)+((dataset==0)*1./1933232.))*5.8123*1000./baseW*nllW'
+        #weights['WW']              = self._stdWgt+'*(((dataset==6)*1./999860.)+((dataset==2)*1./539594.)+((dataset==0)*1./1933232.))*5.8123*1000./baseW*nllW'
+        #                                                            pow                      mc@nlo                   MG            NNLO x-sec     nnll weight
+        weights['WW']              = self._stdWgt+'*(((dataset==6)*1./999860.)+((dataset==2)*1./539594.)+((dataset==0)*1./1933232.))*5.984*1000./baseW*nllW'
         # tocheck
         weights['WJet']              = self._stdWgt+'*kfW*fakeW*(run!=201191)'
         weights['WJetFakeRate-nominal']  = self._stdWgt+'*kfW*fakeW*(run!=201191)'
