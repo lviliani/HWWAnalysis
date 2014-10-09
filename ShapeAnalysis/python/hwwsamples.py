@@ -117,9 +117,9 @@ mcsets = {
         #signals
         'ggH','qqH','WH','ZH',
         # bkgs
-        #('WW', 'WW_mad')
-        ('WW', 'WW_pow')
-        #('WW', 'WW_mc')
+        #('WW', 'WWmad'),
+        ('WW', 'WWpow'),
+        #('WW', 'WWmc'),
         'ggWW','VgS','Vg','WJet','Top','VV','VVV','DYTT','WWnlo','WWnloUp','WWnloDown',
         #
         ('DYLL','ggH'),

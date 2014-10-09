@@ -145,15 +145,15 @@ backgrounds = {
     'ggHminlo'                : [ 'nominals/latino_4125_ggToH125toWWTo2LAndTau2NuMinlo.root'
                                 ],
 
-    'WW_mad'                  : [
+    'WWmad'                   : [
                                   'nominals/latino000_nll_ewk.root'
-                                ]
-    'WW_pow'                  : [
+                                ],
+    'WWpow'                   : [
                                   'nominals/latino006_nll_ewk.root'
-                                ]
-    'WW_mc'                   : [
+                                ],
+    'WWmc'                    : [
                                   'nominals/latino002_nll_ewk.root'
-                                ]
+                                ],
 
 
 }
@@ -246,15 +246,25 @@ def signalSamples(sigtag,mass=125,suffix=''):
                     'nominals/latinogg2vv_Hw1_SigShoulder_8TeV.root',
                     'nominals/latinogg2vv_Hw1_SigTail_8TeV.root'
                    ]
-    qqH_sbi      = ['nominals/latino_150_qqww1sm.root'
+    #qqH_sbi      = ['nominals/latino_150_qqww1sm.root'
+                   #]
+    #qqH_b        = ['nominals/latino_150_qqww1sm.root',
+                    #'nominals/latino_151_qqww9sm.root',
+                    #'nominals/latino_152_qqww25sm.root'
+                   #]
+    #qqH_s        = ['nominals/latino_150_qqww1sm.root',
+                    #'nominals/latino_151_qqww9sm.root',
+                    #'nominals/latino_152_qqww25sm.root'
+                   #]
+    qqH_sbi      = ['nominals/latino_160_qqww1smEM_baseW.root'
                    ]
-    qqH_b        = ['nominals/latino_150_qqww1sm.root',
-                    'nominals/latino_151_qqww9sm.root',
-                    'nominals/latino_152_qqww25sm.root'
+    qqH_b        = ['nominals/latino_160_qqww1smEM_baseW.root',
+                    'nominals/latino_161_qqww9smEM_baseW.root',
+                    'nominals/latino_162_qqww25smEM_baseW.root'
                    ]
-    qqH_s        = ['nominals/latino_150_qqww1sm.root',
-                    'nominals/latino_151_qqww9sm.root',
-                    'nominals/latino_152_qqww25sm.root'
+    qqH_s        = ['nominals/latino_160_qqww1smEM_baseW.root',
+                    'nominals/latino_161_qqww9smEM_baseW.root',
+                    'nominals/latino_162_qqww25smEM_baseW.root'
                    ]
 
 
