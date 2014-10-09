@@ -1076,10 +1076,14 @@ class ShapeFactory:
     # define here the mass-dependent weights
     def _sampleWeights(self,mass,var,cat,sel,flavor):
         weights = {}
-        #                                                            pow                      mc@nlo                   MG             NLO x-sec     nnll weight
-        #weights['WW']              = self._stdWgt+'*(((dataset==6)*1./999860.)+((dataset==2)*1./539594.)+((dataset==0)*1./1933232.))*5.8123*1000./baseW*nllW'
-        #                                                            pow                      mc@nlo                   MG            NNLO x-sec     nnll weight
-        weights['WW']              = self._stdWgt+'*(((dataset==6)*1./999860.)+((dataset==2)*1./539594.)+((dataset==0)*1./1933232.))*5.984*1000./baseW*nllW'
+        #print ">>>> sel = ", sel
+        if sel in ['CutWW'] : # only for WW xsec for the time being
+            #print " WW xsec "
+            #                                                            pow                      mc@nlo                   MG             NLO x-sec     nnll weight
+            #weights['WW']              = self._stdWgt+'*(((dataset==6)*1./999860.)+((dataset==2)*1./539594.)+((dataset==0)*1./1933232.))*5.8123*1000./baseW*nllW'
+            #                                                            pow                      mc@nlo                   MG            NNLO x-sec     nnll weight
+            weights['WW']              = self._stdWgt+'*(((dataset==6)*1./999860.)+((dataset==2)*1./539594.)+((dataset==0)*1./1933232.))*5.984*1000./baseW*nllW'
+
         # tocheck
         weights['WJet']              = self._stdWgt+'*kfW*fakeW*(run!=201191)'
         weights['WJetFakeRate-nominal']  = self._stdWgt+'*kfW*fakeW*(run!=201191)'
@@ -1200,9 +1204,12 @@ class ShapeFactory:
         weights['ggH_b']              = self._stdWgt+'*2.1' # +'*((dataset == 37) - (dataset == 37) + (dataset == 37))'
 
         #                                             only-offshell            1 sm                     9 sm                    25 sm
-        weights['qqH_sbi']            = self._stdWgt+'*(mWW>130)*( 1.000*(dataset == 150) - 0.000*(dataset == 151) + 0.000*(dataset == 152))'
-        weights['qqH_s']              = self._stdWgt+'*(mWW>130)*( 0.125*(dataset == 150) - 0.250*(dataset == 151) + 0.125*(dataset == 152))'
-        weights['qqH_b']              = self._stdWgt+'*(mWW>130)*( 1.875*(dataset == 150) - 1.250*(dataset == 151) + 0.375*(dataset == 152))'
+        #weights['qqH_sbi']            = self._stdWgt+'*(mWW>130)*( 1.000*(dataset == 150) - 0.000*(dataset == 151) + 0.000*(dataset == 152))'
+        #weights['qqH_s']              = self._stdWgt+'*(mWW>130)*( 0.125*(dataset == 150) - 0.250*(dataset == 151) + 0.125*(dataset == 152))'
+        #weights['qqH_b']              = self._stdWgt+'*(mWW>130)*( 1.875*(dataset == 150) - 1.250*(dataset == 151) + 0.375*(dataset == 152))'
+        weights['qqH_sbi']            = self._stdWgt+'*(mWW>130)*( 1.000*(dataset == 160) - 0.000*(dataset == 161) + 0.000*(dataset == 162))'
+        weights['qqH_s']              = self._stdWgt+'*(mWW>130)*( 0.125*(dataset == 160) - 0.250*(dataset == 161) + 0.125*(dataset == 162))'
+        weights['qqH_b']              = self._stdWgt+'*(mWW>130)*( 1.875*(dataset == 160) - 1.250*(dataset == 161) + 0.375*(dataset == 162))'
 
    #Double_t S =  0.125 * P1 -0.250 *P9 + 0.125 * P25;
    #Double_t I = -1.000 * P1 +1.500 *P9 - 0.500 * P25;
