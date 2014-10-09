@@ -921,9 +921,14 @@ def massSelections(mass):
     # Higgs width
     sel['Hwidth-level']     = ' && '.join(Hwidth.HwidthCut)
     sel['Hwidth-selection'] = sel['Hwidth-level']+ ' && ( (njet==0 * (1)) || '  + \
-                          ' (njet==1 * (1)) || ' +  \
-                          ' (njet>=2 * (  (njet>=2 && njet<=3 && (jetpt3<=30 || !(jetpt3 > 30 && (  (jeteta1-jeteta3 > 0 && jeteta2-jeteta3 < 0) || (jeteta2-jeteta3 > 0 && jeteta1-jeteta3 < 0)))))   && abs(eta1 - (jeteta1+jeteta2)/2)/detajj < 0.5 && abs(eta2 - (jeteta1+jeteta2)/2)/detajj < 0.5      && detajj>3.5     && mjj>500    )) '  + \
+                          ' ((njet==1) * (1)) || ' +  \
+                          ' ((njet>=2) * (  (njet>=2 && njet<=3 && (jetpt3<=30 || !(jetpt3 > 30 && (  (jeteta1-jeteta3 > 0 && jeteta2-jeteta3 < 0) || (jeteta2-jeteta3 > 0 && jeteta1-jeteta3 < 0)))))   && abs(eta1 - (jeteta1+jeteta2)/2)/detajj < 0.5 && abs(eta2 - (jeteta1+jeteta2)/2)/detajj < 0.5      && detajj>2.0     && mjj>300    )) '  + \
                           ')'
+
+    #sel['Hwidth-selection'] = sel['Hwidth-level']+ ' && ( (njet==0 * (1)) || '  + \
+                          #' (njet==1 * (1)) || ' +  \
+                          #' (njet>=2 * (  (njet>=2 && njet<=3 && (jetpt3<=30 || !(jetpt3 > 30 && (  (jeteta1-jeteta3 > 0 && jeteta2-jeteta3 < 0) || (jeteta2-jeteta3 > 0 && jeteta1-jeteta3 < 0)))))   && abs(eta1 - (jeteta1+jeteta2)/2)/detajj < 0.5 && abs(eta2 - (jeteta1+jeteta2)/2)/detajj < 0.5      && detajj>3.5     && mjj>500    )) '  + \
+                          #')'
 
 
     return sel
