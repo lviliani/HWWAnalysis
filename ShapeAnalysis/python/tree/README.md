@@ -189,6 +189,9 @@ mva addition
     gardener.py  higgsWWVar -r /tmp/amassiro/gg2vv/     /tmp/amassiro/gg2vv_mww/
 
 
+    gardener.py  higgsWWVar  /home/amassiro/Latinos/Shape/tree_skim_all/nominals/latino_160_qqww1smEM_baseW.root  /home/amassiro/Latinos/Shape/tree_skim_all/nominals/latino_160_qqww1smEM_baseW.root
+    gardener.py  higgsWWVar  /home/amassiro/Latinos/Shape/tree_skim_all/nominals/latino_161_qqww9smEM_baseW.root  /home/amassiro/Latinos/Shape/tree_skim_all/nominals/latino_161_qqww9smEM_baseW.root
+    gardener.py  higgsWWVar  /home/amassiro/Latinos/Shape/tree_skim_all/nominals/latino_162_qqww25smEM_baseW.root  /home/amassiro/Latinos/Shape/tree_skim_all/nominals/latino_162_qqww25smEM_baseW.root
 
 
 
