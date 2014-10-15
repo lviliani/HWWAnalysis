@@ -450,7 +450,6 @@ class ww:
 # Higgs width
 class Hwidth:
 
-
     _massindep = [
         'trigger==1.',
         '((ch1*ch2)<0 && pt1>20 && pt2>10)',
@@ -462,8 +461,8 @@ class Hwidth:
         'nextra==0' ,
         'bveto_ip==1',
         'nbjettche==0',
-        'mth>30',
-        'ptll>10'
+        #'mth>30'
+        #'ptll>10'
     ]
 
     HwidthCut    = _massindep
@@ -920,16 +919,32 @@ def massSelections(mass):
 
     # Higgs width
     sel['Hwidth-level']     = ' && '.join(Hwidth.HwidthCut)
-    sel['Hwidth-selection'] = sel['Hwidth-level']+ ' && ( (njet==0 * (1)) || '  + \
-                          ' ((njet==1) * (1)) || ' +  \
-                          ' ((njet>=2) * (  (njet>=2 && njet<=3 && (jetpt3<=30 || !(jetpt3 > 30 && (  (jeteta1-jeteta3 > 0 && jeteta2-jeteta3 < 0) || (jeteta2-jeteta3 > 0 && jeteta1-jeteta3 < 0)))))   && abs(eta1 - (jeteta1+jeteta2)/2)/detajj < 0.5 && abs(eta2 - (jeteta1+jeteta2)/2)/detajj < 0.5      && detajj>2.0     && mjj>300    )) '  + \
-                          ')'
-
     #sel['Hwidth-selection'] = sel['Hwidth-level']+ ' && ( (njet==0 * (1)) || '  + \
-                          #' (njet==1 * (1)) || ' +  \
-                          #' (njet>=2 * (  (njet>=2 && njet<=3 && (jetpt3<=30 || !(jetpt3 > 30 && (  (jeteta1-jeteta3 > 0 && jeteta2-jeteta3 < 0) || (jeteta2-jeteta3 > 0 && jeteta1-jeteta3 < 0)))))   && abs(eta1 - (jeteta1+jeteta2)/2)/detajj < 0.5 && abs(eta2 - (jeteta1+jeteta2)/2)/detajj < 0.5      && detajj>3.5     && mjj>500    )) '  + \
+                          #' ((njet==1) * (1)) || ' +  \
+                          #' ((njet>=2) * ( ptll>45 && (njet>=2 && njet<=3 && (jetpt3<=30 || !(jetpt3 > 30 && (  (jeteta1-jeteta3 > 0 && jeteta2-jeteta3 < 0) || (jeteta2-jeteta3 > 0 && jeteta1-jeteta3 < 0)))))   && abs(eta1 - (jeteta1+jeteta2)/2)/detajj < 0.5 && abs(eta2 - (jeteta1+jeteta2)/2)/detajj < 0.5      && detajj>3.5     && mjj>500    )) '  + \
+                          #')'
+    #sel['Hwidth-selection'] = sel['Hwidth-level']+ ' && ( (njet==0 * (1)) || '  + \
+                          #' ((njet==1) * (1)) || ' +  \
+                          #' ((njet>=2) * ( ptll>45 && (njet>=2 && njet<=3 && (jetpt3<=30 || !(jetpt3 > 30 && (  (jeteta1-jeteta3 > 0 && jeteta2-jeteta3 < 0) || (jeteta2-jeteta3 > 0 && jeteta1-jeteta3 < 0)))))   && abs(eta1 - (jeteta1+jeteta2)/2)/detajj < 0.5 && abs(eta2 - (jeteta1+jeteta2)/2)/detajj < 0.5      && detajj>2.0     && mjj>300    )) '  + \
                           #')'
 
+    sel['Hwidth-selection'] = sel['Hwidth-level']+ ' && ( (njet==0 * ( (HwidthMVAggH>=0.0 && pt2>20) || (HwidthMVAggH<0.0 && mth<150 && ptll>45 && pt2<=20)  )) || '  + \
+                          ' ((njet==1) * ( (HwidthMVAggH>=0.0 && pt2>20) || (HwidthMVAggH<0.0 && mth<150 && ptll>45 && pt2<=20)  )) || ' +  \
+                          ' ((njet>=2) * ( ptll>45 && (njet>=2 && njet<=3 && (jetpt3<=30 || !(jetpt3 > 30 && (  (jeteta1-jeteta3 > 0 && jeteta2-jeteta3 < 0) || (jeteta2-jeteta3 > 0 && jeteta1-jeteta3 < 0)))))   && abs(eta1 - (jeteta1+jeteta2)/2)/detajj < 0.5 && abs(eta2 - (jeteta1+jeteta2)/2)/detajj < 0.5      && detajj>2.5     && mjj>500 && ' + \
+                          '  (   (mll<100 && pt2<35) || (mll>=100 && pt2>20 && pt1>20)  )  )) '  + \
+                          ')'
+
+    #sel['Hwidth-selection'] = sel['Hwidth-level']+ ' && ( (njet==0 * ( (HwidthMVAggH>=0.0) || (HwidthMVAggH<0.0 && mth<125 && ptll>45)  )) || '  + \
+                          #' ((njet==1) * ( (HwidthMVAggH>=0.0) || (HwidthMVAggH<0.0 && mth<125 && ptll>45)  )) || ' +  \
+                          #' ((njet>=2) * ( ptll>45 && (njet>=2 && njet<=3 && (jetpt3<=30 || !(jetpt3 > 30 && (  (jeteta1-jeteta3 > 0 && jeteta2-jeteta3 < 0) || (jeteta2-jeteta3 > 0 && jeteta1-jeteta3 < 0)))))   && abs(eta1 - (jeteta1+jeteta2)/2)/detajj < 0.5 && abs(eta2 - (jeteta1+jeteta2)/2)/detajj < 0.5      && detajj>2.0     && mjj>300 && ' + \
+                          #'  (   (mll<70 && mth<125) || (mll>=70 && pt2>20 && pt1>20)  )  )) '  + \
+                          #')'
+
+    #sel['Hwidth-level']     = ' && '.join(Hwidth.HwidthCut)
+    #sel['Hwidth-selection'] = sel['Hwidth-level']+ ' && ( (njet==0 * (1)) || '  + \
+                          #' ((njet==1) * (1)) || ' +  \
+                          #' ((njet>=2) * (  (njet>=2 && njet<=3 && (jetpt3<=30 || !(jetpt3 > 30 && (  (jeteta1-jeteta3 > 0 && jeteta2-jeteta3 < 0) || (jeteta2-jeteta3 > 0 && jeteta1-jeteta3 < 0)))))   && abs(eta1 - (jeteta1+jeteta2)/2)/detajj < 0.5 && abs(eta2 - (jeteta1+jeteta2)/2)/detajj < 0.5      && detajj>2.0     && mjj>300    )) '  + \
+                          #')'
 
     return sel
 

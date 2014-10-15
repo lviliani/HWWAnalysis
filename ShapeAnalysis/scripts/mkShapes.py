@@ -172,8 +172,27 @@ class ShapeFactory:
         #return ([0, 20, 50, 75, 100, 150, 200, 250, 300],[30,60,130,150,200,300,400])
         #return ([0, 20, 40, 60, 80, 100, 125, 150, 200, 250, 300, 350],[30, 60, 100, 120, 135, 150, 200, 250, 300, 350, 400, 450])
         #return ([12,     40, 70, 100, 150, 200, 250, 300, 350],[30, 80, 100, 120, 150, 200, 250, 300, 400, 450])
-        return ([12, 20, 40, 60, 80, 100, 125, 150, 200, 250, 300, 350],[30, 60, 80, 100, 120, 135, 150, 200, 250, 300, 400, 450])
 
+        #return ([-1.00, -0.75, -0.50, -0.25, 0.00, 0.25, 0.50, 0.75, 1.00],[-1.00, -0.75, -0.50, -0.25, 0.00, 0.25, 0.50, 0.75, 1.00])
+
+        if cat in ['0j','1j'] :
+          return ([-1.00, -0.50, 0.00, 0.80, 1.00],[-1.00, -0.75, -0.50, -0.25, 0.00, 0.25, 0.60, 0.70, 0.80, 0.90, 1.00])
+          #return ([-1.00, -0.50, 0.00, 0.80, 1.00],[-1.00, -0.50, 0.00, 0.25, 0.60, 0.70, 0.80, 0.90, 1.00])
+          #   HwidthMVAggH in x,     HwidthMVAbkg in y
+        #if cat in ['0j'] :
+          #return ([-1.00, -0.50, 0.00, 0.50, 0.75, 1.00],[-1.00, -0.50, 0.00, 0.25, 0.50, 0.75, 1.00])
+          #return ([-1.00, -0.50, 0.00, 0.50, 1.00],[-1.00, -0.75, -0.50, -0.25, 0.00, 0.25, 0.50, 0.60, 0.70, 0.80, 0.90, 1.00])
+          #return ([-1.00, -0.50, 0.00, 0.80, 1.00],[-1.00, -0.75, -0.50, -0.25, 0.00, 0.25, 0.50, 0.60, 0.70, 0.80, 0.90, 1.00])
+          #   HwidthMVAggH in x,     HwidthMVAbkg in y
+        #elif cat in ['1j'] :
+          #return ([-1.00, -0.50, 0.00, 0.80, 1.00],[-1.00, -0.50, 0.00, 0.25, 0.60, 0.70, 0.80, 0.90, 1.00])
+          #   HwidthMVAggH in x,     HwidthMVAbkg in y
+        else :
+          # mth:mll                    mll in x                    mth in y
+          return ([12, 40, 70, 100, 150, 200, 300],[0, 30, 80, 120, 150, 200, 400, 450])
+          # mth:mll                    mll in x                                          mth in y
+          #return ([12, 20, 40, 70, 100, 125, 150, 200, 250, 300, 350],[30, 60, 80, 100, 120, 135, 150, 200, 250, 300, 400, 450])
+          #return ([12, 20, 40, 60, 80, 100, 125, 150, 200, 250, 300, 350],[30, 60, 80, 100, 120, 135, 150, 200, 250, 300, 400, 450])
 
 
     # _____________________________________________________________________________
@@ -281,7 +300,18 @@ class ShapeFactory:
         if cat not in ['0j','1j','2j']:
             raise RuntimeError('mll range for '+str(cat)+' not defined. Can be 0 or 1')
 
-        return '(mth*((mth>=120&&pt2>20&&pt1>20)+(mth<120&&ptll>20))):mll'
+        if cat in ['0j','1j'] :
+           #return 'HwidthMVAbkg:HwidthMVAggH'
+           #             (mth-65)/65 vs HwidthMVAggH in low HwidthMVAggH region                            HwidthMVAbkg vs HwidthMVAggH if high HwidthMVAggH
+           #return '((HwidthMVAbkg*(HwidthMVAggH>=0.0))+((HwidthMVAggH<0.0)*(mll<50)*(mth-65.)/65.)):(HwidthMVAggH*((HwidthMVAggH>=0.0)+((HwidthMVAggH<0.0)&&(mll<50))))'
+           #             (mth-65)/65 vs HwidthMVAggH in low HwidthMVAggH region                            HwidthMVAbkg vs HwidthMVAggH if high HwidthMVAggH
+           #return '((HwidthMVAbkg*(HwidthMVAggH>=0.0))+((HwidthMVAggH<0.0)*(mth-65.)/65.)):HwidthMVAggH'
+           #             (mll-50)/50 vs HwidthMVAggH in low HwidthMVAggH region                            HwidthMVAbkg vs HwidthMVAggH if high HwidthMVAggH
+           return '((HwidthMVAbkg*(HwidthMVAggH>=0.0))+((HwidthMVAggH<0.0)*(mll-50.)/50.)):HwidthMVAggH'
+        else :
+           return 'mth:mll'
+           #return '(mth*((mll>=&&pt2>20&&pt1>20)+(mth<125&&ptll>20))):mll'
+        #return '(mth*((mth>=120&&pt2>20&&pt1>20)+(mth<120&&ptll>20))):mll'
         #return '(mth*((mth>=120&&pt2>20&&pt1>20)+(mth<120&&ptll>45&&pfmet>30))):mll'
         #return '(mth*((mth>=130&&pt2>20&&pt1>20)+(mth<130&&ptll>45&&pfmet>30))):mll'
         #return '(mth*((mth>=130&&pt2>20&&pt1>20)+(mth<130&&ptll>30&&pfmet>30))):mll'
@@ -1645,10 +1675,11 @@ if __name__ == '__main__':
               systByWeight['puW_down'] = 'puWup/puW'
               systByWeight['puW_up']   = 'puWdown/puW'
 
-              systByWeight['NNLL_down']  = 'nllW_Qdown/nllW'
-              systByWeight['NNLL_up']    = 'nllW_Qup/nllW'
-              systByWeight['NNLLR_down'] = 'nllW_Rdown/nllW'
-              systByWeight['NNLLR_up']   = 'nllW_Rup/nllW'
+              if selection in ['CutWW'] :
+                systByWeight['NNLL_down']  = 'nllW_Qdown/nllW'
+                systByWeight['NNLL_up']    = 'nllW_Qup/nllW'
+                systByWeight['NNLLR_down'] = 'nllW_Rdown/nllW'
+                systByWeight['NNLLR_up']   = 'nllW_Rup/nllW'
 
               factory._systByWeight = systByWeight
 
