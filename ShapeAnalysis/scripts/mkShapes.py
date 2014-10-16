@@ -89,6 +89,7 @@ class ShapeFactory:
         ranges['wwewk-range']        = self._getWWewkrange
         ranges['wwewk-range-top']    = self._getWWewkrangeTop
         ranges['Hwidth-range']       = self._getHwidthrange
+        ranges['HwidthSimple-range'] = self._getSimpleHwidthrange
 
         self._ranges = ranges
 
@@ -122,6 +123,7 @@ class ShapeFactory:
         variables['vbfMllBanana']         = self._getMllVBFWithControlRegion
         variables['wwewk']                = self._getVarWWewk
         variables['Hwidth']               = self._getVarHwidth
+        variables['HwidthSimple']         = self._getSimpleVarHwidth
 
         self._variables = variables
 
@@ -189,10 +191,29 @@ class ShapeFactory:
           #   HwidthMVAggH in x,     HwidthMVAbkg in y
         else :
           # mth:mll                    mll in x                    mth in y
-          return ([12, 40, 70, 100, 150, 200, 300],[0, 30, 80, 120, 150, 200, 400, 450])
+          #return ([12, 40, 70, 100, 150, 200, 300],[0, 30, 80, 120, 150, 200, 400, 450])
+          return ([12,     50, 120,           300],[0, 50, 90, 120, 150, 200, 450])
           # mth:mll                    mll in x                                          mth in y
           #return ([12, 20, 40, 70, 100, 125, 150, 200, 250, 300, 350],[30, 60, 80, 100, 120, 135, 150, 200, 250, 300, 400, 450])
           #return ([12, 20, 40, 60, 80, 100, 125, 150, 200, 250, 300, 350],[30, 60, 80, 100, 120, 135, 150, 200, 250, 300, 400, 450])
+
+    # _____________________________________________________________________________
+    def _getSimpleHwidthrange(self,mass,cat):
+
+        if cat not in ['0j','1j','2j']:
+            print cat
+            raise RuntimeError('range for '+str(cat)+' not defined. !?!?!?')
+
+
+        if cat in ['0j','1j'] :
+         # mth:mll                    mll in x                    mth in y
+          return ([12, 40, 70, 100, 150, 200, 300],[0, 30, 80, 120, 150, 200, 400, 450])
+          #return ([12,     70, 100,           300],[0, 30, 80, 120, 150, 200, 400, 450])
+        else :
+          # mth:mll                    mll in x                    mth in y
+          #return ([12, 40, 70, 100, 150, 200, 300],[0, 30, 80, 120, 150, 200, 400, 450])
+          #return ([12,     70, 100,           300],[0, 30, 80, 120, 150, 200, 400, 450])
+          return ([12,     50, 120,           300],[0, 50, 90, 120, 150, 200, 450])
 
 
     # _____________________________________________________________________________
@@ -317,6 +338,17 @@ class ShapeFactory:
         #return '(mth*((mth>=130&&pt2>20&&pt1>20)+(mth<130&&ptll>30&&pfmet>30))):mll'
         #return 'mth:(mll*(mth>=130&&pt2>20&&pt1>10)-mll*(mth<130&&ptll>30&&pfmet>30))'
         #return 'mll*(mth>=125)-mll*(mth<125)'
+
+    # _____________________________________________________________________________
+    def _getSimpleVarHwidth(self,mass,cat):
+
+        if cat not in ['0j','1j','2j']:
+            raise RuntimeError('mll range for '+str(cat)+' not defined. Can be 0 or 1')
+
+        if cat in ['0j','1j'] :
+           return 'mth:mll'
+        else :
+           return 'mth:mll'
 
 
 
