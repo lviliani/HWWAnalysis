@@ -928,16 +928,23 @@ def massSelections(mass):
                           #' ((njet>=2) * ( ptll>45 && (njet>=2 && njet<=3 && (jetpt3<=30 || !(jetpt3 > 30 && (  (jeteta1-jeteta3 > 0 && jeteta2-jeteta3 < 0) || (jeteta2-jeteta3 > 0 && jeteta1-jeteta3 < 0)))))   && abs(eta1 - (jeteta1+jeteta2)/2)/detajj < 0.5 && abs(eta2 - (jeteta1+jeteta2)/2)/detajj < 0.5      && detajj>2.0     && mjj>300    )) '  + \
                           #')'
 
-    sel['Hwidth-selection'] = sel['Hwidth-level']+ ' && ( (njet==0 * ( (HwidthMVAggH>=0.0 && pt2>20) || (HwidthMVAggH<0.0 && mth>30 && mth<150 && ptll>45 && pt2<40)  )) || '  + \
-                          ' ((njet==1) * ( (HwidthMVAggH>=0.0 && pt2>20) || (HwidthMVAggH<0.0 && mth>30 && mth<150 && ptll>45 && pt2<40)  )) || ' +  \
+    sel['Hwidth-selection'] = sel['Hwidth-level']+ ' && ( (njet==0 * ( (mll<70 && pt2<40 && ptll>45) || (mll>=70 && pt2>20 && pt1>40)  )) || '  + \
+                          ' ((njet==1) * ( (mll<70 && pt2<40 && ptll>45) || (mll>=70 && pt2>20 && pt1>40)  )) || ' +  \
                           ' ((njet>=2) * ( ptll>45 && (njet>=2 && njet<=3 && (jetpt3<=30 || !(jetpt3 > 30 && (  (jeteta1-jeteta3 > 0 && jeteta2-jeteta3 < 0) || (jeteta2-jeteta3 > 0 && jeteta1-jeteta3 < 0)))))   && abs(eta1 - (jeteta1+jeteta2)/2)/detajj < 0.5 && abs(eta2 - (jeteta1+jeteta2)/2)/detajj < 0.5      && detajj>2.5     && mjj>500 && ' + \
-                          '  (   (mll<50 && pt2<40) || (mll>=50 && pt2>20 && pt1>20)  )  )) '  + \
+                          '  (   (mll<70 && pt2<40) || (mll>=70 && pt2>20 && pt1>20)  )  )) '  + \
                           ')'
 
-    sel['Hwidthmthmll-selection'] = sel['Hwidth-level']+ ' && ( (njet==0 * ( (mll<100 && pt2<40 && ptll>45) || (mll>=100 && pt2>20 && pt1>20)  )) || '  + \
-                          ' ((njet==1) * ( (mll<100 && pt2<40 && ptll>45) || (mll>=100 && pt2>20 && pt1>20)  )) || ' +  \
+
+    #sel['Hwidth-selection'] = sel['Hwidth-level']+ ' && ( (njet==0 * ( (HwidthMVAggH>=0.0 && pt2>20) || (HwidthMVAggH<0.0 && mth>60 && mth<120 && ptll>45 && pt2<40)  )) || '  + \
+                          #' ((njet==1) * ( (HwidthMVAggH>=0.0 && pt2>20) || (HwidthMVAggH<0.0 && mth>60 && mth<120 && ptll>45 && pt2<40)  )) || ' +  \
+                          #' ((njet>=2) * ( ptll>45 && (njet>=2 && njet<=3 && (jetpt3<=30 || !(jetpt3 > 30 && (  (jeteta1-jeteta3 > 0 && jeteta2-jeteta3 < 0) || (jeteta2-jeteta3 > 0 && jeteta1-jeteta3 < 0)))))   && abs(eta1 - (jeteta1+jeteta2)/2)/detajj < 0.5 && abs(eta2 - (jeteta1+jeteta2)/2)/detajj < 0.5      && detajj>2.5     && mjj>500 && ' + \
+                          #'  (   (mll<70 && pt2<40) || (mll>=70 && pt2>20 && pt1>20)  )  )) '  + \
+                          #')'
+
+    sel['Hwidthmthmll-selection'] = sel['Hwidth-level']+ ' && ( (njet==0 * ( (mll<70 && pt2<35 && ptll>45) || (mll>=70 && pt2>20 && pt1>50)  )) || '  + \
+                          ' ((njet==1) * ( (mll<70 && pt2<35 && ptll>45) || (mll>=70 && pt2>20 && pt1>50)  )) || ' +  \
                           ' ((njet>=2) * ( ptll>45 && (njet>=2 && njet<=3 && (jetpt3<=30 || !(jetpt3 > 30 && (  (jeteta1-jeteta3 > 0 && jeteta2-jeteta3 < 0) || (jeteta2-jeteta3 > 0 && jeteta1-jeteta3 < 0)))))   && abs(eta1 - (jeteta1+jeteta2)/2)/detajj < 0.5 && abs(eta2 - (jeteta1+jeteta2)/2)/detajj < 0.5      && detajj>2.5     && mjj>500 && ' + \
-                          '  (   (mll<50 && pt2<40) || (mll>=50 && pt2>20 && pt1>20)  )  )) '  + \
+                          '  (   (mll<70 && pt2<40) || (mll>=70 && pt2>20 && pt1>20)  )  )) '  + \
                           ')'
 
     
