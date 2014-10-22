@@ -423,11 +423,11 @@ def addFakeRateSyst(nuisances, mass, channel, jets, shape, suffix=''):
     #nuisances['CMS_hww_FakeRate_e'] = [ ['lnN'], { 'WJet': (fake_e_up,fake_e_dn) } ] # from jet ET variation
 
 
-def floatNorm(process):
+def floatNorm(process,jetcat):
     nuisances = {}
     if process in 'WW' and process != '':
-        nuisances['CMS_norm_'+process] = [ ['lnU'], { 'WW':2.00, 'ggWW':2.00 } ]
+        nuisances['CMS_norm_'+jetcat+'_'+process] = [ ['lnU'], { 'WW':2.00, 'ggWW':2.00 } ]
     elif process != '':
-        nuisances['CMS_norm_'+process] = [ ['lnU'], { process:2.00 } ]
+        nuisances['CMS_norm_'+jetcat+'_'+process] = [ ['lnU'], { process:2.00 } ]
     return nuisances
 

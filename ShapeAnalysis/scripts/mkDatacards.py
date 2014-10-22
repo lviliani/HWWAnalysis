@@ -557,7 +557,7 @@ class NuisanceMapBuilder:
 #             for p in opts['floatN'].split(' '):
             for p in opts['floatN']:
                 print p
-                floatN = floatNorm(p)
+                floatN = floatNorm(p,jetcat)
                 CutBased.update( floatN )
 
         common = OrderedDict()
