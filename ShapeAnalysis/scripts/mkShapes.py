@@ -165,67 +165,25 @@ class ShapeFactory:
     # _____________________________________________________________________________
     def _getHwidthrange(self,mass,cat):
 
-        if cat not in ['0j','1j','2j']:
+        if cat not in ['0j','1j','2j','01j']:
             print cat
             raise RuntimeError('range for '+str(cat)+' not defined. !?!?!?')
 
-        #return ([-300, -250, -200, -150, -100, -75, -50, -20, 0, 20, 50, 75, 100, 150, 200, 250, 300],)
-        #return ([-300, -250, -200, -150, -100, -75, -50, -20, 0, 20, 50, 75, 100, 150, 200, 250, 300],[30,60,130,150,200,250,400])
-        #return ([0, 20, 50, 75, 100, 150, 200, 250, 300],[30,60,130,150,200,300,400])
-        #return ([0, 20, 40, 60, 80, 100, 125, 150, 200, 250, 300, 350],[30, 60, 100, 120, 135, 150, 200, 250, 300, 350, 400, 450])
-        #return ([12,     40, 70, 100, 150, 200, 250, 300, 350],[30, 80, 100, 120, 150, 200, 250, 300, 400, 450])
-
-        #return ([-1.00, -0.75, -0.50, -0.25, 0.00, 0.25, 0.50, 0.75, 1.00],[-1.00, -0.75, -0.50, -0.25, 0.00, 0.25, 0.50, 0.75, 1.00])
-
-        #if cat in ['0j','1j'] :
-          #return ([12, 40, 70, 100, 150,      300],[-1.00, -0.80, -0.70, -0.60, -0.50, -0.40, -0.30, -0.20, -0.10, 0.00, 0.25, 0.50, 1.00])
         if cat in ['1j'] :
-          return ([12, 30, 45, 60, 70, 100,          300],[-1.00, -0.80, -0.70, -0.60, -0.50, -0.40, -0.30, -0.20, -0.10, 0.00, 0.10, 0.20, 0.30, 0.40, 0.50, 0.60, 0.70, 0.80, 0.90, 0.95, 1.00])
-          #return ([12, 30, 45, 60, 70, 100, 150, 200, 300],[-1.00, -0.80, -0.70, -0.60, -0.50, -0.40, -0.30, -0.20, -0.10, 0.00, 0.10, 0.20, 0.30, 0.40, 0.50, 0.60, 0.70, 0.80, 0.90, 0.95, 1.00])
-          #return ([12, 30, 45, 60, 70, 100, 150,  300],[-1.00, -0.80, -0.70, -0.60, -0.50, -0.40, -0.30, -0.20, -0.10, 0.00, 0.25, 0.50, 1.00])
-          #return ([12, 40, 70, 100, 150,      300],[-1.00, -0.80, -0.70, -0.60, -0.50, -0.40, -0.30, -0.20, -0.10, 0.00, 0.25, 0.50, 1.00])   --> results 22 Oct
+          #   HwidthMVAggH in x,     HwidthMVAbkg in y
+          return ([12, 30, 45, 60, 70, 100,          300],[-1.00, -0.70, -0.60, -0.50, -0.40, -0.30, -0.20, -0.10, 0.00, 0.10, 0.20, 0.30, 0.40, 0.50, 0.60, 0.70, 0.80, 1.00])
         elif cat in ['0j'] :
-          #return ([12, 30, 45, 60, 70, 100, 150, 200, 300],[-1.00, -0.80, -0.70, -0.60, -0.50, -0.40, -0.30, -0.20, -0.10, 0.00, 0.10, 0.20, 0.30, 0.40, 0.50, 0.60, 0.70, 0.80, 0.90, 0.95, 1.00])
-          return ([12, 30, 45, 60, 70, 100,          300],[-1.00, -0.80, -0.70, -0.60, -0.50, -0.40, -0.30, -0.20, -0.10, 0.00, 0.10, 0.20, 0.30, 0.40, 0.50, 0.60, 0.70, 0.80, 0.90, 0.95, 1.00])
-          #return ([12, 30, 45, 60, 70, 100,           300],[-1.00, -0.80, -0.70, -0.60, -0.50, -0.40, -0.30, -0.20, -0.10, 0.00, 0.25, 0.50, 1.00])
-          #return ([12, 40, 70, 100,           300],[-1.00, -0.80, -0.70, -0.60, -0.50, -0.40, -0.30, -0.20, -0.10, 0.00, 0.25, 0.50, 1.00])   --> results 22 Oct
-          #return ([12, 40, 70, 100, 150, 200, 300],[-1.00, -0.80, -0.70, -0.60, -0.50, -0.40, -0.30, -0.20, -0.10, 0.00, 0.25, 0.50, 1.00]) -> o events! crash!
-          #return ([12, 40, 70, 100, 150, 200, 300],[-1.00, -0.80, -0.70, -0.60, -0.50, -0.40, -0.30, -0.20, 0.00, 0.25, 0.50, 1.00])
-          #return ([12, 40, 70, 100, 150, 200, 300],[-1.00, -0.75, -0.50, -0.40, -0.30, -0.20, 0.00, 0.25, 0.50, 1.00])
-          #return ([12, 40, 70, 100, 150, 200, 300],[-1.00, -0.50, -0.25, 0.00, 0.25, 0.40, 0.60, 0.70, 0.80, 1.00])
-          #   mll in x,     HwidthMVAbkg / mth in y
-          #return ([-1.00, -0.70, 0.00, 0.95, 1.00],[-1.00, -0.50, -0.25, 0.00, 0.25, 0.40, 0.60, 0.70, 0.80, 1.00]) ---> final
-          #   HwidthMVAggH in x,     HwidthMVAbkg in y
-
-          #return ([-1.00, -0.70, 0.00, 0.90, 1.00],[-1.00, -0.50, -0.25, 0.00, 0.25, 0.40, 0.60, 0.70, 0.80, 1.00]) -> nice
-          #return ([-1.00, -0.70, 0.00, 0.90, 1.00],[-1.00, -0.75, -0.50, -0.25, 0.00, 0.25, 0.40, 0.60, 0.70, 0.80, 1.00]) -> nice
-          #return ([-1.00, -0.50, 0.00, 0.80, 1.00],[-1.00, -0.75, -0.50, -0.25, 0.00, 0.25, 0.60, 0.70, 0.80, 0.90, 1.00])
-          #return ([-1.00, -0.50, 0.00, 0.80, 1.00],[-1.00, -0.50, 0.00, 0.25, 0.60, 0.70, 0.80, 0.90, 1.00])
-          #   HwidthMVAggH in x,     HwidthMVAbkg in y
-        #if cat in ['0j'] :
-          #return ([-1.00, -0.50, 0.00, 0.50, 0.75, 1.00],[-1.00, -0.50, 0.00, 0.25, 0.50, 0.75, 1.00])
-          #return ([-1.00, -0.50, 0.00, 0.50, 1.00],[-1.00, -0.75, -0.50, -0.25, 0.00, 0.25, 0.50, 0.60, 0.70, 0.80, 0.90, 1.00])
-          #return ([-1.00, -0.50, 0.00, 0.80, 1.00],[-1.00, -0.75, -0.50, -0.25, 0.00, 0.25, 0.50, 0.60, 0.70, 0.80, 0.90, 1.00])
-          #   HwidthMVAggH in x,     HwidthMVAbkg in y
-        #elif cat in ['1j'] :
-          #return ([-1.00, -0.50, 0.00, 0.80, 1.00],[-1.00, -0.50, 0.00, 0.25, 0.60, 0.70, 0.80, 0.90, 1.00])
-          #   HwidthMVAggH in x,     HwidthMVAbkg in y
+          return ([12, 30, 45, 60, 70, 100,          300],[-1.00, -0.70, -0.60, -0.50, -0.40, -0.30, -0.20, -0.10, 0.00, 0.10, 0.20, 0.30, 0.40, 0.50, 0.60, 0.70, 0.80, 1.00])
+        elif cat in ['01j'] :
+          return ([12, 30, 45, 60, 70, 100,          300],[-1.00, -0.70, -0.60, -0.50, -0.40, -0.30, -0.20, -0.10, 0.00, 0.10, 0.20, 0.30, 0.40, 0.50, 0.60, 0.70, 0.80, 1.00])
         else :
           # mth:mll                    mll in x                    mth in y
-          #return ([12, 40, 70, 100, 150, 200, 300],[0, 30, 80, 120, 150, 200, 400, 450])
-          #return ([12,     70, 120,           300],[0, 50, 90, 120, 150, 200, 450])
-          #return ([12,  40, 70, 100,      200, 300],[0, 50, 80, 100, 130, 170, 250, 450])  -> nice
-          #return ([12,  40, 70,           150, 300],[0, 50,     100, 130, 170, 250, 450])   --> results 22 Oct
           return ([12,  45, 70,           100, 300],[0, 50,     100, 130, 170, 250, 450])
-          #return ([12,  40, 70, 100,      200, 300],[0, 50, 90, 130, 170, 250, 450])
-          # mth:mll                    mll in x                                          mth in y
-          #return ([12, 20, 40, 70, 100, 125, 150, 200, 250, 300, 350],[30, 60, 80, 100, 120, 135, 150, 200, 250, 300, 400, 450])
-          #return ([12, 20, 40, 60, 80, 100, 125, 150, 200, 250, 300, 350],[30, 60, 80, 100, 120, 135, 150, 200, 250, 300, 400, 450])
 
     # _____________________________________________________________________________
     def _getSimpleHwidthrange(self,mass,cat):
 
-        if cat not in ['0j','1j','2j']:
+        if cat not in ['0j','1j','2j','01j']:
             print cat
             raise RuntimeError('range for '+str(cat)+' not defined. !?!?!?')
 
@@ -233,18 +191,9 @@ class ShapeFactory:
         if cat in ['0j','1j'] :
          # mth:mll                    mll in x                    mth in y
           return ([12, 30, 45, 60, 70, 100, 150, 200, 300],[0, 50, 70, 90, 100, 110, 120, 130, 140, 160, 180, 200, 450])
-
-          #return ([12, 40, 70, 100, 150, 200, 300],[0, 50, 70, 90, 110, 130, 170, 450]) --> results 22 Oct
-          #return ([12, 40, 70, 100, 150, 200, 300],[0, 30, 80, 120, 150, 200, 400, 450])
-          #return ([12,     70, 100,           300],[0, 30, 80, 120, 150, 200, 400, 450])
         else :
           # mth:mll                    mll in x                    mth in y
-          #return ([12, 40, 70, 100, 150, 200, 300],[0, 30, 80, 120, 150, 200, 400, 450])
-          #return ([12,     70, 100,           300],[0, 30, 80, 120, 150, 200, 400, 450])
-          #return ([12,  40, 70, 100,      200, 300],[0, 50, 80, 100, 130, 170, 250, 450])  -> nice
-          #return ([12,  40, 70,           150, 300],[0, 50,     100, 130, 170, 250, 450])   --> results 22 Oct
           return ([12,  45, 70,           100, 300],[0, 50,     100, 130, 170, 250,  450])
-          #return ([12,  40, 70, 100,      200, 300],[0, 50, 90, 130, 170, 250, 450])
 
 
     # _____________________________________________________________________________
@@ -349,10 +298,10 @@ class ShapeFactory:
     # _____________________________________________________________________________
     def _getVarHwidth(self,mass,cat):
 
-        if cat not in ['0j','1j','2j']:
+        if cat not in ['0j','1j','2j','01j']:
             raise RuntimeError('mll range for '+str(cat)+' not defined. Can be 0 or 1')
 
-        if cat in ['0j','1j'] :
+        if cat in ['0j','1j','01j'] :
            #return 'HwidthMVAbkg:HwidthMVAggH'
            #             (mth-65)/65 vs HwidthMVAggH in low HwidthMVAggH region                            HwidthMVAbkg vs HwidthMVAggH if high HwidthMVAggH
            #return '((HwidthMVAbkg*(HwidthMVAggH>=0.0))+((HwidthMVAggH<0.0)*(mll<50)*(mth-65.)/65.)):(HwidthMVAggH*((HwidthMVAggH>=0.0)+((HwidthMVAggH<0.0)&&(mll<50))))'
@@ -379,7 +328,7 @@ class ShapeFactory:
     # _____________________________________________________________________________
     def _getSimpleVarHwidth(self,mass,cat):
 
-        if cat not in ['0j','1j','2j']:
+        if cat not in ['0j','1j','2j','01j']:
             raise RuntimeError('mll range for '+str(cat)+' not defined. Can be 0 or 1')
 
         if cat in ['0j','1j'] :
@@ -613,13 +562,13 @@ class ShapeFactory:
 
             alias = var if not self._splitmode else var+'*(-1+2*('+allCuts[self._splitmode+'-selection']+') )'
             alias = alias if not 'btag' in alias else '(bveto_mu && bveto_ip && nbjettche==0)'
-            
+
             try:
                 varSelection = allCuts[sel+'-selection']
             except KeyError as ke:
                 raise RuntimeError('Config error: '+str(ke))
-                
-            
+
+
             #inner  jet and flavor loops
             for chan,(category,flavor) in self._channels.iteritems():
 #                 cat = hwwinfo.categories[category]
@@ -658,7 +607,7 @@ class ShapeFactory:
                     print 'Input dir:',dirmap.values()
 
                     inputs = self._connectInputs(var,samples, dirmap)
-                    
+
                     # and the output path (might be par dependent as well)
                     output = outPath.format(**pars)
                     outdir = os.path.dirname(output)
@@ -1721,7 +1670,8 @@ if __name__ == '__main__':
               systByWeight = {}
               # use only leptonEfficiency or muonEfficiency+electronEfficiency
               # skipSyst = ['leptonEfficiency_down', 'leptonEfficiency_up']
-              AdditionalSkipSyst = ['JER_down', 'JER_up', 'chargeResolution', 'puW_up', 'puW_down']  # -> temporary fix
+              #AdditionalSkipSyst = ['JER_down', 'JER_up', 'chargeResolution', 'puW_up', 'puW_down']  # -> temporary fix
+              AdditionalSkipSyst = ['chargeResolution', 'puW_up', 'puW_down']  # -> temporary fix
               for s in AdditionalSkipSyst:
                 print 'skipping systematics: ',s
                 if s in systematics.keys() :
@@ -1749,6 +1699,12 @@ if __name__ == '__main__':
                 systByWeight['NNLL_up']    = 'nllW_Qup/nllW'
                 systByWeight['NNLLR_down'] = 'nllW_Rdown/nllW'
                 systByWeight['NNLLR_up']   = 'nllW_Rup/nllW'
+              else :
+                systematics.pop('NNLL_down')
+                systematics.pop('NNLL_up')
+                systematics.pop('NNLLR_down')
+                systematics.pop('NNLLR_up')
+
 
               factory._systByWeight = systByWeight
 
@@ -1765,10 +1721,11 @@ if __name__ == '__main__':
               systMasks['interferenceVBF_down'] = ['qqH', 'qqH_ALT']
 
               # NNLL reweight and unceratinty only if WW
-              systMasks['NNLL_up']    = ['WW']
-              systMasks['NNLL_down']  = ['WW']
-              systMasks['NNLLR_up']   = ['WW']
-              systMasks['NNLLR_down'] = ['WW']
+              if selection in ['CutWW'] :
+                systMasks['NNLL_up']    = ['WW']
+                systMasks['NNLL_down']  = ['WW']
+                systMasks['NNLLR_up']   = ['WW']
+                systMasks['NNLLR_down'] = ['WW']
 
               # remove selected nuisances for some samples
               processMaskNoDYTT = processMask
