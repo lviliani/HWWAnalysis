@@ -545,7 +545,13 @@ class NuisanceMapBuilder:
         else :
            optMatt.VH = 0
 
-        if jetcat not in ['0j','1j','2j','2jex']: raise ValueError('Unsupported jet category found: %s')
+        optMatt.HWidth = 0
+        if 'SpecialSettings' in opts:
+           if opts['SpecialSettings'] == 'HWidth' :
+             optMatt.HWidth = 1
+
+
+        if jetcat not in ['0j','1j','2j','2jex','01j']: raise ValueError('Unsupported jet category found: %s')
 
 #         suffix = '_8TeV'
 #         if '2011' in opt.dataset: suffix = '_7TeV'
@@ -645,6 +651,7 @@ if __name__ == '__main__':
     parser.add_option('-X','--exclude',         dest='nuisFlags'         , help='exclude nuisances matching the expression',        action='callback', type='string', callback=incexc)
     parser.add_option('-I','--include',         dest='nuisFlags'         , help='include nuisances matching the expression',        action='callback', type='string', callback=incexc)
     parser.add_option('-M','--MCextrap',        dest='MCextrap'          , help='For MC extrapolation: gmN nuisance to be scaled',  action='callback', type='string', callback=incexc)
+    parser.add_option('-S','--SpecialSettings', dest='SpecialSettings'   , help='Special settings',        default=''  ,            action='callback', type='string', callback=incexc)
     parser.add_option('--path_dd'           ,   dest='path_dd'           , help='Data driven path'                 , default=None)
     parser.add_option('--path_shape_merged' ,   dest='path_shape_merged' , help='Destination directory for merged' , default=None)
 #     parser.add_option('--floatN',               dest='floatN'            , help='float normalisation of particular processes, separate by space ', default=' ')
@@ -672,7 +679,7 @@ if __name__ == '__main__':
     print 'isssactive: ',opt.isssactive
     print 'MCextrap:   ',opt.MCextrap
     print 'listSignals:',opt.listSignals
-
+    print 'SpecialSettings:',opt.SpecialSettings
 
     # checks
     if not opt.variable or not opt.lumi:
@@ -714,6 +721,7 @@ if __name__ == '__main__':
     optsNuis['nuisFlags'] = opt.nuisFlags
     optsNuis['floatN'] = opt.floatN
     optsNuis['newInterf'] = opt.newcps
+    optsNuis['SpecialSettings'] = opt.SpecialSettings
     lumistr = '{0:.2f}'.format(opt.lumi)
 
 

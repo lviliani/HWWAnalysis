@@ -118,9 +118,14 @@ mcsets = {
         'ggH','qqH','WH','ZH',
         # bkgs
         #('WW', 'WWmad'),
-        ('WW', 'WWpow'),
+        ('WW', 'WWpowheg'),
         #('WW', 'WWmc'),
-        'ggWW','VgS','Vg','WJet','Top','VV','VVV','DYTT','WWnlo','WWnloUp','WWnloDown',
+        #'ggWW',
+        ('ggWW','ggWWnew'),
+        'VgS','Vg','WJet','Top','VV',
+        #'VVV',
+        ('VVV','VVVall'),
+        'DYTT','WWnlo','WWnloUp','WWnloDown',
         #
         ('DYLL','ggH'),
         # systematics
@@ -511,7 +516,10 @@ mcsets = {
         # bkgs
         'WW',
         #'ggWW',
-        'VgS','Vg','WJet','Top','VV','VVV','DYTT','WWnlo','WWnloUp','WWnloDown',
+        'VgS','Vg','WJet','Top','VV',
+        #'VVV',
+        ('VVV','VVVnoEWK'),
+        'DYTT','WWnlo','WWnloUp','WWnloDown',
         ('DYLL','ggH'),
         # systematics
         'WJetFakeRate-nominal',
@@ -538,7 +546,10 @@ mcsets = {
         # bkgs
         'WW',
         #'ggWW',
-        'VgS','Vg','WJet','Top','VV','VVV','DYTT','WWnlo','WWnloUp','WWnloDown',
+        'VgS','Vg','WJet','Top','VV',
+          #'VVV',
+        ('VVV','VVVnoEWK'),
+        'DYTT','WWnlo','WWnloUp','WWnloDown',
         ('DYLL','ggH'),
         # systematics
         'WJetFakeRate-nominal',

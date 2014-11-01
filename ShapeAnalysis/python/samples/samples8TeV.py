@@ -3,6 +3,21 @@ import re
 
 
 backgrounds = {
+    'VVVnoEWK'                : ['nominals/latino_093_TTWJets.root',
+                                 'nominals/latino_094_TTZJets.root',
+                                 'nominals/latino_095_TTWWJets.root',
+                                 'nominals/latino_096_TTGJets.root',
+                                ],
+    'VVVall'                  : ['nominals/latino_088_WWGJets.root',
+                                 'nominals/latino_089_WZZJets.root',
+                                 'nominals/latino_090_ZZZJets.root',
+                                 'nominals/latino_091_WWZJets.root',
+                                 'nominals/latino_092_WWWJets.root',
+                                 'nominals/latino_093_TTWJets.root',
+                                 'nominals/latino_094_TTZJets.root',
+                                 'nominals/latino_095_TTWWJets.root',
+                                 'nominals/latino_096_TTGJets.root',
+                                ],
     'VVV'                     : ['nominals/latino_090_ZZZJets.root',
                                  'nominals/latino_091_WWZJets.root',
                                  'nominals/latino_092_WWWJets.root',
@@ -148,13 +163,13 @@ backgrounds = {
     'WWmad'                   : [
                                   'nominals/latino000_nll_ewk.root'
                                 ],
-    'WWpow'                   : [
+    'WWpowheg'                : [
                                   'nominals/latino006_nll_ewk.root'
                                 ],
     'WWmc'                    : [
                                   'nominals/latino002_nll_ewk.root'
                                 ],
-
+    'ggWWnew'                 : ['nominals/latino001.root'],
 
 }
 

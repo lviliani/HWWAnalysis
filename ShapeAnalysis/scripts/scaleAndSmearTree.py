@@ -1764,12 +1764,12 @@ class scaleAndSmear:
             ## PFMET:
             met = ROOT.TLorentzVector()
             met.SetPtEtaPhiM(self.oldttree.pfmet, 0, self.oldttree.pfmetphi, 0)
-            if self.dataset == '2012' : sigma = 1./met.Pt()
+            #if self.dataset == '2012' : sigma = 1./met.Pt()
             met = smearMET(met, sigma)
             ## CHMET:
             chmet4 = ROOT.TLorentzVector()
             chmet4.SetPtEtaPhiM(self.oldttree.chmet, 0, self.oldttree.chmetphi, 0)
-            if self.dataset == '2012' : sigma = 1./chmet4.Pt()
+            #if self.dataset == '2012' : sigma = 1./chmet4.Pt()
             chmet4 = smearMET(chmet4, sigma)
             ## ## TCMET:
             ## tcmet4 = ROOT.TLorentzVector()

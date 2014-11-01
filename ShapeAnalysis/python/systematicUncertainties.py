@@ -147,7 +147,7 @@ def GetYRVal(YRDic,iMass):
        sp = ROOT.TSpline3("YR",gr);
        #print iMass,sp.Eval(iMass)
        return sp.Eval(iMass)
-      
+
 
 def getCommonSysts(mass,channel,jets,qqWWfromData,shape,options,suffix,isssactive,Energy,newInterf=False,YRVersion=3,mh_SM=125.,mh_SM2=125. ):
 
@@ -170,7 +170,7 @@ def getCommonSysts(mass,channel,jets,qqWWfromData,shape,options,suffix,isssactiv
     #nuisances['pdf_gg']    = [ ['lnN'], { 'ggH':ggH_pdfErrYR[mass], 'ggWW':(1.00 if qqWWfromData else 1.04) }]
     nuisances['pdf_gg']    = [ ['lnN'], { 'ggH'    : GetYRVal(ggH_pdfErrYR,mass), 
                                           'ggH_SM' : GetYRVal(ggH_pdfErrYR,mh_SM),
-                                          'ggWW'   : 1.04 ,
+                                          'ggWW'   : 1.04 ,  # 4% uncertainty by Xavier and Guillelmo studies
                                           # for Higgsw width
                                           'ggH_sbi'   : 1.04 ,
                                           'ggH_b'     : 1.04 ,
@@ -188,7 +188,7 @@ def getCommonSysts(mass,channel,jets,qqWWfromData,shape,options,suffix,isssactiv
                                           'ttH_SM'   :(1.0 if mh_SM>300 else GetYRVal(ttH_pdfErrYR,mh_SM)), 
                                           'qqH_SM'   :GetYRVal(vbfH_pdfErrYR,mh_SM), 
                                           'VV':1.04, 
-                                          'WW':(1.0 if qqWWfromData else 1.04), 
+                                          'WW':(1.0 if qqWWfromData else 1.04),  # 4% uncertainty by Xavier and Guillelmo studies
                                           # for Higgsw width
                                           'qqH_sbi'   : 1.04 ,
                                           'qqH_b'     : 1.04 ,
@@ -198,6 +198,13 @@ def getCommonSysts(mass,channel,jets,qqWWfromData,shape,options,suffix,isssactiv
 
     # -- Theory ---------------------
     nuisances['QCDscale_ggH_offshell']    = [  ['lnN'], { 'ggH_sbi':1.15,  'ggH_b':1.15,  'ggH_s':1.15 }]
+    if options.HWidth :
+      if jets == 0:
+        nuisances['QCDscale_ggWW_0jet'] = [ ['lnN'], {'ggH_sbi': 1.09, 'ggH_b': 1.09, 'ggH_s': 1.09}]
+      if jets == 1:
+        nuisances['QCDscale_ggWW_1jet'] = [ ['lnN'], {'ggH_sbi': 1.09, 'ggH_b': 1.09, 'ggH_s': 1.09}]
+      if jets == 2:
+        nuisances['QCDscale_ggWW_2jet'] = [ ['lnN'], {'ggH_sbi': 1.21, 'ggH_b': 1.21, 'ggH_s': 1.21}]
 
     if jets == 0:
         # appendix D of https://indico.cern.ch/getFile.py/access?contribId=0&resId=0&materialId=0&confId=135333
