@@ -196,6 +196,19 @@ def getCommonSysts(mass,channel,jets,qqWWfromData,shape,options,suffix,isssactiv
 
                                         }]
 
+    if options.WWxsec :
+      nuisances['pdf_qqbar'][1]['WW'] = 1.013
+      nuisances['pdf_gg'][1]['ggWW'] = 1.007
+
+    #nuisances['pdf_qqbar_ACCEPT'] = [ ['lnN'], {
+                                          #'WW':    1.013,
+    #}
+
+    #nuisances['pdf_gg_ACCEPT'] = [ ['lnN'], {
+                                          #'WW':    1.008
+    #}
+
+
     # -- Theory ---------------------
     nuisances['QCDscale_ggH_offshell']    = [  ['lnN'], { 'ggH_sbi':1.15,  'ggH_b':1.15,  'ggH_s':1.15 }]
     if options.HWidth :

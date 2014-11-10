@@ -550,6 +550,13 @@ class NuisanceMapBuilder:
            if opts['SpecialSettings'] == 'HWidth' :
              optMatt.HWidth = 1
 
+        optMatt.WWxsec = 0
+        if 'SpecialSettings' in opts:
+           if opts['SpecialSettings'] == 'WWxsec' :
+             optMatt.WWxsec = 1
+
+
+
 
         if jetcat not in ['0j','1j','2j','2jex','01j']: raise ValueError('Unsupported jet category found: %s')
 
