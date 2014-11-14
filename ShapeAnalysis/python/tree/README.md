@@ -194,7 +194,7 @@ mva addition
     gardener.py  higgsWWVar  /home/amassiro/Latinos/Shape/tree_skim_all/nominals/latino_162_qqww25smEM_baseW.root  /home/amassiro/Latinos/Shape/tree_skim_all/nominals/latino_162_qqww25smEM_baseW.root
 
 
-
+    ls /home/amassiro/Latinos/Shape/tree_skim_all_hwidth/nominals/*qqww*_baseW.root | awk '{print "gardener.py  higgsWWVar "$1" "$1".temp.root"}'
 
 
 

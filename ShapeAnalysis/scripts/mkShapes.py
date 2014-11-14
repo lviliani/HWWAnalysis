@@ -1247,17 +1247,21 @@ class ShapeFactory:
 
         # for Higgs width measurements
         #                                              2.1 from LO -> NNLO scaling
-        weights['ggH_sbi']            = self._stdWgt+'*2.1' # +'*((dataset == 37) - (dataset == 37) + (dataset == 37))'
-        weights['ggH_s']              = self._stdWgt+'*2.1' # +'*((dataset == 37) - (dataset == 37) + (dataset == 37))'
-        weights['ggH_b']              = self._stdWgt+'*2.1' # +'*((dataset == 37) - (dataset == 37) + (dataset == 37))'
+        #weights['ggH_sbi']            = self._stdWgt+'*2.1' # +'*((dataset == 37) - (dataset == 37) + (dataset == 37))'
+        #weights['ggH_s']              = self._stdWgt+'*2.1' # +'*((dataset == 37) - (dataset == 37) + (dataset == 37))'
+        #weights['ggH_b']              = self._stdWgt+'*2.1' # +'*((dataset == 37) - (dataset == 37) + (dataset == 37))'
+        # using powheg to normalize on-shell contribution
+        weights['ggH_sbi']            = self._stdWgt+'*(((njet==0) * (13.3258/5.85323)) + ((njet==1) * (5.78547/1.40855)) + ((njet>=2) * (1.79911/0.195922)))' # +'*((dataset == 37) - (dataset == 37) + (dataset == 37))'
+        weights['ggH_s']              = self._stdWgt+'*(((njet==0) * (13.3258/5.85323)) + ((njet==1) * (5.78547/1.40855)) + ((njet>=2) * (1.79911/0.195922)))' # +'*((dataset == 37) - (dataset == 37) + (dataset == 37))'
+        weights['ggH_b']              = self._stdWgt+'*(((njet==0) * (13.3258/5.85323)) + ((njet==1) * (5.78547/1.40855)) + ((njet>=2) * (1.79911/0.195922)))' # +'*((dataset == 37) - (dataset == 37) + (dataset == 37))'
 
         #                                             only-offshell            1 sm                     9 sm                    25 sm
         #weights['qqH_sbi']            = self._stdWgt+'*(mWW>130)*( 1.000*(dataset == 150) - 0.000*(dataset == 151) + 0.000*(dataset == 152))'
         #weights['qqH_s']              = self._stdWgt+'*(mWW>130)*( 0.125*(dataset == 150) - 0.250*(dataset == 151) + 0.125*(dataset == 152))'
         #weights['qqH_b']              = self._stdWgt+'*(mWW>130)*( 1.875*(dataset == 150) - 1.250*(dataset == 151) + 0.375*(dataset == 152))'
-        weights['qqH_sbi']            = self._stdWgt+'*(mWW>130)*( 1.000*(dataset == 160) - 0.000*(dataset == 161) + 0.000*(dataset == 162))'
-        weights['qqH_s']              = self._stdWgt+'*(mWW>130)*( 0.125*(dataset == 160) - 0.250*(dataset == 161) + 0.125*(dataset == 162))'
-        weights['qqH_b']              = self._stdWgt+'*(mWW>130)*( 1.875*(dataset == 160) - 1.250*(dataset == 161) + 0.375*(dataset == 162))'
+        weights['qqH_sbi']            = self._stdWgt+'*(mWW>130)*( 1.000*( (dataset == 160) ||  (dataset == 169) || (dataset == 176) || (dataset == 172)) - 0.000*( (dataset == 161) ||  (dataset == 175) || (dataset == 173) || (dataset == 170)) + 0.000*( (dataset == 162) ||  (dataset == 171) || (dataset == 174) || (dataset == 177)))'
+        weights['qqH_s']              = self._stdWgt+'*(mWW>130)*( 0.125*( (dataset == 160) ||  (dataset == 169) || (dataset == 176) || (dataset == 172)) - 0.250*( (dataset == 161) ||  (dataset == 175) || (dataset == 173) || (dataset == 170)) + 0.125*( (dataset == 162) ||  (dataset == 171) || (dataset == 174) || (dataset == 177)))'
+        weights['qqH_b']              = self._stdWgt+'*(mWW>130)*( 1.875*( (dataset == 160) ||  (dataset == 169) || (dataset == 176) || (dataset == 172)) - 1.250*( (dataset == 161) ||  (dataset == 175) || (dataset == 173) || (dataset == 170)) + 0.375*( (dataset == 162) ||  (dataset == 171) || (dataset == 174) || (dataset == 177)))'
 
    #Double_t S =  0.125 * P1 -0.250 *P9 + 0.125 * P25;
    #Double_t I = -1.000 * P1 +1.500 *P9 - 0.500 * P25;

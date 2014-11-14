@@ -271,16 +271,47 @@ def signalSamples(sigtag,mass=125,suffix=''):
                     #'nominals/latino_151_qqww9sm.root',
                     #'nominals/latino_152_qqww25sm.root'
                    #]
-    qqH_sbi      = ['nominals/latino_160_qqww1smEM_baseW.root'
+    qqH_sbi      = ['nominals/latino_160_qqww1smEM_baseW.root',
+                    'nominals/latino_169_qqww1smTM_baseW.root',
+                    'nominals/latino_176_qqww1smTT_baseW.root',
+                    'nominals/latino_172_qqww1smTE_baseW.root',
                    ]
     qqH_b        = ['nominals/latino_160_qqww1smEM_baseW.root',
+                    'nominals/latino_169_qqww1smTM_baseW.root',
+                    'nominals/latino_172_qqww1smTE_baseW.root',
+                    'nominals/latino_176_qqww1smTT_baseW.root',
+
                     'nominals/latino_161_qqww9smEM_baseW.root',
-                    'nominals/latino_162_qqww25smEM_baseW.root'
+                    'nominals/latino_175_qqww9smTM_baseW.root',
+                    'nominals/latino_173_qqww9smTE_baseW.root',
+                    'nominals/latino_170_qqww9smTT_baseW.root',
+
+                    'nominals/latino_162_qqww25smEM_baseW.root',
+                    'nominals/latino_171_qqww25smTM_baseW.root',
+                    'nominals/latino_174_qqww25smTE_baseW.root',
+                    'nominals/latino_177_qqww25smTT_baseW.root',
                    ]
     qqH_s        = ['nominals/latino_160_qqww1smEM_baseW.root',
+                    'nominals/latino_169_qqww1smTM_baseW.root',
+                    'nominals/latino_172_qqww1smTE_baseW.root',
+                    'nominals/latino_176_qqww1smTT_baseW.root',
+
                     'nominals/latino_161_qqww9smEM_baseW.root',
-                    'nominals/latino_162_qqww25smEM_baseW.root'
+                    'nominals/latino_175_qqww9smTM_baseW.root',
+                    'nominals/latino_173_qqww9smTE_baseW.root',
+                    'nominals/latino_170_qqww9smTT_baseW.root',
+
+                    'nominals/latino_162_qqww25smEM_baseW.root',
+                    'nominals/latino_171_qqww25smTM_baseW.root',
+                    'nominals/latino_174_qqww25smTE_baseW.root',
+                    'nominals/latino_177_qqww25smTT_baseW.root',
                    ]
+
+
+
+
+
+
 
 
     if sigtag == 'SM' or sigtag == 'Hwidth' :
