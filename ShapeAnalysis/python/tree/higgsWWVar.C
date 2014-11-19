@@ -12,6 +12,7 @@ class higgsWW {
 
   //! functions
   float mWW();
+  float ptWW();
 
  private:
   //! variables
@@ -36,6 +37,12 @@ higgsWW::higgsWW(float pt1, float pt2, float eta1, float eta2, float phi1, float
 float higgsWW::mWW(){
 
  return (L1+L2+V1+V2).M();
+
+}
+
+float higgsWW::ptWW(){
+
+ return (L1+L2+V1+V2).Pt();
 
 }
 
