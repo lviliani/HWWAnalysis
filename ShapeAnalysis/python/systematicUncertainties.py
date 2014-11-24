@@ -62,6 +62,11 @@ ggH_jets2 = dict([(m, dict(zip(['0','1in0','1in1','2in1','2in2'], vals))) for m,
 ggH_UEPS = dict([(m, dict(zip(['u0','u1','u2'], vals))) for m,vals in file2map(SYST_PATH+"ggH_UEPS.txt").items()])
 ggH_intf = dict([(m, dict(zip(['intf'], vals))) for m,vals in file2map(SYST_PATH+"ggH_interference.txt").items()])
 
+#                             BR uncertainty
+HWW_BR = dict([(m, dict(zip(['brunc'], vals))) for m,vals in file2map(SYST_PATH+"HWW_BR.txt").items()])
+
+
+
 
 def loadYRSyst(YRVersion=3,Energy='8TeV') :
 
@@ -348,6 +353,12 @@ def getCommonSysts(mass,channel,jets,qqWWfromData,shape,options,suffix,isssactiv
          nuisances['interf_ggH'] = [ ['lnN'], {'ggH':1.10, 'WW':1.15}]
       else :
          nuisances['interf_ggH'] = [ ['lnN'], {'ggH':1.00}]
+
+    # BR H > VV uncertainty
+    nuisances['BRhiggs_hvv'] = [ ['lnN'], {'ggH':HWW_BR[mass]['brunc'], 'qqH':HWW_BR[mass]['brunc'], 'ggH_sbi':HWW_BR[mass]['brunc'], 'ggH_b':HWW_BR[mass]['brunc'], 'ggH_s':HWW_BR[mass]['brunc'], 'qqH_sbi':HWW_BR[mass]['brunc'], 'qqH_b':HWW_BR[mass]['brunc'], 'qqH_s':HWW_BR[mass]['brunc']}]
+
+
+
 
     #if options.WJsub:
     #    nuisances['CMS_FakeRate_e'] = [ ['lnN'], { 'WJet': 1.0+options.WJsub } ]
