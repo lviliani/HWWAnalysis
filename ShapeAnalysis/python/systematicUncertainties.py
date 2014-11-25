@@ -154,7 +154,7 @@ def GetYRVal(YRDic,iMass):
        return sp.Eval(iMass)
 
 
-def getCommonSysts(mass,channel,jets,qqWWfromData,shape,options,suffix,isssactive,Energy,newInterf=False,YRVersion=3,mh_SM=125.,mh_SM2=125. ):
+def getCommonSysts(mass,channel,jets,qqWWfromData,shape,options,suffix,isssactive,Energy,newInterf=False,YRVersion=3,mh_SM=125.,mh_SM2=125.,ewksinglet=False ):
 
     loadYRSyst(YRVersion,Energy)
 
@@ -349,10 +349,11 @@ def getCommonSysts(mass,channel,jets,qqWWfromData,shape,options,suffix,isssactiv
       else :
          nuisances['interf_ggH'] = [ ['lnN'], {'ggH':1.00}]
     else :
-      if mass>=400:
-         nuisances['interf_ggH'] = [ ['lnN'], {'ggH':1.10, 'WW':1.15}]
-      else :
-         nuisances['interf_ggH'] = [ ['lnN'], {'ggH':1.00}]
+      if ewksinglet:
+       if mass>=400:
+         nuisances['interf_ggH125'] = [ ['lnN'], {'ggH':1.10, 'WW':1.15}]
+       else :
+         nuisances['interf_ggH125'] = [ ['lnN'], {'ggH':1.00}]
 
     # BR H > VV uncertainty
     nuisances['BRhiggs_hvv'] = [ ['lnN'], {'ggH':HWW_BR[mass]['brunc'], 'qqH':HWW_BR[mass]['brunc'], 'ggH_sbi':HWW_BR[mass]['brunc'], 'ggH_b':HWW_BR[mass]['brunc'], 'ggH_s':HWW_BR[mass]['brunc'], 'qqH_sbi':HWW_BR[mass]['brunc'], 'qqH_b':HWW_BR[mass]['brunc'], 'qqH_s':HWW_BR[mass]['brunc']}]

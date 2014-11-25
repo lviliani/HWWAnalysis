@@ -564,7 +564,7 @@ class NuisanceMapBuilder:
 #         if '2011' in opt.dataset: suffix = '_7TeV'
 
         suffix = '_'+opt.energy
-        CutBased = getCommonSysts(int(mass),flavor,int(jetcat[0]),qqWWfromData, self._shape, optMatt, suffix, self._isssactive, opt.energy,opts['newInterf'],opt.YRSysVer,opt.mHSM)
+        CutBased = getCommonSysts(int(mass),flavor,int(jetcat[0]),qqWWfromData, self._shape, optMatt, suffix, self._isssactive, opt.energy,opts['newInterf'],opt.YRSysVer,opt.mHSM,opts['ewksinglet'])
         if self._shape:
             # float WW+ggWW background normalisation float together
 #             for p in opts['floatN'].split(' '):
@@ -728,6 +728,7 @@ if __name__ == '__main__':
     optsNuis['nuisFlags'] = opt.nuisFlags
     optsNuis['floatN'] = opt.floatN
     optsNuis['newInterf'] = opt.newcps
+    optsNuis['ewksinglet'] = opt.ewksinglet
     optsNuis['SpecialSettings'] = opt.SpecialSettings
     lumistr = '{0:.2f}'.format(opt.lumi)
 
