@@ -1429,8 +1429,8 @@ if __name__ == '__main__':
 
         latinoDir           = opt.path_latino
         bdtDir              = opt.path_bdt
-        nomOutDir           = os.path.join(opt.path_shape_raw,'nominals/')
-        systOutDir          = os.path.join(opt.path_shape_raw,'systematics/')
+        nomOutDir           = os.path.join(opt.path_shape_raw,'nominals/{mass}/')
+        systOutDir          = os.path.join(opt.path_shape_raw,'systematics/{mass}/')
         
         nomInputDir         = ''
         systInputDir        = '{syst}/'

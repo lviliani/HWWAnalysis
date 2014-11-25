@@ -89,8 +89,8 @@ mcsets = {
         # templates
         'VgS-template','Vg-template',
         # 0j1j specific
-        ('DYLL-template',    'DYLL-template-0j1j'),              #    A   <-   sorgente
-        ('DYLL-templatesyst','DYLL-templatesyst-0j1j') ,         #    mkmerged vuole "-template"
+        #('DYLL-template',    'DYLL-template-0j1j'),              #    A   <-   sorgente
+        #('DYLL-templatesyst','DYLL-templatesyst-0j1j') ,         #    mkmerged vuole "-template"
         # mH125 as background
         'ggH_SM', 'qqH_SM', 'WH_SM','ZH_SM',
     ],

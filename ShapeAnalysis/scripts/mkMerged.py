@@ -1381,12 +1381,14 @@ if __name__ == '__main__':
                 # configure
                 label = 'mH{0} {1} {2}'.format(mass,cat,fl)
                 ss = ShapeMixer(label)
+                nomPathMass  = nomPath  + str(mass) + '/'
+                systPathMass = systPath + str(mass) + '/'
                 if opt.ewksinglet:
-                  ss.nominalsPath   = os.path.join(nomPath,nameTmpl.format(mass, cat, fl)+'.EWKSinglet_CP2_'+str(opt.cprimesq[iCP2]).replace('.','d')+'_BRnew_'+str(opt.brnew[iBRn]).replace('.','d')+'.root')
-                  ss.systSearchPath = os.path.join(systPath,nameTmpl.format(mass, cat, fl)+'.EWKSinglet_CP2_'+str(opt.cprimesq[iCP2]).replace('.','d')+'_BRnew_'+str(opt.brnew[iBRn]).replace('.','d')+'_*.root')
+                  ss.nominalsPath   = os.path.join(nomPathMass,nameTmpl.format(mass, cat, fl)+'.EWKSinglet_CP2_'+str(opt.cprimesq[iCP2]).replace('.','d')+'_BRnew_'+str(opt.brnew[iBRn]).replace('.','d')+'.root')
+                  ss.systSearchPath = os.path.join(systPathMass,nameTmpl.format(mass, cat, fl)+'.EWKSinglet_CP2_'+str(opt.cprimesq[iCP2]).replace('.','d')+'_BRnew_'+str(opt.brnew[iBRn]).replace('.','d')+'_*.root')
                 else:
-                  ss.nominalsPath   = os.path.join(nomPath,nameTmpl.format(mass, cat, fl)+'.root')
-                  ss.systSearchPath = os.path.join(systPath,nameTmpl.format(mass, cat, fl)+'_*.root')
+                  ss.nominalsPath   = os.path.join(nomPathMass,nameTmpl.format(mass, cat, fl)+'.root')
+                  ss.systSearchPath = os.path.join(systPathMass,nameTmpl.format(mass, cat, fl)+'_*.root')
                 ss.lumiMask = lumiMask
                 ss.lumi     = opt.lumi
                 ss.rebin    = opt.rebin
