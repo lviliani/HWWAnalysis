@@ -1,4 +1,4 @@
-mH_GeV 	H_gg 	    Err_Hi  Err_Lo  H_gamgam    Err_Hi  Err_Lo  H_Zgam      Err_Hi  Err_Lo  H_WW        Err_Hi  Err_Lo  H_ZZ        Err_Hi  Err_Lo  Total_Width_GeV Err_Hi Err_Lo
+mH_GeV 	H_gg 	    Err_Hi_gg  Err_Lo_gg  H_gamgam    Err_Hi_gamgam  Err_Lo_gamgam  H_Zgam      Err_Hi_Zgam  Err_Lo_Zgam  H_WW        Err_Hi_WW  Err_Lo_WW  H_ZZ        Err_Hi_ZZ  Err_Lo_ZZ  Total_Width_GeV Err_Hi Err_Lo
 80.0	4.94E-02	+12.02	-11.58	9.18E-04	+6.34	-6.15	0.00E+00	+0.00	-0.00	6.27E-04	+5.89	-5.73	1.64E-04	+5.79	-5.63	1.99E-03	+5.29	-5.24
 81.0	5.05E-02	+11.99	-11.55	9.46E-04	+6.32	-6.15	0.00E+00	+0.00	-0.00	6.96E-04	+5.86	-5.72	1.81E-04	+5.75	-5.62	2.01E-03	+5.28	-5.21
 82.0	5.17E-02	+11.97	-11.56	9.74E-04	+6.31	-6.16	0.00E+00	+0.00	-0.00	7.74E-04	+5.89	-5.73	1.99E-04	+5.78	-5.63	2.04E-03	+5.28	-5.24
