@@ -122,9 +122,10 @@ class wwcuts:
     wwcommon = wwcommon+[dphilljj, met]
     wwmin    = wwmin   +[dphilljj, metor]
                 
-    zerojet = 'njet == 0'
-    onejet  = 'njet == 1'
-    twojet  = 'njet == 2'
+    zerojet = '(njet == 0)'
+    onejet  = '(njet == 1)'
+    twojet  = '(njet == 2)'
+    zeroOrOnejet = '(njet == 0 || njet == 1)'
     loosevbf= '(njet >= 2 && njet <= 3) '
     vbf     = '(njet >= 2 && njet <= 3 && (jetpt3 <= 30 || !(jetpt3 > 30 && (  (jeteta1-jeteta3 > 0 && jeteta2-jeteta3 < 0) || (jeteta2-jeteta3 > 0 && jeteta1-jeteta3 < 0))))) '
     vbf2011 = '(njet >= 2 && njet <= 3 && njetvbf == 0) '
@@ -444,6 +445,35 @@ class ww:
     wwCut    = _massindep
 
 
+
+
+
+# Higgs width
+class Hwidth:
+
+    _massindep = [
+        'trigger==1.',
+        '((ch1*ch2)<0 && pt1>20 && pt2>10)',
+        'zveto==1',
+        'pfmet>20.',
+        'mpmet>20.',
+        'mll>12',
+        'bveto_mu==1 ',
+        'nextra==0' ,
+        'bveto_ip==1',
+        'nbjettche==0',
+        #'mth>30'
+        #'ptll>10'
+    ]
+
+    HwidthCut    = _massindep
+
+
+
+
+
+
+
 masses = [110, 115, 120, 125, 130, 135, 140, 145, 150, 155, 160, 170, 180, 190, 200, 250, 300, 350, 400, 450, 500, 550, 600, 700, 800, 900, 1000]
 #masses = [110, 115, 120, 125, 130, 135, 140, 150, 155, 160, 170, 180, 190, 200, 250, 300, 350, 400, 450, 500, 550, 600]  
 
@@ -451,6 +481,7 @@ categoryCuts = {}
 categoryCuts['0j'] = wwcuts.zerojet
 categoryCuts['1j'] = wwcuts.onejet
 categoryCuts['2jex'] = wwcuts.twojet
+categoryCuts['01j'] = wwcuts.zeroOrOnejet
 #categoryCuts['2j']   = wwcuts.vbf        # 2 or 3 jets, but the third not between the first two in \eta
 #categoryCuts['2j']   = wwcuts.loosevbf   # 2 or 3 jets  ----> changed! Need to propagate to some analysis? VBF cuts already applied in specific VBF selections!
 categoryCuts['2j']   = wwcuts.vh         # >=2 jets
@@ -480,20 +511,22 @@ flavors['of']=['em','me']
 flavors['ll']=['mm','ee','em','me']
 
 channels = {}
-channels['0j']    = ('0j','ll')
-channels['1j']    = ('1j','ll')
-channels['of_0j'] = ('0j','of')
-channels['of_1j'] = ('1j','of')
-channels['sf_0j'] = ('0j','sf')
-channels['sf_1j'] = ('1j','sf')
-channels['mm_0j'] = ('0j','mm')
-channels['mm_1j'] = ('1j','mm')
-channels['ee_0j'] = ('0j','ee')
-channels['ee_1j'] = ('1j','ee')
-channels['em_0j'] = ('0j','em')
-channels['em_1j'] = ('1j','em')
-channels['me_0j'] = ('0j','me')
-channels['me_1j'] = ('1j','me')
+channels['0j']     = ('0j','ll')
+channels['1j']     = ('1j','ll')
+channels['of_0j']  = ('0j','of')
+channels['of_1j']  = ('1j','of')
+channels['sf_0j']  = ('0j','sf')
+channels['sf_1j']  = ('1j','sf')
+channels['of_01j'] = ('01j','of')
+channels['sf_01j'] = ('01j','sf')
+channels['mm_0j']  = ('0j','mm')
+channels['mm_1j']  = ('1j','mm')
+channels['ee_0j']  = ('0j','ee')
+channels['ee_1j']  = ('1j','ee')
+channels['em_0j']  = ('0j','em')
+channels['em_1j']  = ('1j','em')
+channels['me_0j']  = ('0j','me')
+channels['me_1j']  = ('1j','me')
 
 channels['2j']    = ('2j','ll')
 channels['of_2j'] = ('2j','of')
@@ -886,6 +919,51 @@ def massSelections(mass):
     sel['CutWW-level']     = ' && '.join(ww.wwCut)
     sel['CutWW-selection'] = sel['CutWW-level']
 
+
+
+    # Higgs width
+    sel['Hwidth-level']     = ' && '.join(Hwidth.HwidthCut)
+    #sel['Hwidth-selection'] = sel['Hwidth-level']+ ' && ( (njet==0 * (1)) || '  + \
+                          #' ((njet==1) * (1)) || ' +  \
+                          #' ((njet>=2) * ( ptll>45 && (njet>=2 && njet<=3 && (jetpt3<=30 || !(jetpt3 > 30 && (  (jeteta1-jeteta3 > 0 && jeteta2-jeteta3 < 0) || (jeteta2-jeteta3 > 0 && jeteta1-jeteta3 < 0)))))   && abs(eta1 - (jeteta1+jeteta2)/2)/detajj < 0.5 && abs(eta2 - (jeteta1+jeteta2)/2)/detajj < 0.5      && detajj>3.5     && mjj>500    )) '  + \
+                          #')'
+    #sel['Hwidth-selection'] = sel['Hwidth-level']+ ' && ( (njet==0 * (1)) || '  + \
+                          #' ((njet==1) * (1)) || ' +  \
+                          #' ((njet>=2) * ( ptll>45 && (njet>=2 && njet<=3 && (jetpt3<=30 || !(jetpt3 > 30 && (  (jeteta1-jeteta3 > 0 && jeteta2-jeteta3 < 0) || (jeteta2-jeteta3 > 0 && jeteta1-jeteta3 < 0)))))   && abs(eta1 - (jeteta1+jeteta2)/2)/detajj < 0.5 && abs(eta2 - (jeteta1+jeteta2)/2)/detajj < 0.5      && detajj>2.0     && mjj>300    )) '  + \
+                          #')'
+
+    sel['Hwidth-selection'] = sel['Hwidth-level']+ ' && ( (njet==0 * ( (mll<70 && pt2<40 && ptll>45) || (mll>=70 && pt2>20 && pt1>20)  )) || '  + \
+                          ' ((njet==1) * ( (mll<70 && pt2<40 && ptll>45) || (mll>=70 && pt2>20 && pt1>20)  )) || ' +  \
+                          ' ((njet>=2) * ( ptll>45 && (njet>=2 && njet<=3 && (jetpt3<=30 || !(jetpt3 > 30 && (  (jeteta1-jeteta3 > 0 && jeteta2-jeteta3 < 0) || (jeteta2-jeteta3 > 0 && jeteta1-jeteta3 < 0)))))   && abs(eta1 - (jeteta1+jeteta2)/2)/detajj < 0.5 && abs(eta2 - (jeteta1+jeteta2)/2)/detajj < 0.5      && detajj>2.5     && mjj>500 && ' + \
+                          '  (   (mll<70 && pt2<40) || (mll>=70 && pt2>20 && pt1>20)  )  )) '  + \
+                          ')'
+
+
+    #sel['Hwidth-selection'] = sel['Hwidth-level']+ ' && ( (njet==0 * ( (HwidthMVAggH>=0.0 && pt2>20) || (HwidthMVAggH<0.0 && mth>60 && mth<120 && ptll>45 && pt2<40)  )) || '  + \
+                          #' ((njet==1) * ( (HwidthMVAggH>=0.0 && pt2>20) || (HwidthMVAggH<0.0 && mth>60 && mth<120 && ptll>45 && pt2<40)  )) || ' +  \
+                          #' ((njet>=2) * ( ptll>45 && (njet>=2 && njet<=3 && (jetpt3<=30 || !(jetpt3 > 30 && (  (jeteta1-jeteta3 > 0 && jeteta2-jeteta3 < 0) || (jeteta2-jeteta3 > 0 && jeteta1-jeteta3 < 0)))))   && abs(eta1 - (jeteta1+jeteta2)/2)/detajj < 0.5 && abs(eta2 - (jeteta1+jeteta2)/2)/detajj < 0.5      && detajj>2.5     && mjj>500 && ' + \
+                          #'  (   (mll<70 && pt2<40) || (mll>=70 && pt2>20 && pt1>20)  )  )) '  + \
+                          #')'
+
+    sel['Hwidthmthmll-selection'] = sel['Hwidth-level']+ ' && ( (njet==0 * ( (mll<70 && pt2<35 && ptll>45) || (mll>=70 && pt2>20 && pt1>50)  )) || '  + \
+                          ' ((njet==1) * ( (mll<70 && pt2<35 && ptll>45) || (mll>=70 && pt2>20 && pt1>50)  )) || ' +  \
+                          ' ((njet>=2) * ( ptll>45 && (njet>=2 && njet<=3 && (jetpt3<=30 || !(jetpt3 > 30 && (  (jeteta1-jeteta3 > 0 && jeteta2-jeteta3 < 0) || (jeteta2-jeteta3 > 0 && jeteta1-jeteta3 < 0)))))   && abs(eta1 - (jeteta1+jeteta2)/2)/detajj < 0.5 && abs(eta2 - (jeteta1+jeteta2)/2)/detajj < 0.5      && detajj>2.5     && mjj>500 && ' + \
+                          '  (   (mll<70 && pt2<40) || (mll>=70 && pt2>20 && pt1>20)  )  )) '  + \
+                          ')'
+
+
+
+    #sel['Hwidth-selection'] = sel['Hwidth-level']+ ' && ( (njet==0 * ( (HwidthMVAggH>=0.0) || (HwidthMVAggH<0.0 && mth<125 && ptll>45)  )) || '  + \
+                          #' ((njet==1) * ( (HwidthMVAggH>=0.0) || (HwidthMVAggH<0.0 && mth<125 && ptll>45)  )) || ' +  \
+                          #' ((njet>=2) * ( ptll>45 && (njet>=2 && njet<=3 && (jetpt3<=30 || !(jetpt3 > 30 && (  (jeteta1-jeteta3 > 0 && jeteta2-jeteta3 < 0) || (jeteta2-jeteta3 > 0 && jeteta1-jeteta3 < 0)))))   && abs(eta1 - (jeteta1+jeteta2)/2)/detajj < 0.5 && abs(eta2 - (jeteta1+jeteta2)/2)/detajj < 0.5      && detajj>2.0     && mjj>300 && ' + \
+                          #'  (   (mll<70 && mth<125) || (mll>=70 && pt2>20 && pt1>20)  )  )) '  + \
+                          #')'
+
+    #sel['Hwidth-level']     = ' && '.join(Hwidth.HwidthCut)
+    #sel['Hwidth-selection'] = sel['Hwidth-level']+ ' && ( (njet==0 * (1)) || '  + \
+                          #' ((njet==1) * (1)) || ' +  \
+                          #' ((njet>=2) * (  (njet>=2 && njet<=3 && (jetpt3<=30 || !(jetpt3 > 30 && (  (jeteta1-jeteta3 > 0 && jeteta2-jeteta3 < 0) || (jeteta2-jeteta3 > 0 && jeteta1-jeteta3 < 0)))))   && abs(eta1 - (jeteta1+jeteta2)/2)/detajj < 0.5 && abs(eta2 - (jeteta1+jeteta2)/2)/detajj < 0.5      && detajj>2.0     && mjj>300    )) '  + \
+                          #')'
 
     return sel
 

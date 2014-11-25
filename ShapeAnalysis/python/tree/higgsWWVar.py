@@ -44,8 +44,10 @@ class higgsWWVarFiller(TreeCloner):
         self.clone(output,newbranches)
 
         mWW          = numpy.ones(1, dtype=numpy.float32)
+        ptWW         = numpy.ones(1, dtype=numpy.float32)
 
         self.otree.Branch('mWW'  , mWW  , 'mWW/F')
+        self.otree.Branch('ptWW' , ptWW , 'ptWW/F')
 
         nentries = self.itree.GetEntries()
         print 'Total number of entries: ',nentries 
@@ -88,6 +90,7 @@ class higgsWWVarFiller(TreeCloner):
             higgsWW = ROOT.higgsWW(pt1, pt2, eta1, eta2, phi1, phi2,    vpt1, vpt2, veta1, veta2, vphi1, vphi2 )
 
             mWW[0]   = higgsWW.mWW()
+            ptWW[0]  = higgsWW.ptWW()
 
             otree.Fill()
 

@@ -58,7 +58,10 @@ class DDCardReader:
                        'of_1j'      : ('1j',['of']), 'sf_1j': ('1j',['sf']),
                        'of_2j'      : ('2j',['of']), 'sf_2j': ('2j',['sf']),
                        'of_vh2j'    : ('vh2j',['of']), 'sf_vh2j': ('vh2j',['sf']),
-                       'of_2jtche05': ('2jtche05',['of']), 'sf_2jtche05': ('2jtche05',['sf'])
+                       'of_2jtche05': ('2jtche05',['of']), 'sf_2jtche05': ('2jtche05',['sf']),
+                       'of_2jtche05CJ': ('2jtche05CJ',['of']), 'sf_2jtche05CJ': ('2jtche05CJ',['sf']),
+                       'of_2jtche05FJ': ('2jtche05FJ',['of']), 'sf_2jtche05FJ': ('2jtche05FJ',['sf']),
+                       'of_01j'     : ('01j',['of']), 'sf_01j': ('01j',['sf']),
                        }
         wwmapping    = {'of_0j': ('0j',['of']), 'sf_0j': ('0j',['sf']),
                        'of_1j': ('1j',['of']), 'sf_1j': ('1j',['sf']),
@@ -69,7 +72,9 @@ class DDCardReader:
         lleemmmapping  = {
                        'sf_2j': ('2j',['sf']),
                        'sf_vh2j': ('vh2j',['sf']),
-                       'sf_2jtche05': ('2jtche05',['sf'])
+                       'sf_2jtche05': ('2jtche05',['sf']),
+                       'sf_2jtche05CJ': ('2jtche05CJ',['sf']),
+                       'sf_2jtche05FJ': ('2jtche05FJ',['sf'])
                        }
 
         readmap = {}

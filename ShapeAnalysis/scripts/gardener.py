@@ -27,6 +27,8 @@ from tree.fakeW             import FakeWVarFiller
 from tree.ZHWWlvlvVar       import ZhwwlvlvVarFiller
 from tree.WW2jVar           import WW2jVarFiller
 from tree.leptonTypeVar     import LeptonTypeVarFiller
+from tree.hwidthMVAVar      import HwidthMVAVarFiller
+
 
 from tree.qq2vvEWKcorrectionsWeight       import qq2vvEWKcorrectionsWeightFiller
 from tree.wwNLLcorrectionWeight           import wwNLLcorrectionWeightFiller
@@ -79,6 +81,8 @@ if __name__ == '__main__':
     modules['wwNLLcorrections']      =  wwNLLcorrectionWeightFiller()
 # ww invariant mass -> for Higgs width
     modules['higgsWWVar']          =  higgsWWVarFiller()
+# h width in wwlvlv
+    modules['hwidthMVAVar']      = HwidthMVAVarFiller()
 
     gardener_cli( modules )
 

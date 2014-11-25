@@ -40,6 +40,17 @@ PileUp weight
 
 
 
+Useful corrections
+====
+
+xyshift for met
+
+    mkdir /tmp/amassiro/ww-xyshift/
+    ./gardener.py  xyShift  /tmp/amassiro/latino000_nll_ewk.root     /tmp/amassiro/ww-xyshift/latino000_nll_ewk.root
+    ./gardener.py  xyShift  /tmp/amassiro/latino002_nll_ewk.root     /tmp/amassiro/ww-xyshift/latino002_nll_ewk.root
+    ./gardener.py  xyShift  /tmp/amassiro/latino006_nll_ewk.root     /tmp/amassiro/ww-xyshift/latino006_nll_ewk.root
+
+
 
 Useful variables
 ====
@@ -178,9 +189,12 @@ mva addition
     gardener.py  higgsWWVar -r /tmp/amassiro/gg2vv/     /tmp/amassiro/gg2vv_mww/
 
 
+    gardener.py  higgsWWVar  /home/amassiro/Latinos/Shape/tree_skim_all/nominals/latino_160_qqww1smEM_baseW.root  /home/amassiro/Latinos/Shape/tree_skim_all/nominals/latino_160_qqww1smEM_baseW.root
+    gardener.py  higgsWWVar  /home/amassiro/Latinos/Shape/tree_skim_all/nominals/latino_161_qqww9smEM_baseW.root  /home/amassiro/Latinos/Shape/tree_skim_all/nominals/latino_161_qqww9smEM_baseW.root
+    gardener.py  higgsWWVar  /home/amassiro/Latinos/Shape/tree_skim_all/nominals/latino_162_qqww25smEM_baseW.root  /home/amassiro/Latinos/Shape/tree_skim_all/nominals/latino_162_qqww25smEM_baseW.root
 
 
-
+    ls /home/amassiro/Latinos/Shape/tree_skim_all_hwidth/nominals/*qqww*_baseW.root | awk '{print "gardener.py  higgsWWVar "$1" "$1".temp.root"}'
 
 
 

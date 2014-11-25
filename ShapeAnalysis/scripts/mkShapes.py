@@ -88,6 +88,8 @@ class ShapeFactory:
         ranges['whsc-range']         = self._getWHSCrange
         ranges['wwewk-range']        = self._getWWewkrange
         ranges['wwewk-range-top']    = self._getWWewkrangeTop
+        ranges['Hwidth-range']       = self._getHwidthrange
+        ranges['HwidthSimple-range'] = self._getSimpleHwidthrange
 
         self._ranges = ranges
 
@@ -119,6 +121,9 @@ class ShapeFactory:
         variables['2dWithSSmirrorRegion'] = self._getMllMth2DSpinWithSSmirrorRegion
         variables['vhMllBanana']          = self._getMllVHWithControlRegion
         variables['vbfMllBanana']         = self._getMllVBFWithControlRegion
+        variables['wwewk']                = self._getVarWWewk
+        variables['Hwidth']               = self._getVarHwidth
+        variables['HwidthSimple']         = self._getSimpleVarHwidth
 
         self._variables = variables
 
@@ -157,6 +162,39 @@ class ShapeFactory:
         #elif callable(theVariable):
             #return theVariable(mass,cat)
 
+    # _____________________________________________________________________________
+    def _getHwidthrange(self,mass,cat):
+
+        if cat not in ['0j','1j','2j','01j']:
+            print cat
+            raise RuntimeError('range for '+str(cat)+' not defined. !?!?!?')
+
+        if cat in ['1j'] :
+          #   HwidthMVAggH in x,     HwidthMVAbkg in y
+          return ([12, 30, 45, 60, 70, 100,          300],[-1.00, -0.70, -0.60, -0.50, -0.40, -0.30, -0.20, -0.10, 0.00, 0.10, 0.20, 0.30, 0.40, 0.50, 0.60, 0.70, 0.80, 1.00])
+        elif cat in ['0j'] :
+          return ([12, 30, 45, 60, 70, 100,          300],[-1.00, -0.70, -0.60, -0.50, -0.40, -0.30, -0.20, -0.10, 0.00, 0.10, 0.20, 0.30, 0.40, 0.50, 0.60, 0.70, 0.80, 1.00])
+        elif cat in ['01j'] :
+          return ([12, 30, 45, 60, 70, 100,          300],[-1.00, -0.70, -0.60, -0.50, -0.40, -0.30, -0.20, -0.10, 0.00, 0.10, 0.20, 0.30, 0.40, 0.50, 0.60, 0.70, 0.80, 1.00])
+        else :
+          # mth:mll                    mll in x                    mth in y
+          return ([12,  45, 70,           100, 300],[0, 50,     100, 130, 170, 250, 450])
+
+    # _____________________________________________________________________________
+    def _getSimpleHwidthrange(self,mass,cat):
+
+        if cat not in ['0j','1j','2j','01j']:
+            print cat
+            raise RuntimeError('range for '+str(cat)+' not defined. !?!?!?')
+
+
+        if cat in ['0j','1j'] :
+         # mth:mll                    mll in x                    mth in y
+          return ([12, 30, 45, 60, 70, 100, 150, 200, 300],[0, 50, 70, 90, 100, 110, 120, 130, 140, 160, 180, 200, 450])
+        else :
+          # mth:mll                    mll in x                    mth in y
+          return ([12,  45, 70,           100, 300],[0, 50,     100, 130, 170, 250,  450])
+
 
     # _____________________________________________________________________________
     def _getWWewkrange(self,mass,cat):
@@ -168,7 +206,15 @@ class ShapeFactory:
         #return ([-1.0, -0.5, 0.0, 0.2, 0.5, 0.6, 0.7, 0.8, 0.9, 1.0],)
         #return ([-1.0, -0.75, -0.5, -0.25, 0.0, 0.25, 0.5, 0.6, 0.7, 0.8, 0.9, 1.0],)
         #return ([-1.0, -0.75, -0.5, -0.25, 0.0, 0.30, 0.50, 0.70, 0.90, 1.0],)
-        return ([-1.0, -0.80, -0.60, -0.40, -0.20, 0.00, 0.20, 0.40, 0.60, 0.80, 1.00],)
+
+        #return ([-1.0, -0.80, -0.60, -0.40, -0.20, 0.00, 0.20, 0.40, 0.60, 0.80, 1.00],)
+        #return ([-1.0, -0.50, -0.00, 0.30, 0.60, 1.00],)
+        return ([-1.0, -0.50, -0.00, 0.50, 1.00],)
+
+        #                 mva jets                             mll
+        #return ([-1.0, -0.50, -0.00, 0.30, 0.60, 1.00],[50.00, 150.00, 250.00])
+
+
 
     # _____________________________________________________________________________
     def _getWWewkrangeTop(self,mass,cat):
@@ -179,7 +225,9 @@ class ShapeFactory:
 
         #return ([-1.0, -0.80, -0.60, -0.40, -0.20, 0.00, 0.20, 0.40, 0.60, 0.80, 1.00],)
         #return ([-1.0, -0.90, -0.80, -0.70, -0.60, -0.50, -0.40, -0.30, -0.20, -0.10, 0.00, 0.10, 0.20, 0.30, 0.40, 0.50, 0.60, 0.70, 0.80, 0.90, 1.00],)
-        return ([-1.0, -0.95, -0.90, -0.85, -0.80, -0.75, -0.70, -0.65, -0.60, -0.55, -0.50, -0.45, -0.40, -0.35, -0.30, -0.25, -0.20, -0.15, -0.10, -0.05, 0.00, 0.05, 0.10, 0.15, 0.20, 0.25, 0.30, 0.35, 0.40, 0.45, 0.50, 0.55, 0.60, 0.65, 0.70, 0.75, 0.80, 0.85, 0.90, 0.95, 1.00],)
+        #return ([-1.0, -0.95, -0.90, -0.85, -0.80, -0.75, -0.70, -0.65, -0.60, -0.55, -0.50, -0.45, -0.40, -0.35, -0.30, -0.25, -0.20, -0.15, -0.10, -0.05, 0.00, 0.05, 0.10, 0.15, 0.20, 0.25, 0.30, 0.35, 0.40, 0.45, 0.50, 0.55, 0.60, 0.65, 0.70, 0.75, 0.80, 0.85, 0.90, 0.95, 1.00],)
+
+        return ([-1.0, -0.50, -0.00, 0.50, 1.00],)
 
 
     # _____________________________________________________________________________
@@ -192,6 +240,14 @@ class ShapeFactory:
         #return ([0,20,40,60,80,100,120,140,160,180,250,400],)
         return ([0,40,80,120,160,200,240,300,400],)
 
+
+
+
+    # _____________________________________________________________________________
+    def _getVarWWewk(self,mass,cat):
+
+        return 'WWewkMVABDTG'
+        #return 'mll:WWewkMVABDTG'
 
 
     # _____________________________________________________________________________
@@ -236,6 +292,50 @@ class ShapeFactory:
             return 'mll:mth*((ch1*ch2)<0)-mth*((ch1*ch2)>0)'
         else:
             return 'mll:mth*((ch1*ch2)<0)-mth*((ch1*ch2)>0)'
+
+
+
+    # _____________________________________________________________________________
+    def _getVarHwidth(self,mass,cat):
+
+        if cat not in ['0j','1j','2j','01j']:
+            raise RuntimeError('mll range for '+str(cat)+' not defined. Can be 0 or 1')
+
+        if cat in ['0j','1j','01j'] :
+           #return 'HwidthMVAbkg:HwidthMVAggH'
+           #             (mth-65)/65 vs HwidthMVAggH in low HwidthMVAggH region                            HwidthMVAbkg vs HwidthMVAggH if high HwidthMVAggH
+           #return '((HwidthMVAbkg*(HwidthMVAggH>=0.0))+((HwidthMVAggH<0.0)*(mll<50)*(mth-65.)/65.)):(HwidthMVAggH*((HwidthMVAggH>=0.0)+((HwidthMVAggH<0.0)&&(mll<50))))'
+           #             (mth-65)/65 vs HwidthMVAggH in low HwidthMVAggH region                            HwidthMVAbkg vs HwidthMVAggH if high HwidthMVAggH
+           #return '((HwidthMVAbkg*(HwidthMVAggH>=0.0))+((HwidthMVAggH<0.0)*(mth-65.)/65.)):HwidthMVAggH'
+           #             (mll-50)/50 vs HwidthMVAggH in low HwidthMVAggH region                            HwidthMVAbkg vs HwidthMVAggH if high HwidthMVAggH
+           #return '((HwidthMVAbkg*(HwidthMVAggH>=0.0))+((HwidthMVAggH<0.0)*(mll-40.)/40.)):HwidthMVAggH'
+
+           #return '((HwidthMVAbkg*(HwidthMVAggH>=0.0))+((HwidthMVAggH<0.0)*(mth-120.)/120.)):mll'
+           #return '((HwidthMVAbkg*(HwidthMVAggH>=0.0))+((HwidthMVAggH<0.0)*(mth-200.)/200.)):mll'
+           #return '((HwidthMVAbkg*(mll>=70))+((mll<70)*(mth-200.)/200.)):mll'
+           return '((HwidthMVAbkg*(mll>=70))+((mll<70)*(mth-160.)/160.)):mll'
+
+        else :
+           return 'mth:mll'
+           #return '(mth*((mll>=&&pt2>20&&pt1>20)+(mth<125&&ptll>20))):mll'
+        #return '(mth*((mth>=120&&pt2>20&&pt1>20)+(mth<120&&ptll>20))):mll'
+        #return '(mth*((mth>=120&&pt2>20&&pt1>20)+(mth<120&&ptll>45&&pfmet>30))):mll'
+        #return '(mth*((mth>=130&&pt2>20&&pt1>20)+(mth<130&&ptll>45&&pfmet>30))):mll'
+        #return '(mth*((mth>=130&&pt2>20&&pt1>20)+(mth<130&&ptll>30&&pfmet>30))):mll'
+        #return 'mth:(mll*(mth>=130&&pt2>20&&pt1>10)-mll*(mth<130&&ptll>30&&pfmet>30))'
+        #return 'mll*(mth>=125)-mll*(mth<125)'
+
+    # _____________________________________________________________________________
+    def _getSimpleVarHwidth(self,mass,cat):
+
+        if cat not in ['0j','1j','2j','01j']:
+            raise RuntimeError('mll range for '+str(cat)+' not defined. Can be 0 or 1')
+
+        if cat in ['0j','1j'] :
+           return 'mth:mll'
+        else :
+           return 'mth:mll'
+
 
 
     # _____________________________________________________________________________
@@ -462,13 +562,13 @@ class ShapeFactory:
 
             alias = var if not self._splitmode else var+'*(-1+2*('+allCuts[self._splitmode+'-selection']+') )'
             alias = alias if not 'btag' in alias else '(bveto_mu && bveto_ip && nbjettche==0)'
-            
+
             try:
                 varSelection = allCuts[sel+'-selection']
             except KeyError as ke:
                 raise RuntimeError('Config error: '+str(ke))
-                
-            
+
+
             #inner  jet and flavor loops
             for chan,(category,flavor) in self._channels.iteritems():
 #                 cat = hwwinfo.categories[category]
@@ -491,7 +591,8 @@ class ShapeFactory:
                         if 'DYLL-templatesyst' in samples: samples.pop('DYLL-templatesyst')
                     if (flavor=='ee' or flavor=='mm'):
                         if 'DYTT'              in samples: samples.pop('DYTT')
-                    
+
+                    #print '----> samples = ',samples
                     # - define the source paths 
                     activeInputPaths = ['base']
                     # - if the current var is listes among the known paths,
@@ -506,7 +607,7 @@ class ShapeFactory:
                     print 'Input dir:',dirmap.values()
 
                     inputs = self._connectInputs(var,samples, dirmap)
-                    
+
                     # and the output path (might be par dependent as well)
                     output = outPath.format(**pars)
                     outdir = os.path.dirname(output)
@@ -1026,6 +1127,14 @@ class ShapeFactory:
     # define here the mass-dependent weights
     def _sampleWeights(self,mass,var,cat,sel,flavor):
         weights = {}
+        #print ">>>> sel = ", sel
+        if sel in ['CutWW'] : # only for WW xsec for the time being
+            #print " WW xsec "
+            #                                                            pow                      mc@nlo                   MG             NLO x-sec     nnll weight
+            #weights['WW']              = self._stdWgt+'*(((dataset==6)*1./999860.)+((dataset==2)*1./539594.)+((dataset==0)*1./1933232.))*5.8123*1000./baseW*nllW'
+            #                                                            pow                      mc@nlo                   MG            NNLO x-sec     nnll weight
+            weights['WW']              = self._stdWgt+'*(((dataset==6)*1./999860.)+((dataset==2)*1./539594.)+((dataset==0)*1./1933232.))*5.984*1000./baseW*nllW'
+
         # tocheck
         weights['WJet']              = self._stdWgt+'*kfW*fakeW*(run!=201191)'
         weights['WJetFakeRate-nominal']  = self._stdWgt+'*kfW*fakeW*(run!=201191)'
@@ -1139,11 +1248,34 @@ class ShapeFactory:
             weights['VH']             = 'puW*effW*triggW*0.0007897267'
 
 
+        # for Higgs width measurements
+        #                                              2.1 from LO -> NNLO scaling
+        #weights['ggH_sbi']            = self._stdWgt+'*2.1' # +'*((dataset == 37) - (dataset == 37) + (dataset == 37))'
+        #weights['ggH_s']              = self._stdWgt+'*2.1' # +'*((dataset == 37) - (dataset == 37) + (dataset == 37))'
+        #weights['ggH_b']              = self._stdWgt+'*2.1' # +'*((dataset == 37) - (dataset == 37) + (dataset == 37))'
+        # using powheg to normalize on-shell contribution
+        weights['ggH_sbi']            = self._stdWgt+'*(((njet==0) * (13.3258/5.85323)) + ((njet==1) * (5.78547/1.40855)) + ((njet>=2) * (1.79911/0.195922)))' # +'*((dataset == 37) - (dataset == 37) + (dataset == 37))'
+        weights['ggH_s']              = self._stdWgt+'*(((njet==0) * (13.3258/5.85323)) + ((njet==1) * (5.78547/1.40855)) + ((njet>=2) * (1.79911/0.195922)))' # +'*((dataset == 37) - (dataset == 37) + (dataset == 37))'
+        weights['ggH_b']              = self._stdWgt+'*(((njet==0) * (13.3258/5.85323)) + ((njet==1) * (5.78547/1.40855)) + ((njet>=2) * (1.79911/0.195922)))' # +'*((dataset == 37) - (dataset == 37) + (dataset == 37))'
+
+        #                                             only-offshell            1 sm                     9 sm                    25 sm
+        #weights['qqH_sbi']            = self._stdWgt+'*(mWW>130)*( 1.000*(dataset == 150) - 0.000*(dataset == 151) + 0.000*(dataset == 152))'
+        #weights['qqH_s']              = self._stdWgt+'*(mWW>130)*( 0.125*(dataset == 150) - 0.250*(dataset == 151) + 0.125*(dataset == 152))'
+        #weights['qqH_b']              = self._stdWgt+'*(mWW>130)*( 1.875*(dataset == 150) - 1.250*(dataset == 151) + 0.375*(dataset == 152))'
+        weights['qqH_sbi']            = self._stdWgt+'*(mWW>130)*( 1.000*( (dataset == 160) ||  (dataset == 169) || (dataset == 176) || (dataset == 172)) - 0.000*( (dataset == 161) ||  (dataset == 175) || (dataset == 173) || (dataset == 170)) + 0.000*( (dataset == 162) ||  (dataset == 171) || (dataset == 174) || (dataset == 177)))'
+        weights['qqH_s']              = self._stdWgt+'*(mWW>130)*( 0.125*( (dataset == 160) ||  (dataset == 169) || (dataset == 176) || (dataset == 172)) - 0.250*( (dataset == 161) ||  (dataset == 175) || (dataset == 173) || (dataset == 170)) + 0.125*( (dataset == 162) ||  (dataset == 171) || (dataset == 174) || (dataset == 177)))'
+        weights['qqH_b']              = self._stdWgt+'*(mWW>130)*( 1.875*( (dataset == 160) ||  (dataset == 169) || (dataset == 176) || (dataset == 172)) - 1.250*( (dataset == 161) ||  (dataset == 175) || (dataset == 173) || (dataset == 170)) + 0.375*( (dataset == 162) ||  (dataset == 171) || (dataset == 174) || (dataset == 177)))'
+
+   #Double_t S =  0.125 * P1 -0.250 *P9 + 0.125 * P25;
+   #Double_t I = -1.000 * P1 +1.500 *P9 - 0.500 * P25;
+   #Double_t B =  1.875 * P1 -1.250 *P9 + 0.375 * P25;
+
+
         if cat in ['2j','2jtche05','2jtche05CJ','2jtche05FJ']:
             #weights['WW']                = self._stdWgt+'*(1+(mjj>500)*(detajj>3.5))'
             weights['WW']                = self._stdWgt
-            weights['WWewk']             = self._stdWgt+'*(numbLHE==0)'
-            #weights['WWewk']             = self._stdWgt+'*(abs(jetLHEPartonpid1)!=6 && abs(jetLHEPartonpid2)!=6 && abs(jetLHEPartonpid3)!=6)*(abs(jetLHEPartonpid1)!=5 && abs(jetLHEPartonpid2)!=5 && abs(jetLHEPartonpid3)!=5)'
+            #weights['WWewk']             = self._stdWgt+'*(numbLHE==0)'
+            weights['WWewk']             = self._stdWgt+'*(abs(jetLHEPartonpid1)!=6 && abs(jetLHEPartonpid2)!=6 && abs(jetLHEPartonpid3)!=6)*(abs(jetLHEPartonpid1)!=5 && abs(jetLHEPartonpid2)!=5 && abs(jetLHEPartonpid3)!=5)'
 
             if (sel == 'vbf' or sel == 'vbf-shape') :
               weights['CHITOP-Top']        = self._stdWgt+'*('+hwwinfo.massSelections(mass)['vbf-selection-top']+')'
@@ -1522,9 +1654,16 @@ if __name__ == '__main__':
                   ('interferenceGGH_down'    , 'interf_ggHDown'),
                   ('interferenceVBF_up'      , 'interf_qqHUp'),
                   ('interferenceVBF_down'    , 'interf_qqHDown'),
+                  ('JER_down'                , 'p_res_jDown'),
+                  ('JER_up'                  , 'p_res_jUp'),
+                  ('JER_down'                , 'p_res_jDown'),
+                  ('NNLL_up'                 , 'nnllUp'),
+                  ('NNLL_down'               , 'nnllDown'),
+                  ('NNLLR_up'                , 'nnllRUp'),
+                  ('NNLLR_down'              , 'nnllRDown'),
               ])
 
-  
+
               # remove skip-syst list
   #             if opt.skipSyst!='':
   #                for s in opt.skipSyst.split(','):
@@ -1538,6 +1677,16 @@ if __name__ == '__main__':
               systByWeight = {}
               # use only leptonEfficiency or muonEfficiency+electronEfficiency
               # skipSyst = ['leptonEfficiency_down', 'leptonEfficiency_up']
+              #AdditionalSkipSyst = ['JER_down', 'JER_up', 'chargeResolution', 'puW_up', 'puW_down']  # -> temporary fix
+              AdditionalSkipSyst = ['chargeResolution', 'puW_up', 'puW_down']  # -> temporary fix
+              for s in AdditionalSkipSyst:
+                print 'skipping systematics: ',s
+                if s in systematics.keys() :
+                  systematics.pop(s)
+                else :
+                  print '>> Beware! you are trying to remove a nuisance that is not even there: ',s
+
+
               systByWeight['leptonEfficiency_down'] = 'effWDown/effW'
               systByWeight['leptonEfficiency_up']   = 'effWUp/effW'
               systByWeight['muonEfficiency_down'] = 'effWMuDown/effW'
@@ -1552,9 +1701,21 @@ if __name__ == '__main__':
               systByWeight['puW_down'] = 'puWup/puW'
               systByWeight['puW_up']   = 'puWdown/puW'
 
+              if selection in ['CutWW'] :
+                systByWeight['NNLL_down']  = 'nllW_Qdown/nllW'
+                systByWeight['NNLL_up']    = 'nllW_Qup/nllW'
+                systByWeight['NNLLR_down'] = 'nllW_Rdown/nllW'
+                systByWeight['NNLLR_up']   = 'nllW_Rup/nllW'
+              else :
+                systematics.pop('NNLL_down')
+                systematics.pop('NNLL_up')
+                systematics.pop('NNLLR_down')
+                systematics.pop('NNLLR_up')
+
+
               factory._systByWeight = systByWeight
 
-              processMask = ['ggH', 'ggH_ALT',  'qqH',  'qqH_ALT', 'wzttH', 'ZH', 'WH', 'ttH', 'ggWW', 'Top', 'TopPt0', 'TopPt1', 'TopPt2', 'TopPt3', 'TopPt4', 'TopPt5', 'TopPt6', 'TopPt7', 'TopPt8', 'WW', 'VV', 'VgS', 'Vg', 'DYTT', 'Other', 'VVV', 'WWewk', 'CHITOP-Top' , 'ggH_SM', 'qqH_SM', 'wzttH_SM' , 'WH_SM','ZH_SM','ttH_SM']
+              processMask = ['ggH', 'ggH_ALT',  'qqH',  'qqH_ALT', 'wzttH', 'ZH', 'WH', 'ttH', 'ggWW', 'Top', 'TopPt0', 'TopPt1', 'TopPt2', 'TopPt3', 'TopPt4', 'TopPt5', 'TopPt6', 'TopPt7', 'TopPt8', 'WW', 'VV', 'VgS', 'Vg', 'DYTT', 'Other', 'VVV', 'WWewk', 'CHITOP-Top' , 'ggH_SM', 'qqH_SM', 'wzttH_SM' , 'WH_SM','ZH_SM','ttH_SM','ggH_sbi','ggH_b','ggH_s','qqH_sbi','qqH_b','qqH_s']
 
               if '2011' in opt.dataset:
                   processMask = ['ggH', 'ggH_ALT', 'qqH', 'qqH_ALT', 'VH' , 'wzttH', 'ZH', 'WH', 'ttH', 'ggWW', 'Top', 'WW', 'VV', 'CHITOP-Top', 'ggH_SM', 'qqH_SM','VH_SM', 'wzttH_SM', 'ZH_SM', 'WH_SM', 'ttH_SM']
@@ -1565,6 +1726,27 @@ if __name__ == '__main__':
               systMasks['interferenceGGH_down'] = ['ggH', 'ggH_ALT']
               systMasks['interferenceVBF_up'  ] = ['qqH', 'qqH_ALT']
               systMasks['interferenceVBF_down'] = ['qqH', 'qqH_ALT']
+
+              # NNLL reweight and unceratinty only if WW
+              if selection in ['CutWW'] :
+                systMasks['NNLL_up']    = ['WW']
+                systMasks['NNLL_down']  = ['WW']
+                systMasks['NNLLR_up']   = ['WW']
+                systMasks['NNLLR_down'] = ['WW']
+
+              # remove selected nuisances for some samples
+              processMaskNoDYTT = processMask
+              processMaskNoDYTT = filter(lambda a: a != 'DYTT', processMaskNoDYTT)
+              for syst,mask in systMasks.iteritems():
+                if syst == 'JER_down' or syst == 'JER_up' :
+                  #print ' >>> Old ', mask
+                  mask = processMaskNoDYTT
+                  #print ' >>> New ', mask
+                  #print 'processMaskNoDYTT  = ',processMaskNoDYTT
+                  systMasks[syst] = mask
+
+
+
               systDirs  = dict([(s,systInputDir if s not in systByWeight else 'templates/' ) for s in systematics])
               #systDirs  = dict([(s,systInputDir if s not in systByWeight else 'nominals/' ) for s in systematics])
               print "systDirs = ",systDirs

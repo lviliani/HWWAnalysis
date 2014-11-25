@@ -191,6 +191,7 @@ class ShapeLoader:
         for name,process,effect,var in self._systematics:
             # check for Up/Down
 #             (process,effect,var) = self._systRegex.match(name).group(1,2,3)
+            print "process,effect,var = ", process,effect,var
             if var == 'Up': 
                 if effect not in ups: ups[effect]= []
                 ups[effect].append(process)
@@ -198,6 +199,9 @@ class ShapeLoader:
                 if effect not in downs: downs[effect]= []
                 downs[effect].append(process)
         # check 
+        print " ups = ", ups
+        print " downs = ", downs
+
         for effect in ups:
             if set(ups[effect]) != set(downs[effect]):
                 sUp = set(ups[effect])
@@ -541,7 +545,20 @@ class NuisanceMapBuilder:
         else :
            optMatt.VH = 0
 
-        if jetcat not in ['0j','1j','2j','2jex']: raise ValueError('Unsupported jet category found: %s')
+        optMatt.HWidth = 0
+        if 'SpecialSettings' in opts:
+           if opts['SpecialSettings'] == 'HWidth' :
+             optMatt.HWidth = 1
+
+        optMatt.WWxsec = 0
+        if 'SpecialSettings' in opts:
+           if opts['SpecialSettings'] == 'WWxsec' :
+             optMatt.WWxsec = 1
+
+
+
+
+        if jetcat not in ['0j','1j','2j','2jex','01j']: raise ValueError('Unsupported jet category found: %s')
 
 #         suffix = '_8TeV'
 #         if '2011' in opt.dataset: suffix = '_7TeV'
@@ -553,7 +570,7 @@ class NuisanceMapBuilder:
 #             for p in opts['floatN'].split(' '):
             for p in opts['floatN']:
                 print p
-                floatN = floatNorm(p)
+                floatN = floatNorm(p,jetcat)
                 CutBased.update( floatN )
 
         common = OrderedDict()
@@ -641,6 +658,7 @@ if __name__ == '__main__':
     parser.add_option('-X','--exclude',         dest='nuisFlags'         , help='exclude nuisances matching the expression',        action='callback', type='string', callback=incexc)
     parser.add_option('-I','--include',         dest='nuisFlags'         , help='include nuisances matching the expression',        action='callback', type='string', callback=incexc)
     parser.add_option('-M','--MCextrap',        dest='MCextrap'          , help='For MC extrapolation: gmN nuisance to be scaled',  action='callback', type='string', callback=incexc)
+    parser.add_option('-S','--SpecialSettings', dest='SpecialSettings'   , help='Special settings',        default=''  ,            action='callback', type='string', callback=incexc)
     parser.add_option('--path_dd'           ,   dest='path_dd'           , help='Data driven path'                 , default=None)
     parser.add_option('--path_shape_merged' ,   dest='path_shape_merged' , help='Destination directory for merged' , default=None)
 #     parser.add_option('--floatN',               dest='floatN'            , help='float normalisation of particular processes, separate by space ', default=' ')
@@ -668,7 +686,7 @@ if __name__ == '__main__':
     print 'isssactive: ',opt.isssactive
     print 'MCextrap:   ',opt.MCextrap
     print 'listSignals:',opt.listSignals
-
+    print 'SpecialSettings:',opt.SpecialSettings
 
     # checks
     if not opt.variable or not opt.lumi:
@@ -710,6 +728,7 @@ if __name__ == '__main__':
     optsNuis['nuisFlags'] = opt.nuisFlags
     optsNuis['floatN'] = opt.floatN
     optsNuis['newInterf'] = opt.newcps
+    optsNuis['SpecialSettings'] = opt.SpecialSettings
     lumistr = '{0:.2f}'.format(opt.lumi)
 
 
@@ -753,7 +772,7 @@ if __name__ == '__main__':
     
                 # reshuffle the order
                 #order = [ 'vbfH', 'ggH', 'wzttH', 'ggWW', 'Vg', 'WJet', 'Top', 'WW', 'DYLL', 'VV', 'DYTT', 'Data']
-                order = [ 'ggH','ggH_ALT','qqH','qqH_ALT', 'wzttH','wzttH_ALT', 'WH', 'ZH', 'ttH', 'ggWW', 'VgS', 'Vg', 'WJet', 'Top', 'TopPt0', 'TopPt1', 'TopPt2', 'TopPt3', 'TopPt4', 'TopPt5', 'TopPt6', 'TopPt7', 'TopPt8', 'WW', 'WWewk', 'DYLL', 'VV', 'DYTT', 'DYee', 'DYmm', 'DYee05', 'DYmm05', 'Other', 'VVV', 'Data','ggH_SM', 'qqH_SM', 'WH_SM','ZH_SM' , 'wzttH_SM' ]
+                order = [ 'ggH','ggH_ALT','qqH','qqH_ALT', 'wzttH','wzttH_ALT', 'WH', 'ZH', 'ttH', 'ggWW', 'VgS', 'Vg', 'WJet', 'Top', 'TopPt0', 'TopPt1', 'TopPt2', 'TopPt3', 'TopPt4', 'TopPt5', 'TopPt6', 'TopPt7', 'TopPt8', 'WW', 'WWewk', 'DYLL', 'VV', 'DYTT', 'DYee', 'DYmm', 'DYee05', 'DYmm05', 'Other', 'VVV', 'Data','ggH_SM', 'qqH_SM', 'WH_SM','ZH_SM' , 'wzttH_SM', 'ggH_sbi', 'ggH_s', 'ggH_b', 'qqH_sbi', 'qqH_s', 'qqH_b' ]
     
    
                 oldYields = yields.copy()

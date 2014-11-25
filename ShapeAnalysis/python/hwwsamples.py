@@ -113,6 +113,35 @@ mcsets = {
         #('DYLL-template',    'DYLL-template-0j1j'),              #    A   <-   sorgente
         #('DYLL-templatesyst','DYLL-templatesyst-0j1j')           #    mkmerged vuole "-template"
     ],
+    '0j1jWW' : [
+        #signals
+        'ggH','qqH','WH','ZH',
+        # bkgs
+        #('WW', 'WWmad'),
+        ('WW', 'WWpowheg'),
+        #('WW', 'WWmc'),
+        #'ggWW',
+        ('ggWW','ggWWnew'),
+        'VgS','Vg','WJet','Top','VV',
+        #'VVV',
+        ('VVV','VVVall'),
+        'DYTT','WWnlo','WWnloUp','WWnloDown',
+        #
+        ('DYLL','ggH'),
+        # systematics
+        'WJetFakeRate-nominal',
+        ('WJetFakeRate-eUp', 'WJetFakeRate-nominal'),
+        ('WJetFakeRate-eDn', 'WJetFakeRate-nominal'),
+        ('WJetFakeRate-mUp', 'WJetFakeRate-nominal'),
+        ('WJetFakeRate-mDn', 'WJetFakeRate-nominal'),
+        ('TopTW',   'Top'),
+        ('TopCtrl', 'Top'),
+        # templates
+        'VgS-template','Vg-template',
+        # 0j1j specific
+        #('DYLL-template',    'DYLL-template-0j1j'),              #    A   <-   sorgente
+        #('DYLL-templatesyst','DYLL-templatesyst-0j1j')           #    mkmerged vuole "-template"
+    ],
     'cutbased' : [
         #signals
         'ggH','qqH','WH','ZH',
@@ -475,7 +504,65 @@ mcsets = {
         'ggH','qqH','wzttH',
         # backgrounds
         'WW','ggWW','VgS','Vg','WJet','ttbar','tW','VV','DYTT','DYLL',
-   ]
+   ],
+
+   'Hwidth_01j' : [
+        #signals
+        'ggH','qqH',
+        'ggH_sbi','qqH_sbi',
+        'ggH_b','qqH_b',
+        'ggH_s','qqH_s',
+        #'ggHminlo',
+        # bkgs
+        'WW',
+        #'ggWW',
+        'VgS','Vg','WJet','Top','VV',
+        #'VVV',
+        ('VVV','VVVnoEWK'),
+        'DYTT','WWnlo','WWnloUp','WWnloDown',
+        ('DYLL','ggH'),
+        # systematics
+        'WJetFakeRate-nominal',
+        ('WJetFakeRate-eUp', 'WJetFakeRate-nominal'),
+        ('WJetFakeRate-eDn', 'WJetFakeRate-nominal'),
+        ('WJetFakeRate-mUp', 'WJetFakeRate-nominal'),
+        ('WJetFakeRate-mDn', 'WJetFakeRate-nominal'),
+        ('TopTW',   'Top'),
+        ('TopCtrl', 'Top'),
+        # templates
+        'VgS-template','Vg-template',
+        # 0j1j specific
+        #('DYLL-template',    'DYLL-template-0j1j'),              #    A   <-   sorgente
+        #('DYLL-templatesyst','DYLL-templatesyst-0j1j')           #    mkmerged vuole "-template"
+    ],
+
+   'Hwidth_2j' : [
+        #signals
+        'ggH','qqH',
+        'ggH_sbi','qqH_sbi',
+        'ggH_b','qqH_b',
+        'ggH_s','qqH_s',
+        #'ggHminlo',
+        # bkgs
+        'WW',
+        #'ggWW',
+        'VgS','Vg','WJet','Top','VV',
+          #'VVV',
+        ('VVV','VVVnoEWK'),
+        'DYTT','WWnlo','WWnloUp','WWnloDown',
+        ('DYLL','ggH'),
+        # systematics
+        'WJetFakeRate-nominal',
+        ('WJetFakeRate-eUp', 'WJetFakeRate-nominal'),
+        ('WJetFakeRate-eDn', 'WJetFakeRate-nominal'),
+        ('WJetFakeRate-mUp', 'WJetFakeRate-nominal'),
+        ('WJetFakeRate-mDn', 'WJetFakeRate-nominal'),
+        #
+        'Top'
+        #('CHITOP-Top',     'Top'), -> to be fixed for data-driven estimation
+        # templates
+        'VgS-template','Vg-template',
+    ],
 }
 
 #--------------

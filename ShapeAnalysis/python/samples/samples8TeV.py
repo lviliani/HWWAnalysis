@@ -3,6 +3,21 @@ import re
 
 
 backgrounds = {
+    'VVVnoEWK'                : ['nominals/latino_093_TTWJets.root',
+                                 'nominals/latino_094_TTZJets.root',
+                                 'nominals/latino_095_TTWWJets.root',
+                                 'nominals/latino_096_TTGJets.root',
+                                ],
+    'VVVall'                  : ['nominals/latino_088_WWGJets.root',
+                                 'nominals/latino_089_WZZJets.root',
+                                 'nominals/latino_090_ZZZJets.root',
+                                 'nominals/latino_091_WWZJets.root',
+                                 'nominals/latino_092_WWWJets.root',
+                                 'nominals/latino_093_TTWJets.root',
+                                 'nominals/latino_094_TTZJets.root',
+                                 'nominals/latino_095_TTWWJets.root',
+                                 'nominals/latino_096_TTGJets.root',
+                                ],
     'VVV'                     : ['nominals/latino_090_ZZZJets.root',
                                  'nominals/latino_091_WWZJets.root',
                                  'nominals/latino_092_WWWJets.root',
@@ -144,6 +159,18 @@ backgrounds = {
                                 ],
     'ggHminlo'                : [ 'nominals/latino_4125_ggToH125toWWTo2LAndTau2NuMinlo.root'
                                 ],
+
+    'WWmad'                   : [
+                                  'nominals/latino000_nll_ewk.root'
+                                ],
+    'WWpowheg'                : [
+                                  'nominals/latino006_nll_ewk.root'
+                                ],
+    'WWmc'                    : [
+                                  'nominals/latino002_nll_ewk.root'
+                                ],
+    'ggWWnew'                 : ['nominals/latino001.root'],
+
 }
 
 backgrounds['Other'] = backgrounds['WW']+backgrounds['ggWW']+backgrounds['Top']+backgrounds['VV']+backgrounds['DYTT']+backgrounds['DYLL']
@@ -218,7 +245,76 @@ def signalSamples(sigtag,mass=125,suffix=''):
                     'nominals/latino_8012_Graviton2PMqqbarToWWLTau2nu.root'
                    ]
 
-    if sigtag == 'SM':
+    # FIXME the names
+
+    ggH_sbi      = [
+                    #'nominals/latinogg2vv_Hw1_IntOnPeak_8TeV.root', --> only off-shell must be considered
+                    'nominals/latinogg2vv_Hw1_IntShoulder_8TeV.root',
+                    'nominals/latinogg2vv_Hw1_IntTail_8TeV.root'
+                   ]
+    ggH_b        = [
+                    'nominals/latinogg2vv_Hw25_CotHead_8TeV.root',
+                    'nominals/latinogg2vv_Hw25_CotTail_8TeV.root'
+                   ]
+    ggH_s        = [
+                    #'nominals/latinogg2vv_Hw1_SigOnPeak_8TeV.root',  -> only off-shell must be considered
+                    'nominals/latinogg2vv_Hw1_SigShoulder_8TeV.root',
+                    'nominals/latinogg2vv_Hw1_SigTail_8TeV.root'
+                   ]
+    #qqH_sbi      = ['nominals/latino_150_qqww1sm.root'
+                   #]
+    #qqH_b        = ['nominals/latino_150_qqww1sm.root',
+                    #'nominals/latino_151_qqww9sm.root',
+                    #'nominals/latino_152_qqww25sm.root'
+                   #]
+    #qqH_s        = ['nominals/latino_150_qqww1sm.root',
+                    #'nominals/latino_151_qqww9sm.root',
+                    #'nominals/latino_152_qqww25sm.root'
+                   #]
+    qqH_sbi      = ['nominals/latino_160_qqww1smEM_baseW.root',
+                    'nominals/latino_169_qqww1smTM_baseW.root',
+                    'nominals/latino_176_qqww1smTT_baseW.root',
+                    'nominals/latino_172_qqww1smTE_baseW.root',
+                   ]
+    qqH_b        = ['nominals/latino_160_qqww1smEM_baseW.root',
+                    'nominals/latino_169_qqww1smTM_baseW.root',
+                    'nominals/latino_172_qqww1smTE_baseW.root',
+                    'nominals/latino_176_qqww1smTT_baseW.root',
+
+                    'nominals/latino_161_qqww9smEM_baseW.root',
+                    'nominals/latino_175_qqww9smTM_baseW.root',
+                    'nominals/latino_173_qqww9smTE_baseW.root',
+                    'nominals/latino_170_qqww9smTT_baseW.root',
+
+                    'nominals/latino_162_qqww25smEM_baseW.root',
+                    'nominals/latino_171_qqww25smTM_baseW.root',
+                    'nominals/latino_174_qqww25smTE_baseW.root',
+                    'nominals/latino_177_qqww25smTT_baseW.root',
+                   ]
+    qqH_s        = ['nominals/latino_160_qqww1smEM_baseW.root',
+                    'nominals/latino_169_qqww1smTM_baseW.root',
+                    'nominals/latino_172_qqww1smTE_baseW.root',
+                    'nominals/latino_176_qqww1smTT_baseW.root',
+
+                    'nominals/latino_161_qqww9smEM_baseW.root',
+                    'nominals/latino_175_qqww9smTM_baseW.root',
+                    'nominals/latino_173_qqww9smTE_baseW.root',
+                    'nominals/latino_170_qqww9smTT_baseW.root',
+
+                    'nominals/latino_162_qqww25smEM_baseW.root',
+                    'nominals/latino_171_qqww25smTM_baseW.root',
+                    'nominals/latino_174_qqww25smTE_baseW.root',
+                    'nominals/latino_177_qqww25smTT_baseW.root',
+                   ]
+
+
+
+
+
+
+
+
+    if sigtag == 'SM' or sigtag == 'Hwidth' :
         ggH   = ['nominals/latino_1{mass}_ggToH{mass}toWWTo2LAndTau2Nu.root',
                 ]
         qqH   = ['nominals/latino_2{mass}_vbfToH{mass}toWWTo2LAndTau2Nu.root',
@@ -243,6 +339,14 @@ def signalSamples(sigtag,mass=125,suffix=''):
         else:
             signals['ggH'+suffix]   = [f.format(mass = mass) for f in ggH]
             signals['qqH'+suffix]   = [f.format(mass = mass) for f in qqH]
+
+        if sigtag == 'Hwidth' :
+            signals['ggH_sbi'] = ggH_sbi
+            signals['ggH_s']   = ggH_s
+            signals['ggH_b']   = ggH_b
+            signals['qqH_sbi'] = qqH_sbi
+            signals['qqH_s']   = qqH_s
+            signals['qqH_b']   = qqH_b
 
 
 # and the JHU case:

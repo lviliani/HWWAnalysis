@@ -104,10 +104,10 @@ class ZhwwlvlvVarFiller(TreeCloner):
             ch2 = itree.ch2
             ch3 = itree.ch3
             ch4 = itree.ch4
-            fl1 = ROOT.TMath.Abs(itree.pdgid1)
-            fl2 = ROOT.TMath.Abs(itree.pdgid2)
-            fl3 = ROOT.TMath.Abs(itree.pdgid3)
-            fl4 = ROOT.TMath.Abs(itree.pdgid4)
+            fl1 = itree.pdgid1
+            fl2 = itree.pdgid2
+            fl3 = itree.pdgid3
+            fl4 = itree.pdgid4
 
             ZHWW4lvari = ROOT.ZHWW4lvari(pt1, pt2, pt3, pt4, eta1, eta2, eta3, eta4, phi1, phi2, phi3, phi4, ch1, ch2, ch3, ch4, fl1, fl2, fl3, fl4)
 

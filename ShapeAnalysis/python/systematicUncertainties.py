@@ -62,6 +62,11 @@ ggH_jets2 = dict([(m, dict(zip(['0','1in0','1in1','2in1','2in2'], vals))) for m,
 ggH_UEPS = dict([(m, dict(zip(['u0','u1','u2'], vals))) for m,vals in file2map(SYST_PATH+"ggH_UEPS.txt").items()])
 ggH_intf = dict([(m, dict(zip(['intf'], vals))) for m,vals in file2map(SYST_PATH+"ggH_interference.txt").items()])
 
+#                             BR uncertainty
+HWW_BR = dict([(m, dict(zip(['brunc'], vals))) for m,vals in file2map(SYST_PATH+"HWW_BR.txt").items()])
+
+
+
 
 def loadYRSyst(YRVersion=3,Energy='8TeV') :
 
@@ -147,7 +152,7 @@ def GetYRVal(YRDic,iMass):
        sp = ROOT.TSpline3("YR",gr);
        #print iMass,sp.Eval(iMass)
        return sp.Eval(iMass)
-      
+
 
 def getCommonSysts(mass,channel,jets,qqWWfromData,shape,options,suffix,isssactive,Energy,newInterf=False,YRVersion=3,mh_SM=125.,mh_SM2=125. ):
 
@@ -157,6 +162,8 @@ def getCommonSysts(mass,channel,jets,qqWWfromData,shape,options,suffix,isssactiv
     #MCPROC = ['ggH', 'vbfH', 'DTT', 'ggWW', 'VV', 'Vg' ]; 
     MCPROC = ['ggH', 'qqH', 'wzttH', 'WH', 'ZH', 'ttH', 'DYTT', 'VV', 'VgS', 'Vg', 'Other', 'VVV', 'WWewk', 'ggH_SM', 'qqH_SM', 'wzttH_SM' , 'WH_SM', 'ZH_SM', 'ttH_SM' ];
     MCPROC+=['Top']
+    MCPROC+=['ggH_sbi', 'ggH_b', 'ggH_s'] # for Higgs width
+    MCPROC+=['qqH_sbi', 'qqH_b', 'qqH_s'] # for Higgs width
     if channel == 'elmu' or channel == 'muel': MCPROC+=['DYMM','DYEE']
     if channel == 'of': MCPROC += ['DYLL']
     if not qqWWfromData: MCPROC+=['WW','ggWW']
@@ -168,7 +175,11 @@ def getCommonSysts(mass,channel,jets,qqWWfromData,shape,options,suffix,isssactiv
     #nuisances['pdf_gg']    = [ ['lnN'], { 'ggH':ggH_pdfErrYR[mass], 'ggWW':(1.00 if qqWWfromData else 1.04) }]
     nuisances['pdf_gg']    = [ ['lnN'], { 'ggH'    : GetYRVal(ggH_pdfErrYR,mass), 
                                           'ggH_SM' : GetYRVal(ggH_pdfErrYR,mh_SM),
-                                          'ggWW'   : 1.04 , 
+                                          'ggWW'   : 1.04 ,  # 4% uncertainty by Xavier and Guillelmo studies
+                                          # for Higgsw width
+                                          'ggH_sbi'   : 1.04 ,
+                                          'ggH_b'     : 1.04 ,
+                                          'ggH_s'     : 1.04 ,
                                         }]
 
     nuisances['pdf_qqbar'] = [ ['lnN'], { #'wzttH' :(1.0 if mass>300 else wzttH_pdfErrYR[mass]),  
@@ -182,11 +193,37 @@ def getCommonSysts(mass,channel,jets,qqWWfromData,shape,options,suffix,isssactiv
                                           'ttH_SM'   :(1.0 if mh_SM>300 else GetYRVal(ttH_pdfErrYR,mh_SM)), 
                                           'qqH_SM'   :GetYRVal(vbfH_pdfErrYR,mh_SM), 
                                           'VV':1.04, 
-                                          'WW':(1.0 if qqWWfromData else 1.04), 
- 
+                                          'WW':(1.0 if qqWWfromData else 1.04),  # 4% uncertainty by Xavier and Guillelmo studies
+                                          # for Higgsw width
+                                          'qqH_sbi'   : 1.04 ,
+                                          'qqH_b'     : 1.04 ,
+                                          'qqH_s'     : 1.04 ,
+
                                         }]
 
+    if options.WWxsec :
+      nuisances['pdf_qqbar'][1]['WW'] = 1.013
+      nuisances['pdf_gg'][1]['ggWW'] = 1.007
+
+    #nuisances['pdf_qqbar_ACCEPT'] = [ ['lnN'], {
+                                          #'WW':    1.013,
+    #}
+
+    #nuisances['pdf_gg_ACCEPT'] = [ ['lnN'], {
+                                          #'WW':    1.008
+    #}
+
+
     # -- Theory ---------------------
+    nuisances['QCDscale_ggH_offshell']    = [  ['lnN'], { 'ggH_sbi':1.15,  'ggH_b':1.15,  'ggH_s':1.15 }]
+    if options.HWidth :
+      if jets == 0:
+        nuisances['QCDscale_ggWW_0jet'] = [ ['lnN'], {'ggH_sbi': 1.11, 'ggH_b': 1.11, 'ggH_s': 1.11}]
+      if jets == 1:
+        nuisances['QCDscale_ggWW_1jet'] = [ ['lnN'], {'ggH_sbi': 1.11, 'ggH_b': 1.11, 'ggH_s': 1.11}]
+      if jets == 2:
+        nuisances['QCDscale_ggWW_2jet'] = [ ['lnN'], {'ggH_sbi': 1.21, 'ggH_b': 1.21, 'ggH_s': 1.21}]
+
     if jets == 0:
         # appendix D of https://indico.cern.ch/getFile.py/access?contribId=0&resId=0&materialId=0&confId=135333
         k0 = pow(GetYRVal(ggH_scaErrYR,mass),     1/ggH_jets[mass]['f0'])
@@ -289,8 +326,14 @@ def getCommonSysts(mass,channel,jets,qqWWfromData,shape,options,suffix,isssactiv
                                                   'ggH_SM':1.20, 'qqH_SM':1.10}]
 
     # UEPS for WW 0 jet
-    if   jets == 0: nuisances['UEPS_WW'] = [ ['lnN'], {'WW':1.01}]
+    if   jets == 0: nuisances['UEPS_WW'] = [ ['lnN'], {'WW':1.035}]   # see AN 2014/077
 
+    # UEPS for offshell part
+    #nuisances['UEPS_off'] = [ ['lnN'], {'ggH_sbi':1.10, 'ggH_b':1.10, 'ggH_s':1.10, 'qqH_sbi':1.10, 'qqH_b':1.10, 'qqH_s':1.10  }]
+    if 'UEPS' in nuisances.keys() :
+      nuisances['UEPS'][1].update( {'ggH_sbi':1.10, 'ggH_b':1.10, 'ggH_s':1.10, 'qqH_sbi':1.10, 'qqH_b':1.10, 'qqH_s':1.10  } )
+    else :
+      nuisances['UEPS'] = [ ['lnN'], {'ggH_sbi':1.10, 'ggH_b':1.10, 'ggH_s':1.10, 'qqH_sbi':1.10, 'qqH_b':1.10, 'qqH_s':1.10  }]
 
 
     #if ((not qqWWfromData) and (jets != 2)): nuisances['QCDscale_WW_EXTRAP'] = [ ['lnN'], {'WW':1.06}]
@@ -311,6 +354,12 @@ def getCommonSysts(mass,channel,jets,qqWWfromData,shape,options,suffix,isssactiv
       else :
          nuisances['interf_ggH'] = [ ['lnN'], {'ggH':1.00}]
 
+    # BR H > VV uncertainty
+    nuisances['BRhiggs_hvv'] = [ ['lnN'], {'ggH':HWW_BR[mass]['brunc'], 'qqH':HWW_BR[mass]['brunc'], 'ggH_sbi':HWW_BR[mass]['brunc'], 'ggH_b':HWW_BR[mass]['brunc'], 'ggH_s':HWW_BR[mass]['brunc'], 'qqH_sbi':HWW_BR[mass]['brunc'], 'qqH_b':HWW_BR[mass]['brunc'], 'qqH_s':HWW_BR[mass]['brunc']}]
+
+
+
+
     #if options.WJsub:
     #    nuisances['CMS_FakeRate_e'] = [ ['lnN'], { 'WJet': 1.0+options.WJsub } ]
     #    nuisances['CMS_FakeRate_m'] = [ ['lnN'], { 'WJet': 1.0+options.WJsub } ]
@@ -319,13 +368,15 @@ def getCommonSysts(mass,channel,jets,qqWWfromData,shape,options,suffix,isssactiv
     #    nuisances['CMS_FakeRate_m'] = [ ['lnN'], { 'WJet': 1.0+options.WJadd } ]
     addFakeRateSyst(nuisances, mass, channel, jets, shape, suffix)
 
-    if 'e' in channel:     nuisances['CMS'+suffix+'_eff_l'] = [ ['lnN'], dict([(p,pow(1.02,channel.count('e'))) for p in MCPROC])]
-    #elif channel == 'all': nuisances['CMS_eff_l'] = [ ['lnN'], dict([(p,1.02) for p in MCPROC])]
-    #elif channel == 'sf':  nuisances['CMS_eff_l'] = [ ['lnN'], dict([(p,1.02) for p in MCPROC])]
-    #elif channel == 'of':  nuisances['CMS_eff_l'] = [ ['lnN'], dict([(p,1.02) for p in MCPROC])]
-    else :
-        nuisances['CMS'+suffix+'_eff_e'] = [ ['lnN'], dict([(p,1.04) for p in MCPROC])]
-        nuisances['CMS'+suffix+'_eff_m'] = [ ['lnN'], dict([(p,1.03) for p in MCPROC])]
+    # FIXME : AM: "where are these numbers coming from?" 
+    #if 'e' in channel:     nuisances['CMS'+suffix+'_eff_l'] = [ ['lnN'], dict([(p,pow(1.02,channel.count('e'))) for p in MCPROC])]
+    ##elif channel == 'all': nuisances['CMS_eff_l'] = [ ['lnN'], dict([(p,1.02) for p in MCPROC])]
+    ##elif channel == 'sf':  nuisances['CMS_eff_l'] = [ ['lnN'], dict([(p,1.02) for p in MCPROC])]
+    ##elif channel == 'of':  nuisances['CMS_eff_l'] = [ ['lnN'], dict([(p,1.02) for p in MCPROC])]
+    #else :
+        #nuisances['CMS'+suffix+'_eff_e'] = [ ['lnN'], dict([(p,1.04) for p in MCPROC])]
+        #nuisances['CMS'+suffix+'_eff_m'] = [ ['lnN'], dict([(p,1.03) for p in MCPROC])]
+
     # just put a common one now
     if   channel == 'mumu': nuisances['CMS_p_scale_m'] = [ ['lnN'], dict([(p,1.015) for p in MCPROC if p != 'DTT'] )]
     elif channel == 'elmu': nuisances['CMS_p_scale_m'] = [ ['lnN'], dict([(p,1.015) for p in MCPROC if p != 'DTT'] )]
@@ -405,11 +456,11 @@ def addFakeRateSyst(nuisances, mass, channel, jets, shape, suffix=''):
     #nuisances['CMS_hww_FakeRate_e'] = [ ['lnN'], { 'WJet': (fake_e_up,fake_e_dn) } ] # from jet ET variation
 
 
-def floatNorm(process):
+def floatNorm(process,jetcat):
     nuisances = {}
     if process in 'WW' and process != '':
-        nuisances['CMS_norm_'+process] = [ ['lnU'], { 'WW':2.00, 'ggWW':2.00 } ]
+        nuisances['CMS_norm_'+jetcat+'_'+process] = [ ['lnU'], { 'WW':2.00, 'ggWW':2.00 } ]
     elif process != '':
-        nuisances['CMS_norm_'+process] = [ ['lnU'], { process:2.00 } ]
+        nuisances['CMS_norm_'+jetcat+'_'+process] = [ ['lnU'], { process:2.00 } ]
     return nuisances
 
