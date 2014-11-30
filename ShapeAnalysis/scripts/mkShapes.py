@@ -1272,6 +1272,15 @@ class ShapeFactory:
         weights['qqH_s']              = self._stdWgt+'*(mWW>130)*( 0.125*( (dataset == 160) ||  (dataset == 169) || (dataset == 176) || (dataset == 172)) - 0.250*( (dataset == 161) ||  (dataset == 175) || (dataset == 173) || (dataset == 170)) + 0.125*( (dataset == 162) ||  (dataset == 171) || (dataset == 174) || (dataset == 177)))'
         weights['qqH_b']              = self._stdWgt+'*(mWW>130)*( 1.875*( (dataset == 160) ||  (dataset == 169) || (dataset == 176) || (dataset == 172)) - 1.250*( (dataset == 161) ||  (dataset == 175) || (dataset == 173) || (dataset == 170)) + 0.375*( (dataset == 162) ||  (dataset == 171) || (dataset == 174) || (dataset == 177)))'
 
+        # fix for 2011
+        #print "sel = ",sel
+        if (sel == "Hwidthmthmll7TeV") :
+          weights['qqH_sbi']            = self._stdWgt+'*(mWW>130)*( 1.000*( (dataset == 272) ||  (dataset == 275) || (dataset == 278) || (dataset == 281)) - 0.000*( (dataset == 273) ||  (dataset == 276) || (dataset == 279) || (dataset == 282)) + 0.000*( (dataset == 274) ||  (dataset == 277) || (dataset == 280) || (dataset == 283)))'
+          weights['qqH_s']              = self._stdWgt+'*(mWW>130)*( 0.125*( (dataset == 272) ||  (dataset == 275) || (dataset == 278) || (dataset == 281)) - 0.250*( (dataset == 273) ||  (dataset == 175) || (dataset == 279) || (dataset == 282)) + 0.125*( (dataset == 274) ||  (dataset == 277) || (dataset == 280) || (dataset == 283)))'
+          weights['qqH_b']              = self._stdWgt+'*(mWW>130)*( 1.875*( (dataset == 272) ||  (dataset == 275) || (dataset == 278) || (dataset == 281)) - 1.250*( (dataset == 273) ||  (dataset == 175) || (dataset == 279) || (dataset == 282)) + 0.375*( (dataset == 274) ||  (dataset == 277) || (dataset == 280) || (dataset == 283)))'
+
+
+
    #Double_t S =  0.125 * P1 -0.250 *P9 + 0.125 * P25;
    #Double_t I = -1.000 * P1 +1.500 *P9 - 0.500 * P25;
    #Double_t B =  1.875 * P1 -1.250 *P9 + 0.375 * P25;

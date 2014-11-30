@@ -125,6 +125,11 @@ data['Data2011'] = data['Data2011A']+data['Data2011B']
 
 def signalSamples(sigtag,mass=125,suffix=''):
 
+    # get closer mass
+    # FIXME: temporary fix
+    if int(mass) == 125:
+      mass = 126
+
     signals = {}
 
     # some preliminary definitions
@@ -152,7 +157,79 @@ def signalSamples(sigtag,mass=125,suffix=''):
                     'nominals/latino_13012_Graviton2PMqqbarToWWLTau2Nu.root'
                    ]
 
-    if sigtag == 'SM':
+
+
+    # for higgs width
+    ggH_sbi      = [
+                    #'nominals/latino_260_ggww1smSBI000140.root', --> only off-shell must be considered
+                    'nominals/latino_263_ggww1smSBI140300.root',
+                    'nominals/latino_266_ggww1smSBI300.root'
+                   ]
+    ggH_b        = [
+                    'nominals/latino_270_ggwwB000300.root',
+                    'nominals/latino_271_ggwwB300.root'
+                   ]
+    ggH_s        = [
+                     #'nominals/latino_250_ggww1sm000140.root',-> only off-shell must be considered
+                     'nominals/latino_253_ggww1sm140300.root',
+                     'nominals/latino_256_ggww1sm300.root',
+                   ]
+
+    qqH_sbi      = ['nominals/latino_272_qqww1smTM.root',
+                    'nominals/latino_275_qqww1smTE.root',
+                    'nominals/latino_278_qqww1smTT.root',
+                    'nominals/latino_281_qqww1smEM.root',
+                    'nominals/latino_284_qqww1smEE.root',
+                    'nominals/latino_287_qqww1smMM.root',
+                   ]
+    qqH_b        = ['nominals/latino_272_qqww1smTM.root',
+                    'nominals/latino_275_qqww1smTE.root',
+                    'nominals/latino_278_qqww1smTT.root',
+                    'nominals/latino_281_qqww1smEM.root',
+                    #'nominals/latino_284_qqww1smEE.root',
+                    #'nominals/latino_287_qqww1smMM.root',
+
+                    'nominals/latino_273_qqww9smTM.root',
+                    'nominals/latino_276_qqww9smTE.root',
+                    'nominals/latino_279_qqww9smTT.root',
+                    'nominals/latino_282_qqww9smEM.root',
+                    #'nominals/latino_285_qqww9smEE.root',
+                    #'nominals/latino_288_qqww9smMM.root',
+
+                    'nominals/latino_274_qqww25smTM.root',
+                    'nominals/latino_277_qqww25smTE.root',
+                    'nominals/latino_280_qqww25smTT.root',
+                    'nominals/latino_283_qqww25smEM.root',
+                    #'nominals/latino_286_qqww25smEE.root',
+                    #'nominals/latino_289_qqww25smMM.root',
+                   ]
+    qqH_s        = ['nominals/latino_272_qqww1smTM.root',
+                    'nominals/latino_275_qqww1smTE.root',
+                    'nominals/latino_278_qqww1smTT.root',
+                    'nominals/latino_281_qqww1smEM.root',
+                    #'nominals/latino_284_qqww1smEE.root',
+                    #'nominals/latino_287_qqww1smMM.root',
+
+                    'nominals/latino_273_qqww9smTM.root',
+                    'nominals/latino_276_qqww9smTE.root',
+                    'nominals/latino_279_qqww9smTT.root',
+                    'nominals/latino_282_qqww9smEM.root',
+                    #'nominals/latino_285_qqww9smEE.root',
+                    #'nominals/latino_288_qqww9smMM.root',
+
+                    'nominals/latino_274_qqww25smTM.root',
+                    'nominals/latino_277_qqww25smTE.root',
+                    'nominals/latino_280_qqww25smTT.root',
+                    'nominals/latino_283_qqww25smEM.root',
+                    #'nominals/latino_286_qqww25smEE.root',
+                    #'nominals/latino_289_qqww25smMM.root',
+                   ]
+
+
+
+
+
+    if sigtag == 'SM' or sigtag == 'Hwidth' :
         ggH = ['nominals/latino_1{mass}_ggToH{mass}toWWto2L2Nu.root',
                'nominals/latino_2{mass}_ggToH{mass}toWWtoLNuTauNu.root',
                'nominals/latino_3{mass}_ggToH{mass}toWWto2Tau2Nu.root',
@@ -195,6 +272,16 @@ def signalSamples(sigtag,mass=125,suffix=''):
         else:
             signals['ggH'+suffix]  = ['nominals/latino_9{mass}_ggToH{mass}toWWTo2LAndTau2Nu.root'.format(mass = mass)]
             signals['qqH'+suffix]  = ['nominals/latino_8{mass}_vbfToH{mass}toWWTo2LAndTau2Nu.root'.format(mass = mass)]
+
+
+
+        if sigtag == 'Hwidth' :
+            signals['ggH_sbi'] = ggH_sbi
+            signals['ggH_s']   = ggH_s
+            signals['ggH_b']   = ggH_b
+            signals['qqH_sbi'] = qqH_sbi
+            signals['qqH_s']   = qqH_s
+            signals['qqH_b']   = qqH_b
 
 
 # and the JHU case:
@@ -299,3 +386,4 @@ def signalSamples(sigtag,mass=125,suffix=''):
     else:
         raise ValueError('Signal tag %s not found for mass %d' % (sigtag,mass) )
     return signals
+
