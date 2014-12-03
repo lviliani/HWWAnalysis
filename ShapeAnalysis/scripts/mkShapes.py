@@ -90,6 +90,7 @@ class ShapeFactory:
         ranges['wwewk-range-top']    = self._getWWewkrangeTop
         ranges['Hwidth-range']       = self._getHwidthrange
         ranges['HwidthSimple-range'] = self._getSimpleHwidthrange
+        ranges['HwidthSimple7TeV-range'] = self._getSimpleHwidthrange7TeV
 
         self._ranges = ranges
 
@@ -200,6 +201,27 @@ class ShapeFactory:
           # mth:mll                    mll in x                    mth in y
           #return ([12,  45, 70,           100, 300],[0, 50,     100, 130, 170, 250,  450])
           return ([12,      70,                300],[0, 50,     100, 130, 170,      450])
+
+    # _____________________________________________________________________________
+    def _getSimpleHwidthrange7TeV(self,mass,cat):
+
+        if cat not in ['0j','1j','2j','01j']:
+            print cat
+            raise RuntimeError('range for '+str(cat)+' not defined. !?!?!?')
+
+
+        if cat in ['0j','1j'] :
+         # mth:mll                    mll in x                    mth in y
+          #return ([12, 30, 45, 60, 70, 100, 150, 200, 300],[0, 50, 70, 90, 100, 110, 120, 130, 140, 160, 180, 200, 450])
+          #return ([12, 30, 45,     70, 100, 150, 200, 300],[0, 50, 70, 90, 100, 110, 120, 130, 140, 160,      200, 450])
+          return ([12, 30, 45,     70, 100, 150, 200, 300],[0, 50,      90,      110,      130,      160,      200, 450])
+        else :
+          # mth:mll                    mll in x                    mth in y
+          #return ([12,  45, 70,           100, 300],[0, 50,     100, 130, 170, 250,  450])
+          #return ([12,      70,                300],[0, 50,           130, 170,      450])
+          #return ([12,      70,                300],[0, 80,           130, 170,      450])
+          return ([12,      70,                300],[0, 80,           130,           450])
+
 
 
     # _____________________________________________________________________________
@@ -1274,10 +1296,11 @@ class ShapeFactory:
 
         # fix for 2011
         #print "sel = ",sel
+        # due to lack of mww variable, add and remove powheg sample dataset=8126
         if (sel == "Hwidthmthmll7TeV") :
-          weights['qqH_sbi']            = self._stdWgt+'*(mWW>130)*( 1.000*( (dataset == 272) ||  (dataset == 275) || (dataset == 278) || (dataset == 281)) - 0.000*( (dataset == 273) ||  (dataset == 276) || (dataset == 279) || (dataset == 282)) + 0.000*( (dataset == 274) ||  (dataset == 277) || (dataset == 280) || (dataset == 283)))'
-          weights['qqH_s']              = self._stdWgt+'*(mWW>130)*( 0.125*( (dataset == 272) ||  (dataset == 275) || (dataset == 278) || (dataset == 281)) - 0.250*( (dataset == 273) ||  (dataset == 175) || (dataset == 279) || (dataset == 282)) + 0.125*( (dataset == 274) ||  (dataset == 277) || (dataset == 280) || (dataset == 283)))'
-          weights['qqH_b']              = self._stdWgt+'*(mWW>130)*( 1.875*( (dataset == 272) ||  (dataset == 275) || (dataset == 278) || (dataset == 281)) - 1.250*( (dataset == 273) ||  (dataset == 175) || (dataset == 279) || (dataset == 282)) + 0.375*( (dataset == 274) ||  (dataset == 277) || (dataset == 280) || (dataset == 283)))'
+          weights['qqH_sbi']            = self._stdWgt+'*( 1.000*( (dataset == 272) ||  (dataset == 275) || (dataset == 278) || (dataset == 281)) - 0.000*( (dataset == 273) ||  (dataset == 276) || (dataset == 279) || (dataset == 282)) + 0.000*( (dataset == 274) ||  (dataset == 277) || (dataset == 280) || (dataset == 283)) -1.000 * (dataset == 8126))'
+          weights['qqH_s']              = self._stdWgt+'*( 0.125*( (dataset == 272) ||  (dataset == 275) || (dataset == 278) || (dataset == 281)) - 0.250*( (dataset == 273) ||  (dataset == 175) || (dataset == 279) || (dataset == 282)) + 0.125*( (dataset == 274) ||  (dataset == 277) || (dataset == 280) || (dataset == 283)) )'
+          weights['qqH_b']              = self._stdWgt+'*( 1.875*( (dataset == 272) ||  (dataset == 275) || (dataset == 278) || (dataset == 281)) - 1.250*( (dataset == 273) ||  (dataset == 175) || (dataset == 279) || (dataset == 282)) + 0.375*( (dataset == 274) ||  (dataset == 277) || (dataset == 280) || (dataset == 283)) -1.000 * (dataset == 8126))'
 
 
 

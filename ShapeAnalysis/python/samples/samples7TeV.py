@@ -127,8 +127,8 @@ def signalSamples(sigtag,mass=125,suffix=''):
 
     # get closer mass
     # FIXME: temporary fix
-    if int(mass) == 125:
-      mass = 126
+    #if int(mass) == 125:
+      #mass = 126
 
     signals = {}
 
@@ -181,6 +181,7 @@ def signalSamples(sigtag,mass=125,suffix=''):
                     'nominals/latino_281_qqww1smEM.root',
                     'nominals/latino_284_qqww1smEE.root',
                     'nominals/latino_287_qqww1smMM.root',
+                    'nominals/latino_8125_vbfToH125toWWTo2LAndTau2Nu.root',
                    ]
     qqH_b        = ['nominals/latino_272_qqww1smTM.root',
                     'nominals/latino_275_qqww1smTE.root',
@@ -202,6 +203,7 @@ def signalSamples(sigtag,mass=125,suffix=''):
                     'nominals/latino_283_qqww25smEM.root',
                     #'nominals/latino_286_qqww25smEE.root',
                     #'nominals/latino_289_qqww25smMM.root',
+                    'nominals/latino_8125_vbfToH125toWWTo2LAndTau2Nu.root',
                    ]
     qqH_s        = ['nominals/latino_272_qqww1smTM.root',
                     'nominals/latino_275_qqww1smTE.root',
@@ -223,6 +225,7 @@ def signalSamples(sigtag,mass=125,suffix=''):
                     'nominals/latino_283_qqww25smEM.root',
                     #'nominals/latino_286_qqww25smEE.root',
                     #'nominals/latino_289_qqww25smMM.root',
+                    #'nominals/latino_8125_vbfToH125toWWTo2LAndTau2Nu.root',
                    ]
 
 
