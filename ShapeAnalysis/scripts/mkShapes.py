@@ -1286,21 +1286,22 @@ class ShapeFactory:
         weights['ggH_s']              = self._stdWgt+'*(((njet==0) * (13.3258/5.85323)) + ((njet==1) * (5.78547/1.40855)) + ((njet>=2) * (1.79911/0.195922)))' # +'*((dataset == 37) - (dataset == 37) + (dataset == 37))'
         weights['ggH_b']              = self._stdWgt+'*(((njet==0) * (13.3258/5.85323)) + ((njet==1) * (5.78547/1.40855)) + ((njet>=2) * (1.79911/0.195922)))' # +'*((dataset == 37) - (dataset == 37) + (dataset == 37))'
 
+        # scale factors from h126 to h125 GeV
         #                                             only-offshell            1 sm                     9 sm                    25 sm
         #weights['qqH_sbi']            = self._stdWgt+'*(mWW>130)*( 1.000*(dataset == 150) - 0.000*(dataset == 151) + 0.000*(dataset == 152))'
         #weights['qqH_s']              = self._stdWgt+'*(mWW>130)*( 0.125*(dataset == 150) - 0.250*(dataset == 151) + 0.125*(dataset == 152))'
         #weights['qqH_b']              = self._stdWgt+'*(mWW>130)*( 1.875*(dataset == 150) - 1.250*(dataset == 151) + 0.375*(dataset == 152))'
-        weights['qqH_sbi']            = self._stdWgt+'*(mWW>130)*( 1.000*( (dataset == 160) ||  (dataset == 169) || (dataset == 176) || (dataset == 172)) - 0.000*( (dataset == 161) ||  (dataset == 175) || (dataset == 173) || (dataset == 170)) + 0.000*( (dataset == 162) ||  (dataset == 171) || (dataset == 174) || (dataset == 177)))'
-        weights['qqH_s']              = self._stdWgt+'*(mWW>130)*( 0.125*( (dataset == 160) ||  (dataset == 169) || (dataset == 176) || (dataset == 172)) - 0.250*( (dataset == 161) ||  (dataset == 175) || (dataset == 173) || (dataset == 170)) + 0.125*( (dataset == 162) ||  (dataset == 171) || (dataset == 174) || (dataset == 177)))'
-        weights['qqH_b']              = self._stdWgt+'*(mWW>130)*( 1.875*( (dataset == 160) ||  (dataset == 169) || (dataset == 176) || (dataset == 172)) - 1.250*( (dataset == 161) ||  (dataset == 175) || (dataset == 173) || (dataset == 170)) + 0.375*( (dataset == 162) ||  (dataset == 171) || (dataset == 174) || (dataset == 177)))'
+        weights['qqH_sbi']            = self._stdWgt+'*(1.578/1.568*2.15/2.31)*(mWW>130)*( 1.000*( (dataset == 160) ||  (dataset == 169) || (dataset == 176) || (dataset == 172)) - 0.000*( (dataset == 161) ||  (dataset == 175) || (dataset == 173) || (dataset == 170)) + 0.000*( (dataset == 162) ||  (dataset == 171) || (dataset == 174) || (dataset == 177)))'
+        weights['qqH_s']              = self._stdWgt+'*(1.578/1.568*2.15/2.31)*(mWW>130)*( 0.125*( (dataset == 160) ||  (dataset == 169) || (dataset == 176) || (dataset == 172)) - 0.250*( (dataset == 161) ||  (dataset == 175) || (dataset == 173) || (dataset == 170)) + 0.125*( (dataset == 162) ||  (dataset == 171) || (dataset == 174) || (dataset == 177)))'
+        weights['qqH_b']              = self._stdWgt+'*(1.578/1.568*2.15/2.31)*(mWW>130)*( 1.875*( (dataset == 160) ||  (dataset == 169) || (dataset == 176) || (dataset == 172)) - 1.250*( (dataset == 161) ||  (dataset == 175) || (dataset == 173) || (dataset == 170)) + 0.375*( (dataset == 162) ||  (dataset == 171) || (dataset == 174) || (dataset == 177)))'
 
         # fix for 2011
         #print "sel = ",sel
         # due to lack of mww variable, add and remove powheg sample dataset=8126
         if (sel == "Hwidthmthmll7TeV") :
-          weights['qqH_sbi']            = self._stdWgt+'*( 1.000*( (dataset == 272) ||  (dataset == 275) || (dataset == 278) || (dataset == 281)) - 0.000*( (dataset == 273) ||  (dataset == 276) || (dataset == 279) || (dataset == 282)) + 0.000*( (dataset == 274) ||  (dataset == 277) || (dataset == 280) || (dataset == 283)) -1.000 * (dataset == 8126))'
-          weights['qqH_s']              = self._stdWgt+'*( 0.125*( (dataset == 272) ||  (dataset == 275) || (dataset == 278) || (dataset == 281)) - 0.250*( (dataset == 273) ||  (dataset == 175) || (dataset == 279) || (dataset == 282)) + 0.125*( (dataset == 274) ||  (dataset == 277) || (dataset == 280) || (dataset == 283)) )'
-          weights['qqH_b']              = self._stdWgt+'*( 1.875*( (dataset == 272) ||  (dataset == 275) || (dataset == 278) || (dataset == 281)) - 1.250*( (dataset == 273) ||  (dataset == 175) || (dataset == 279) || (dataset == 282)) + 0.375*( (dataset == 274) ||  (dataset == 277) || (dataset == 280) || (dataset == 283)) -1.000 * (dataset == 8126))'
+          weights['qqH_sbi']            = self._stdWgt+'*(1.222/1.211*2.15/2.31)*( 1.000*( (dataset == 272) ||  (dataset == 275) || (dataset == 278) || (dataset == 281)) - 0.000*( (dataset == 273) ||  (dataset == 276) || (dataset == 279) || (dataset == 282)) + 0.000*( (dataset == 274) ||  (dataset == 277) || (dataset == 280) || (dataset == 283)) -1.000 * (dataset == 8126))'
+          weights['qqH_s']              = self._stdWgt+'*(1.222/1.211*2.15/2.31)*( 0.125*( (dataset == 272) ||  (dataset == 275) || (dataset == 278) || (dataset == 281)) - 0.250*( (dataset == 273) ||  (dataset == 175) || (dataset == 279) || (dataset == 282)) + 0.125*( (dataset == 274) ||  (dataset == 277) || (dataset == 280) || (dataset == 283)) )'
+          weights['qqH_b']              = self._stdWgt+'*(1.222/1.211*2.15/2.31)*( 1.875*( (dataset == 272) ||  (dataset == 275) || (dataset == 278) || (dataset == 281)) - 1.250*( (dataset == 273) ||  (dataset == 175) || (dataset == 279) || (dataset == 282)) + 0.375*( (dataset == 274) ||  (dataset == 277) || (dataset == 280) || (dataset == 283)) -1.000 * (dataset == 8126))'
 
 
 
