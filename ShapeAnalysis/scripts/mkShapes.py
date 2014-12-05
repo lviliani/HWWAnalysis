@@ -1304,6 +1304,12 @@ class ShapeFactory:
           weights['qqH_b']              = self._stdWgt+'*(1.222/1.211*2.15/2.31)*( 1.875*( (dataset == 272) ||  (dataset == 275) || (dataset == 278) || (dataset == 281)) - 1.250*( (dataset == 273) ||  (dataset == 175) || (dataset == 279) || (dataset == 282)) + 0.375*( (dataset == 274) ||  (dataset == 277) || (dataset == 280) || (dataset == 283)) -1.000 * (dataset == 8126))'
 
 
+        if ("Hwidth" in sel) :
+          print " Hww width analysis "
+          weights['WW']   = self._stdWgt+'*((njet==0) * (1.10)  + (njet==1) * (1.20) + (njet>=2) * (1.0))'
+          if ("7TeV" in sel) :
+            weights['WW']   = self._stdWgt+'*((njet==0) * (1.08) + (njet==1) * (0.88) + (njet>=2) * (1.0))'
+
 
    #Double_t S =  0.125 * P1 -0.250 *P9 + 0.125 * P25;
    #Double_t I = -1.000 * P1 +1.500 *P9 - 0.500 * P25;
