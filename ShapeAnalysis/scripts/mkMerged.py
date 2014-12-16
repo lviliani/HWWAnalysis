@@ -702,7 +702,7 @@ class ShapeMixer:
             else:
                 dyLLnom.Scale( (dyLLmc.Integral() if dyLLmc.Integral() != 0. else 0.001)/dyLLnom.Integral() )
                 self.nominals['DYLL'] = dyLLnom
-                
+
 
                 if dyLLShapeSyst and dyLLShapeSyst.Integral() != 0.:
                     dyLLShapeUp, dyLLShapeDown = self._mirror('DYLL',dyLLnom,dyLLShapeSyst, dyLLSystName,True)
@@ -720,7 +720,7 @@ class ShapeMixer:
             if vg+'-template' in self.nominals:
                 vgmc        = self.nominals.pop(vg)
                 vgShape     = self.nominals.pop(vg+'-template')
-            
+
                 vgnom = vgShape.Clone('histo_'+vg)
                 vgnom.SetTitle(vg)
                 if vgnom.Integral() == 0.:
@@ -749,13 +749,15 @@ class ShapeMixer:
                     del self.nominals[t]
 
                 if madWW.GetNbinsX()>1:
-                    wwGenUp = mcAtNLO['WWnlo'].Clone('histo_WW_Gen_nlo_WWUp')
+                    #wwGenUp = mcAtNLO['WWnlo'].Clone('histo_WW_Gen_nlo_WWUp')
+                    wwGenUp = mcAtNLO['WWnlo'].Clone('histo_WW_Gen_nlo_'+chan+suffix+'_WWUp')
                     wwGenUp.SetTitle('WW Gen_nlo_WW Up')
                     wwGenUp.Scale(madWW.Integral()/wwGenUp.Integral())
                     self.generators[wwGenUp.GetTitle()] = wwGenUp
-                    
+
                     #copy the nominal
-                    wwGenDown = madWW.Clone('histo_WW_Gen_nlo_WWDown')
+                    #wwGenDown = madWW.Clone('histo_WW_Gen_nlo_WWDown')
+                    wwGenDown = mcAtNLO['WWnlo'].Clone('histo_WW_Gen_nlo_'+chan+suffix+'_WWDown')
                     wwGenDown.SetTitle('WW Gen_nlo_WW Down')
                     wwGenDown.Scale(2.)
                     wwGenDown.Add(wwGenUp, -1)
@@ -764,14 +766,16 @@ class ShapeMixer:
 
 
                     # MC@NLO scale
-                    wwScaleUp = mcAtNLO['WWnloUp'].Clone('histo_WW_Gen_scale_WWUp')
+                    #wwScaleUp = mcAtNLO['WWnloUp'].Clone('histo_WW_Gen_scale_WWUp')
+                    wwScaleUp = mcAtNLO['WWnloUp'].Clone('histo_WW_Gen_scale_'+chan+suffix+'_WWUp')
                     wwScaleUp.SetTitle('WW Gen_scale_WW Up')
                     wwScaleUp.Divide(mcAtNLO['WWnlo'])
                     wwScaleUp.Multiply(madWW)
                     if  (wwScaleUp.Integral() != 0) : wwScaleUp.Scale(madWW.Integral()/wwScaleUp.Integral())
                     self.generators[wwScaleUp.GetTitle()] = wwScaleUp
-                    
-                    wwScaleDown = mcAtNLO['WWnloDown'].Clone('histo_WW_Gen_scale_WWDown')
+
+                    #wwScaleDown = mcAtNLO['WWnloDown'].Clone('histo_WW_Gen_scale_WWDown')
+                    wwScaleDown = mcAtNLO['WWnloDown'].Clone('histo_WW_Gen_scale_'+chan+suffix+'_WWDown')
                     wwScaleDown.SetTitle('WW Gen_scale_WW Down')
                     wwScaleDown.Divide(mcAtNLO['WWnlo'])
                     wwScaleDown.Multiply(madWW)
@@ -1273,8 +1277,8 @@ if __name__ == '__main__':
     parser.add_option('--statmode'          , dest='statmode'          , help='Production mode for stat-shapes (default = %default)', default='unified')
     parser.add_option('--path_dd'           , dest='path_dd'           , help='Data driven path'                 , default=None)
     parser.add_option('--path_scale'        , dest='path_scale'        , help='Scale factors'                    , default=None)
-    parser.add_option('--path_shape_raw'    , dest='path_shape_raw'    , help='Input directory of raw shapes'    , default=None)
-    parser.add_option('--path_shape_merged' , dest='path_shape_merged' , help='Destination directory for merged' , default=None)
+    parser.add_option('--path_shape_raw'    , dest='path_shape_raw'    , help='Input directory of raw shapes'    , default='raw')
+    parser.add_option('--path_shape_merged' , dest='path_shape_merged' , help='Destination directory for merged' , default='merged')
     parser.add_option('--no-syst',       dest='makeSyst',   help='Do not produce the systematics',        action='store_false',   default=True)
     parser.add_option('--simask'            , dest='simask'            , help='Signal injection mask' , default=None, type='string' , action='callback' , callback=hwwtools.list_maker('simask'))
 

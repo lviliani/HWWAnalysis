@@ -1537,7 +1537,7 @@ if __name__ == '__main__':
     parser.add_option('--mcset'          , dest='mcset'          , help='Mcset to process'                           , default=None)
     parser.add_option('--path_latino'    , dest='path_latino'    , help='Root of the master trees'                   , default=None)
     parser.add_option('--path_bdt'       , dest='path_bdt'       , help='Root of the friendly bdt trees'             , default=None)
-    parser.add_option('--path_shape_raw' , dest='path_shape_raw' , help='Destination directory of nominals'          , default=None)
+    parser.add_option('--path_shape_raw' , dest='path_shape_raw' , help='Destination directory of nominals'          , default='raw')
     parser.add_option('--range'          , dest='range'          , help='Range (optional default is var)'            , default=None)
     parser.add_option('--splitmode'      , dest='splitmode'      , help='Split in channels using a second selection' , default=None)
 
