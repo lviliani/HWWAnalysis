@@ -100,6 +100,10 @@ class ShapeDatacardWriter:
             if 'WW' in signals and 'Gen_nlo_WW' in name:
                 isAgoodNuisance = False
 
+            # even if split in jet bins
+            if 'WW' in signals and 'Gen_nlo_' in name:
+                isAgoodNuisance = False
+
             if (isAgoodNuisance) :
                if len(pdf) == 1: card.write('{0:<41} {1:<7}         '.format(name,pdf[0]))
                else:             card.write('{0:<41} {1:<7} {2:<6}  '.format(name,pdf[0],pdf[1]))
@@ -660,7 +664,7 @@ if __name__ == '__main__':
     parser.add_option('-M','--MCextrap',        dest='MCextrap'          , help='For MC extrapolation: gmN nuisance to be scaled',  action='callback', type='string', callback=incexc)
     parser.add_option('-S','--SpecialSettings', dest='SpecialSettings'   , help='Special settings',        default=''  ,            action='callback', type='string', callback=incexc)
     parser.add_option('--path_dd'           ,   dest='path_dd'           , help='Data driven path'                 , default=None)
-    parser.add_option('--path_shape_merged' ,   dest='path_shape_merged' , help='Destination directory for merged' , default=None)
+    parser.add_option('--path_shape_merged' ,   dest='path_shape_merged' , help='Destination directory for merged' , default='merged')
 #     parser.add_option('--floatN',               dest='floatN'            , help='float normalisation of particular processes, separate by space ', default=' ')
     parser.add_option('--isssactive',           dest='isssactive'        , help='Is samesign datacard available'                           , default=False)
     parser.add_option('--floatN',               dest='floatN'            , help='float normalisation of particular processes, separate by space',  default=[] , type='string' , action='callback' , callback=hwwtools.list_maker('floatN'))
