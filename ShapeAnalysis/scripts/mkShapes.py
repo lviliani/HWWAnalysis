@@ -1307,8 +1307,17 @@ class ShapeFactory:
         if ("Hwidth" in sel) :
           print " Hww width analysis "
           weights['WW']   = self._stdWgt+'*((njet==0) * (1.10)  + (njet==1) * (1.20) + (njet>=2) * (1.0))'
+
           if ("7TeV" in sel) :
             weights['WW']   = self._stdWgt+'*((njet==0) * (1.08) + (njet==1) * (0.88) + (njet>=2) * (1.0))'
+            # scale 125 GeV -> 125.6 GeV
+            #weights['ggH'] = weights['ggH'] + '*15.176000/15.320000*0.224600/0.215000'
+            #weights['qqH'] = weights['qqH'] + '*1.217400/1.222000*0.224600/0.215000'
+
+          #else :
+            # scale 125 GeV -> 125.6 GeV
+            #weights['ggH'] = weights['ggH'] + '*19.340000/19.520000*0.224600/0.215000'
+            #weights['qqH'] = weights['qqH'] + '*1.572000/1.578000*0.224600/0.215000'
 
 
    #Double_t S =  0.125 * P1 -0.250 *P9 + 0.125 * P25;
