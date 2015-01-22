@@ -1287,6 +1287,8 @@ class ShapeFactory:
         weights['ggH_b']              = self._stdWgt+'*(((njet==0) * (13.3258/5.85323)) + ((njet==1) * (5.78547/1.40855)) + ((njet>=2) * (1.79911/0.195922)))' # +'*((dataset == 37) - (dataset == 37) + (dataset == 37))'
 
         # scale factors from h126 to h125 GeV
+        # ggH ~ 1.035
+        # qqH ~ 1.041
         #                                             only-offshell            1 sm                     9 sm                    25 sm
         #weights['qqH_sbi']            = self._stdWgt+'*(mWW>130)*( 1.000*(dataset == 150) - 0.000*(dataset == 151) + 0.000*(dataset == 152))'
         #weights['qqH_s']              = self._stdWgt+'*(mWW>130)*( 0.125*(dataset == 150) - 0.250*(dataset == 151) + 0.125*(dataset == 152))'
@@ -1307,17 +1309,12 @@ class ShapeFactory:
         if ("Hwidth" in sel) :
           print " Hww width analysis "
           weights['WW']   = self._stdWgt+'*((njet==0) * (1.10)  + (njet==1) * (1.20) + (njet>=2) * (1.0))'
-
           if ("7TeV" in sel) :
             weights['WW']   = self._stdWgt+'*((njet==0) * (1.08) + (njet==1) * (0.88) + (njet>=2) * (1.0))'
-            # scale 125 GeV -> 125.6 GeV
-            #weights['ggH'] = weights['ggH'] + '*15.176000/15.320000*0.224600/0.215000'
-            #weights['qqH'] = weights['qqH'] + '*1.217400/1.222000*0.224600/0.215000'
 
-          #else :
-            # scale 125 GeV -> 125.6 GeV
-            #weights['ggH'] = weights['ggH'] + '*19.340000/19.520000*0.224600/0.215000'
-            #weights['qqH'] = weights['qqH'] + '*1.572000/1.578000*0.224600/0.215000'
+          # scale 125 GeV -> 125.6 GeV
+          #weights['ggH'] = weights['ggH'] + '*1.035'
+          #weights['qqH'] = weights['qqH'] + '*1.041'
 
 
    #Double_t S =  0.125 * P1 -0.250 *P9 + 0.125 * P25;
