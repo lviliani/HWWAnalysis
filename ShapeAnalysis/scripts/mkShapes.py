@@ -1312,6 +1312,21 @@ class ShapeFactory:
           if ("7TeV" in sel) :
             weights['WW']   = self._stdWgt+'*((njet==0) * (1.08) + (njet==1) * (0.88) + (njet>=2) * (1.0))'
 
+
+          # test to suppress cross-feed
+          #weights['qqH_sbi'] = weights['qqH_sbi'] + '*(mll>70)'
+          #weights['qqH_s']   = weights['qqH_s']   + '*(mll>70)'
+          #weights['qqH_b']   = weights['qqH_b']   + '*(mll>70)'
+
+          #weights['ggH_sbi'] = weights['ggH_sbi'] + '*(mll>70)'
+          #weights['ggH_s']   = weights['ggH_s']   + '*(mll>70)'
+          #weights['ggH_b']   = weights['ggH_b']   + '*(mll>70)'
+
+          #weights['qqH']   = weights['qqH'] + '*(mll<70)'
+          #weights['ggH']   = weights['ggH'] + '*(mll<70)'
+
+
+
           # scale 125 GeV -> 125.6 GeV
           #weights['ggH'] = weights['ggH'] + '*1.035'
           #weights['qqH'] = weights['qqH'] + '*1.041'
