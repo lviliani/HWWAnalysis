@@ -1318,9 +1318,9 @@ class ShapeFactory:
           #weights['qqH_s']   = weights['qqH_s']   + '*(mll>70)'
           #weights['qqH_b']   = weights['qqH_b']   + '*(mll>70)'
 
-          #weights['ggH_sbi'] = weights['ggH_sbi'] + '*(mll>70)'
-          #weights['ggH_s']   = weights['ggH_s']   + '*(mll>70)'
-          #weights['ggH_b']   = weights['ggH_b']   + '*(mll>70)'
+          #weights['ggH_sbi'] = weights['ggH_sbi'] + '*((mll>70) || (mth>130))'
+          #weights['ggH_s']   = weights['ggH_s']   + '*((mll>70) || (mth>130))'
+          #weights['ggH_b']   = weights['ggH_b']   + '*((mll>70) || (mth>130))'
 
           #weights['qqH']   = weights['qqH'] + '*(mll<70)'
           #weights['ggH']   = weights['ggH'] + '*(mll<70)'
