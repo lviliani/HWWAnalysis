@@ -225,14 +225,24 @@ def getCommonSysts(mass,channel,jets,qqWWfromData,shape,options,suffix,isssactiv
 
 
     # -- Theory ---------------------
-    nuisances['QCDscale_ggH_offshell']    = [  ['lnN'], { 'ggH_sbi':1.15,  'ggH_b':1.15,  'ggH_s':1.15 }]
+    #nuisances['QCDscale_ggH_offshell']    = [  ['lnN'], { 'ggH_sbi':1.15,  'ggH_b':1.15,  'ggH_s':1.15 }]
     if options.HWidth :
       if jets == 0:
-        nuisances['QCDscale_ggWW_0jet'] = [ ['lnN'], {'ggH_sbi': 1.11, 'ggH_b': 1.11, 'ggH_s': 1.11}]
+        #nuisances['QCDscale_ggWW_0jet'] = [ ['lnN'], {'ggH_sbi': 1.11, 'ggH_b': 1.11, 'ggH_s': 1.11}]
+        nuisances['QCDscale_ggWW_offshell']    = [ ['lnN'], {'ggH_sbi': 1.15, 'ggH_b': 1.15, 'ggH_s': 1.15}]
+        nuisances['QCDscale_ggWW_offshell1in'] = [ ['lnN'], {'ggH_sbi': 0.796502, 'ggH_b': 0.796502, 'ggH_s': 0.796502}]
       if jets == 1:
-        nuisances['QCDscale_ggWW_1jet'] = [ ['lnN'], {'ggH_sbi': 1.11, 'ggH_b': 1.11, 'ggH_s': 1.11}]
+        #nuisances['QCDscale_ggWW_1jet'] = [ ['lnN'], {'ggH_sbi': 1.11, 'ggH_b': 1.11, 'ggH_s': 1.11}]
+        nuisances['QCDscale_ggWW_offshell1in'] = [ ['lnN'], {'ggH_sbi': 0.676083, 'ggH_b': 0.676083, 'ggH_s': 0.676083}]
+        nuisances['QCDscale_ggWW_offshell2in'] = [ ['lnN'], {'ggH_sbi': 0.996433, 'ggH_b': 0.996433, 'ggH_s': 0.996433}]
       if jets == 2:
-        nuisances['QCDscale_ggWW_2jet'] = [ ['lnN'], {'ggH_sbi': 1.21, 'ggH_b': 1.21, 'ggH_s': 1.21}]
+        #nuisances['QCDscale_ggWW_2jet'] = [ ['lnN'], {'ggH_sbi': 1.21, 'ggH_b': 1.21, 'ggH_s': 1.21}]
+        nuisances['QCDscale_ggWW_offshell2in'] = [ ['lnN'], {'ggH_sbi': 1.51302, 'ggH_b': 1.51302, 'ggH_s': 1.51302}]
+
+      #QCDscale_ggH     1.75158    -          -      << with "YR" uncertainty --> NNLO ~ 15%
+      #QCDscale_ggH1in  0.796502   0.676083   -
+      #QCDscale_ggH2in  -          0.996433   1.51302
+
 
     if jets == 0:
         # appendix D of https://indico.cern.ch/getFile.py/access?contribId=0&resId=0&materialId=0&confId=135333

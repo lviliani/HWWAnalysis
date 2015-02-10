@@ -1282,9 +1282,17 @@ class ShapeFactory:
         #weights['ggH_s']              = self._stdWgt+'*2.1' # +'*((dataset == 37) - (dataset == 37) + (dataset == 37))'
         #weights['ggH_b']              = self._stdWgt+'*2.1' # +'*((dataset == 37) - (dataset == 37) + (dataset == 37))'
         # using powheg to normalize on-shell contribution
-        weights['ggH_sbi']            = self._stdWgt+'*(((njet==0) * (13.3258/5.85323)) + ((njet==1) * (5.78547/1.40855)) + ((njet>=2) * (1.79911/0.195922)))' # +'*((dataset == 37) - (dataset == 37) + (dataset == 37))'
-        weights['ggH_s']              = self._stdWgt+'*(((njet==0) * (13.3258/5.85323)) + ((njet==1) * (5.78547/1.40855)) + ((njet>=2) * (1.79911/0.195922)))' # +'*((dataset == 37) - (dataset == 37) + (dataset == 37))'
-        weights['ggH_b']              = self._stdWgt+'*(((njet==0) * (13.3258/5.85323)) + ((njet==1) * (5.78547/1.40855)) + ((njet>=2) * (1.79911/0.195922)))' # +'*((dataset == 37) - (dataset == 37) + (dataset == 37))'
+        #weights['ggH_sbi']            = self._stdWgt+'*(((njet==0) * (13.3258/5.85323)) + ((njet==1) * (5.78547/1.40855)) + ((njet>=2) * (1.79911/0.195922)))' # +'*((dataset == 37) - (dataset == 37) + (dataset == 37))'
+        #weights['ggH_s']              = self._stdWgt+'*(((njet==0) * (13.3258/5.85323)) + ((njet==1) * (5.78547/1.40855)) + ((njet>=2) * (1.79911/0.195922)))' # +'*((dataset == 37) - (dataset == 37) + (dataset == 37))'
+        #weights['ggH_b']              = self._stdWgt+'*(((njet==0) * (13.3258/5.85323)) + ((njet==1) * (5.78547/1.40855)) + ((njet>=2) * (1.79911/0.195922)))' # +'*((dataset == 37) - (dataset == 37) + (dataset == 37))'
+        weights['ggH_sbi']            = self._stdWgt+'*2.739*(((njet==0) * (1.1986-4.9341/sqrt(mWW))) + ((njet==1) * (0.8415+68.0300/sqrt(mWW))) + ((njet>=2) * (0.7655+165.6779/sqrt(mWW))))' # +'*((dataset == 37) - (dataset == 37) + (dataset == 37))'
+        weights['ggH_s']              = self._stdWgt+'*2.739*(((njet==0) * (1.1986-4.9341/sqrt(mWW))) + ((njet==1) * (0.8415+68.0300/sqrt(mWW))) + ((njet>=2) * (0.7655+165.6779/sqrt(mWW))))' # +'*((dataset == 37) - (dataset == 37) + (dataset == 37))'
+        weights['ggH_b']              = self._stdWgt+'*2.739*(((njet==0) * (1.1986-4.9341/sqrt(mWW))) + ((njet==1) * (0.8415+68.0300/sqrt(mWW))) + ((njet>=2) * (0.7655+165.6779/sqrt(mWW))))' # +'*((dataset == 37) - (dataset == 37) + (dataset == 37))'
+        #integral = 19.7036
+        #integral = 7.19278
+        # --> 2.739 as global scale factor
+
+
 
         # scale factors from h126 to h125 GeV
         # ggH ~ 1.035
