@@ -1316,23 +1316,23 @@ class ShapeFactory:
           # fix since we don't have gen-level information at 7 TeV
           weights['ggH_sbi']            = self._stdWgt+'*2.739*((njet==0) * (((dataset == 253) || (dataset == 263) || (dataset == 270))*(1.1986-4.9341/sqrt(200)) \
                                                                            + ((dataset == 256) || (dataset == 266) || (dataset == 271))*(1.1986-4.9341/sqrt(400))) + \
-                                                                (njet==0) * (((dataset == 253) || (dataset == 263) || (dataset == 270))*(0.8415+68.030/    (200)) \
+                                                                (njet==1) * (((dataset == 253) || (dataset == 263) || (dataset == 270))*(0.8415+68.030/    (200)) \
                                                                           + ((dataset == 256) || (dataset == 266) || (dataset == 271))*(0.8415+68.030/(400))) + \
-                                                                (njet==0) * (((dataset == 253) || (dataset == 263) || (dataset == 270))*(0.7655+165.6779/  (200)) \
+                                                                (njet==2) * (((dataset == 253) || (dataset == 263) || (dataset == 270))*(0.7655+165.6779/  (200)) \
                                                                           + ((dataset == 256) || (dataset == 266) || (dataset == 271))*(0.7655+165.6779/(400))) )'
 
           weights['ggH_s']              = self._stdWgt+'*2.739*((njet==0) * (((dataset == 253) || (dataset == 263) || (dataset == 270))*(1.1986-4.9341/sqrt(200)) \
                                                                            + ((dataset == 256) || (dataset == 266) || (dataset == 271))*(1.1986-4.9341/sqrt(400))) + \
-                                                                (njet==0) * (((dataset == 253) || (dataset == 263) || (dataset == 270))*(0.8415+68.030/    (200)) \
+                                                                (njet==1) * (((dataset == 253) || (dataset == 263) || (dataset == 270))*(0.8415+68.030/    (200)) \
                                                                           + ((dataset == 256) || (dataset == 266) || (dataset == 271))*(0.8415+68.030/(400))) + \
-                                                                (njet==0) * (((dataset == 253) || (dataset == 263) || (dataset == 270))*(0.7655+165.6779/  (200)) \
+                                                                (njet==2) * (((dataset == 253) || (dataset == 263) || (dataset == 270))*(0.7655+165.6779/  (200)) \
                                                                           + ((dataset == 256) || (dataset == 266) || (dataset == 271))*(0.7655+165.6779/(400))) )'
 
           weights['ggH_b']            = self._stdWgt+'*2.739*((njet==0) * (((dataset == 253) || (dataset == 263) || (dataset == 270))*(1.1986-4.9341/sqrt(200)) \
                                                                            + ((dataset == 256) || (dataset == 266) || (dataset == 271))*(1.1986-4.9341/sqrt(400))) + \
-                                                                (njet==0) * (((dataset == 253) || (dataset == 263) || (dataset == 270))*(0.8415+68.030/    (200)) \
+                                                                (njet==1) * (((dataset == 253) || (dataset == 263) || (dataset == 270))*(0.8415+68.030/    (200)) \
                                                                           + ((dataset == 256) || (dataset == 266) || (dataset == 271))*(0.8415+68.030/(400))) + \
-                                                                (njet==0) * (((dataset == 253) || (dataset == 263) || (dataset == 270))*(0.7655+165.6779/  (200)) \
+                                                                (njet==2) * (((dataset == 253) || (dataset == 263) || (dataset == 270))*(0.7655+165.6779/  (200)) \
                                                                           + ((dataset == 256) || (dataset == 266) || (dataset == 271))*(0.7655+165.6779/(400))) )'
 
         if ("Hwidth" in sel) :
