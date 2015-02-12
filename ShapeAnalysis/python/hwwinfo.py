@@ -171,6 +171,7 @@ class wwcuts:
     pth4 = 'sqrt((pt1*cos(phi1) + pt2*cos(phi2) + pfmet*cos(pfmetphi))**2 + (pt1*sin(phi1) + pt2*sin(phi2) + pfmet*sin(pfmetphi))**2) >= 87. && sqrt((pt1*cos(phi1) + pt2*cos(phi2) + pfmet*cos(pfmetphi))**2 + (pt1*sin(phi1) + pt2*sin(phi2) + pfmet*sin(pfmetphi))**2) < 125.'
     pth5 = 'sqrt((pt1*cos(phi1) + pt2*cos(phi2) + pfmet*cos(pfmetphi))**2 + (pt1*sin(phi1) + pt2*sin(phi2) + pfmet*sin(pfmetphi))**2) >= 125. && sqrt((pt1*cos(phi1) + pt2*cos(phi2) + pfmet*cos(pfmetphi))**2 + (pt1*sin(phi1) + pt2*sin(phi2) + pfmet*sin(pfmetphi))**2) < 162.'
     pth6 = 'sqrt((pt1*cos(phi1) + pt2*cos(phi2) + pfmet*cos(pfmetphi))**2 + (pt1*sin(phi1) + pt2*sin(phi2) + pfmet*sin(pfmetphi))**2) >= 162.'
+    pthincl = 'sqrt((pt1*cos(phi1) + pt2*cos(phi2) + pfmet*cos(pfmetphi))**2 + (pt1*sin(phi1) + pt2*sin(phi2) + pfmet*sin(pfmetphi))**2) >= 0'
 
 
 # vbf
@@ -552,6 +553,7 @@ categoryCuts['pth3'] = wwcuts.pth3
 categoryCuts['pth4'] = wwcuts.pth4
 categoryCuts['pth5'] = wwcuts.pth5
 categoryCuts['pth6'] = wwcuts.pth6
+categoryCuts['pthincl'] = wwcuts.pthincl
 
 
 flavorCuts = {}
@@ -626,6 +628,7 @@ channels['of_pth3'] = ('pth3','of')
 channels['of_pth4'] = ('pth4','of')
 channels['of_pth5'] = ('pth5','of')
 channels['of_pth6'] = ('pth6','of')
+channels['of'] = ('pthincl', 'of')
 
 channels['sf_pth1'] = ('pth1','sf')
 channels['sf_pth2'] = ('pth2','sf')
@@ -784,7 +787,7 @@ def massSelections(mass):
     sel['shape-ss-selection']     = sel['ww-common-ss'].replace("zveto==1", "zveto>-1")+' && '+sel['shape-lomass'] if mass <=250 else sel['ww-common-ss'].replace("zveto==1", "zveto>-1")+' && '+sel['shape-himass']
 
 
-    sel['shape-pth-selection']    = (sel['ww-pth-0j'].replace("zveto==1", "zveto>-1")+' && '+sel['shape-lomass'] if wwcuts.zerojet else sel['ww-pth-12j'].replace("zveto==1", "zveto>-1")+' && '+sel['shape-lomass'])
+    sel['shape-pth-selection']    = ('( (njet==0 && ('+sel['shape-lomass']+' && '+sel['ww-pth-0j'].replace("zveto==1", "zveto>-1")+'))'+' || '+'(njet>0 && ('+sel['shape-lomass']+' && '+sel['ww-pth-12j'].replace("zveto==1", "zveto>-1")+' && '+sel['shape-lomass']+')))')
 
     sel['pth-selection-top0jet']  = sel['ww-pth-0j'].replace("zveto==1", "zveto>-1")+' && '+sel['shape-lomass']+' && njet==0' 
 

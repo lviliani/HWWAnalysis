@@ -323,7 +323,7 @@ def signalSamples(sigtag,mass=125,suffix=''):
         WH    = ['nominals/latino_3{mass}_wzttH{mass}ToWW.root']
         ZH    = ['nominals/latino_3{mass}_wzttH{mass}ToWW.root']
         ttH   = ['nominals/latino_3{mass}_wzttH{mass}ToWW.root']
-
+        sigSM = ['nominals/latino_1{mass}_ggToH{mass}toWWTo2LAndTau2Nu.root','nominals/latino_2{mass}_vbfToH{mass}toWWTo2LAndTau2Nu.root','nominals/latino_3{mass}_wzttH{mass}ToWW.root']   
 
 
         if mass <= 300:
@@ -333,6 +333,7 @@ def signalSamples(sigtag,mass=125,suffix=''):
             signals['WH'+suffix]    = [f.format(mass = mass) for f in WH]
             signals['ZH'+suffix]    = [f.format(mass = mass) for f in ZH]
             signals['ttH'+suffix]   = [f.format(mass = mass) for f in ttH]
+            signals['sigSM'+suffix] = [f.format(mass = mass) for f in sigSM]		
         elif mass == 1000:
             signals['ggH'+suffix]   = ['nominals/latino_2000_ggToH1000toWWTo2LAndTau2Nu.root']
             signals['qqH'+suffix]   = ['nominals/latino_3000_vbfToH1000toWWTo2LAndTau2Nu.root']

@@ -757,7 +757,7 @@ if __name__ == '__main__':
     
                 # reshuffle the order
                 #order = [ 'vbfH', 'ggH', 'wzttH', 'ggWW', 'Vg', 'WJet', 'Top', 'WW', 'DYLL', 'VV', 'DYTT', 'Data']
-                order = [ 'ggH','ggH_ALT','qqH','qqH_ALT', 'wzttH','wzttH_ALT', 'WH', 'ZH', 'ttH', 'ggWW', 'VgS', 'Vg', 'WJet', 'Top', 'Top0jet', 'Topge1jet', 'TopPt0', 'TopPt1', 'TopPt2', 'TopPt3', 'TopPt4', 'TopPt5', 'TopPt6', 'TopPt7', 'TopPt8', 'WW', 'WWewk', 'DYLL', 'VV', 'DYTT', 'DYee', 'DYmm', 'DYee05', 'DYmm05', 'Other', 'VVV', 'Data','ggH_SM', 'qqH_SM', 'WH_SM','ZH_SM' , 'wzttH_SM', 'ggH_sbi', 'ggH_s', 'ggH_b', 'qqH_sbi', 'qqH_s', 'qqH_b' ]
+                order = [ 'ggH', 'ggHBin0','ggHBin1','ggHBin2','ggHBin3','ggHBin4','ggHBin5', 'ggH_ALT','qqH', 'qqHBin0', 'qqHBin1', 'qqHBin2', 'qqHBin3', 'qqHBin4', 'qqHBin5', 'qqH_ALT', 'wzttH','wzttH_ALT', 'WH', 'WHBin0', 'WHBin1', 'WHBin2', 'WHBin3', 'WHBin4', 'WHBin5', 'ZH', 'ZHBin0', 'ZHBin1', 'ZHBin2', 'ZHBin3', 'ZHBin4', 'ZHBin5', 'ttH', 'ggWW', 'VgS', 'Vg', 'WJet', 'Top', 'Top0jet', 'Topge1jet', 'TopPt0', 'TopPt1', 'TopPt2', 'TopPt3', 'TopPt4', 'TopPt5', 'TopPt6', 'TopPt7', 'TopPt8', 'WW', 'WWewk', 'DYLL', 'VV', 'DYTT', 'DYee', 'DYmm', 'DYee05', 'DYmm05', 'Other', 'VVV', 'Data','ggH_SM', 'qqH_SM', 'WH_SM','ZH_SM' , 'wzttH_SM', 'ggH_sbi', 'ggH_s', 'ggH_b', 'qqH_sbi', 'qqH_s', 'qqH_b' ]
     
    
                 oldYields = yields.copy()

@@ -2,7 +2,7 @@ import hwwtools
 import re
 
 
-signals = ['ggH','qqH','wzttH','ggH_ALT','qqH_ALT','WH','ZH','ttH','VH']
+signals = ['ggH','ggHBin0','ggHBin1','ggHBin2','ggHBin3','ggHBin4','ggHBin5','qqH','qqHBin0','qqHBin1','qqHBin2','qqHBin3','qqHBin4','qqHBin5','wzttH','ggH_ALT','qqH_ALT','WH','WHBin0','WHBin1','WHBin2','WHBin3','WHBin4','WHBin5','ZH','ZHBin0','ZHBin1','ZHBin2','ZHBin3','ZHBin4','ZHBin5','ttH','VH']
 
 #--------------
 # mcsets,
@@ -75,7 +75,37 @@ mcsets = {
 
     '0j1j-differential' : [
         #signals
-        'ggH','qqH','WH','ZH',
+#        ('sigSMBin0', 'sigSM'),
+#        ('sigSMBin1', 'sigSM'),
+#        ('sigSMBin2', 'sigSM'),
+#        ('sigSMBin3', 'sigSM'),
+#        ('sigSMBin4', 'sigSM'),
+#        ('sigSMBin5', 'sigSM'),
+	 ('ggHBin0','ggH'),
+         ('ggHBin1','ggH'),
+         ('ggHBin2','ggH'),
+         ('ggHBin3','ggH'),
+         ('ggHBin4','ggH'),
+         ('ggHBin5','ggH'),
+         ('qqHBin0','qqH'),
+         ('qqHBin1','qqH'),
+         ('qqHBin2','qqH'),
+         ('qqHBin3','qqH'),
+         ('qqHBin4','qqH'),
+         ('qqHBin5','qqH'),
+         ('WHBin0','WH'),
+         ('WHBin1','WH'),
+         ('WHBin2','WH'),
+         ('WHBin3','WH'),
+         ('WHBin4','WH'),
+         ('WHBin5','WH'),
+         ('ZHBin0','ZH'),
+         ('ZHBin1','ZH'),
+         ('ZHBin2','ZH'),
+         ('ZHBin3','ZH'),
+         ('ZHBin4','ZH'),
+         ('ZHBin5','ZH'),
+
         # bkgs
          'WW','ggWW','VgS','Vg','WJet','VV','VVV','DYTT','WWnlo','WWnloUp','WWnloDown',
          ('DYLL','ggH'),
@@ -96,7 +126,7 @@ mcsets = {
          # 0j1j specific
          #('DYLL-template',    'DYLL-template-0j1j'),              #    A   <-   sorgente
          #('DYLL-templatesyst','DYLL-templatesyst-0j1j')           #    mkmerged vuole "-template"
-         ('CHITOP-Top0jet','Top')
+         #('CHITOP-Top0jet','Top')
      ], 
  
      'differential' : [

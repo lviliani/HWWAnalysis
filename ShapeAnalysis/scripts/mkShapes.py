@@ -90,6 +90,7 @@ class ShapeFactory:
         ranges['wwewk-range-top']    = self._getWWewkrangeTop
         ranges['Hwidth-range']       = self._getHwidthrange
         ranges['HwidthSimple-range'] = self._getSimpleHwidthrange
+        ranges['Pth-range'] = self._getRangePth
 
         self._ranges = ranges
 
@@ -124,6 +125,7 @@ class ShapeFactory:
         variables['wwewk']                = self._getVarWWewk
         variables['Hwidth']               = self._getVarHwidth
         variables['HwidthSimple']         = self._getSimpleVarHwidth
+        variables['Pth']         = self._getVarPth
 
         self._variables = variables
 
@@ -337,6 +339,19 @@ class ShapeFactory:
            return 'mth:mll'
 
 
+    # _____________________________________________________________________________
+    def _getVarPth(self,mass,cat):
+
+      return 'mll:(mth+280*(0*('+hwwinfo.wwcuts.pth1+')+1*('+hwwinfo.wwcuts.pth2+')+2*('+hwwinfo.wwcuts.pth3+')+3*('+hwwinfo.wwcuts.pth4+')+4*('+hwwinfo.wwcuts.pth5+')+5*('+hwwinfo.wwcuts.pth6+')))'
+
+    def _getRangePth(self,mass,cat):
+      rangemth = [60,70,80,90,100,110,120,140,160,180,200,220,240,260,280]
+      rangemthTotal = [60,70,80,90,100,110,120,140,160,180,200,220,240,260,280]
+      for i in range(1,5):
+	for j in rangemth:
+	  rangemthTotal.append(j+280*i) 		
+      return (rangemthTotal,[12,30,45,60,75,100,125,150,175,200])
+       
 
     # _____________________________________________________________________________
     def getrange(self,tag,mass,cat):
@@ -777,7 +792,7 @@ class ShapeFactory:
 
         print 'var: '+var
         print 'selection (for WW  as example): '+selections['WW']
-        print 'selection (for ggH as example): '+selections['ggH']
+        print 'selection (for ggH as example): '+selections['ggHBin0']
         #print 'inputs = ', inputs
 
         for process,tree  in inputs.iteritems():
@@ -1182,6 +1197,40 @@ class ShapeFactory:
         weights['VgS']               = self._stdWgt+'*kfW'
         weights['Vg']                = self._stdWgt+'*kfW'
 
+#        weights['sigSMBin0']         = self._stdWgt+'*('+self._HiggsWgt('ggH',mass,flavor)+'*(dataset == 1125) + '+self._HiggsWgt('qqH',mass,flavor)+'*(dataset == 2125) +'+self._HiggsWgt('WH',mass,flavor)+'*(mctruth == 26)+'+self._HiggsWgt('ZH',mass,flavor)+'*(mctruth == 24)+'+self._HiggsWgt('ttH',mass,flavor)+'*(mctruth == 121)'+')*'+self._muVal+'*('+hwwinfo.wwcuts.pth1+')'
+#        weights['sigSMBin1']         = self._stdWgt+'*('+self._HiggsWgt('ggH',mass,flavor)+'*(dataset == 1125) + '+self._HiggsWgt('qqH',mass,flavor)+'*(dataset == 2125) +'+self._HiggsWgt('WH',mass,flavor)+'*(mctruth == 26)+'+self._HiggsWgt('ZH',mass,flavor)+'*(mctruth == 24)+'+self._HiggsWgt('ttH',mass,flavor)+'*(mctruth == 121)'+')*'+self._muVal+'*('+hwwinfo.wwcuts.pth2+')'
+#        weights['sigSMBin2']         = self._stdWgt+'*('+self._HiggsWgt('ggH',mass,flavor)+'*(dataset == 1125) + '+self._HiggsWgt('qqH',mass,flavor)+'*(dataset == 2125) +'+self._HiggsWgt('WH',mass,flavor)+'*(mctruth == 26)+'+self._HiggsWgt('ZH',mass,flavor)+'*(mctruth == 24)+'+self._HiggsWgt('ttH',mass,flavor)+'*(mctruth == 121)'+')*'+self._muVal+'*('+hwwinfo.wwcuts.pth3+')'
+#        weights['sigSMBin3']         = self._stdWgt+'*('+self._HiggsWgt('ggH',mass,flavor)+'*(dataset == 1125) + '+self._HiggsWgt('qqH',mass,flavor)+'*(dataset == 2125) +'+self._HiggsWgt('WH',mass,flavor)+'*(mctruth == 26)+'+self._HiggsWgt('ZH',mass,flavor)+'*(mctruth == 24)+'+self._HiggsWgt('ttH',mass,flavor)+'*(mctruth == 121)'+')*'+self._muVal+'*('+hwwinfo.wwcuts.pth4+')'
+#        weights['sigSMBin4']         = self._stdWgt+'*('+self._HiggsWgt('ggH',mass,flavor)+'*(dataset == 1125) + '+self._HiggsWgt('qqH',mass,flavor)+'*(dataset == 2125) +'+self._HiggsWgt('WH',mass,flavor)+'*(mctruth == 26)+'+self._HiggsWgt('ZH',mass,flavor)+'*(mctruth == 24)+'+self._HiggsWgt('ttH',mass,flavor)+'*(mctruth == 121)'+')*'+self._muVal+'*('+hwwinfo.wwcuts.pth5+')'
+#        weights['sigSMBin5']         = self._stdWgt+'*('+self._HiggsWgt('ggH',mass,flavor)+'*(dataset == 1125) + '+self._HiggsWgt('qqH',mass,flavor)+'*(dataset == 2125) +'+self._HiggsWgt('WH',mass,flavor)+'*(mctruth == 26)+'+self._HiggsWgt('ZH',mass,flavor)+'*(mctruth == 24)+'+self._HiggsWgt('ttH',mass,flavor)+'*(mctruth == 121)'+')*'+self._muVal+'*('+hwwinfo.wwcuts.pth6+')'
+      
+        weights['ggHBin0']               = self._stdWgt+'*'+self._HiggsWgt('ggH',mass,flavor)+'*'+self._muVal+'*('+hwwinfo.wwcuts.pth1+')'
+        weights['ggHBin1']               = self._stdWgt+'*'+self._HiggsWgt('ggH',mass,flavor)+'*'+self._muVal+'*('+hwwinfo.wwcuts.pth2+')'
+        weights['ggHBin2']               = self._stdWgt+'*'+self._HiggsWgt('ggH',mass,flavor)+'*'+self._muVal+'*('+hwwinfo.wwcuts.pth3+')'
+        weights['ggHBin3']               = self._stdWgt+'*'+self._HiggsWgt('ggH',mass,flavor)+'*'+self._muVal+'*('+hwwinfo.wwcuts.pth4+')'
+        weights['ggHBin4']               = self._stdWgt+'*'+self._HiggsWgt('ggH',mass,flavor)+'*'+self._muVal+'*('+hwwinfo.wwcuts.pth5+')'
+        weights['ggHBin5']               = self._stdWgt+'*'+self._HiggsWgt('ggH',mass,flavor)+'*'+self._muVal+'*('+hwwinfo.wwcuts.pth6+')'
+
+        weights['qqHBin0']               = self._stdWgt+'*'+self._HiggsWgt('qqH',mass,flavor)+'*'+self._muVal+'*('+hwwinfo.wwcuts.pth1+')'
+        weights['qqHBin1']               = self._stdWgt+'*'+self._HiggsWgt('qqH',mass,flavor)+'*'+self._muVal+'*('+hwwinfo.wwcuts.pth2+')'
+        weights['qqHBin2']               = self._stdWgt+'*'+self._HiggsWgt('qqH',mass,flavor)+'*'+self._muVal+'*('+hwwinfo.wwcuts.pth3+')'
+        weights['qqHBin3']               = self._stdWgt+'*'+self._HiggsWgt('qqH',mass,flavor)+'*'+self._muVal+'*('+hwwinfo.wwcuts.pth4+')'
+        weights['qqHBin4']               = self._stdWgt+'*'+self._HiggsWgt('qqH',mass,flavor)+'*'+self._muVal+'*('+hwwinfo.wwcuts.pth5+')'
+        weights['qqHBin5']               = self._stdWgt+'*'+self._HiggsWgt('qqH',mass,flavor)+'*'+self._muVal+'*('+hwwinfo.wwcuts.pth6+')'
+
+        weights['WHBin0']                = self._stdWgt+'*'+self._HiggsWgt('WH',mass,flavor)+'*(mctruth == 26)*'+self._muVal+'*('+hwwinfo.wwcuts.pth1+')'
+        weights['WHBin1']                = self._stdWgt+'*'+self._HiggsWgt('WH',mass,flavor)+'*(mctruth == 26)*'+self._muVal+'*('+hwwinfo.wwcuts.pth2+')'
+        weights['WHBin2']                = self._stdWgt+'*'+self._HiggsWgt('WH',mass,flavor)+'*(mctruth == 26)*'+self._muVal+'*('+hwwinfo.wwcuts.pth3+')'
+        weights['WHBin3']                = self._stdWgt+'*'+self._HiggsWgt('WH',mass,flavor)+'*(mctruth == 26)*'+self._muVal+'*('+hwwinfo.wwcuts.pth4+')'
+        weights['WHBin4']                = self._stdWgt+'*'+self._HiggsWgt('WH',mass,flavor)+'*(mctruth == 26)*'+self._muVal+'*('+hwwinfo.wwcuts.pth5+')'
+        weights['WHBin5']                = self._stdWgt+'*'+self._HiggsWgt('WH',mass,flavor)+'*(mctruth == 26)*'+self._muVal+'*('+hwwinfo.wwcuts.pth6+')'
+
+        weights['ZHBin0']                = self._stdWgt+'*'+self._HiggsWgt('ZH',mass,flavor)+'*(mctruth == 24)*'+self._muVal+'*('+hwwinfo.wwcuts.pth1+')'
+        weights['ZHBin1']                = self._stdWgt+'*'+self._HiggsWgt('ZH',mass,flavor)+'*(mctruth == 24)*'+self._muVal+'*('+hwwinfo.wwcuts.pth2+')'
+        weights['ZHBin2']                = self._stdWgt+'*'+self._HiggsWgt('ZH',mass,flavor)+'*(mctruth == 24)*'+self._muVal+'*('+hwwinfo.wwcuts.pth3+')'
+        weights['ZHBin3']                = self._stdWgt+'*'+self._HiggsWgt('ZH',mass,flavor)+'*(mctruth == 24)*'+self._muVal+'*('+hwwinfo.wwcuts.pth4+')'
+        weights['ZHBin4']                = self._stdWgt+'*'+self._HiggsWgt('ZH',mass,flavor)+'*(mctruth == 24)*'+self._muVal+'*('+hwwinfo.wwcuts.pth5+')'
+        weights['ZHBin5']                = self._stdWgt+'*'+self._HiggsWgt('ZH',mass,flavor)+'*(mctruth == 24)*'+self._muVal+'*('+hwwinfo.wwcuts.pth6+')'
 
         weights['ggH']               = self._stdWgt+'*'+self._HiggsWgt('ggH',mass,flavor)+'*'+self._muVal
         weights['qqH']               = self._stdWgt+'*'+self._HiggsWgt('qqH',mass,flavor)+'*'+self._muVal
@@ -1269,7 +1318,7 @@ class ShapeFactory:
    #Double_t I = -1.000 * P1 +1.500 *P9 - 0.500 * P25;
    #Double_t B =  1.875 * P1 -1.250 *P9 + 0.375 * P25;
 
-        weights['CHITOP-Top0jet']     = self._stdWgt+'*('+hwwinfo.massSelections(mass)['pth-selection-top0jet']+')'
+#        weights['CHITOP-Top0jet']     = self._stdWgt+'*('+hwwinfo.massSelections(mass)['pth-selection-top0jet']+')'
 
         if cat in ['2j','2jtche05','2jtche05CJ','2jtche05FJ']:
             #weights['WW']                = self._stdWgt+'*(1+(mjj>500)*(detajj>3.5))'
@@ -1722,7 +1771,7 @@ if __name__ == '__main__':
 
               factory._systByWeight = systByWeight
 
-              processMask = ['ggH', 'ggH_ALT',  'qqH',  'qqH_ALT', 'wzttH', 'ZH', 'WH', 'ttH', 'ggWW', 'Top', 'Top0jet', 'Topge1jet', 'TopPt0', 'TopPt1', 'TopPt2', 'TopPt3', 'TopPt4', 'TopPt5', 'TopPt6', 'TopPt7', 'TopPt8', 'WW', 'VV', 'VgS', 'Vg', 'DYTT', 'Other', 'VVV', 'WWewk', 'CHITOP-Top' , 'CHITOP-Top0jet', 'ggH_SM', 'qqH_SM', 'wzttH_SM' , 'WH_SM','ZH_SM','ttH_SM','ggH_sbi','ggH_b','ggH_s','qqH_sbi','qqH_b','qqH_s']
+              processMask = ['ggH','ggHBin0','ggHBin1','ggHBin2','ggHBin3','ggHBin4','ggHBin5', 'ggH_ALT',  'qqH', 'qqHBin0', 'qqHBin1', 'qqHBin2', 'qqHBin3', 'qqHBin4', 'qqHBin5',  'qqH_ALT', 'wzttH', 'ZH', 'ZHBin0', 'ZHBin1', 'ZHBin2', 'ZHBin3', 'ZHBin4', 'ZHBin5', 'WH', 'WHBin0', 'WHBin1', 'WHBin2', 'WHBin3', 'WHBin4', 'WHBin5', 'ttH', 'ggWW', 'Top', 'Top0jet', 'Topge1jet', 'TopPt0', 'TopPt1', 'TopPt2', 'TopPt3', 'TopPt4', 'TopPt5', 'TopPt6', 'TopPt7', 'TopPt8', 'WW', 'VV', 'VgS', 'Vg', 'DYTT', 'Other', 'VVV', 'WWewk', 'CHITOP-Top' , 'CHITOP-Top0jet', 'ggH_SM', 'qqH_SM', 'wzttH_SM' , 'WH_SM','ZH_SM','ttH_SM','ggH_sbi','ggH_b','ggH_s','qqH_sbi','qqH_b','qqH_s']
 
               if '2011' in opt.dataset:
                   processMask = ['ggH', 'ggH_ALT', 'qqH', 'qqH_ALT', 'VH' , 'wzttH', 'ZH', 'WH', 'ttH', 'ggWW', 'Top', 'WW', 'VV', 'CHITOP-Top', 'ggH_SM', 'qqH_SM','VH_SM', 'wzttH_SM', 'ZH_SM', 'WH_SM', 'ttH_SM']
