@@ -62,6 +62,14 @@ class DDCardReader:
                        'of_2jtche05CJ': ('2jtche05CJ',['of']), 'sf_2jtche05CJ': ('2jtche05CJ',['sf']),
                        'of_2jtche05FJ': ('2jtche05FJ',['of']), 'sf_2jtche05FJ': ('2jtche05FJ',['sf']),
                        'of_01j'     : ('01j',['of']), 'sf_01j': ('01j',['sf']),
+		       'of_pth1'    : ('pth1',['of']),
+		       'of_pth2'    : ('pth2',['of']),
+		       'of_pth3'    : ('pth3',['of']),
+		       'of_pth4'    : ('pth4',['of']),
+		       'of_pth5'    : ('pth5',['of']),
+		       'of_pth6'    : ('pth6',['of']),
+		       'of_pth7'    : ('pth7',['of']),
+		       'of_pth8'    : ('pth8',['of'])
                        }
         wwmapping    = {'of_0j': ('0j',['of']), 'sf_0j': ('0j',['sf']),
                        'of_1j': ('1j',['of']), 'sf_1j': ('1j',['sf']),
@@ -78,6 +86,7 @@ class DDCardReader:
                        }
 
         readmap = {}
+	readmap['Top0jet']  = basemapping.copy()
         readmap['Top']  = basemapping.copy()
         readmap['TopPt0']  = basemapping.copy()
         readmap['TopPt1']  = basemapping.copy()

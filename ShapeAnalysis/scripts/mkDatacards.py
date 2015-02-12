@@ -100,10 +100,6 @@ class ShapeDatacardWriter:
             if 'WW' in signals and 'Gen_nlo_WW' in name:
                 isAgoodNuisance = False
 
-            # even if split in jet bins
-            if 'WW' in signals and 'Gen_nlo_' in name:
-                isAgoodNuisance = False
-
             if (isAgoodNuisance) :
                if len(pdf) == 1: card.write('{0:<41} {1:<7}         '.format(name,pdf[0]))
                else:             card.write('{0:<41} {1:<7} {2:<6}  '.format(name,pdf[0],pdf[1]))
@@ -548,27 +544,14 @@ class NuisanceMapBuilder:
            optMatt.VH = 1
         else :
            optMatt.VH = 0
-
-        optMatt.HWidth = 0
-        if 'SpecialSettings' in opts:
-           if opts['SpecialSettings'] == 'HWidth' :
-             optMatt.HWidth = 1
-
-        optMatt.WWxsec = 0
-        if 'SpecialSettings' in opts:
-           if opts['SpecialSettings'] == 'WWxsec' :
-             optMatt.WWxsec = 1
-
-
-
-
-        if jetcat not in ['0j','1j','2j','2jex','01j']: raise ValueError('Unsupported jet category found: %s')
+        if jetcat not in ['0j','1j','2j','2jex'] and 'pth' not in jetcat: raise ValueError('Unsupported jet category found: %s')
 
 #         suffix = '_8TeV'
 #         if '2011' in opt.dataset: suffix = '_7TeV'
 
         suffix = '_'+opt.energy
-        CutBased = getCommonSysts(int(mass),flavor,int(jetcat[0]),qqWWfromData, self._shape, optMatt, suffix, self._isssactive, opt.energy,opts['newInterf'],opt.YRSysVer,opt.mHSM,125.0,opts['ewksinglet'])
+        njett = jetcat[0] if 'pth' not in jetcat else 0
+        CutBased = getCommonSysts(int(mass),flavor,int(njett),qqWWfromData, self._shape, optMatt, suffix, self._isssactive, opt.energy,opts['newInterf'],opt.YRSysVer,opt.mHSM)
         if self._shape:
             # float WW+ggWW background normalisation float together
 #             for p in opts['floatN'].split(' '):
@@ -662,9 +645,8 @@ if __name__ == '__main__':
     parser.add_option('-X','--exclude',         dest='nuisFlags'         , help='exclude nuisances matching the expression',        action='callback', type='string', callback=incexc)
     parser.add_option('-I','--include',         dest='nuisFlags'         , help='include nuisances matching the expression',        action='callback', type='string', callback=incexc)
     parser.add_option('-M','--MCextrap',        dest='MCextrap'          , help='For MC extrapolation: gmN nuisance to be scaled',  action='callback', type='string', callback=incexc)
-    parser.add_option('-S','--SpecialSettings', dest='SpecialSettings'   , help='Special settings',        default=''  ,            action='callback', type='string', callback=incexc)
     parser.add_option('--path_dd'           ,   dest='path_dd'           , help='Data driven path'                 , default=None)
-    parser.add_option('--path_shape_merged' ,   dest='path_shape_merged' , help='Destination directory for merged' , default='merged')
+    parser.add_option('--path_shape_merged' ,   dest='path_shape_merged' , help='Destination directory for merged' , default=None)
 #     parser.add_option('--floatN',               dest='floatN'            , help='float normalisation of particular processes, separate by space ', default=' ')
     parser.add_option('--isssactive',           dest='isssactive'        , help='Is samesign datacard available'                           , default=False)
     parser.add_option('--floatN',               dest='floatN'            , help='float normalisation of particular processes, separate by space',  default=[] , type='string' , action='callback' , callback=hwwtools.list_maker('floatN'))
@@ -690,7 +672,7 @@ if __name__ == '__main__':
     print 'isssactive: ',opt.isssactive
     print 'MCextrap:   ',opt.MCextrap
     print 'listSignals:',opt.listSignals
-    print 'SpecialSettings:',opt.SpecialSettings
+
 
     # checks
     if not opt.variable or not opt.lumi:
@@ -732,8 +714,6 @@ if __name__ == '__main__':
     optsNuis['nuisFlags'] = opt.nuisFlags
     optsNuis['floatN'] = opt.floatN
     optsNuis['newInterf'] = opt.newcps
-    optsNuis['ewksinglet'] = opt.ewksinglet
-    optsNuis['SpecialSettings'] = opt.SpecialSettings
     lumistr = '{0:.2f}'.format(opt.lumi)
 
 
@@ -777,7 +757,7 @@ if __name__ == '__main__':
     
                 # reshuffle the order
                 #order = [ 'vbfH', 'ggH', 'wzttH', 'ggWW', 'Vg', 'WJet', 'Top', 'WW', 'DYLL', 'VV', 'DYTT', 'Data']
-                order = [ 'ggH','ggH_ALT','qqH','qqH_ALT', 'wzttH','wzttH_ALT', 'WH', 'ZH', 'ttH', 'ggWW', 'VgS', 'Vg', 'WJet', 'Top', 'TopPt0', 'TopPt1', 'TopPt2', 'TopPt3', 'TopPt4', 'TopPt5', 'TopPt6', 'TopPt7', 'TopPt8', 'WW', 'WWewk', 'DYLL', 'VV', 'DYTT', 'DYee', 'DYmm', 'DYee05', 'DYmm05', 'Other', 'VVV', 'Data','ggH_SM', 'qqH_SM', 'WH_SM','ZH_SM' , 'wzttH_SM', 'ggH_sbi', 'ggH_s', 'ggH_b', 'qqH_sbi', 'qqH_s', 'qqH_b' ]
+                order = [ 'ggH','ggH_ALT','qqH','qqH_ALT', 'wzttH','wzttH_ALT', 'WH', 'ZH', 'ttH', 'ggWW', 'VgS', 'Vg', 'WJet', 'Top', 'Top0jet', 'Topge1jet', 'TopPt0', 'TopPt1', 'TopPt2', 'TopPt3', 'TopPt4', 'TopPt5', 'TopPt6', 'TopPt7', 'TopPt8', 'WW', 'WWewk', 'DYLL', 'VV', 'DYTT', 'DYee', 'DYmm', 'DYee05', 'DYmm05', 'Other', 'VVV', 'Data','ggH_SM', 'qqH_SM', 'WH_SM','ZH_SM' , 'wzttH_SM', 'ggH_sbi', 'ggH_s', 'ggH_b', 'qqH_sbi', 'qqH_s', 'qqH_b' ]
     
    
                 oldYields = yields.copy()

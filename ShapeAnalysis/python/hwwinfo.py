@@ -77,6 +77,39 @@ class wwcuts:
         'ptll>%f'%ptllCut,                     # ema 14
     ]
 
+    wwpth_0jet = [
+        'pt1>20',
+        'pt2>10',
+        '(ch1*ch2)<0', # use 0.5 to get charge symmetric template  
+        'trigger==1.',
+        'pfmet>20.',
+        'mll>12',                       # ema7
+        '(zveto==1||!sameflav)',
+        'mpmet>20.',                    # ema9
+        'bveto_mu==1',
+        'nextra==0',
+        'bveto_ip==1',
+        'ptll>%f'%ptllCut,                     # ema 14
+    ]
+
+    wwpth_12jet = [
+        'pt1>20',
+        'pt2>10',
+        '(ch1*ch2)<0', # use 0.5 to get charge symmetric template  
+        'trigger==1.',
+        'pfmet>20.',
+        'mll>12',                       # ema7
+        '(zveto==1||!sameflav)',
+        'mpmet>20.',                    # ema9
+        'nextra==0',
+        'jetbjpb1<1.4',
+	'jetbjpb2<1.4',
+        'jetbjpb3<1.4',
+        'jetbjpb4<1.4',
+        'ptll>%f'%ptllCut,                     # ema 14
+    ]
+
+
     wwcommon2011 = [
         'pt1>20',
         'pt2>10',
@@ -131,6 +164,13 @@ class wwcuts:
     vbf2011 = '(njet >= 2 && njet <= 3 && njetvbf == 0) '
     vh      = '(njet >= 2)'
     atleastonejet = '(njet >= 1)'
+
+    pth1 = 'sqrt((pt1*cos(phi1) + pt2*cos(phi2) + pfmet*cos(pfmetphi))**2 + (pt1*sin(phi1) + pt2*sin(phi2) + pfmet*sin(pfmetphi))**2) < 15. '
+    pth2 = 'sqrt((pt1*cos(phi1) + pt2*cos(phi2) + pfmet*cos(pfmetphi))**2 + (pt1*sin(phi1) + pt2*sin(phi2) + pfmet*sin(pfmetphi))**2) >= 15. && sqrt((pt1*cos(phi1) + pt2*cos(phi2) + pfmet*cos(pfmetphi))**2 + (pt1*sin(phi1) + pt2*sin(phi2) + pfmet*sin(pfmetphi))**2) < 45.'
+    pth3 = 'sqrt((pt1*cos(phi1) + pt2*cos(phi2) + pfmet*cos(pfmetphi))**2 + (pt1*sin(phi1) + pt2*sin(phi2) + pfmet*sin(pfmetphi))**2) >= 45. && sqrt((pt1*cos(phi1) + pt2*cos(phi2) + pfmet*cos(pfmetphi))**2 + (pt1*sin(phi1) + pt2*sin(phi2) + pfmet*sin(pfmetphi))**2) < 87.'
+    pth4 = 'sqrt((pt1*cos(phi1) + pt2*cos(phi2) + pfmet*cos(pfmetphi))**2 + (pt1*sin(phi1) + pt2*sin(phi2) + pfmet*sin(pfmetphi))**2) >= 87. && sqrt((pt1*cos(phi1) + pt2*cos(phi2) + pfmet*cos(pfmetphi))**2 + (pt1*sin(phi1) + pt2*sin(phi2) + pfmet*sin(pfmetphi))**2) < 125.'
+    pth5 = 'sqrt((pt1*cos(phi1) + pt2*cos(phi2) + pfmet*cos(pfmetphi))**2 + (pt1*sin(phi1) + pt2*sin(phi2) + pfmet*sin(pfmetphi))**2) >= 125. && sqrt((pt1*cos(phi1) + pt2*cos(phi2) + pfmet*cos(pfmetphi))**2 + (pt1*sin(phi1) + pt2*sin(phi2) + pfmet*sin(pfmetphi))**2) < 162.'
+    pth6 = 'sqrt((pt1*cos(phi1) + pt2*cos(phi2) + pfmet*cos(pfmetphi))**2 + (pt1*sin(phi1) + pt2*sin(phi2) + pfmet*sin(pfmetphi))**2) >= 162.'
 
 
 # vbf
@@ -506,6 +546,13 @@ categoryCuts['2jtche05']   = wwcuts.vh         # >=2 jets
 categoryCuts['2jtche05CJ'] = wwcuts.vh         # >=2 jets
 categoryCuts['2jtche05FJ'] = wwcuts.vh         # >=2 jets
 
+categoryCuts['pth1'] = wwcuts.pth1
+categoryCuts['pth2'] = wwcuts.pth2
+categoryCuts['pth3'] = wwcuts.pth3
+categoryCuts['pth4'] = wwcuts.pth4
+categoryCuts['pth5'] = wwcuts.pth5
+categoryCuts['pth6'] = wwcuts.pth6
+
 
 flavorCuts = {}
 flavorCuts['all'] = '1'			       #'channel>-1'
@@ -572,6 +619,27 @@ channels['of_vh2j'] = ('vh2j','of')
 channels['sf_vh2j'] = ('vh2j','sf')
 
 channels['ll_whsc'] = ('whsc','ll')
+
+channels['of_pth1'] = ('pth1','of')
+channels['of_pth2'] = ('pth2','of')
+channels['of_pth3'] = ('pth3','of')
+channels['of_pth4'] = ('pth4','of')
+channels['of_pth5'] = ('pth5','of')
+channels['of_pth6'] = ('pth6','of')
+
+channels['sf_pth1'] = ('pth1','sf')
+channels['sf_pth2'] = ('pth2','sf')
+channels['sf_pth3'] = ('pth3','sf')
+channels['sf_pth4'] = ('pth4','sf')
+channels['sf_pth5'] = ('pth5','sf')
+channels['sf_pth6'] = ('pth6','sf')
+
+channels['pth1'] = ('pth1','ll')
+channels['pth2'] = ('pth2','ll')
+channels['pth3'] = ('pth3','ll')
+channels['pth4'] = ('pth4','ll')
+channels['pth5'] = ('pth5','ll')
+channels['pth6'] = ('pth6','ll')
 
 
 #  __  __               ___     _      
@@ -646,6 +714,8 @@ def massSelections(mass):
     masscuts = dict([(cut,massDependantCutsbyVar[cut][mass]) for cut in massDependantCutsbyVar])
 
     sel = {}
+    sel['ww-pth-0j']	 = ' && '.join(wwcuts.wwpth_0jet)
+    sel['ww-pth-12j']     = ' && '.join(wwcuts.wwpth_12jet)
     sel['ww-min']        = ' && '.join(wwcuts.wwmin)
     sel['ww-common']     = ' && '.join(wwcuts.wwcommon)
     sel['wwbtag-common'] = sel['ww-common'].replace('bveto_mu==1','bveto_mu>-1').replace('(bveto_ip==1 && nbjettche==0)','(bveto_ip>-1 && nbjettche>-1)')
@@ -713,7 +783,14 @@ def massSelections(mass):
     sel['ww-common-ss']           = sel['ww-common'].replace("(ch1*ch2)<0.5", "(ch1*ch2)>0.5")
     sel['shape-ss-selection']     = sel['ww-common-ss'].replace("zveto==1", "zveto>-1")+' && '+sel['shape-lomass'] if mass <=250 else sel['ww-common-ss'].replace("zveto==1", "zveto>-1")+' && '+sel['shape-himass']
 
+
+    sel['shape-pth-selection']    = (sel['ww-pth-0j'].replace("zveto==1", "zveto>-1")+' && '+sel['shape-lomass'] if wwcuts.zerojet else sel['ww-pth-12j'].replace("zveto==1", "zveto>-1")+' && '+sel['shape-lomass'])
+
+    sel['pth-selection-top0jet']  = sel['ww-pth-0j'].replace("zveto==1", "zveto>-1")+' && '+sel['shape-lomass']+' && njet==0' 
+
+
     sel['shape-selection']        = sel['ww-common'].replace("zveto==1", "zveto>-1").replace(wwcuts.met, wwcuts.mpmet)+' && '+sel['shape-lomass'] if mass <=250 else sel['ww-common'].replace("zveto==1", "zveto>-1").replace(wwcuts.met, wwcuts.mpmet)+' && '+sel['shape-himass']
+
     sel['shapebtag-selection']    = sel['wwbtag-common'].replace("zveto==1", "zveto>-1").replace(wwcuts.met, wwcuts.mpmet)+' && '+sel['shape-lomass'] if mass <=250 else sel['wwbtag-common'].replace("zveto==1", "zveto>-1").replace(wwcuts.met, wwcuts.mpmet)+' && '+sel['shape-himass']
     sel['shape2011-selection']     = sel['ww2011-common'].replace("zveto==1", "zveto>-1")+' && '+sel['shape-lomass'] if mass <=250 else sel['ww2011-common'].replace("zveto==1","zveto>-1")+' && '+sel['shape-himass']
     sel['shape2011btag-selection'] = sel['ww2011btag-common'].replace("zveto==1", "zveto>-1")+' && '+sel['shape-lomass'] if mass <=250 else sel['ww2011btag-common'].replace("zveto==1","zveto>-1")+' && '+sel['shape-himass']

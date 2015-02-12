@@ -72,6 +72,54 @@ mcsets = {
         #('DYLL-template',    'DYLL-template-0j1j'),              #    A   <-   sorgente
         #('DYLL-templatesyst','DYLL-templatesyst-0j1j')           #    mkmerged vuole "-template"
     ],
+
+    '0j1j-differential' : [
+        #signals
+        'ggH','qqH','WH','ZH',
+        # bkgs
+         'WW','ggWW','VgS','Vg','WJet','VV','VVV','DYTT','WWnlo','WWnloUp','WWnloDown',
+         ('DYLL','ggH'),
+         # systematics
+         'WJetFakeRate-nominal',
+         ('WJetFakeRate-eUp', 'WJetFakeRate-nominal'),
+         ('WJetFakeRate-eDn', 'WJetFakeRate-nominal'),
+         ('WJetFakeRate-mUp', 'WJetFakeRate-nominal'),
+         ('WJetFakeRate-mDn', 'WJetFakeRate-nominal'),
+         ('TopTW',   'Top'),
+         ('Top0jet',   'Top'),
+         ('Topge1jet',   'Top'),
+         #('Topge1jetUp',   'Top'),
+         #('Topge1jetDown',   'Top'),
+         ('TopCtrl', 'Top'),
+         # templates
+         'VgS-template','Vg-template',
+         # 0j1j specific
+         #('DYLL-template',    'DYLL-template-0j1j'),              #    A   <-   sorgente
+         #('DYLL-templatesyst','DYLL-templatesyst-0j1j')           #    mkmerged vuole "-template"
+         ('CHITOP-Top0jet','Top')
+     ], 
+ 
+     'differential' : [
+         #signals
+         'ggH','vbfwzttH', 
+         # bkgs
+         'WW','ggWW','VgS','Vg','WJet','Top','VV','VVV','DYTT','WWnlo','WWnloUp','WWnloDown',
+         ('DYLL','ggH'),
+         # systematics
+         'WJetFakeRate-nominal',
+         ('WJetFakeRate-eUp', 'WJetFakeRate-nominal'),
+         ('WJetFakeRate-eDn', 'WJetFakeRate-nominal'),
+         ('WJetFakeRate-mUp', 'WJetFakeRate-nominal'),
+         ('WJetFakeRate-mDn', 'WJetFakeRate-nominal'),
+         ('TopTW',   'Top'),
+         ('TopCtrl', 'Top'),
+         # templates
+         'VgS-template','Vg-template',
+         # 0j1j specific
+         #('DYLL-template',    'DYLL-template-0j1j'),              #    A   <-   sorgente
+         #('DYLL-templatesyst','DYLL-templatesyst-0j1j')           #    mkmerged vuole "-template"
+     ],
+
     '0j1j-mH125' : [
         #signals
         'ggH','qqH','WH','ZH',
@@ -118,14 +166,9 @@ mcsets = {
         'ggH','qqH','WH','ZH',
         # bkgs
         #('WW', 'WWmad'),
-        ('WW', 'WWpowheg'),
+        ('WW', 'WWpow'),
         #('WW', 'WWmc'),
-        #'ggWW',
-        ('ggWW','ggWWnew'),
-        'VgS','Vg','WJet','Top','VV',
-        #'VVV',
-        ('VVV','VVVall'),
-        'DYTT','WWnlo','WWnloUp','WWnloDown',
+        'ggWW','VgS','Vg','WJet','Top','VV','VVV','DYTT','WWnlo','WWnloUp','WWnloDown',
         #
         ('DYLL','ggH'),
         # systematics

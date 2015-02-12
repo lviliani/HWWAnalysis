@@ -90,7 +90,6 @@ class ShapeFactory:
         ranges['wwewk-range-top']    = self._getWWewkrangeTop
         ranges['Hwidth-range']       = self._getHwidthrange
         ranges['HwidthSimple-range'] = self._getSimpleHwidthrange
-        ranges['HwidthSimple7TeV-range'] = self._getSimpleHwidthrange7TeV
 
         self._ranges = ranges
 
@@ -172,18 +171,14 @@ class ShapeFactory:
 
         if cat in ['1j'] :
           #   HwidthMVAggH in x,     HwidthMVAbkg in y
-          #return ([12, 30, 45, 60, 70, 100,          300],[-1.00, -0.70, -0.60, -0.50, -0.40, -0.30, -0.20, -0.10, 0.00, 0.10, 0.20, 0.30, 0.40, 0.50, 0.60, 0.70, 0.80, 1.00])
-          #return ([12, 30, 45,     70, 100,          300],[-1.00, -0.70, -0.60, -0.50, -0.40, -0.30, -0.20, -0.10, 0.00, 0.10, 0.20, 0.30, 0.40, 0.50, 0.60, 0.70,       1.00])
-          return ([12, 30, 45,     70,               300],[-1.00,        -0.60, -0.50, -0.40, -0.30, -0.20, -0.10, 0.00, 0.10, 0.20, 0.30, 0.40, 0.50, 0.60, 0.70,       1.00])
+          return ([12, 30, 45, 60, 70, 100,          300],[-1.00, -0.70, -0.60, -0.50, -0.40, -0.30, -0.20, -0.10, 0.00, 0.10, 0.20, 0.30, 0.40, 0.50, 0.60, 0.70, 0.80, 1.00])
         elif cat in ['0j'] :
           return ([12, 30, 45, 60, 70, 100,          300],[-1.00, -0.70, -0.60, -0.50, -0.40, -0.30, -0.20, -0.10, 0.00, 0.10, 0.20, 0.30, 0.40, 0.50, 0.60, 0.70, 0.80, 1.00])
         elif cat in ['01j'] :
           return ([12, 30, 45, 60, 70, 100,          300],[-1.00, -0.70, -0.60, -0.50, -0.40, -0.30, -0.20, -0.10, 0.00, 0.10, 0.20, 0.30, 0.40, 0.50, 0.60, 0.70, 0.80, 1.00])
         else :
           # mth:mll                    mll in x                    mth in y
-          #return ([12,  45, 70,           100, 300],[0, 50,     100, 130, 170, 250, 450])
-          return ([12,      70,                300],[0, 50,     100, 130, 170,      450])
-
+          return ([12,  45, 70,           100, 300],[0, 50,     100, 130, 170, 250, 450])
 
     # _____________________________________________________________________________
     def _getSimpleHwidthrange(self,mass,cat):
@@ -195,33 +190,10 @@ class ShapeFactory:
 
         if cat in ['0j','1j'] :
          # mth:mll                    mll in x                    mth in y
-          #return ([12, 30, 45, 60, 70, 100, 150, 200, 300],[0, 50, 70, 90, 100, 110, 120, 130, 140, 160, 180, 200, 450])
-          return ([12, 30, 45,     70, 100, 150, 200, 300],[0, 50, 70, 90, 100, 110, 120, 130, 140, 160,      200, 450])
+          return ([12, 30, 45, 60, 70, 100, 150, 200, 300],[0, 50, 70, 90, 100, 110, 120, 130, 140, 160, 180, 200, 450])
         else :
           # mth:mll                    mll in x                    mth in y
-          #return ([12,  45, 70,           100, 300],[0, 50,     100, 130, 170, 250,  450])
-          return ([12,      70,                300],[0, 50,     100, 130, 170,      450])
-
-    # _____________________________________________________________________________
-    def _getSimpleHwidthrange7TeV(self,mass,cat):
-
-        if cat not in ['0j','1j','2j','01j']:
-            print cat
-            raise RuntimeError('range for '+str(cat)+' not defined. !?!?!?')
-
-
-        if cat in ['0j','1j'] :
-         # mth:mll                    mll in x                    mth in y
-          #return ([12, 30, 45, 60, 70, 100, 150, 200, 300],[0, 50, 70, 90, 100, 110, 120, 130, 140, 160, 180, 200, 450])
-          #return ([12, 30, 45,     70, 100, 150, 200, 300],[0, 50, 70, 90, 100, 110, 120, 130, 140, 160,      200, 450])
-          return ([12, 30, 45,     70, 100, 150, 200, 300],[0, 50,      90,      110,      130,      160,      200, 450])
-        else :
-          # mth:mll                    mll in x                    mth in y
-          #return ([12,  45, 70,           100, 300],[0, 50,     100, 130, 170, 250,  450])
-          #return ([12,      70,                300],[0, 50,           130, 170,      450])
-          #return ([12,      70,                300],[0, 80,           130, 170,      450])
-          return ([12,      70,                300],[0, 80,           130,           450])
-
+          return ([12,  45, 70,           100, 300],[0, 50,     100, 130, 170, 250,  450])
 
 
     # _____________________________________________________________________________
@@ -401,7 +373,8 @@ class ShapeFactory:
     # _____________________________________________________________________________
     def _getMllMth2DSpinrange(self,mass,cat):
 
-        if cat not in ['0j','1j']:
+        print cat
+        if cat not in ['0j','1j'] and 'pth' not in cat:
             raise RuntimeError('mll range for '+str(cat)+' not defined. Can be 0 or 1')
 
         if mass < 300.:
@@ -1116,13 +1089,10 @@ class ShapeFactory:
            Gamma = GamSM * self._cprimesq / (1.-self._brnew)
            
            #if prodMode in ['ggH','qqH']  and not self._approxewk : hWght += '*getBWWght(MHiggs,%f,%f,%f)'%(Mass,GamSM,Gamma)
-           #if prodMode in ['ggH','qqH']  : hWght += '*getBWWght(MHiggs,%f,%f,%f)'%(Mass,GamSM,Gamma)
-           if prodMode in ['ggH'] : hWght += '*getBWWght(MHiggs,%f,%f,%f)'%(Mass,GamSM,Gamma)
-           if prodMode in ['qqH'] and mass < 350 : hWght += '*getBWWght(MHiggs,%f,%f,%f)'%(Mass,GamSM,Gamma)
+           if prodMode in ['ggH','qqH']  : hWght += '*getBWWght(MHiggs,%f,%f,%f)'%(Mass,GamSM,Gamma)
 
          # ... Change mu of both all H
-         if prodMode in ['ggH','WH','ZH','ttH']                      :  hWght += '*'+str(self._cprimesq)+'*(1-'+str(self._brnew)+')'
-         if prodMode in ['qqH'] and mass < 350                       :  hWght += '*'+str(self._cprimesq)+'*(1-'+str(self._brnew)+')'
+         if prodMode in ['ggH','qqH','WH','ZH','ttH']                :  hWght += '*'+str(self._cprimesq)+'*(1-'+str(self._brnew)+')'
          if prodMode in ['ggH_SM','qqH_SM','WH_SM','ZH_SM','ttH_SM'] :  hWght += '*(1-'+str(self._cprimesq)+')'
 
 
@@ -1201,6 +1171,11 @@ class ShapeFactory:
         weights['DYLL-templatesyst'] = self._stdWgt+'*dyWUp*(1-(( dataset == 36 || dataset == 37 ) && mctruth == 2 ))'
         #systematics
         weights['TopTW']             = self._stdWgt+'*(1+0.17*(dataset>=11 && dataset<=16))' # 17% on tW/tt ratio
+        weights['Top0jet']           = self._stdWgt+'*(dataset>=11 && dataset<=16)*(njet==0)*(0.97)'
+        weights['Topge1jet']         = self._stdWgt+'*(dataset>=11 && dataset<=19)*(njet>0)*(1+(dataset==19)*0.13)*( (njet==1)*1.061 + (njet>1)*1.125 )'
+#        weights['Topge1jet']         = self._stdWgt+'*(dataset>=11 && dataset<=19)*(njet>0)*(1+(dataset==19)*0.13)*( (njet==1)*0.953 + (njet>1)*0.908 )'
+        #weights['Topge1jetUp']       = self._stdWgt+'*(dataset>=11 && dataset<=19)*(njet>0)*(1+(dataset==19)*0.13)*( (njet==1)*0.953 + (njet>1)*0.908 )'
+        #weights['Topge1jetDown']     = self._stdWgt+'*(dataset>=11 && dataset<=19)*(njet>0)*(1+(dataset==19)*0.13)*( (njet==1)*(0.953+0.056) + (njet>1)*(0.908+0.112))'
         weights['TopCtrl']           = self._stdWgt+'*bvetoW'
         weights['Top-template']      = self._stdWgt+'*bvetoW'
         #filter and k-factor on Vg* done by kfW
@@ -1278,43 +1253,23 @@ class ShapeFactory:
 
         # for Higgs width measurements
         #                                              2.1 from LO -> NNLO scaling
-        #weights['ggH_sbi']            = self._stdWgt+'*2.1' # +'*((dataset == 37) - (dataset == 37) + (dataset == 37))'
-        #weights['ggH_s']              = self._stdWgt+'*2.1' # +'*((dataset == 37) - (dataset == 37) + (dataset == 37))'
-        #weights['ggH_b']              = self._stdWgt+'*2.1' # +'*((dataset == 37) - (dataset == 37) + (dataset == 37))'
-        # using powheg to normalize on-shell contribution
-        weights['ggH_sbi']            = self._stdWgt+'*(((njet==0) * (13.3258/5.85323)) + ((njet==1) * (5.78547/1.40855)) + ((njet>=2) * (1.79911/0.195922)))' # +'*((dataset == 37) - (dataset == 37) + (dataset == 37))'
-        weights['ggH_s']              = self._stdWgt+'*(((njet==0) * (13.3258/5.85323)) + ((njet==1) * (5.78547/1.40855)) + ((njet>=2) * (1.79911/0.195922)))' # +'*((dataset == 37) - (dataset == 37) + (dataset == 37))'
-        weights['ggH_b']              = self._stdWgt+'*(((njet==0) * (13.3258/5.85323)) + ((njet==1) * (5.78547/1.40855)) + ((njet>=2) * (1.79911/0.195922)))' # +'*((dataset == 37) - (dataset == 37) + (dataset == 37))'
+        weights['ggH_sbi']            = self._stdWgt+'*2.1' # +'*((dataset == 37) - (dataset == 37) + (dataset == 37))'
+        weights['ggH_s']              = self._stdWgt+'*2.1' # +'*((dataset == 37) - (dataset == 37) + (dataset == 37))'
+        weights['ggH_b']              = self._stdWgt+'*2.1' # +'*((dataset == 37) - (dataset == 37) + (dataset == 37))'
 
-        # scale factors from h126 to h125 GeV
         #                                             only-offshell            1 sm                     9 sm                    25 sm
         #weights['qqH_sbi']            = self._stdWgt+'*(mWW>130)*( 1.000*(dataset == 150) - 0.000*(dataset == 151) + 0.000*(dataset == 152))'
         #weights['qqH_s']              = self._stdWgt+'*(mWW>130)*( 0.125*(dataset == 150) - 0.250*(dataset == 151) + 0.125*(dataset == 152))'
         #weights['qqH_b']              = self._stdWgt+'*(mWW>130)*( 1.875*(dataset == 150) - 1.250*(dataset == 151) + 0.375*(dataset == 152))'
-        weights['qqH_sbi']            = self._stdWgt+'*(1.578/1.568*2.15/2.31)*(mWW>130)*( 1.000*( (dataset == 160) ||  (dataset == 169) || (dataset == 176) || (dataset == 172)) - 0.000*( (dataset == 161) ||  (dataset == 175) || (dataset == 173) || (dataset == 170)) + 0.000*( (dataset == 162) ||  (dataset == 171) || (dataset == 174) || (dataset == 177)))'
-        weights['qqH_s']              = self._stdWgt+'*(1.578/1.568*2.15/2.31)*(mWW>130)*( 0.125*( (dataset == 160) ||  (dataset == 169) || (dataset == 176) || (dataset == 172)) - 0.250*( (dataset == 161) ||  (dataset == 175) || (dataset == 173) || (dataset == 170)) + 0.125*( (dataset == 162) ||  (dataset == 171) || (dataset == 174) || (dataset == 177)))'
-        weights['qqH_b']              = self._stdWgt+'*(1.578/1.568*2.15/2.31)*(mWW>130)*( 1.875*( (dataset == 160) ||  (dataset == 169) || (dataset == 176) || (dataset == 172)) - 1.250*( (dataset == 161) ||  (dataset == 175) || (dataset == 173) || (dataset == 170)) + 0.375*( (dataset == 162) ||  (dataset == 171) || (dataset == 174) || (dataset == 177)))'
-
-        # fix for 2011
-        #print "sel = ",sel
-        # due to lack of mww variable, add and remove powheg sample dataset=8126
-        if (sel == "Hwidthmthmll7TeV") :
-          weights['qqH_sbi']            = self._stdWgt+'*(1.222/1.211*2.15/2.31)*( 1.000*( (dataset == 272) ||  (dataset == 275) || (dataset == 278) || (dataset == 281)) - 0.000*( (dataset == 273) ||  (dataset == 276) || (dataset == 279) || (dataset == 282)) + 0.000*( (dataset == 274) ||  (dataset == 277) || (dataset == 280) || (dataset == 283)) -1.000 * (dataset == 8126))'
-          weights['qqH_s']              = self._stdWgt+'*(1.222/1.211*2.15/2.31)*( 0.125*( (dataset == 272) ||  (dataset == 275) || (dataset == 278) || (dataset == 281)) - 0.250*( (dataset == 273) ||  (dataset == 175) || (dataset == 279) || (dataset == 282)) + 0.125*( (dataset == 274) ||  (dataset == 277) || (dataset == 280) || (dataset == 283)) )'
-          weights['qqH_b']              = self._stdWgt+'*(1.222/1.211*2.15/2.31)*( 1.875*( (dataset == 272) ||  (dataset == 275) || (dataset == 278) || (dataset == 281)) - 1.250*( (dataset == 273) ||  (dataset == 175) || (dataset == 279) || (dataset == 282)) + 0.375*( (dataset == 274) ||  (dataset == 277) || (dataset == 280) || (dataset == 283)) -1.000 * (dataset == 8126))'
-
-
-        if ("Hwidth" in sel) :
-          print " Hww width analysis "
-          weights['WW']   = self._stdWgt+'*((njet==0) * (1.10)  + (njet==1) * (1.20) + (njet>=2) * (1.0))'
-          if ("7TeV" in sel) :
-            weights['WW']   = self._stdWgt+'*((njet==0) * (1.08) + (njet==1) * (0.88) + (njet>=2) * (1.0))'
-
+        weights['qqH_sbi']            = self._stdWgt+'*(mWW>130)*( 1.000*(dataset == 160) - 0.000*(dataset == 161) + 0.000*(dataset == 162))'
+        weights['qqH_s']              = self._stdWgt+'*(mWW>130)*( 0.125*(dataset == 160) - 0.250*(dataset == 161) + 0.125*(dataset == 162))'
+        weights['qqH_b']              = self._stdWgt+'*(mWW>130)*( 1.875*(dataset == 160) - 1.250*(dataset == 161) + 0.375*(dataset == 162))'
 
    #Double_t S =  0.125 * P1 -0.250 *P9 + 0.125 * P25;
    #Double_t I = -1.000 * P1 +1.500 *P9 - 0.500 * P25;
    #Double_t B =  1.875 * P1 -1.250 *P9 + 0.375 * P25;
 
+        weights['CHITOP-Top0jet']     = self._stdWgt+'*('+hwwinfo.massSelections(mass)['pth-selection-top0jet']+')'
 
         if cat in ['2j','2jtche05','2jtche05CJ','2jtche05FJ']:
             #weights['WW']                = self._stdWgt+'*(1+(mjj>500)*(detajj>3.5))'
@@ -1322,6 +1277,8 @@ class ShapeFactory:
             #weights['WWewk']             = self._stdWgt+'*(numbLHE==0)'
             weights['WWewk']             = self._stdWgt+'*(abs(jetLHEPartonpid1)!=6 && abs(jetLHEPartonpid2)!=6 && abs(jetLHEPartonpid3)!=6)*(abs(jetLHEPartonpid1)!=5 && abs(jetLHEPartonpid2)!=5 && abs(jetLHEPartonpid3)!=5)'
 
+#            if (sel == 'shape-pth-selection' or sel == 'shape-pth') :
+#            weights['CHITOP-Top0jet']	  = self._stdWgt+'*('+hwwinfo.massSelections(mass)['pth-selection-top0jet']+')'
             if (sel == 'vbf' or sel == 'vbf-shape') :
               weights['CHITOP-Top']        = self._stdWgt+'*('+hwwinfo.massSelections(mass)['vbf-selection-top']+')'
 
@@ -1537,7 +1494,7 @@ if __name__ == '__main__':
     parser.add_option('--mcset'          , dest='mcset'          , help='Mcset to process'                           , default=None)
     parser.add_option('--path_latino'    , dest='path_latino'    , help='Root of the master trees'                   , default=None)
     parser.add_option('--path_bdt'       , dest='path_bdt'       , help='Root of the friendly bdt trees'             , default=None)
-    parser.add_option('--path_shape_raw' , dest='path_shape_raw' , help='Destination directory of nominals'          , default='raw')
+    parser.add_option('--path_shape_raw' , dest='path_shape_raw' , help='Destination directory of nominals'          , default=None)
     parser.add_option('--range'          , dest='range'          , help='Range (optional default is var)'            , default=None)
     parser.add_option('--splitmode'      , dest='splitmode'      , help='Split in channels using a second selection' , default=None)
 
@@ -1606,9 +1563,9 @@ if __name__ == '__main__':
 
         latinoDir           = opt.path_latino
         bdtDir              = opt.path_bdt
-        nomOutDir           = os.path.join(opt.path_shape_raw,'nominals/{mass}/')
-        systOutDir          = os.path.join(opt.path_shape_raw,'systematics/{mass}/')
-
+        nomOutDir           = os.path.join(opt.path_shape_raw,'nominals/')
+        systOutDir          = os.path.join(opt.path_shape_raw,'systematics/')
+        
         nomInputDir         = ''
         systInputDir        = '{syst}/'
 
@@ -1702,6 +1659,8 @@ if __name__ == '__main__':
                   ('JER_down'                , 'p_res_jDown'),
                   ('JER_up'                  , 'p_res_jUp'),
                   ('JER_down'                , 'p_res_jDown'),
+                  ('btagsf_up'               , 'btagsfUp'),
+                  ('btagsf_down'             , 'btagsfDown'),
                   ('NNLL_up'                 , 'nnllUp'),
                   ('NNLL_down'               , 'nnllDown'),
                   ('NNLLR_up'                , 'nnllRUp'),
@@ -1746,6 +1705,9 @@ if __name__ == '__main__':
               systByWeight['puW_down'] = 'puWup/puW'
               systByWeight['puW_up']   = 'puWdown/puW'
 
+              systByWeight['btagsf_up'] = "( ((dataset>=11 && dataset<=19) && (njet>0)) ? ( (njet==1)*(1.061+0.079) + (njet>1)*(1.125+0.168) )/( (njet==1)*(1.061) + (njet>1)*(1.125) ) : 1. )"
+              systByWeight['btagsf_down'] = "( ((dataset>=11 && dataset<=19) && (njet>0)) ? ( (njet==1)*(1.061-0.079) + (njet>1)*(1.125-0.168) )/( (njet==1)*(1.061) + (njet>1)*(1.125) ) : 1. )"
+
               if selection in ['CutWW'] :
                 systByWeight['NNLL_down']  = 'nllW_Qdown/nllW'
                 systByWeight['NNLL_up']    = 'nllW_Qup/nllW'
@@ -1760,7 +1722,7 @@ if __name__ == '__main__':
 
               factory._systByWeight = systByWeight
 
-              processMask = ['ggH', 'ggH_ALT',  'qqH',  'qqH_ALT', 'wzttH', 'ZH', 'WH', 'ttH', 'ggWW', 'Top', 'TopPt0', 'TopPt1', 'TopPt2', 'TopPt3', 'TopPt4', 'TopPt5', 'TopPt6', 'TopPt7', 'TopPt8', 'WW', 'VV', 'VgS', 'Vg', 'DYTT', 'Other', 'VVV', 'WWewk', 'CHITOP-Top' , 'ggH_SM', 'qqH_SM', 'wzttH_SM' , 'WH_SM','ZH_SM','ttH_SM','ggH_sbi','ggH_b','ggH_s','qqH_sbi','qqH_b','qqH_s']
+              processMask = ['ggH', 'ggH_ALT',  'qqH',  'qqH_ALT', 'wzttH', 'ZH', 'WH', 'ttH', 'ggWW', 'Top', 'Top0jet', 'Topge1jet', 'TopPt0', 'TopPt1', 'TopPt2', 'TopPt3', 'TopPt4', 'TopPt5', 'TopPt6', 'TopPt7', 'TopPt8', 'WW', 'VV', 'VgS', 'Vg', 'DYTT', 'Other', 'VVV', 'WWewk', 'CHITOP-Top' , 'CHITOP-Top0jet', 'ggH_SM', 'qqH_SM', 'wzttH_SM' , 'WH_SM','ZH_SM','ttH_SM','ggH_sbi','ggH_b','ggH_s','qqH_sbi','qqH_b','qqH_s']
 
               if '2011' in opt.dataset:
                   processMask = ['ggH', 'ggH_ALT', 'qqH', 'qqH_ALT', 'VH' , 'wzttH', 'ZH', 'WH', 'ttH', 'ggWW', 'Top', 'WW', 'VV', 'CHITOP-Top', 'ggH_SM', 'qqH_SM','VH_SM', 'wzttH_SM', 'ZH_SM', 'WH_SM', 'ttH_SM']
