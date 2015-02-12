@@ -229,7 +229,8 @@ def getCommonSysts(mass,channel,jets,qqWWfromData,shape,options,suffix,isssactiv
     if options.HWidth :
       if jets == 0:
         #nuisances['QCDscale_ggWW_0jet'] = [ ['lnN'], {'ggH_sbi': 1.11, 'ggH_b': 1.11, 'ggH_s': 1.11}]
-        nuisances['QCDscale_ggWW_offshell']    = [ ['lnN'], {'ggH_sbi': 1.15, 'ggH_b': 1.15, 'ggH_s': 1.15}]
+        #nuisances['QCDscale_ggWW_offshell']    = [ ['lnN'], {'ggH_sbi': 1.15, 'ggH_b': 1.15, 'ggH_s': 1.15}]
+        nuisances['QCDscale_ggWW_offshell']    = [ ['lnN'], {'ggH_sbi': 1.75158,  'ggH_b': 1.75158,  'ggH_s': 1.75158}]  # using NLO uncertainty for ST recipe
         nuisances['QCDscale_ggWW_offshell1in'] = [ ['lnN'], {'ggH_sbi': 0.796502, 'ggH_b': 0.796502, 'ggH_s': 0.796502}]
       if jets == 1:
         #nuisances['QCDscale_ggWW_1jet'] = [ ['lnN'], {'ggH_sbi': 1.11, 'ggH_b': 1.11, 'ggH_s': 1.11}]
