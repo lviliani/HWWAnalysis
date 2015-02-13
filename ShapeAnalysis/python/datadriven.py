@@ -68,7 +68,7 @@ class DDCardReader:
 		       'of_pth4'    : ('pth4',['of']),
 		       'of_pth5'    : ('pth5',['of']),
 		       'of_pth6'    : ('pth6',['of']),
-		       'of'	    : ('pthincl',['of'])
+		       'of_pthincl'	    : ('pthincl',['of'])
                        }
         wwmapping    = {'of_0j': ('0j',['of']), 'sf_0j': ('0j',['sf']),
                        'of_1j': ('1j',['of']), 'sf_1j': ('1j',['sf']),

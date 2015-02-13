@@ -628,7 +628,7 @@ channels['of_pth3'] = ('pth3','of')
 channels['of_pth4'] = ('pth4','of')
 channels['of_pth5'] = ('pth5','of')
 channels['of_pth6'] = ('pth6','of')
-channels['of'] = ('pthincl', 'of')
+channels['of_pthincl'] = ('pthincl', 'of')
 
 channels['sf_pth1'] = ('pth1','sf')
 channels['sf_pth2'] = ('pth2','sf')
