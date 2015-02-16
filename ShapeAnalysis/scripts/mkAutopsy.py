@@ -467,8 +467,8 @@ class Coroner(object):
 
     #---
     def _sewmc(self):
-        # clean the parameters
         self._ws.loadSnapshot('clean')
+        # clean the parameters
         model, pars, norms = self._fit
         
         # deal with the 2 cases. Fit 
@@ -477,7 +477,7 @@ class Coroner(object):
             pars = pars.snapshot()
 
             # normalize to data
-#             A = self._data.sum(False)
+#           A = self._data.sum(False)
             A = self._data.sum(ROOT.RooArgSet(self._x),ROOT.RooArgSet(self._cat),False)
         else:
             # here we can use w.set('nuisances') :D
@@ -789,7 +789,10 @@ def fitAndPlot( dcpath, opts ):
         # workspace + parameters = shapes
         print 'Making the workspace...',
         sys.stdout.flush()
-        os.system( 'text2workspace.py %s -o %s' % (dcpath,wspath) )
+        cmd = 'text2workspace.py %s -o %s' % (dcpath,wspath)
+        if opts.model != None:
+           cmd = 'text2workspace.py %s -o %s -P %s' % (dcpath,wspath, opts.model)
+        os.system( cmd )
         print 'done.'
 
     ROOT.gSystem.Load('libHiggsAnalysisCombinedLimit')
@@ -819,9 +822,11 @@ def fitAndPlot( dcpath, opts ):
         # 3.2
         mlcmd = ' '
         if opts.injectionSignal == False :
-          mlcmd = 'combine -M MaxLikelihoodFit --saveNormalizations '+os.path.join(here,wspath)
+          mlcmd = 'combine --saveWorkspace -M '+ opts.fitmode +' '+os.path.join(here,wspath)
         else :
-          mlcmd = 'combine --expectSignal=1 -t -1 -M MaxLikelihoodFit --saveNormalizations '+os.path.join(here,wspath)
+          mlcmd = 'combine --saveWorkspace --expectSignal=1 -t -1 -M '+opts.fitmode+' '+os.path.join(here,wspath)
+        if opts.fitmode == "MultiDimFit":
+          mlcmd += ' --algo=singles'
         logging.debug(mlcmd)
         print 'do: ',mlcmd
         print 'Fitting the workspace...',
@@ -834,26 +839,38 @@ def fitAndPlot( dcpath, opts ):
         mlfpath = os.path.join(mlfdir,'mlfit.root')
 
     # 4. open the output and get the normalizations
-    mlffile = ROOT.TFile.Open(mlfpath)
-    if not mlffile.__nonzero__():
-        raise IOError('Could not open '+mlfpath)
-
     model_s = w.pdf('model_s')
     model_b = w.pdf('model_b')
-    res_s   = mlffile.Get('fit_s')
-    res_b   = mlffile.Get('fit_b')
-    sig_fit = ( model_s, res_s.floatParsFinal(), mlffile.Get('norm_fit_s'), )
-    bkg_fit = ( model_b, res_b.floatParsFinal(), mlffile.Get('norm_fit_b'), )
+    mlffile = ROOT.TFile.Open(mlfpath)
+    if not mlffile.__nonzero__():
+      raise IOError('Could not open '+mlfpath)
 
-    print 'List of bins found',', '.join(DC.bins)
-    bin = DC.bins[0]
+    res_s=None
+    res_b=None
+    sig_fit=None
+    bkg_fit=None
+    modes=None
+    if opts.fitmode == "MaxLikelyhoodFit":
+      res_s   = mlffile.Get('fit_s')
+      res_b   = mlffile.Get('fit_b')
+      sig_fit = ( model_s, res_s.floatParsFinal(), mlffile.Get('norm_fit_s'), )
+      bkg_fit = ( model_b, res_b.floatParsFinal(), mlffile.Get('norm_fit_b'), )
 
-    modes = odict.OrderedDict([
+      print 'List of bins found',', '.join(DC.bins)
+      bin = DC.bins[0]
+
+      modes = odict.OrderedDict([
         ('init',(model_s,res_s.floatParsInit(),None)), #(None, None, model_s)
         ('bkg' ,bkg_fit),
         ('sig' ,sig_fit),
-    ])
-
+      ])
+    else:
+      res_s   = mlffile.Get('fit_s')
+      sig_fit = ( model_s, res_s.floatParsFinal(), mlffile.Get('norm_fit_s'), )
+      modes = odict.OrderedDict([
+        ('sig', sig_fit )
+      ])  
+      #sig_fit = 
     # experimental
     MB = ShapeBuilder(DC, options)
 
@@ -1056,6 +1073,8 @@ def addOptions( parser ):
     parser.add_option('--usefit'           , dest='usefit'         , help='Do not fit, use an external file', default=None)
     parser.add_option('--stretch'          , dest='stretch'        , help='Stretch'                         , default=None, type='float')
     parser.add_option('--injectionSignal'  , dest='injectionSignal', help='Signal injection'                , default=False     , action='store_true')
+    parser.add_option('--model'  , dest='model', help='signal model'                , default=None     , action='store')
+    parser.add_option('--fitmode'  , dest='fitmode', help='fit mode, MaxLikelihoodFit or MultiDimFit', default='MaxLikelihoodFit', action='store')
 
     hwwtools.addOptions(parser)
     hwwtools.loadOptDefaults(parser)
