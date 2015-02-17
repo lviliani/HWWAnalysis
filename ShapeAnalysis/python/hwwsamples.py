@@ -127,7 +127,72 @@ mcsets = {
          #('DYLL-template',    'DYLL-template-0j1j'),              #    A   <-   sorgente
          #('DYLL-templatesyst','DYLL-templatesyst-0j1j')           #    mkmerged vuole "-template"
          #('CHITOP-Top0jet','Top')
-     ], 
+     ],
+
+      '0j1j-differential2' : [
+        #signals
+#        ('sigSMBin0', 'sigSM'),
+#        ('sigSMBin1', 'sigSM'),
+#        ('sigSMBin2', 'sigSM'),
+#        ('sigSMBin3', 'sigSM'),
+#        ('sigSMBin4', 'sigSM'),
+#        ('sigSMBin5', 'sigSM'),
+         ('ggHBin0','ggH'),
+         ('ggHBin1','ggH'),
+         ('ggHBin2','ggH'),
+         ('ggHBin3','ggH'),
+         ('ggHBin4','ggH'),
+         ('ggHBin5','ggH'),
+         ('qqHBin0','qqH'),
+         ('qqHBin1','qqH'),
+         ('qqHBin2','qqH'),
+         ('qqHBin3','qqH'),
+         ('qqHBin4','qqH'),
+         ('qqHBin5','qqH'),
+         ('WHBin0','WH'),
+         ('WHBin1','WH'),
+         ('WHBin2','WH'),
+         ('WHBin3','WH'),
+         ('WHBin4','WH'),
+         ('WHBin5','WH'),
+         ('ZHBin0','ZH'),
+         ('ZHBin1','ZH'),
+         ('ZHBin2','ZH'),
+         ('ZHBin3','ZH'),
+         ('ZHBin4','ZH'),
+         ('ZHBin5','ZH'),
+
+        # bkgs
+         ('WWBin0', 'WW'), 
+         ('WWBin1', 'WW'), 
+         ('WWBin2', 'WW'), 
+         ('WWBin3', 'WW'), 
+         ('WWBin4', 'WW'), 
+         ('WWBin5', 'WW'), 
+        
+
+         'ggWW','VgS','Vg','WJet','VV','VVV','DYTT','WWnlo','WWnloUp','WWnloDown',
+         ('DYLL','ggH'),
+         # systematics
+         'WJetFakeRate-nominal',
+         ('WJetFakeRate-eUp', 'WJetFakeRate-nominal'),
+         ('WJetFakeRate-eDn', 'WJetFakeRate-nominal'),
+         ('WJetFakeRate-mUp', 'WJetFakeRate-nominal'),
+         ('WJetFakeRate-mDn', 'WJetFakeRate-nominal'),
+         ('TopTW',   'Top'),
+         ('Top0jet',   'Top'),
+         ('Topge1jet',   'Top'),
+         #('Topge1jetUp',   'Top'),
+         #('Topge1jetDown',   'Top'),
+         ('TopCtrl', 'Top'),
+         # templates
+         'VgS-template','Vg-template',
+         # 0j1j specific
+         #('DYLL-template',    'DYLL-template-0j1j'),              #    A   <-   sorgente
+         #('DYLL-templatesyst','DYLL-templatesyst-0j1j')           #    mkmerged vuole "-template"
+         #('CHITOP-Top0jet','Top')
+     ],
+ 
  
      'differential' : [
          #signals

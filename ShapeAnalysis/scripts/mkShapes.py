@@ -347,9 +347,9 @@ class ShapeFactory:
     def _getRangePth(self,mass,cat):
       rangemth = [60,70,80,90,100,110,120,140,160,180,200,220,240,260,280]
       rangemthTotal = [60,70,80,90,100,110,120,140,160,180,200,220,240,260,280]
-      for i in range(1,5):
-	for j in rangemth:
-	  rangemthTotal.append(j+280*i) 		
+      for i in range(1,6):
+	for j in range(1, len(rangemth)):
+	  rangemthTotal.append(rangemth[j]+280*i) 		
       return (rangemthTotal,[12,30,45,60,75,100,125,150,175,200])
        
 
@@ -791,8 +791,14 @@ class ShapeFactory:
             raise ValueError('The variable\'s and range number of dimensions are mismatching')
 
         print 'var: '+var
-        print 'selection (for WW  as example): '+selections['WW']
-        print 'selection (for ggH as example): '+selections['ggHBin0']
+        for key in selections.keys():
+          if 'WW' in key:
+            print 'selection (for '+key+'  as example): '+selections[key]
+            break
+        for key in selections.keys():    
+          if 'ggH' in key:    
+            print 'selection (for '+key+' as example): '+selections[key]
+            break
         #print 'inputs = ', inputs
 
         for process,tree  in inputs.iteritems():
@@ -1232,6 +1238,13 @@ class ShapeFactory:
         weights['ZHBin4']                = self._stdWgt+'*'+self._HiggsWgt('ZH',mass,flavor)+'*(mctruth == 24)*'+self._muVal+'*('+hwwinfo.wwcuts.pth5+')'
         weights['ZHBin5']                = self._stdWgt+'*'+self._HiggsWgt('ZH',mass,flavor)+'*(mctruth == 24)*'+self._muVal+'*('+hwwinfo.wwcuts.pth6+')'
 
+        weights['WWBin0']                = self._stdWgt+'*('+hwwinfo.wwcuts.pth1+')'
+        weights['WWBin1']                = self._stdWgt+'*('+hwwinfo.wwcuts.pth2+')'
+        weights['WWBin2']                = self._stdWgt+'*('+hwwinfo.wwcuts.pth3+')'
+        weights['WWBin3']                = self._stdWgt+'*('+hwwinfo.wwcuts.pth4+')'
+        weights['WWBin4']                = self._stdWgt+'*('+hwwinfo.wwcuts.pth5+')'
+        weights['WWBin5']                = self._stdWgt+'*('+hwwinfo.wwcuts.pth6+')'
+
         weights['ggH']               = self._stdWgt+'*'+self._HiggsWgt('ggH',mass,flavor)+'*'+self._muVal
         weights['qqH']               = self._stdWgt+'*'+self._HiggsWgt('qqH',mass,flavor)+'*'+self._muVal
         weights['ggHminlo']          = 'effW*triggW*kfW*puW*HEPMCweight/497500.*1000*0.108*0.108*9*0.216'+self._muVal
@@ -1313,6 +1326,12 @@ class ShapeFactory:
         weights['qqH_sbi']            = self._stdWgt+'*(mWW>130)*( 1.000*(dataset == 160) - 0.000*(dataset == 161) + 0.000*(dataset == 162))'
         weights['qqH_s']              = self._stdWgt+'*(mWW>130)*( 0.125*(dataset == 160) - 0.250*(dataset == 161) + 0.125*(dataset == 162))'
         weights['qqH_b']              = self._stdWgt+'*(mWW>130)*( 1.875*(dataset == 160) - 1.250*(dataset == 161) + 0.375*(dataset == 162))'
+
+        if ("Hwidth" in sel or 'pth' in sel ) :
+          print " Hww width analysis or pth analysis"
+          weights['WW'] = self._stdWgt+'*((njet==0) * (1.10) + (njet==1) * (1.20) + (njet>=2) * (1.0))'
+          if ("7TeV" in sel) :
+            weights['WW'] = self._stdWgt+'*((njet==0) * (1.08) + (njet==1) * (0.88) + (njet>=2) * (1.0))' 
 
    #Double_t S =  0.125 * P1 -0.250 *P9 + 0.125 * P25;
    #Double_t I = -1.000 * P1 +1.500 *P9 - 0.500 * P25;
@@ -1771,7 +1790,7 @@ if __name__ == '__main__':
 
               factory._systByWeight = systByWeight
 
-              processMask = ['ggH','ggHBin0','ggHBin1','ggHBin2','ggHBin3','ggHBin4','ggHBin5', 'ggH_ALT',  'qqH', 'qqHBin0', 'qqHBin1', 'qqHBin2', 'qqHBin3', 'qqHBin4', 'qqHBin5',  'qqH_ALT', 'wzttH', 'ZH', 'ZHBin0', 'ZHBin1', 'ZHBin2', 'ZHBin3', 'ZHBin4', 'ZHBin5', 'WH', 'WHBin0', 'WHBin1', 'WHBin2', 'WHBin3', 'WHBin4', 'WHBin5', 'ttH', 'ggWW', 'Top', 'Top0jet', 'Topge1jet', 'TopPt0', 'TopPt1', 'TopPt2', 'TopPt3', 'TopPt4', 'TopPt5', 'TopPt6', 'TopPt7', 'TopPt8', 'WW', 'VV', 'VgS', 'Vg', 'DYTT', 'Other', 'VVV', 'WWewk', 'CHITOP-Top' , 'CHITOP-Top0jet', 'ggH_SM', 'qqH_SM', 'wzttH_SM' , 'WH_SM','ZH_SM','ttH_SM','ggH_sbi','ggH_b','ggH_s','qqH_sbi','qqH_b','qqH_s']
+              processMask = ['ggH','ggHBin0','ggHBin1','ggHBin2','ggHBin3','ggHBin4','ggHBin5', 'ggH_ALT',  'qqH', 'qqHBin0', 'qqHBin1', 'qqHBin2', 'qqHBin3', 'qqHBin4', 'qqHBin5',  'qqH_ALT', 'wzttH', 'ZH', 'ZHBin0', 'ZHBin1', 'ZHBin2', 'ZHBin3', 'ZHBin4', 'ZHBin5', 'WH', 'WHBin0', 'WHBin1', 'WHBin2', 'WHBin3', 'WHBin4', 'WHBin5', 'ttH', 'ggWW', 'Top', 'Top0jet', 'Topge1jet', 'TopPt0', 'TopPt1', 'TopPt2', 'TopPt3', 'TopPt4', 'TopPt5', 'TopPt6', 'TopPt7', 'TopPt8', 'WW', 'VV', 'VgS', 'Vg', 'DYTT', 'Other', 'VVV', 'WWewk', 'CHITOP-Top' , 'CHITOP-Top0jet', 'ggH_SM', 'qqH_SM', 'wzttH_SM' , 'WH_SM','ZH_SM','ttH_SM','ggH_sbi','ggH_b','ggH_s','qqH_sbi','qqH_b','qqH_s', 'WWBin0', 'WWBin1', 'WWBin2', 'WWBin3', 'WWBin4', 'WWBin5',]
 
               if '2011' in opt.dataset:
                   processMask = ['ggH', 'ggH_ALT', 'qqH', 'qqH_ALT', 'VH' , 'wzttH', 'ZH', 'WH', 'ttH', 'ggWW', 'Top', 'WW', 'VV', 'CHITOP-Top', 'ggH_SM', 'qqH_SM','VH_SM', 'wzttH_SM', 'ZH_SM', 'WH_SM', 'ttH_SM']
