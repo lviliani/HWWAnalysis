@@ -274,15 +274,18 @@ class Coroner(object):
         return h
 
     #---
-    def _array2TH1(self, name, array, title=None ):
+    def _array2TH1(self, name, array, title=None):
         if len(array) != self._template.GetNbinsX():
             raise ValueError('Mismatching bin array length and histogram bins: %d %d' % (len(array), self._template.GetNbinsX()) )
 
         if title==None: title = name
         h = self._makeHisto( name, title )
+  
 
         for i,c in enumerate(array):
             h.SetBinContent(i+1,c)
+        
+        print "histo ",name,"has integral",h.Integral()
 
         return h
 
@@ -792,6 +795,7 @@ def fitAndPlot( dcpath, opts ):
         cmd = 'text2workspace.py %s -o %s' % (dcpath,wspath)
         if opts.model != None:
            cmd = 'text2workspace.py %s -o %s -P %s' % (dcpath,wspath, opts.model)
+        print cmd   
         os.system( cmd )
         print 'done.'
 

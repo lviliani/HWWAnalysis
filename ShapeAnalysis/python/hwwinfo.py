@@ -102,10 +102,11 @@ class wwcuts:
         '(zveto==1||!sameflav)',
         'mpmet>20.',                    # ema9
         'nextra==0',
-        'jetbjpb1<1.4',
-	'jetbjpb2<1.4',
-        'jetbjpb3<1.4',
-        'jetbjpb4<1.4',
+        #'jetbjpb1<1.4',
+	#'jetbjpb2<1.4',
+        #'jetbjpb3<1.4',
+        #'jetbjpb4<1.4',
+        '( jetbjpb1<1.4 || jetpt1<30) && ( jetbjpb2<1.4 || jetpt2<30)',
         'ptll>%f'%ptllCut,                     # ema 14
     ]
 
@@ -786,6 +787,7 @@ def massSelections(mass):
     sel['ww-common-ss']           = sel['ww-common'].replace("(ch1*ch2)<0.5", "(ch1*ch2)>0.5")
     sel['shape-ss-selection']     = sel['ww-common-ss'].replace("zveto==1", "zveto>-1")+' && '+sel['shape-lomass'] if mass <=250 else sel['ww-common-ss'].replace("zveto==1", "zveto>-1")+' && '+sel['shape-himass']
 
+    sel['shape-pth-top-enriched-selection'] = '( trigger==1. &&  mll>50 && nextra==0 && pt1>20 && pt2>10 && (ch1*ch2)<0 && (zveto==1||!sameflav) && ptll>45 && (njet==0 || njet==1 || (dphilljetjet<pi/180.*165. || !sameflav )) )*(!sameflav && jetbjpb1>1.4 && jetpt1>30)*(pfmet>20. && mpmet>20. && ( !sameflav || ( (njet!=0 || dymva1>0.88 || mpmet>35) && (njet!=1 || dymva1>0.84 || mpmet>35) && ( njet==0 || njet==1 || (pfmet > 45.0)) ) ))'
 
     sel['shape-pth-selection']    = ('( (njet==0 && ('+sel['shape-lomass']+' && '+sel['ww-pth-0j'].replace("zveto==1", "zveto>-1")+'))'+' || '+'(njet>0 && ('+sel['shape-lomass']+' && '+sel['ww-pth-12j'].replace("zveto==1", "zveto>-1")+' && '+sel['shape-lomass']+')))')
 
