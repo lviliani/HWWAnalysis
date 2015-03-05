@@ -28,6 +28,7 @@ from tree.ZHWWlvlvVar       import ZhwwlvlvVarFiller
 from tree.WW2jVar           import WW2jVarFiller
 from tree.leptonTypeVar     import LeptonTypeVarFiller
 from tree.hwidthMVAVar      import HwidthMVAVarFiller
+from tree.btagSF            import btagSF
 
 
 from tree.qq2vvEWKcorrectionsWeight       import qq2vvEWKcorrectionsWeightFiller
@@ -66,6 +67,7 @@ if __name__ == '__main__':
     modules['manyJetsHiggsVar'] = ManyJetsHiggsVarFiller()
     modules['wwGenInfo']        = WWGenFiller()
     modules['higgsCPS']         = HiggsCPSWeightAdder()
+    modules['btagSF']           = btagSF()
 
 # Fake backgroud
     modules['fakeW']            =  FakeWVarFiller()
