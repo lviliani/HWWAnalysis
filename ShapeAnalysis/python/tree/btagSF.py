@@ -108,16 +108,20 @@ class btagSF(TreeCloner):
             n_matching_jets = 0 
             for jet in jets:
               if jet.Perp()>30.:
+		matching=False	
                 for b in trueb:
                   if jet.DeltaR(b) < 0.5:
                     #print jet.Print()
                     #print"matching with",
                     #print b.Print()
                     #print "with DeltaR=",jet.DeltaR(b)
-                    if n_matching_jets < 2:
-                      n_matching_jets += 1
-                    else:
-                      print "WARNING! more than two matching jets. We'll assume two matching jets anyways"
+		    matching=True
+                    break	
+                if matching:
+		  if n_matching_jets < 2:
+                    n_matching_jets += 1
+                  else:
+                    print "WARNING! more than two matching jets. We'll assume two matching jets anyways"
               
             #weight for btagged jets is epsilon_data/epsilon_MC
             #weight for anti b-tagged jets is (1-epsilon_data)/(1-epsilon_MC)
