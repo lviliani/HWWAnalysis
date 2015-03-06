@@ -1193,8 +1193,8 @@ class ShapeFactory:
         #systematics
         weights['TopTW']             = self._stdWgt+'*(1+0.17*(dataset>=11 && dataset<=16))' # 17% on tW/tt ratio
         weights['Top0jet']           = self._stdWgt+'*(dataset>=11 && dataset<=19)*(njet==0)'
-        weights['Topge1jet']         = self._stdWgt+'*(dataset>=11 && dataset<=19)*(njet>0)*(1+(dataset==19)*0.13)*( (njet==1)*1.061 + (njet>1)*1.125 )'
-        weights['Topge1jetCtrl']         = self._stdWgt+'*(dataset>=11 && dataset<=19)*(njet>0)*(1+(dataset==19)*0.13)*( (njet==1)*0.953 + (njet>1)*0.908 )'
+        weights['Topge1jet']         = self._stdWgt+'*(dataset>=11 && dataset<=19)*(njet>0)*(1+(dataset==19)*0.13)*( weightAntiBtag )'
+        weights['Topge1jetCtrl']         = self._stdWgt+'*(dataset>=11 && dataset<=19)*(njet>0)*(1+(dataset==19)*0.13)*weightBtag'
 
         weights['Top0jet_nowe']           = self._stdWgt+'*(dataset>=11 && dataset<=16)*(njet==0)'
         weights['Topge1jet_nowe']         = self._stdWgt+'*(dataset>=11 && dataset<=19)*(njet>0)'
@@ -1777,8 +1777,8 @@ if __name__ == '__main__':
               systByWeight['puW_down'] = 'puWup/puW'
               systByWeight['puW_up']   = 'puWdown/puW'
 
-              systByWeight['btagsf_up'] = "( ((dataset>=11 && dataset<=19) && (njet>0)) ? ( (njet==1)*(1.061+0.079) + (njet>1)*(1.125+0.168) )/( (njet==1)*(1.061) + (njet>1)*(1.125) ) : 1. )"
-              systByWeight['btagsf_down'] = "( ((dataset>=11 && dataset<=19) && (njet>0)) ? ( (njet==1)*(1.061-0.079) + (njet>1)*(1.125-0.168) )/( (njet==1)*(1.061) + (njet>1)*(1.125) ) : 1. )"
+              systByWeight['btagsf_up'] = "( ((dataset>=11 && dataset<=19) && (njet>0)) ? ( weightAntiBtagUp/weightAntiBtag ) : 1. )"
+              systByWeight['btagsf_down'] = "( ((dataset>=11 && dataset<=19) && (njet>0)) ? ( weightAntiBtagDown/weightAntiBtag : 1. )"
 
               if selection in ['CutWW'] :
                 systByWeight['NNLL_down']  = 'nllW_Qdown/nllW'

@@ -93,7 +93,7 @@ class btagSF(TreeCloner):
               jetphi = eval("itree."+basename+"phi"+str(i)) 
               jeteta = eval("itree."+basename+"eta"+str(i))
               vec = TVector3(0.,0.,0.)
-              if jetpt>0:
+              if jetpt>30:
                 vec.SetPtEtaPhi(jetpt, jeteta, jetphi)
                 container.append(vec) 
             #goes from 1 to 4    
