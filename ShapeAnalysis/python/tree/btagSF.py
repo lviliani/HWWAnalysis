@@ -93,7 +93,7 @@ class btagSF(TreeCloner):
               jetphi = eval("itree."+basename+"phi"+str(i)) 
               jeteta = eval("itree."+basename+"eta"+str(i))
               vec = TVector3(0.,0.,0.)
-              if jetpt>30:
+              if jetpt>0:
                 vec.SetPtEtaPhi(jetpt, jeteta, jetphi)
                 container.append(vec) 
             #goes from 1 to 4    
@@ -107,17 +107,18 @@ class btagSF(TreeCloner):
               
             n_matching_jets = 0 
             for jet in jets:
-              for b in trueb:
-                if jet.DeltaR(b) < 0.5:
-                  #print jet.Print()
-                  #print"matching with",
-                  #print b.Print()
-                  #print "with DeltaR=",jet.DeltaR(b)
-                  if n_matching_jets < 2:
-                    n_matching_jets += 1
-                  else:
-                    print "WARNING! more than two matching jets. We'll assume two matching jets anyways"
-            
+              if jet.Perp()>30.:
+                for b in trueb:
+                  if jet.DeltaR(b) < 0.5:
+                    #print jet.Print()
+                    #print"matching with",
+                    #print b.Print()
+                    #print "with DeltaR=",jet.DeltaR(b)
+                    if n_matching_jets < 2:
+                      n_matching_jets += 1
+                    else:
+                      print "WARNING! more than two matching jets. We'll assume two matching jets anyways"
+              
             #weight for btagged jets is epsilon_data/epsilon_MC
             #weight for anti b-tagged jets is (1-epsilon_data)/(1-epsilon_MC)
             weightBtag[0] = (eff_data/eff_mc)**n_matching_jets
