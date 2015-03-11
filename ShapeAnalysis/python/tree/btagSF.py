@@ -62,12 +62,22 @@ class btagSF(TreeCloner):
        
     # ----
     def process(self,**kwargs):
+        print '''
+-----------------------------------------------------------------------------------
+  _________                             ___________              __                
+ /   _____/ ____ _____ _______   ____   \_   _____/____    _____/  |_  ___________ 
+ \_____  \_/ ___\__   \_  __  \_/ __ \   |    __) \__  \ _/ ___\   __\/  _ \_  _ _\\
+ /        \  \___ / __ \|  | \/\  ___/   |     \   / __  \  \___|  | (  <_> )  | \/
+/_______  /\___  >____  /__|    \___  >  \___  /  (____  /\___  >__|  \____/|__|   
+        \/     \/     \/            \/       \/        \/     \/                   
+-----------------------------------------------------------------------------------
+'''
         tree  = kwargs['tree']
         input = kwargs['input']
         output = kwargs['output']
 
         self.connect(tree,input)
-        newbranches = ["weightBtag", "weightAntiBtag", "weightBtagUp", "weightBtagDown", "weightAntiBtagUp", "weightAntiBtagDown"]
+        newbranches = ["weightBtag", "weightAntiBtag", "weightBtagUp", "weightBtagDown", "weightAntiBtagUp", "weightAntiBtagDown","weightMistag","weightAntiMistag","weightMistagUp","weightAntiMistagUp","weightMistagDown","weightAntiMistagDown","isb1","isb2","isb3","isb4"]
         self.clone(output,newbranches)
         weightBtag = numpy.ones(1, dtype=numpy.float32)
         weightAntiBtag = numpy.ones(1, dtype=numpy.float32)
@@ -81,7 +91,10 @@ class btagSF(TreeCloner):
         weightAntiMistagUp = numpy.ones(1, dtype=numpy.float32)
         weightMistagDown = numpy.ones(1, dtype=numpy.float32)
         weightAntiMistagDown = numpy.ones(1, dtype=numpy.float32)
-        
+        isb1 = numpy.ones(1, dtype=numpy.float32)
+        isb2 = numpy.ones(1, dtype=numpy.float32)
+        isb3 = numpy.ones(1, dtype=numpy.float32)
+        isb4 = numpy.ones(1, dtype=numpy.float32)
 
         itree     = self.itree
         otree     = self.otree
@@ -107,6 +120,11 @@ class btagSF(TreeCloner):
         self.otree.Branch("weightMistagDown",weightMistagDown,'weightMistagDown/F')
         self.otree.Branch("weightAntiMistagUp",weightAntiMistagUp,'weightAntiMistagUp/F')
         self.otree.Branch("weightAntiMistagDown",weightAntiMistagDown,'weightAntiMistagDown/F')
+        self.otree.Branch("isb1",isb1,'isb1/F')
+        self.otree.Branch("isb2",isb2,'isb2/F')
+        self.otree.Branch("isb3",isb3,'isb3/F')
+        self.otree.Branch("isb4",isb4,'isb4/F')
+
 
         nentries = self.itree.GetEntries()
         print 'Total number of entries: ',nentries
@@ -140,10 +158,19 @@ class btagSF(TreeCloner):
               
             jets30 = []
             n_matching_jets = 0 
+            n_not_matching_jets = 0 
+	    i = 0
+            isb1[0]=0
+            isb2[0]=0
+            isb3[0]=0
+            isb4[0]=0
+
             for jet in jets:
               if jet.Perp()>30.:
+		i+=1
 		jets30.append(jet)
-		matching=False	
+		matching=False
+                	
                 for b in trueb:
                   if jet.DeltaR(b) < 0.5:
                     #print jet.Print()
@@ -153,6 +180,11 @@ class btagSF(TreeCloner):
 		    matching=True
                     break	
                 if matching:
+                  if   (i==1): isb1[0]=1
+                  elif (i==2): isb2[0]=1
+		  elif (i==3): isb3[0]=1
+                  elif (i==4): isb4[0]=1
+ 	
 		  if n_matching_jets < 2:
                     n_matching_jets += 1
                   else:
