@@ -1192,12 +1192,14 @@ class ShapeFactory:
         weights['DYLL-templatesyst'] = self._stdWgt+'*dyWUp*(1-(( dataset == 36 || dataset == 37 ) && mctruth == 2 ))'
         #systematics
         weights['TopTW']             = self._stdWgt+'*(1+0.17*(dataset>=11 && dataset<=16))' # 17% on tW/tt ratio
-        weights['Top0jet']           = self._stdWgt+'*(dataset>=11 && dataset<=19)*(njet==0)'
-        weights['Topge1jet']         = self._stdWgt+'*(dataset>=11 && dataset<=19)*(njet>0)*(1+(dataset==19)*0.13)*( weightAntiBtag )'
-        weights['Topge1jetCtrl']         = self._stdWgt+'*(dataset>=11 && dataset<=19)*(njet>0)*(1+(dataset==19)*0.13)*weightBtag'
+        weights['Top0jet']           = self._stdWgt+'*(dataset>=10 && dataset<=19)*(njet==0)'
+        #weights['Topge1jet']         = self._stdWgt+'*(dataset>=10 && dataset<=19)*(njet>0)*(1+(dataset==19)*0.13)*( weightAntiBtag )'
+        weights['Topge1jet']         = self._stdWgt+'*(dataset>=10 && dataset<=19)*(njet>0)* weightBtagSig '
+        #weights['Topge1jetCtrl']         = self._stdWgt+'*(dataset>=10 && dataset<=19)*(njet>0)*(1+(dataset==19)*0.13)*weightBtag'
+        weights['Topge1jetCtrl']         = self._stdWgt+'*(dataset>=10 && dataset<=19)*(njet>0)*weightBtagCtrl'
 
-        weights['Top0jet_nowe']           = self._stdWgt+'*(dataset>=11 && dataset<=16)*(njet==0)'
-        weights['Topge1jet_nowe']         = self._stdWgt+'*(dataset>=11 && dataset<=19)*(njet>0)'
+        weights['Top0jet_nowe']           = self._stdWgt+'*(dataset>=10 && dataset<=16)*(njet==0)'
+        weights['Topge1jet_nowe']         = self._stdWgt+'*(dataset>=10 && dataset<=19)*(njet>0)'
 #        weights['Topge1jet']         = self._stdWgt+'*(dataset>=11 && dataset<=19)*(njet>0)*(1+(dataset==19)*0.13)*( (njet==1)*0.953 + (njet>1)*0.908 )'
         #weights['Topge1jetUp']       = self._stdWgt+'*(dataset>=11 && dataset<=19)*(njet>0)*(1+(dataset==19)*0.13)*( (njet==1)*0.953 + (njet>1)*0.908 )'
         #weights['Topge1jetDown']     = self._stdWgt+'*(dataset>=11 && dataset<=19)*(njet>0)*(1+(dataset==19)*0.13)*( (njet==1)*(0.953+0.056) + (njet>1)*(0.908+0.112))'
@@ -1777,8 +1779,12 @@ if __name__ == '__main__':
               systByWeight['puW_down'] = 'puWup/puW'
               systByWeight['puW_up']   = 'puWdown/puW'
 
-              systByWeight['btagsf_up'] = "( ((dataset>=11 && dataset<=19) && (njet>0)) ? ( weightAntiBtagUp/weightAntiBtag ) : 1. )"
-              systByWeight['btagsf_down'] = "( ((dataset>=11 && dataset<=19) && (njet>0)) ? ( weightAntiBtagDown/weightAntiBtag : 1. )"
+              #signal region has jetbjpb1<1.4
+              #ctrl region has jetbjpb1>1.4
+              #systByWeight['btagsf_up'] = "( ((dataset>=11 && dataset<=19) && (njet>0)) ? ( weightAntiBtagUp/weightAntiBtag ) : 1. )"
+              systByWeight['btagsf_up'] = "( ((dataset>=10 && dataset<=19) && (njet>0)) ? ( (weightBtagSigUp/weightBtagSig)*(jetbjpb1<1.4) + (weightBtagCtrlUp/weightBtagCtrl)*(jetbjpb1>1.4) ) : 1. )"
+              #systByWeight['btagsf_down'] = "( ((dataset>=11 && dataset<=19) && (njet>0)) ? ( weightAntiBtagDown/weightAntiBtag : 1. )"
+              systByWeight['btagsf_down'] = "( ((dataset>=10 && dataset<=19) && (njet>0)) ? ( (weightBtagSigDown/weightBtagSig)*(jetbjpb1<1.4) + (weightBtagCtrlDown/weightBtagCtrl)*(jetbjpb1>1.4)) : 1. )"
 
               if selection in ['CutWW'] :
                 systByWeight['NNLL_down']  = 'nllW_Qdown/nllW'

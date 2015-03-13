@@ -106,7 +106,7 @@ class wwcuts:
 	#'jetbjpb2<1.4',
         #'jetbjpb3<1.4',
         #'jetbjpb4<1.4',
-        '( jetbjpb1<1.4 || jetpt1<30) && ( jetbjpb2<1.4 || jetpt2<30)',
+        '( jetbjpb1<1.4 || jetpt1<30) && ( jetbjpb2<1.4 || jetpt2<30) && ( jetbjpb3<1.4 || jetpt3<30) && ( jetbjpb4<1.4 || jetpt4<30) ',
         'ptll>%f'%ptllCut,                     # ema 14
     ]
 
