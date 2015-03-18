@@ -190,7 +190,73 @@ mcsets = {
          # templates
          'VgS-template','Vg-template',
      ],
+      '0j1j-differential3' : [
+        #signals
+#        ('sigSMBin0', 'sigSM'),
+#        ('sigSMBin1', 'sigSM'),
+#        ('sigSMBin2', 'sigSM'),
+#        ('sigSMBin3', 'sigSM'),
+#        ('sigSMBin4', 'sigSM'),
+#        ('sigSMBin5', 'sigSM'),
+         ('ggHBin0','ggH'),
+         ('ggHBin1','ggH'),
+         ('ggHBin2','ggH'),
+         ('ggHBin3','ggH'),
+         ('ggHBin4','ggH'),
+         ('ggHBin5','ggH'),
+         ('qqHBin0','qqH'),
+         ('qqHBin1','qqH'),
+         ('qqHBin2','qqH'),
+         ('qqHBin3','qqH'),
+         ('qqHBin4','qqH'),
+         ('qqHBin5','qqH'),
+         ('WHBin0','WH'),
+         ('WHBin1','WH'),
+         ('WHBin2','WH'),
+         ('WHBin3','WH'),
+         ('WHBin4','WH'),
+         ('WHBin5','WH'),
+         ('ZHBin0','ZH'),
+         ('ZHBin1','ZH'),
+         ('ZHBin2','ZH'),
+         ('ZHBin3','ZH'),
+         ('ZHBin4','ZH'),
+         ('ZHBin5','ZH'),
 
+        # bkgs
+         ('WWBin0', 'WW'),
+         ('WWBin1', 'WW'),
+         ('WWBin2', 'WW'),
+         ('WWBin3', 'WW'),
+         ('WWBin4', 'WW'),
+         ('WWBin5', 'WW'),
+
+
+         'ggWW','VgS','Vg','WJet','VV','VVV','DYTT','WWnlo','WWnloUp','WWnloDown',
+         ('DYLL','ggH'),
+         # systematics
+         'WJetFakeRate-nominal',
+         ('WJetFakeRate-eUp', 'WJetFakeRate-nominal'),
+         ('WJetFakeRate-eDn', 'WJetFakeRate-nominal'),
+         ('WJetFakeRate-mUp', 'WJetFakeRate-nominal'),
+         ('WJetFakeRate-mDn', 'WJetFakeRate-nominal'),
+         ('TopTW',   'Top'),
+         ('Top0jet',   'Top'),
+         ('Topge1jetBin0',   'Top'),
+         ('Topge1jetBin1',   'Top'),
+         ('Topge1jetBin2',   'Top'),
+         ('Topge1jetBin3',   'Top'),
+         ('Topge1jetBin4',   'Top'),
+         ('Topge1jetBin5',   'Top'),
+
+         #('Top0jet_nowe',   'Top'),
+         #('Topge1jet_nowe',   'Top'),
+
+
+         ('TopCtrl', 'Top'),
+         # templates
+         'VgS-template','Vg-template',
+     ],
      '0j1j-differential2Ctrl' : [
         #signals
 #        ('sigSMBin0', 'sigSM'),
@@ -234,6 +300,96 @@ mcsets = {
 
 
          'ggWW','VgS','Vg','WJet','VV','VVV','DYTT','WWnlo','WWnloUp','WWnloDown',
+         ('DYLL','ggH'),
+         # systematics
+         'WJetFakeRate-nominal',
+         ('WJetFakeRate-eUp', 'WJetFakeRate-nominal'),
+         ('WJetFakeRate-eDn', 'WJetFakeRate-nominal'),
+         ('WJetFakeRate-mUp', 'WJetFakeRate-nominal'),
+         ('WJetFakeRate-mDn', 'WJetFakeRate-nominal'),
+         #('TopTW',   'Top'),
+         ('Top0jet',   'Top'),
+         ('Topge1jetCtrl',   'Top'),
+         #('Top0jet_nowe',   'Top'),
+         #('Topge1jet_nowe',   'Top'),
+
+
+         #('TopCtrl', 'Top'),
+         # templates
+         #'VgS-template','Vg-template',
+     ],
+      '0j1j-differential3Ctrl' : [
+        #signals
+#        ('sigSMBin0', 'sigSM'),
+#        ('sigSMBin1', 'sigSM'),
+#        ('sigSMBin2', 'sigSM'),
+#        ('sigSMBin3', 'sigSM'),
+#        ('sigSMBin4', 'sigSM'),
+#        ('sigSMBin5', 'sigSM'),
+         ('ggHBin0','ggH'),
+         ('ggHBin1','ggH'),
+         ('ggHBin2','ggH'),
+         ('ggHBin3','ggH'),
+         ('ggHBin4','ggH'),
+         ('ggHBin5','ggH'),
+         ('qqHBin0','qqH'),
+         ('qqHBin1','qqH'),
+         ('qqHBin2','qqH'),
+         ('qqHBin3','qqH'),
+         ('qqHBin4','qqH'),
+         ('qqHBin5','qqH'),
+         ('WHBin0','WH'),
+         ('WHBin1','WH'),
+         ('WHBin2','WH'),
+         ('WHBin3','WH'),
+         ('WHBin4','WH'),
+         ('WHBin5','WH'),
+         ('ZHBin0','ZH'),
+         ('ZHBin1','ZH'),
+         ('ZHBin2','ZH'),
+         ('ZHBin3','ZH'),
+         ('ZHBin4','ZH'),
+         ('ZHBin5','ZH'),
+
+        # bkgs
+         ('WWBin0', 'WW'),
+         ('WWBin1', 'WW'),
+         ('WWBin2', 'WW'),
+         ('WWBin3', 'WW'),
+         ('WWBin4', 'WW'),
+         ('WWBin5', 'WW'),
+
+
+         'ggWW','VgS','Vg','WJet','VV','VVV','DYTT','WWnlo','WWnloUp','WWnloDown',
+         ('DYLL','ggH'),
+         # systematics
+         'WJetFakeRate-nominal',
+         ('WJetFakeRate-eUp', 'WJetFakeRate-nominal'),
+         ('WJetFakeRate-eDn', 'WJetFakeRate-nominal'),
+         ('WJetFakeRate-mUp', 'WJetFakeRate-nominal'),
+         ('WJetFakeRate-mDn', 'WJetFakeRate-nominal'),
+         #('TopTW',   'Top'),
+         ('Top0jet',   'Top'),
+         ('Topge1jetCtrlBin0',   'Top'),
+         ('Topge1jetCtrlBin1',   'Top'),
+         ('Topge1jetCtrlBin2',   'Top'),
+         ('Topge1jetCtrlBin3',   'Top'),
+         ('Topge1jetCtrlBin4',   'Top'),
+         ('Topge1jetCtrlBin5',   'Top'),
+   
+         #('Top0jet_nowe',   'Top'),
+         #('Topge1jet_nowe',   'Top'),
+
+
+         #('TopCtrl', 'Top'),
+         # templates
+         #'VgS-template','Vg-template',
+     ],
+     '0j1j-inclusiveCtrl' : [
+        #signals
+        'ggH','qqH','WH','ZH',
+        # bkgs
+         'WW','ggWW','VgS','Vg','WJet','VV','VVV','DYTT','WWnlo','WWnloUp','WWnloDown',
          ('DYLL','ggH'),
          # systematics
          'WJetFakeRate-nominal',

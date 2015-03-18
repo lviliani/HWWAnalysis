@@ -85,7 +85,20 @@ class DDCardReader:
                        }
 
         readmap = {}
+        readmap['Topge1jetCtrl']  = basemapping.copy()
+        readmap['Topge1jetCtrlBin0']  = basemapping.copy()
+        readmap['Topge1jetCtrlBin1']  = basemapping.copy()
+        readmap['Topge1jetCtrlBin2']  = basemapping.copy()
+        readmap['Topge1jetCtrlBin3']  = basemapping.copy()
+        readmap['Topge1jetCtrlBin4']  = basemapping.copy()
+        readmap['Topge1jetCtrlBin5']  = basemapping.copy()
 	readmap['Topge1jet']  = basemapping.copy()
+        readmap['Topge1jetBin0']  = basemapping.copy()
+        readmap['Topge1jetBin1']  = basemapping.copy()
+        readmap['Topge1jetBin2']  = basemapping.copy()
+        readmap['Topge1jetBin3']  = basemapping.copy()
+        readmap['Topge1jetBin4']  = basemapping.copy()
+        readmap['Topge1jetBin5']  = basemapping.copy()
 	readmap['Top0jet']  = basemapping.copy()
         readmap['Top']  = basemapping.copy()
         readmap['TopPt0']  = basemapping.copy()
