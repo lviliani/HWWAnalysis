@@ -1195,8 +1195,26 @@ class ShapeFactory:
         weights['Top0jet']           = self._stdWgt+'*(dataset>=10 && dataset<=19)*(njet==0)'
         #weights['Topge1jet']         = self._stdWgt+'*(dataset>=10 && dataset<=19)*(njet>0)*(1+(dataset==19)*0.13)*( weightAntiBtag )'
         weights['Topge1jet']         = self._stdWgt+'*(dataset>=10 && dataset<=19)*(njet>0)* weightBtagSig '
+       
+        weights['Topge1jetBin0']     = self._stdWgt+'*(dataset>=10 && dataset<=19)*(njet>0)* weightBtagSig*('+hwwinfo.wwcuts.pth1+')'
+        weights['Topge1jetBin1']     = self._stdWgt+'*(dataset>=10 && dataset<=19)*(njet>0)* weightBtagSig*('+hwwinfo.wwcuts.pth2+')'
+        weights['Topge1jetBin2']     = self._stdWgt+'*(dataset>=10 && dataset<=19)*(njet>0)* weightBtagSig*('+hwwinfo.wwcuts.pth3+')'
+        weights['Topge1jetBin3']     = self._stdWgt+'*(dataset>=10 && dataset<=19)*(njet>0)* weightBtagSig*('+hwwinfo.wwcuts.pth4+')'
+        weights['Topge1jetBin4']     = self._stdWgt+'*(dataset>=10 && dataset<=19)*(njet>0)* weightBtagSig*('+hwwinfo.wwcuts.pth5+')'
+        weights['Topge1jetBin5']     = self._stdWgt+'*(dataset>=10 && dataset<=19)*(njet>0)* weightBtagSig*('+hwwinfo.wwcuts.pth6+')'
+ 
+
         #weights['Topge1jetCtrl']         = self._stdWgt+'*(dataset>=10 && dataset<=19)*(njet>0)*(1+(dataset==19)*0.13)*weightBtag'
         weights['Topge1jetCtrl']         = self._stdWgt+'*(dataset>=10 && dataset<=19)*(njet>0)*weightBtagCtrl'
+
+        weights['Topge1jetCtrlBin0']         = self._stdWgt+'*(dataset>=10 && dataset<=19)*(njet>0)*weightBtagCtrl*('+hwwinfo.wwcuts.pth1+')'
+        weights['Topge1jetCtrlBin1']         = self._stdWgt+'*(dataset>=10 && dataset<=19)*(njet>0)*weightBtagCtrl*('+hwwinfo.wwcuts.pth2+')'
+        weights['Topge1jetCtrlBin2']         = self._stdWgt+'*(dataset>=10 && dataset<=19)*(njet>0)*weightBtagCtrl*('+hwwinfo.wwcuts.pth3+')'
+        weights['Topge1jetCtrlBin3']         = self._stdWgt+'*(dataset>=10 && dataset<=19)*(njet>0)*weightBtagCtrl*('+hwwinfo.wwcuts.pth4+')'
+        weights['Topge1jetCtrlBin4']         = self._stdWgt+'*(dataset>=10 && dataset<=19)*(njet>0)*weightBtagCtrl*('+hwwinfo.wwcuts.pth5+')'
+        weights['Topge1jetCtrlBin5']         = self._stdWgt+'*(dataset>=10 && dataset<=19)*(njet>0)*weightBtagCtrl*('+hwwinfo.wwcuts.pth6+')'
+
+
 
         weights['Top0jet_nowe']           = self._stdWgt+'*(dataset>=10 && dataset<=16)*(njet==0)'
         weights['Topge1jet_nowe']         = self._stdWgt+'*(dataset>=10 && dataset<=19)*(njet>0)'
@@ -1800,7 +1818,7 @@ if __name__ == '__main__':
 
               factory._systByWeight = systByWeight
 
-              processMask = ['ggH','ggHBin0','ggHBin1','ggHBin2','ggHBin3','ggHBin4','ggHBin5', 'ggH_ALT',  'qqH', 'qqHBin0', 'qqHBin1', 'qqHBin2', 'qqHBin3', 'qqHBin4', 'qqHBin5',  'qqH_ALT', 'wzttH', 'ZH', 'ZHBin0', 'ZHBin1', 'ZHBin2', 'ZHBin3', 'ZHBin4', 'ZHBin5', 'WH', 'WHBin0', 'WHBin1', 'WHBin2', 'WHBin3', 'WHBin4', 'WHBin5', 'ttH', 'ggWW', 'Top', 'Top0jet', 'Topge1jet', 'Top0jet_nowe', 'Topge1jet_nowe', 'Topge1jetCtrl', 'TopPt0', 'TopPt1', 'TopPt2', 'TopPt3', 'TopPt4', 'TopPt5', 'TopPt6', 'TopPt7', 'TopPt8', 'WW', 'VV', 'VgS', 'Vg', 'DYTT', 'Other', 'VVV', 'WWewk', 'CHITOP-Top' , 'CHITOP-Top0jet', 'ggH_SM', 'qqH_SM', 'wzttH_SM' , 'WH_SM','ZH_SM','ttH_SM','ggH_sbi','ggH_b','ggH_s','qqH_sbi','qqH_b','qqH_s', 'WWBin0', 'WWBin1', 'WWBin2', 'WWBin3', 'WWBin4', 'WWBin5',]
+              processMask = ['ggH','ggHBin0','ggHBin1','ggHBin2','ggHBin3','ggHBin4','ggHBin5', 'ggH_ALT',  'qqH', 'qqHBin0', 'qqHBin1', 'qqHBin2', 'qqHBin3', 'qqHBin4', 'qqHBin5',  'qqH_ALT', 'wzttH', 'ZH', 'ZHBin0', 'ZHBin1', 'ZHBin2', 'ZHBin3', 'ZHBin4', 'ZHBin5', 'WH', 'WHBin0', 'WHBin1', 'WHBin2', 'WHBin3', 'WHBin4', 'WHBin5', 'ttH', 'ggWW', 'Top', 'Top0jet', 'Topge1jet', 'Topge1jetBin0', 'Topge1jetBin1','Topge1jetBin2','Topge1jetBin3','Topge1jetBin4','Topge1jetBin5','Top0jet_nowe', 'Topge1jet_nowe', 'Topge1jetCtrl','Topge1jetCtrlBin0', 'Topge1jetCtrlBin1','Topge1jetCtrlBin2','Topge1jetCtrlBin3','Topge1jetCtrlBin4','Topge1jetCtrlBin5','TopPt0', 'TopPt1', 'TopPt2', 'TopPt3', 'TopPt4', 'TopPt5', 'TopPt6', 'TopPt7', 'TopPt8', 'WW', 'VV', 'VgS', 'Vg', 'DYTT', 'Other', 'VVV', 'WWewk', 'CHITOP-Top' , 'CHITOP-Top0jet', 'ggH_SM', 'qqH_SM', 'wzttH_SM' , 'WH_SM','ZH_SM','ttH_SM','ggH_sbi','ggH_b','ggH_s','qqH_sbi','qqH_b','qqH_s', 'WWBin0', 'WWBin1', 'WWBin2', 'WWBin3', 'WWBin4', 'WWBin5',]
 
               if '2011' in opt.dataset:
                   processMask = ['ggH', 'ggH_ALT', 'qqH', 'qqH_ALT', 'VH' , 'wzttH', 'ZH', 'WH', 'ttH', 'ggWW', 'Top', 'WW', 'VV', 'CHITOP-Top', 'ggH_SM', 'qqH_SM','VH_SM', 'wzttH_SM', 'ZH_SM', 'WH_SM', 'ttH_SM']
