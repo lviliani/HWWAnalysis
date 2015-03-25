@@ -92,14 +92,14 @@ class btagSF(TreeCloner):
     # ----
     def process(self,**kwargs):
         print '''
------------------------------------------------------------------------------------
-  _________                             ___________              __                
- /   _____/ ____ _____ _______   ____   \_   _____/____    _____/  |_  ___________ 
- \_____  \_/ ___\__   \_  __  \_/ __ \   |    __) \__  \ _/ ___\   __\/  _ \_  _ _\\
- /        \  \___ / __ \|  | \/\  ___/   |     \   / __  \  \___|  | (  <_> )  | \/
-/_______  /\___  >____  /__|    \___  >  \___  /  (____  /\___  >__|  \____/|__|   
-        \/     \/     \/            \/       \/        \/     \/                   
------------------------------------------------------------------------------------
+   .----------.     -----------------------------------------------------------------------------------    .----------.   
+  /  .-.  .-.  \     _________                             ___________              __                    /  .-.  .-.  \  
+ /   | |  | |   \   /   _____/ ____ _____ _______   ____   \_   _____/____    _____/  |_  ___________    /   | |  | |   \ 
+ \   ._'  ._'  _/   \_____  \_/ ___\__   \_  __  \_/ __ \   |    __) \__  \ _/ ___\   __\/  _ \_  _ _\   \   ._'  ._'  _/ 
+ /\     .--.  / |   /        \  \___ / __ \|  | \/\  ___/   |     \   / __  \  \___|  | (  <_> )  | \/   /\     .--.  / | 
+/\ |   /  /  / /    _______  /\___  >____  /__|    \___  >  \___  /  (____  /\___  >__|  \____/|__|     /\ |   /  /  / /  
+ / |  '--'  /\ \           \/     \/     \/            \/       \/        \/     \/                      / |  '--'  /\ \  
+  /'-------'  \ \   ----------------------------------------------------------------------------------    /'-------'  \ \ 
 '''
         tree  = kwargs['tree']
         input = kwargs['input']
@@ -170,7 +170,7 @@ class btagSF(TreeCloner):
             if i > 0 and i%step == 0.:
                 print i,'events processed.'
 
-            if itree.dataset != 11 and itree.dataset != 12 and itree.dataset != 19:
+            if itree.dataset != 11 and itree.dataset != 12 and itree.dataset != 19 and itree.dataset != 1125 and itree.dataset != 2125 and itree.dataset != 3125 :
               weightBtagSig[0]=1.
               weightBtagSigUp[0]=1.
               weightBtagSigDown[0]=1.
@@ -188,7 +188,32 @@ class btagSF(TreeCloner):
             #goes from 1 to 4    
             for i in range(1,5):
               self.extract3Vect(itree, "jet", i, jets)
+
            
+            if itree.dataset == 1125 or itree.dataset == 2125 or itree.dataset == 3125 :
+              j=0
+	      for jet in jets :
+		if jet.Perp()>30 : j+=1
+              
+              njet = min(2, j)
+              weightBtagSig[0] = perjetAntiMistag**njet
+              errorBtagSig =  njet*perjetAntiMistagError
+              weightBtagSigUp[0]   = weightBtagSig[0]*(1 + errorBtagSig)
+              weightBtagSigDown[0] = weightBtagSig[0]*(1 - errorBtagSig)
+
+              weightBtagCtrl[0] = 1
+              weightBtagCtrlUp[0] = 1
+              weightBtagCtrlDown[0] = 1
+
+              isb1[0]=-9999
+              isb2[0]=-9999
+              isb3[0]=-9999
+              isb4[0]=-9999
+
+              otree.Fill()
+              continue
+
+                       
             trueb = []
             #goes from 1 to 2
             for i in range(1,3):
@@ -245,7 +270,7 @@ class btagSF(TreeCloner):
             #anticorrelated with signal region
             weightBtagCtrlUp[0] = weightBtagCtrl[0]*(1 - errorBtagCtrl)
             weightBtagCtrlDown[0] = weightBtagCtrl[0]*(1 + errorBtagCtrl)
-          
+         
             #n_not_matching_jets = min(2,len(jets30) - n_matching_jets)
             #weight for btagged jets is epsilon_data/epsilon_MC
             #weight for anti b-tagged jets is (1-epsilon_data)/(1-epsilon_MC)
