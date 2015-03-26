@@ -56,6 +56,9 @@ zH_scaErrYR    = {}
 ttH_pdfErrYR   = {}
 ttH_scaErrYR   = {}
 
+HWW_BR         = {}
+HWW_BR_vals    = {}
+
 SYST_PATH      = os.getenv('CMSSW_BASE')+'/src/HWWAnalysis/ShapeAnalysis/data/nuisances/'
 ggH_jets = dict([(m, dict(zip(['f0','f1','f2','k1','k2'], vals))) for m,vals in file2map(SYST_PATH+"ggH_jetBins.txt").items()]) 
 ggH_jets2 = dict([(m, dict(zip(['0','1in0','1in1','2in1','2in2'], vals))) for m,vals in file2map(SYST_PATH+"ggH_jetBinNuisances.txt").items()]) 
@@ -63,6 +66,9 @@ ggH_jets2_pth = dict([(int(bin), dict(zip(['0in','1in','2in'], vals))) for bin,v
 #print ggH_jets2_pth
 ggH_UEPS = dict([(m, dict(zip(['u0','u1','u2'], vals))) for m,vals in file2map(SYST_PATH+"ggH_UEPS.txt").items()])
 ggH_intf = dict([(m, dict(zip(['intf'], vals))) for m,vals in file2map(SYST_PATH+"ggH_interference.txt").items()])
+
+#                             BR uncertainty
+#HWW_BR = dict([(m, dict(zip(['brunc'], vals))) for m,vals in file2map(SYST_PATH+"HWW_BR.txt").items()])
 
 
 def loadYRSyst(YRVersion=3,Energy='8TeV') :
@@ -72,7 +78,10 @@ def loadYRSyst(YRVersion=3,Energy='8TeV') :
     global YR_wzttH  
     global YR_wH      
     global YR_zH       
-    global YR_ttH       
+    global YR_ttH   
+
+    global HWW_BR
+    global HWW_BR_vals    
 
     global ggH_pdfErrYR  
     global ggH_scaErrYR   
@@ -108,6 +117,10 @@ def loadYRSyst(YRVersion=3,Energy='8TeV') :
       YR_zH          = file2map(YR_PATH+Energy+'-ZH.txt')
       YR_ttH         = file2map(YR_PATH+Energy+'-ttH.txt')
     
+    # Only available in YR3
+    HWW_BR         = file2map(os.getenv('CMSSW_BASE')+'/src/HWWAnalysis/ShapeAnalysis/data/lhc-hxswg-YR3/sm/br/BR2bosons.txt')
+    HWW_BR_vals    = dict([(m, (abs(Err_Hi_WW)+abs(Err_Lo_WW))/2.) for m,(H_gg,Err_Hi_gg,Err_Lo_gg,H_gamgam,Err_Hi_gamgam,Err_Lo_gamgam,H_Zgam,Err_Hi_Zgam,Err_Lo_Zgam,H_WW,Err_Hi_WW,Err_Lo_WW,H_ZZ,Err_Hi_ZZ,Err_Lo_ZZ,Total_Width_GeV,Err_Hi,Err_Lo) in HWW_BR.items()] )
+
     ggH_pdfErrYR   = dict([(m, sqrt((1+0.01*pdf_hi)/(1+0.01*pdf_lo))) for m,(xs,xs_hi,xs_lo,sca_hi,sca_lo,pdf_hi,pdf_lo) in YR_ggH.items()] )
     ggH_scaErrYR   = dict([(m, sqrt((1+0.01*sca_hi)/(1+0.01*sca_lo))) for m,(xs,xs_hi,xs_lo,sca_hi,sca_lo,pdf_hi,pdf_lo) in YR_ggH.items()] )
     vbfH_pdfErrYR  = dict([(m, sqrt((1+0.01*pdf_hi)/(1+0.01*pdf_lo))) for m,(xs,xs_hi,xs_lo,sca_hi,sca_lo,pdf_hi,pdf_lo) in YR_vbfH.items()] )
@@ -349,6 +362,14 @@ def getCommonSysts(mass,channel,jets,qqWWfromData,shape,options,suffix,isssactiv
          nuisances['interf_ggH'] = [ ['lnN'], {'ggH':1.10, 'WW':1.15}]
       else :
          nuisances['interf_ggH'] = [ ['lnN'], {'ggH':1.00}]
+
+
+    # BR H > VV uncertainty
+    BRunc    = 1.+GetYRVal(HWW_BR_vals,mass)/100.
+    BRunc_SM = 1.+GetYRVal(HWW_BR_vals,mh_SM)/100.
+    print "BR UNCERTAINIES: ",BRunc,BRunc_SM
+    nuisances['BRhiggs_hvv'] = [ ['lnN'], {'ggH':BRunc, 'ggHBin0':BRunc,'ggHBin1':BRunc,'ggHBin2':BRunc,'ggHBin3':BRunc,'ggHBin4':BRunc,'ggHBin5':BRunc,'qqH':BRunc, 'qqHBin0':BRunc, 'qqHBin1':BRunc,'qqHBin2':BRunc,'qqHBin3':BRunc,'qqHBin4':BRunc,'qqHBin5':BRunc,'ZH':BRunc,'ZHBin0':BRunc, 'ZHBin1':BRunc,'ZHBin2':BRunc,'ZHBin3':BRunc,'ZHBin4':BRunc,'ZHBin5':BRunc,'WH':BRunc, 'WHBin0':BRunc, 'WHBin1':BRunc,'WHBin2':BRunc,'WHBin3':BRunc,'WHBin4':BRunc,'WHBin5':BRunc,'ggH_sbi':BRunc, 'ggH_b':BRunc, 'ggH_s':BRunc, 'qqH_sbi':BRunc, 'qqH_b':BRunc, 'qqH_s':BRunc , 'ggH_SM':BRunc_SM , 'qqH_SM':BRunc_SM , 'ZH_SM':BRunc_SM , 'WH_SM':BRunc_SM }]
+
 
     #if options.WJsub:
     #    nuisances['CMS_FakeRate_e'] = [ ['lnN'], { 'WJet': 1.0+options.WJsub } ]
