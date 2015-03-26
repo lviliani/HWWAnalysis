@@ -305,13 +305,21 @@ class NuisanceMapBuilder:
         if 'sf_1j' in channel : cb = '_cb'
         print '!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!! TEMP FIX !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!! ',cb,channel
         mapping = {
-            'WW'      : ( jetcat+cb,  ['WW','ggWW'] ),
-            'Top'     : ( jetcat+cb,  ['Top']       ),
-            'DYLL'    : ( jetcat+cb,  ['DYLL']      ),
-            'DYee'    : ( channel+cb, ['DYee']      ),
-            'DYmm'    : ( channel+cb, ['DYmm']      ),
-            'DYee05'  : ( channel+cb, ['DYee05']      ),
-            'DYmm05'  : ( channel+cb, ['DYmm05']      ),
+            'WW'       : ( jetcat+cb,  ['WW','ggWW'] ),
+            'Top'      : ( jetcat+cb,  ['Top']       ),
+            'Top0jet'  : ( jetcat+cb,  ['Top0jet']       ),
+            'Topge1jet': ( jetcat+cb,  ['Topge1jet']       ),
+            'Topge1jetBin0': ( jetcat+cb,  ['Topge1jetBin0']       ),
+            'Topge1jetBin1': ( jetcat+cb,  ['Topge1jetBin1']       ),
+            'Topge1jetBin2': ( jetcat+cb,  ['Topge1jetBin2']       ),
+            'Topge1jetBin3': ( jetcat+cb,  ['Topge1jetBin3']       ),
+            'Topge1jetBin4': ( jetcat+cb,  ['Topge1jetBin4']       ),
+            'Topge1jetBin5': ( jetcat+cb,  ['Topge1jetBin5']       ),
+            'DYLL'     : ( jetcat+cb,  ['DYLL']      ),
+            'DYee'     : ( channel+cb, ['DYee']      ),
+            'DYmm'     : ( channel+cb, ['DYmm']      ),
+            'DYee05'   : ( channel+cb, ['DYee05']      ),
+            'DYmm05'   : ( channel+cb, ['DYmm05']      ),
         }
 
         # see if there are MC extrapolation scale factors needed
