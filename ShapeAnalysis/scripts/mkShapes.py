@@ -1800,9 +1800,12 @@ if __name__ == '__main__':
               #signal region has jetbjpb1<1.4
               #ctrl region has jetbjpb1>1.4
               #systByWeight['btagsf_up'] = "( ((dataset>=11 && dataset<=19) && (njet>0)) ? ( weightAntiBtagUp/weightAntiBtag ) : 1. )"
-              systByWeight['btagsf_up'] = "( ((dataset>=10 && dataset<=19) && (njet>0)) ? ( (weightBtagSigUp/weightBtagSig)*(jetbjpb1<1.4) + (weightBtagCtrlUp/weightBtagCtrl)*(jetbjpb1>1.4) ) : 1. )"
+              #systByWeight['btagsf_up'] = "( ((dataset>=10 && dataset<=19) && (njet>0)) ? ( (weightBtagSigUp/weightBtagSig)*(jetbjpb1<1.4) + (weightBtagCtrlUp/weightBtagCtrl)*(jetbjpb1>1.4) ) : 1. )"
+              systByWeight['btagsf_up'] = "( ( ((dataset>=10 && dataset<=19) || dataset==1125 || dataset==2125 || dataset==3125 ) && (njet>0)) ? ( (weightBtagSigUp/weightBtagSig)*(jetbjpb1<1.4) + (weightBtagCtrlUp/weightBtagCtrl)*(jetbjpb1>1.4) ) : 1. )"
+
               #systByWeight['btagsf_down'] = "( ((dataset>=11 && dataset<=19) && (njet>0)) ? ( weightAntiBtagDown/weightAntiBtag : 1. )"
-              systByWeight['btagsf_down'] = "( ((dataset>=10 && dataset<=19) && (njet>0)) ? ( (weightBtagSigDown/weightBtagSig)*(jetbjpb1<1.4) + (weightBtagCtrlDown/weightBtagCtrl)*(jetbjpb1>1.4)) : 1. )"
+              #systByWeight['btagsf_down'] = "( ((dataset>=10 && dataset<=19) && (njet>0)) ? ( (weightBtagSigDown/weightBtagSig)*(jetbjpb1<1.4) + (weightBtagCtrlDown/weightBtagCtrl)*(jetbjpb1>1.4)) : 1. )"
+              systByWeight['btagsf_down'] = "( ( ((dataset>=10 && dataset<=19) || dataset==1125 || dataset==2125 || dataset==3125 ) && (njet>0)) ? ( (weightBtagSigDown/weightBtagSig)*(jetbjpb1<1.4) + (weightBtagCtrlDown/weightBtagCtrl)*(jetbjpb1>1.4)) : 1. )"
 
               if selection in ['CutWW'] :
                 systByWeight['NNLL_down']  = 'nllW_Qdown/nllW'

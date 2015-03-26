@@ -168,6 +168,11 @@ def getCommonSysts(mass,channel,jets,qqWWfromData,shape,options,suffix,isssactiv
     if channel == 'elmu' or channel == 'muel': MCPROC+=['DYMM','DYEE']
     if channel == 'of': MCPROC += ['DYLL']
     if not qqWWfromData: MCPROC+=['WW','ggWW']
+  
+    if channel == 'of_pthincl': 
+      for pthbin in range(0,6):
+        MCPROC+=['ggHBin'+str(pthbin), 'qqHBin'+str(pthbin), 'WHBin'+str(pthbin), 'ZHBin'+str(pthbin)]
+  
     # -- Luminosity ---------------------
     lumiunc = 1.026
     if '7TeV' in suffix: lumiunc = 1.022
