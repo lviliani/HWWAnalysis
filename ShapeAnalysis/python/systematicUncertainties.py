@@ -161,6 +161,10 @@ def getCommonSysts(mass,channel,jets,qqWWfromData,shape,options,suffix,isssactiv
     MCPROC+=['Top']
     MCPROC+=['ggH_sbi', 'ggH_b', 'ggH_s'] # for Higgs width
     MCPROC+=['qqH_sbi', 'qqH_b', 'qqH_s'] # for Higgs width
+    MCPROC+=['ggHBin0', 'ggHBin1', 'ggHBin2', 'ggHBin3', 'ggHBin4', 'ggHBin5']#for pth
+    MCPROC+=['qqHBin0', 'qqHBin1', 'qqHBin2', 'qqHBin3', 'qqHBin4', 'qqHBin5']#for pth
+    MCPROC+=['WHBin0', 'WHBin1', 'WHBin2', 'WHBin3', 'WHBin4', 'WHBin5']#for pth
+    MCPROC+=['ZHBin0', 'ZHBin1', 'ZHBin2', 'ZHBin3', 'ZHBin4', 'ZHBin5']#for pth
     if channel == 'elmu' or channel == 'muel': MCPROC+=['DYMM','DYEE']
     if channel == 'of': MCPROC += ['DYLL']
     if not qqWWfromData: MCPROC+=['WW','ggWW']
@@ -253,14 +257,10 @@ def getCommonSysts(mass,channel,jets,qqWWfromData,shape,options,suffix,isssactiv
     if 'QCDscale_ggH2in' not in nuisances.keys():
       nuisances['QCDscale_ggH2in'] = [['lnN'], {}]
     
-    #print ['ggHBin'+str(i) for i in range(len(ggH_jets2_pth))]
-    #print [ggH_jets2_pth[i]['0in'] for i in range(len(ggH_jets2_pth))]
-    
     nuisances['QCDscale_ggH'][1].update( dict(zip(['ggHBin'+str(i) for i in range(len(ggH_jets2_pth))], [ggH_jets2_pth[i]['0in'] for i in range(len(ggH_jets2_pth))])))
     nuisances['QCDscale_ggH1in'][1].update(dict(zip(['ggHBin'+str(i) for i in range(len(ggH_jets2_pth))], [ggH_jets2_pth[i]['1in'] for i in range(len(ggH_jets2_pth))])))
     nuisances['QCDscale_ggH2in'][1].update(dict(zip(['ggHBin'+str(i) for i in range(len(ggH_jets2_pth))], [ggH_jets2_pth[i]['2in'] for i in range(len(ggH_jets2_pth))])))
    
-    print nuisances['QCDscale_ggH']
 
 
     nuisances['QCDscale_ggWW'] = [ ['lnN'], {'ggWW': 1.30}]
