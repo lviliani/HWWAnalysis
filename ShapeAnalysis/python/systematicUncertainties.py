@@ -17,7 +17,7 @@ def file2map(x):
         for x in open(x,"r"):
             cols = x.split()
             if len(cols) < 2: continue
-            if "mH" in x:
+            if "mH" in x or "bin" in x:
                 headers = [i.strip() for i in cols[1:]]
             else:
                 fields = [ float(i) for i in cols ]
@@ -59,6 +59,8 @@ ttH_scaErrYR   = {}
 SYST_PATH      = os.getenv('CMSSW_BASE')+'/src/HWWAnalysis/ShapeAnalysis/data/nuisances/'
 ggH_jets = dict([(m, dict(zip(['f0','f1','f2','k1','k2'], vals))) for m,vals in file2map(SYST_PATH+"ggH_jetBins.txt").items()]) 
 ggH_jets2 = dict([(m, dict(zip(['0','1in0','1in1','2in1','2in2'], vals))) for m,vals in file2map(SYST_PATH+"ggH_jetBinNuisances.txt").items()]) 
+ggH_jets2_pth = dict([(int(bin), dict(zip(['0in','1in','2in'], vals))) for bin,vals in file2map(SYST_PATH+"ggH_pth_jetBinNuisances.txt").items()]) 
+#print ggH_jets2_pth
 ggH_UEPS = dict([(m, dict(zip(['u0','u1','u2'], vals))) for m,vals in file2map(SYST_PATH+"ggH_UEPS.txt").items()])
 ggH_intf = dict([(m, dict(zip(['intf'], vals))) for m,vals in file2map(SYST_PATH+"ggH_interference.txt").items()])
 
@@ -198,7 +200,6 @@ def getCommonSysts(mass,channel,jets,qqWWfromData,shape,options,suffix,isssactiv
 
     # -- Theory ---------------------
     nuisances['QCDscale_ggH_offshell']    = [  ['lnN'], { 'ggH_sbi':1.15,  'ggH_b':1.15,  'ggH_s':1.15 }]
-
     if jets == 0:
         # appendix D of https://indico.cern.ch/getFile.py/access?contribId=0&resId=0&materialId=0&confId=135333
         k0 = pow(GetYRVal(ggH_scaErrYR,mass),     1/ggH_jets[mass]['f0'])
@@ -242,6 +243,25 @@ def getCommonSysts(mass,channel,jets,qqWWfromData,shape,options,suffix,isssactiv
                #--> now we have Phantom WW+2jets ewk sample, no need this nuisance
                #nuisances['QCDscale_WWvbf'] = [ ['lnN'], {'WW': 1.500 }]
                nuisances['QCDscale_WWewk']     = [ ['lnN'], {'WWewk':1.20 }]
+
+
+    print nuisances.keys()
+    if 'QCDscale_ggH' not in nuisances.keys():
+      nuisances['QCDscale_ggH'] = [['lnN'], {}]
+    if 'QCDscale_ggH1in' not in nuisances.keys():  
+      nuisances['QCDscale_ggH1in'] = [['lnN'], {}]
+    if 'QCDscale_ggH2in' not in nuisances.keys():
+      nuisances['QCDscale_ggH2in'] = [['lnN'], {}]
+    
+    #print ['ggHBin'+str(i) for i in range(len(ggH_jets2_pth))]
+    #print [ggH_jets2_pth[i]['0in'] for i in range(len(ggH_jets2_pth))]
+    
+    nuisances['QCDscale_ggH'][1].update( dict(zip(['ggHBin'+str(i) for i in range(len(ggH_jets2_pth))], [ggH_jets2_pth[i]['0in'] for i in range(len(ggH_jets2_pth))])))
+    nuisances['QCDscale_ggH1in'][1].update(dict(zip(['ggHBin'+str(i) for i in range(len(ggH_jets2_pth))], [ggH_jets2_pth[i]['1in'] for i in range(len(ggH_jets2_pth))])))
+    nuisances['QCDscale_ggH2in'][1].update(dict(zip(['ggHBin'+str(i) for i in range(len(ggH_jets2_pth))], [ggH_jets2_pth[i]['2in'] for i in range(len(ggH_jets2_pth))])))
+   
+    print nuisances['QCDscale_ggH']
+
 
     nuisances['QCDscale_ggWW'] = [ ['lnN'], {'ggWW': 1.30}]
     nuisances['QCDscale_qqH']  = [ ['lnN'], { 'qqH':GetYRVal(vbfH_scaErrYR,mass) , 'qqH_SM':GetYRVal(vbfH_scaErrYR,mh_SM) }]
