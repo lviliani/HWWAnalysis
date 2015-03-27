@@ -872,28 +872,30 @@ class ShapeMixer:
         # Top shapes
         #
         fracTW = {} 
+        print self.nominals
+        for channel in  self.nominals.keys():
+          if "Top" in channel and "TW" in channel:
+            nameNominal = channel.replace("TW", "")
+            pytTop = self.nominals[nameNominal]
+            fracTW[channel] = self.nominals[channel]
+            del self.nominals[channel]
+            
+            if pytTop.GetNbinsX()>1:
+               topGenUp = fracTW[channel].Clone('histo_{1}_CMS{0}_hww_{1}_fTWUp'.format(suffix, nameNominal))
+               topGenUp.SetTitle('{0} CMS_hww_{0}_fTW Up'.format(nameNominal))
+               topGenUp.Scale(pytTop.Integral()/topGenUp.Integral())
+               self.generators[topGenUp.GetTitle()] = topGenUp
+
+               #copy the nominal
+               topGenDown = pytTop.Clone('histo_{1}_CMS{0}_hww_{1}_fTWDown'.format(suffix, nameNominal))
+               topGenDown.SetTitle('{0} CMS_hww_{0}_fTW Down'.format(nameNominal))
+               topGenDown.Scale(2.)
+               topGenDown.Add(topGenUp, -1)
+               topGenDown.Scale(pytTop.Integral()/topGenDown.Integral())
+               self.generators[topGenDown.GetTitle()] = topGenDown
+
         if 'Top' in self.nominals:
             pytTop = self.nominals['Top']
-            fracTWs = ['TopTW',]
-
-            if set(fracTWs).issubset(self.nominals):
-                for t in fracTWs:
-                    fracTW[t] = self.nominals[t]
-                    del self.nominals[t]
-
-                if pytTop.GetNbinsX()>1:
-                    topGenUp = fracTW['TopTW'].Clone('histo_Top_CMS{0}_hww_Top_fTWUp'.format(suffix))
-                    topGenUp.SetTitle('Top CMS_hww_Top_fTW Up')
-                    topGenUp.Scale(pytTop.Integral()/topGenUp.Integral())
-                    self.generators[topGenUp.GetTitle()] = topGenUp
-
-                    #copy the nominal
-                    topGenDown = pytTop.Clone('histo_Top_CMS{0}_hww_Top_fTWDown'.format(suffix))
-                    topGenDown.SetTitle('Top CMS_hww_Top_fTW Down')
-                    topGenDown.Scale(2.)
-                    topGenDown.Add(topGenUp, -1)
-                    topGenDown.Scale(pytTop.Integral()/topGenDown.Integral())
-                    self.generators[topGenDown.GetTitle()] = topGenDown
 
             ctrlTT = {} 
             ctrlTTs = ['TopCtrl',]

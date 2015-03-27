@@ -1192,6 +1192,7 @@ class ShapeFactory:
         weights['DYLL-templatesyst'] = self._stdWgt+'*dyWUp*(1-(( dataset == 36 || dataset == 37 ) && mctruth == 2 ))'
         #systematics
         weights['TopTW']             = self._stdWgt+'*(1+0.17*(dataset>=11 && dataset<=16))' # 17% on tW/tt ratio
+        weights['TopTW0jet']             = self._stdWgt+'*(1+0.17*(dataset>=11 && dataset<=16)*(njet==0))'
         weights['Top0jet']           = self._stdWgt+'*(dataset>=10 && dataset<=19)*(njet==0)'
         #weights['Topge1jet']         = self._stdWgt+'*(dataset>=10 && dataset<=19)*(njet>0)*(1+(dataset==19)*0.13)*( weightAntiBtag )'
         weights['Topge1jet']         = self._stdWgt+'*(dataset>=10 && dataset<=19)*(njet>0)* weightBtagSig '
@@ -1202,6 +1203,15 @@ class ShapeFactory:
         weights['Topge1jetBin3']     = self._stdWgt+'*(dataset>=10 && dataset<=19)*(njet>0)* weightBtagSig*('+hwwinfo.wwcuts.pth4+')'
         weights['Topge1jetBin4']     = self._stdWgt+'*(dataset>=10 && dataset<=19)*(njet>0)* weightBtagSig*('+hwwinfo.wwcuts.pth5+')'
         weights['Topge1jetBin5']     = self._stdWgt+'*(dataset>=10 && dataset<=19)*(njet>0)* weightBtagSig*('+hwwinfo.wwcuts.pth6+')'
+
+        weights['TopTWge1jetBin0']     = self._stdWgt+'*(dataset>=10 && dataset<=19)*(njet>0)* weightBtagSig*('+hwwinfo.wwcuts.pth1+')*(1+0.17*(dataset>=11 && dataset<=16))'
+        weights['TopTWge1jetBin1']     = self._stdWgt+'*(dataset>=10 && dataset<=19)*(njet>0)* weightBtagSig*('+hwwinfo.wwcuts.pth2+')*(1+0.17*(dataset>=11 && dataset<=16))'
+        weights['TopTWge1jetBin2']     = self._stdWgt+'*(dataset>=10 && dataset<=19)*(njet>0)* weightBtagSig*('+hwwinfo.wwcuts.pth3+')*(1+0.17*(dataset>=11 && dataset<=16))'
+        weights['TopTWge1jetBin3']     = self._stdWgt+'*(dataset>=10 && dataset<=19)*(njet>0)* weightBtagSig*('+hwwinfo.wwcuts.pth4+')*(1+0.17*(dataset>=11 && dataset<=16))'
+        weights['TopTWge1jetBin4']     = self._stdWgt+'*(dataset>=10 && dataset<=19)*(njet>0)* weightBtagSig*('+hwwinfo.wwcuts.pth5+')*(1+0.17*(dataset>=11 && dataset<=16))'
+        weights['TopTWge1jetBin5']     = self._stdWgt+'*(dataset>=10 && dataset<=19)*(njet>0)* weightBtagSig*('+hwwinfo.wwcuts.pth6+')*(1+0.17*(dataset>=11 && dataset<=16))'
+
+          
  
 
         #weights['Topge1jetCtrl']         = self._stdWgt+'*(dataset>=10 && dataset<=19)*(njet>0)*(1+(dataset==19)*0.13)*weightBtag'
@@ -1213,6 +1223,14 @@ class ShapeFactory:
         weights['Topge1jetCtrlBin3']         = self._stdWgt+'*(dataset>=10 && dataset<=19)*(njet>0)*weightBtagCtrl*('+hwwinfo.wwcuts.pth4+')'
         weights['Topge1jetCtrlBin4']         = self._stdWgt+'*(dataset>=10 && dataset<=19)*(njet>0)*weightBtagCtrl*('+hwwinfo.wwcuts.pth5+')'
         weights['Topge1jetCtrlBin5']         = self._stdWgt+'*(dataset>=10 && dataset<=19)*(njet>0)*weightBtagCtrl*('+hwwinfo.wwcuts.pth6+')'
+
+        weights['TopTWge1jetCtrlBin0']     = self._stdWgt+'*(dataset>=10 && dataset<=19)*(njet>0)* weightBtagCtrl*('+hwwinfo.wwcuts.pth1+')*(1+0.17*(dataset>=11 && dataset<=16))'
+        weights['TopTWge1jetCtrlBin1']     = self._stdWgt+'*(dataset>=10 && dataset<=19)*(njet>0)* weightBtagCtrl*('+hwwinfo.wwcuts.pth2+')*(1+0.17*(dataset>=11 && dataset<=16))'
+        weights['TopTWge1jetCtrlBin2']     = self._stdWgt+'*(dataset>=10 && dataset<=19)*(njet>0)* weightBtagCtrl*('+hwwinfo.wwcuts.pth3+')*(1+0.17*(dataset>=11 && dataset<=16))'
+        weights['TopTWge1jetCtrlBin3']     = self._stdWgt+'*(dataset>=10 && dataset<=19)*(njet>0)* weightBtagCtrl*('+hwwinfo.wwcuts.pth4+')*(1+0.17*(dataset>=11 && dataset<=16))'
+        weights['TopTWge1jetCtrlBin4']     = self._stdWgt+'*(dataset>=10 && dataset<=19)*(njet>0)* weightBtagCtrl*('+hwwinfo.wwcuts.pth5+')*(1+0.17*(dataset>=11 && dataset<=16))'
+        weights['TopTWge1jetCtrlBin5']     = self._stdWgt+'*(dataset>=10 && dataset<=19)*(njet>0)* weightBtagCtrl*('+hwwinfo.wwcuts.pth6+')*(1+0.17*(dataset>=11 && dataset<=16))'
+        
 
 
 
