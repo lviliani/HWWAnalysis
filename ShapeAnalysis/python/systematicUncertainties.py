@@ -66,6 +66,8 @@ ggH_jets2_pth = dict([(int(bin), dict(zip(['0in','1in','2in'], vals))) for bin,v
 #print ggH_jets2_pth
 ggH_UEPS = dict([(m, dict(zip(['u0','u1','u2'], vals))) for m,vals in file2map(SYST_PATH+"ggH_UEPS.txt").items()])
 ggH_intf = dict([(m, dict(zip(['intf'], vals))) for m,vals in file2map(SYST_PATH+"ggH_interference.txt").items()])
+ggH_UEPS_pth = file2map(SYST_PATH+"ggH_UEPS_pth.txt")
+
 
 #                             BR uncertainty
 #HWW_BR = dict([(m, dict(zip(['brunc'], vals))) for m,vals in file2map(SYST_PATH+"HWW_BR.txt").items()])
@@ -323,6 +325,12 @@ def getCommonSysts(mass,channel,jets,qqWWfromData,shape,options,suffix,isssactiv
     nuisances['QCDscale_wH_ACCEPT']  = [ ['lnN'], {'WH':1.02 ,  'WH_SM':1.02}]
     nuisances['QCDscale_zH_ACCEPT']  = [ ['lnN'], {'ZH':1.02 ,  'ZH_SM':1.02}]
     nuisances['QCDscale_ttH_ACCEPT'] = [ ['lnN'], {'ttH':1.02,  'ttH_SM':1.02}]
+
+   
+    ggH_UEPS_PTH = [ggH_UEPS_pth[0][0], ggH_UEPS_pth[1][0], ggH_UEPS_pth[2][0], ggH_UEPS_pth[3][0], ggH_UEPS_pth[4][0], ggH_UEPS_pth[5][0]]
+
+    nuisances['UEPS_PTH'] = [ ['lnN'], {'ggHBin0':ggH_UEPS_PTH[0], 'ggHBin1':ggH_UEPS_PTH[1],'ggHBin2':ggH_UEPS_PTH[2],'ggHBin3':ggH_UEPS_PTH[3],'ggHBin4':ggH_UEPS_PTH[4],'ggHBin5':ggH_UEPS_PTH[5], 'qqHBin0':1.10, 'qqHBin1':1.10,'qqHBin2':1.10,'qqHBin3':1.10,'qqHBin4':1.10,'qqHBin5':1.10, 'WHBin0':1.08, 'WHBin1':1.08,'WHBin2':1.08,'WHBin3':1.08,'WHBin4':1.08,'WHBin5':1.08, 'ZHBin0':1.08, 'ZHBin1':1.08,'ZHBin2':1.08,'ZHBin3':1.08,'ZHBin4':1.08,'ZHBin5':1.08}]
+
     if   jets == 0: nuisances['UEPS'] = [ ['lnN'], {'ggH':ggH_UEPS[mass]['u0'], 'ggH_SM':ggH_UEPS[mh_SM2]['u0']}]
     elif jets == 1: nuisances['UEPS'] = [ ['lnN'], {'ggH':ggH_UEPS[mass]['u1'], 'ggH_SM':ggH_UEPS[mh_SM2]['u1']}]
     #elif jets == 2: nuisances['UEPS'] = [ ['lnN'], {'ggH':ggH_UEPS[mass]['u2'], 'ggH125':ggH_UEPS[mass]['u2']}]
