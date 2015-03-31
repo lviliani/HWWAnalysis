@@ -499,13 +499,15 @@ class Coroner(object):
                         break
                 
                 # add errors
-                if   ptype == 'lnN' or ptype == 'lnU' or 'shape' in ptype:
+                # rBin* is ptype None
+                if ptype != None:
+                  if   ptype == 'lnN' or ptype == 'lnU' or 'shape' in ptype:
                     # +/- 1 for lnN (and shapes)
                     arg.setError(1.)
-                elif ptype == 'gmN':
+                  elif ptype == 'gmN':
                     # +/- sqrt(N) for gmN
                     arg.setError(math.sqrt(arg.getVal()))
-                else:
+                  else:
                     raise ValueError('Pdf type %s not known',ptype)
 
             # normalize to the expected from the DC
@@ -872,6 +874,7 @@ def fitAndPlot( dcpath, opts ):
       res_s   = mlffile.Get('fit_s')
       sig_fit = ( model_s, res_s.floatParsFinal(), mlffile.Get('norm_fit_s'), )
       modes = odict.OrderedDict([
+        ('init',(model_s,res_s.floatParsInit(),None)),
         ('sig', sig_fit )
       ])  
       #sig_fit = 
