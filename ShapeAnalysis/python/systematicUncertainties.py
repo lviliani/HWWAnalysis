@@ -190,7 +190,14 @@ def getCommonSysts(mass,channel,jets,qqWWfromData,shape,options,suffix,isssactiv
     nuisances['lumi'+suffix] = [ ['lnN'], dict([(p,lumiunc) for p in MCPROC if p!='DYTT' and p!='Top'])]
     # -- PDF ---------------------
     #nuisances['pdf_gg']    = [ ['lnN'], { 'ggH':ggH_pdfErrYR[mass], 'ggWW':(1.00 if qqWWfromData else 1.04) }]
-    nuisances['pdf_gg']    = [ ['lnN'], { 'ggH'    : GetYRVal(ggH_pdfErrYR,mass), 
+    nuisances['pdf_gg']    = [ ['lnN'], { 'ggH'    : GetYRVal(ggH_pdfErrYR,mass),
+					  'ggHBin0': GetYRVal(ggH_pdfErrYR,mass),
+                                          'ggHBin1': GetYRVal(ggH_pdfErrYR,mass),
+                                          'ggHBin2': GetYRVal(ggH_pdfErrYR,mass),
+                                          'ggHBin3': GetYRVal(ggH_pdfErrYR,mass),
+                                          'ggHBin4': GetYRVal(ggH_pdfErrYR,mass),
+                                          'ggHBin5': GetYRVal(ggH_pdfErrYR,mass),
+	 
                                           'ggH_SM' : GetYRVal(ggH_pdfErrYR,mh_SM),
                                           'ggWW'   : 1.04 ,
                                           # for Higgsw width
@@ -201,9 +208,28 @@ def getCommonSysts(mass,channel,jets,qqWWfromData,shape,options,suffix,isssactiv
 
     nuisances['pdf_qqbar'] = [ ['lnN'], { #'wzttH' :(1.0 if mass>300 else wzttH_pdfErrYR[mass]),  
                                           'WH'    :(1.0 if mass>300 else GetYRVal(wH_pdfErrYR,mass)),  
+                                          'WHBin0'    :(1.0 if mass>300 else GetYRVal(wH_pdfErrYR,mass)),  
+                                          'WHBin1'    :(1.0 if mass>300 else GetYRVal(wH_pdfErrYR,mass)), 
+                                          'WHBin2'    :(1.0 if mass>300 else GetYRVal(wH_pdfErrYR,mass)), 
+                                          'WHBin3'    :(1.0 if mass>300 else GetYRVal(wH_pdfErrYR,mass)), 
+                                          'WHBin4'    :(1.0 if mass>300 else GetYRVal(wH_pdfErrYR,mass)), 
+                                          'WHBin5'    :(1.0 if mass>300 else GetYRVal(wH_pdfErrYR,mass)), 
                                           'ZH'    :(1.0 if mass>300 else GetYRVal(zH_pdfErrYR,mass)), 
+                                          'ZHBin0'    :(1.0 if mass>300 else GetYRVal(zH_pdfErrYR,mass)), 
+                                          'ZHBin1'    :(1.0 if mass>300 else GetYRVal(zH_pdfErrYR,mass)),
+                                          'ZHBin2'    :(1.0 if mass>300 else GetYRVal(zH_pdfErrYR,mass)),
+                                          'ZHBin3'    :(1.0 if mass>300 else GetYRVal(zH_pdfErrYR,mass)),
+                                          'ZHBin4'    :(1.0 if mass>300 else GetYRVal(zH_pdfErrYR,mass)),
+                                          'ZHBin5'    :(1.0 if mass>300 else GetYRVal(zH_pdfErrYR,mass)),
                                           'ttH'   :(1.0 if mass>300 else GetYRVal(ttH_pdfErrYR,mass)), 
                                           'qqH'   :GetYRVal(vbfH_pdfErrYR,mass), 
+                                          'qqHBin0'   :GetYRVal(vbfH_pdfErrYR,mass), 
+                                          'qqHBin1'   :GetYRVal(vbfH_pdfErrYR,mass),
+                                          'qqHBin2'   :GetYRVal(vbfH_pdfErrYR,mass),
+                                          'qqHBin3'   :GetYRVal(vbfH_pdfErrYR,mass),
+                                          'qqHBin4'   :GetYRVal(vbfH_pdfErrYR,mass),
+                                          'qqHBin5'   :GetYRVal(vbfH_pdfErrYR,mass),
+
                                           #'wzttH_SM' :(1.0 if mh_SM>300 else wzttH_pdfErrYR[mh_SM]),  
                                           'WH_SM'    :(1.0 if mh_SM>300 else GetYRVal(wH_pdfErrYR,mh_SM)),  
                                           'ZH_SM'    :(1.0 if mh_SM>300 else GetYRVal(zH_pdfErrYR,mh_SM)), 
