@@ -303,12 +303,6 @@ def getCommonSysts(mass,channel,jets,qqWWfromData,shape,options,suffix,isssactiv
     nuisances['QCDscale_ggH1in'][1].update(dict(zip(['ggHBin'+str(i) for i in range(len(ggH_jets2_pth))], [ggH_jets2_pth[i]['1in'] for i in range(len(ggH_jets2_pth))])))
     nuisances['QCDscale_ggH2in'][1].update(dict(zip(['ggHBin'+str(i) for i in range(len(ggH_jets2_pth))], [ggH_jets2_pth[i]['2in'] for i in range(len(ggH_jets2_pth))])))
    
-    if not qqWWfromData:
-      if 'QCDscale_WW' not in nuisances.keys():
-        nuisances['QCDscale_WW'] = [['lnN'], {}]
-      
-      nuisances['QCDscale_WW'][1].update({'WWBin0': 1.035, 'WWBin1': 1.035, 'WWBin2': 1.035, 'WWBin3': 1.035, 'WWBin4': 1.035, 'WWBin5': 1.035})
-
     nuisances['QCDscale_ggWW'] = [ ['lnN'], {'ggWW': 1.30}]
     nuisances['QCDscale_qqH']  = [ ['lnN'], { 'qqH':GetYRVal(vbfH_scaErrYR,mass) , 'qqH_SM':GetYRVal(vbfH_scaErrYR,mh_SM) }]
 
