@@ -190,59 +190,102 @@ def getCommonSysts(mass,channel,jets,qqWWfromData,shape,options,suffix,isssactiv
     nuisances['lumi'+suffix] = [ ['lnN'], dict([(p,lumiunc) for p in MCPROC if p!='DYTT' and p!='Top'])]
     # -- PDF ---------------------
     #nuisances['pdf_gg']    = [ ['lnN'], { 'ggH':ggH_pdfErrYR[mass], 'ggWW':(1.00 if qqWWfromData else 1.04) }]
-    nuisances['pdf_gg']    = [ ['lnN'], { 'ggH'    : GetYRVal(ggH_pdfErrYR,mass),
-					  'ggHBin0': GetYRVal(ggH_pdfErrYR,mass),
-                                          'ggHBin1': GetYRVal(ggH_pdfErrYR,mass),
-                                          'ggHBin2': GetYRVal(ggH_pdfErrYR,mass),
-                                          'ggHBin3': GetYRVal(ggH_pdfErrYR,mass),
-                                          'ggHBin4': GetYRVal(ggH_pdfErrYR,mass),
-                                          'ggHBin5': GetYRVal(ggH_pdfErrYR,mass),
-	 
-                                          'ggH_SM' : GetYRVal(ggH_pdfErrYR,mh_SM),
+#    nuisances['pdf_gg']    = [ ['lnN'], { 'ggH'    : GetYRVal(ggH_pdfErrYR,mass),
+#					  'ggHBin0': GetYRVal(ggH_pdfErrYR,mass),
+#                                          'ggHBin1': GetYRVal(ggH_pdfErrYR,mass),
+#                                          'ggHBin2': GetYRVal(ggH_pdfErrYR,mass),
+#                                          'ggHBin3': GetYRVal(ggH_pdfErrYR,mass),
+#                                          'ggHBin4': GetYRVal(ggH_pdfErrYR,mass),
+#                                          'ggHBin5': GetYRVal(ggH_pdfErrYR,mass),
+#	 
+#                                          'ggH_SM' : GetYRVal(ggH_pdfErrYR,mh_SM),
+#                                          'ggWW'   : 1.04 ,
+#                                          # for Higgsw width
+#                                          'ggH_sbi'   : 1.04 ,
+#                                          'ggH_b'     : 1.04 ,
+#                                          'ggH_s'     : 1.04 ,
+#                                         }]
+
+### In WW xsec measurement going to full PDFs uncertainty to the ACCEPT one involves a reduction of the uncertainty of a factor around 4.
+### We assume the same reduction is applicable also to pdf_gg and pdf_qqbar for ggH and other Higgs signals, thus we divide the YR value by 4. 
+    nuisances['pdf_gg_ACCEPT']    = [ ['lnN'], { 'ggH'    : (1+float(GetYRVal(ggH_pdfErrYR,mass)-1)/float(4)),
+                                          'ggHBin0': (1+float(GetYRVal(ggH_pdfErrYR,mass)-1)/float(4)),
+                                          'ggHBin1': (1+float(GetYRVal(ggH_pdfErrYR,mass)-1)/float(4)),
+                                          'ggHBin2': (1+float(GetYRVal(ggH_pdfErrYR,mass)-1)/float(4)),
+                                          'ggHBin3': (1+float(GetYRVal(ggH_pdfErrYR,mass)-1)/float(4)),
+                                          'ggHBin4': (1+float(GetYRVal(ggH_pdfErrYR,mass)-1)/float(4)),
+                                          'ggHBin5': (1+float(GetYRVal(ggH_pdfErrYR,mass)-1)/float(4)),
                                           'ggWW'   : 1.04 ,
-                                          # for Higgsw width
-                                          'ggH_sbi'   : 1.04 ,
-                                          'ggH_b'     : 1.04 ,
-                                          'ggH_s'     : 1.04 ,
                                         }]
 
-    nuisances['pdf_qqbar'] = [ ['lnN'], { #'wzttH' :(1.0 if mass>300 else wzttH_pdfErrYR[mass]),  
-                                          'WH'    :(1.0 if mass>300 else GetYRVal(wH_pdfErrYR,mass)),  
-                                          'WHBin0'    :(1.0 if mass>300 else GetYRVal(wH_pdfErrYR,mass)),  
-                                          'WHBin1'    :(1.0 if mass>300 else GetYRVal(wH_pdfErrYR,mass)), 
-                                          'WHBin2'    :(1.0 if mass>300 else GetYRVal(wH_pdfErrYR,mass)), 
-                                          'WHBin3'    :(1.0 if mass>300 else GetYRVal(wH_pdfErrYR,mass)), 
-                                          'WHBin4'    :(1.0 if mass>300 else GetYRVal(wH_pdfErrYR,mass)), 
-                                          'WHBin5'    :(1.0 if mass>300 else GetYRVal(wH_pdfErrYR,mass)), 
-                                          'ZH'    :(1.0 if mass>300 else GetYRVal(zH_pdfErrYR,mass)), 
-                                          'ZHBin0'    :(1.0 if mass>300 else GetYRVal(zH_pdfErrYR,mass)), 
-                                          'ZHBin1'    :(1.0 if mass>300 else GetYRVal(zH_pdfErrYR,mass)),
-                                          'ZHBin2'    :(1.0 if mass>300 else GetYRVal(zH_pdfErrYR,mass)),
-                                          'ZHBin3'    :(1.0 if mass>300 else GetYRVal(zH_pdfErrYR,mass)),
-                                          'ZHBin4'    :(1.0 if mass>300 else GetYRVal(zH_pdfErrYR,mass)),
-                                          'ZHBin5'    :(1.0 if mass>300 else GetYRVal(zH_pdfErrYR,mass)),
-                                          'ttH'   :(1.0 if mass>300 else GetYRVal(ttH_pdfErrYR,mass)), 
-                                          'qqH'   :GetYRVal(vbfH_pdfErrYR,mass), 
-                                          'qqHBin0'   :GetYRVal(vbfH_pdfErrYR,mass), 
-                                          'qqHBin1'   :GetYRVal(vbfH_pdfErrYR,mass),
-                                          'qqHBin2'   :GetYRVal(vbfH_pdfErrYR,mass),
-                                          'qqHBin3'   :GetYRVal(vbfH_pdfErrYR,mass),
-                                          'qqHBin4'   :GetYRVal(vbfH_pdfErrYR,mass),
-                                          'qqHBin5'   :GetYRVal(vbfH_pdfErrYR,mass),
 
-                                          #'wzttH_SM' :(1.0 if mh_SM>300 else wzttH_pdfErrYR[mh_SM]),  
-                                          'WH_SM'    :(1.0 if mh_SM>300 else GetYRVal(wH_pdfErrYR,mh_SM)),  
-                                          'ZH_SM'    :(1.0 if mh_SM>300 else GetYRVal(zH_pdfErrYR,mh_SM)), 
-                                          'ttH_SM'   :(1.0 if mh_SM>300 else GetYRVal(ttH_pdfErrYR,mh_SM)), 
-                                          'qqH_SM'   :GetYRVal(vbfH_pdfErrYR,mh_SM), 
+
+#    nuisances['pdf_qqbar'] = [ ['lnN'], { #'wzttH' :(1.0 if mass>300 else wzttH_pdfErrYR[mass]),  
+#                                          'WH'    :(1.0 if mass>300 else GetYRVal(wH_pdfErrYR,mass)),  
+#                                          'WHBin0'    :(1.0 if mass>300 else GetYRVal(wH_pdfErrYR,mass)),  
+#                                          'WHBin1'    :(1.0 if mass>300 else GetYRVal(wH_pdfErrYR,mass)), 
+#                                          'WHBin2'    :(1.0 if mass>300 else GetYRVal(wH_pdfErrYR,mass)), 
+#                                          'WHBin3'    :(1.0 if mass>300 else GetYRVal(wH_pdfErrYR,mass)), 
+#                                          'WHBin4'    :(1.0 if mass>300 else GetYRVal(wH_pdfErrYR,mass)), 
+#                                          'WHBin5'    :(1.0 if mass>300 else GetYRVal(wH_pdfErrYR,mass)), 
+#                                          'ZH'    :(1.0 if mass>300 else GetYRVal(zH_pdfErrYR,mass)), 
+#                                          'ZHBin0'    :(1.0 if mass>300 else GetYRVal(zH_pdfErrYR,mass)), 
+#                                          'ZHBin1'    :(1.0 if mass>300 else GetYRVal(zH_pdfErrYR,mass)),
+#                                          'ZHBin2'    :(1.0 if mass>300 else GetYRVal(zH_pdfErrYR,mass)),
+#                                          'ZHBin3'    :(1.0 if mass>300 else GetYRVal(zH_pdfErrYR,mass)),
+#                                          'ZHBin4'    :(1.0 if mass>300 else GetYRVal(zH_pdfErrYR,mass)),
+#                                          'ZHBin5'    :(1.0 if mass>300 else GetYRVal(zH_pdfErrYR,mass)),
+#                                          'ttH'   :(1.0 if mass>300 else GetYRVal(ttH_pdfErrYR,mass)), 
+#                                          'qqH'   :GetYRVal(vbfH_pdfErrYR,mass), 
+#                                          'qqHBin0'   :GetYRVal(vbfH_pdfErrYR,mass), 
+#                                          'qqHBin1'   :GetYRVal(vbfH_pdfErrYR,mass),
+#                                          'qqHBin2'   :GetYRVal(vbfH_pdfErrYR,mass),
+#                                          'qqHBin3'   :GetYRVal(vbfH_pdfErrYR,mass),
+#                                          'qqHBin4'   :GetYRVal(vbfH_pdfErrYR,mass),
+#                                          'qqHBin5'   :GetYRVal(vbfH_pdfErrYR,mass),
+#
+#                                          #'wzttH_SM' :(1.0 if mh_SM>300 else wzttH_pdfErrYR[mh_SM]),  
+#                                          'WH_SM'    :(1.0 if mh_SM>300 else GetYRVal(wH_pdfErrYR,mh_SM)),  
+#                                          'ZH_SM'    :(1.0 if mh_SM>300 else GetYRVal(zH_pdfErrYR,mh_SM)), 
+#                                          'ttH_SM'   :(1.0 if mh_SM>300 else GetYRVal(ttH_pdfErrYR,mh_SM)), 
+#                                          'qqH_SM'   :GetYRVal(vbfH_pdfErrYR,mh_SM), 
+#                                          'VV':1.04, 
+#                                          'WW':(1.0 if qqWWfromData else 1.04), 
+#                                          # for Higgsw width
+#                                          'qqH_sbi'   : 1.04 ,
+#                                          'qqH_b'     : 1.04 ,
+#                                          'qqH_s'     : 1.04 ,
+#
+#                                        }]
+
+    nuisances['pdf_qqbar_ACCEPT'] = [ ['lnN'], { 'WH'    :(1.0 if mass>300 else (1+float(GetYRVal(wH_pdfErrYR,mass)-1)/float(4))),  
+                                          'WHBin0'    :(1.0 if mass>300 else (1+float(GetYRVal(wH_pdfErrYR,mass)-1)/float(4))),  
+                                          'WHBin1'    :(1.0 if mass>300 else (1+float(GetYRVal(wH_pdfErrYR,mass)-1)/float(4))), 
+                                          'WHBin2'    :(1.0 if mass>300 else (1+float(GetYRVal(wH_pdfErrYR,mass)-1)/float(4))), 
+                                          'WHBin3'    :(1.0 if mass>300 else (1+float(GetYRVal(wH_pdfErrYR,mass)-1)/float(4))), 
+                                          'WHBin4'    :(1.0 if mass>300 else (1+float(GetYRVal(wH_pdfErrYR,mass)-1)/float(4))), 
+                                          'WHBin5'    :(1.0 if mass>300 else (1+float(GetYRVal(wH_pdfErrYR,mass)-1)/float(4))), 
+                                          'ZH'    :(1.0 if mass>300 else (1+float(GetYRVal(zH_pdfErrYR,mass)-1)/float(4))), 
+                                          'ZHBin0'    :(1.0 if mass>300 else (1+float(GetYRVal(zH_pdfErrYR,mass)-1)/float(4))), 
+                                          'ZHBin1'    :(1.0 if mass>300 else (1+float(GetYRVal(zH_pdfErrYR,mass)-1)/float(4))),
+                                          'ZHBin2'    :(1.0 if mass>300 else (1+float(GetYRVal(zH_pdfErrYR,mass)-1)/float(4))),
+                                          'ZHBin3'    :(1.0 if mass>300 else (1+float(GetYRVal(zH_pdfErrYR,mass)-1)/float(4))),
+                                          'ZHBin4'    :(1.0 if mass>300 else (1+float(GetYRVal(zH_pdfErrYR,mass)-1)/float(4))),
+                                          'ZHBin5'    :(1.0 if mass>300 else (1+float(GetYRVal(zH_pdfErrYR,mass)-1)/float(4))),
+                                          'ttH'   :(1.0 if mass>300 else (1+float(GetYRVal(ttH_pdfErrYR,mass)-1)/float(4) )), 
+                                          'qqH'   :(1+float(GetYRVal(vbfH_pdfErrYR,mass)-1)/float(4)), 
+                                          'qqHBin0'   :(1+float(GetYRVal(vbfH_pdfErrYR,mass)-1)/float(4)), 
+                                          'qqHBin1'   :(1+float(GetYRVal(vbfH_pdfErrYR,mass)-1)/float(4)),
+                                          'qqHBin2'   :(1+float(GetYRVal(vbfH_pdfErrYR,mass)-1)/float(4)),
+                                          'qqHBin3'   :(1+float(GetYRVal(vbfH_pdfErrYR,mass)-1)/float(4)),
+                                          'qqHBin4'   :(1+float(GetYRVal(vbfH_pdfErrYR,mass)-1)/float(4)),
+                                          'qqHBin5'   :(1+float(GetYRVal(vbfH_pdfErrYR,mass)-1)/float(4)),
+
                                           'VV':1.04, 
                                           'WW':(1.0 if qqWWfromData else 1.04), 
-                                          # for Higgsw width
-                                          'qqH_sbi'   : 1.04 ,
-                                          'qqH_b'     : 1.04 ,
-                                          'qqH_s'     : 1.04 ,
-
                                         }]
+
+
 
     # -- Theory ---------------------
     nuisances['QCDscale_ggH_offshell']    = [  ['lnN'], { 'ggH_sbi':1.15,  'ggH_b':1.15,  'ggH_s':1.15 }]
@@ -351,9 +394,9 @@ def getCommonSysts(mass,channel,jets,qqWWfromData,shape,options,suffix,isssactiv
     nuisances['QCDscale_ttH_ACCEPT'] = [ ['lnN'], {'ttH':1.02,  'ttH_SM':1.02}]
 
    
-    ggH_UEPS_PTH = [ggH_UEPS_pth[0][0], ggH_UEPS_pth[1][0], ggH_UEPS_pth[2][0], ggH_UEPS_pth[3][0], ggH_UEPS_pth[4][0], ggH_UEPS_pth[5][0]]
+#    ggH_UEPS_PTH = [ggH_UEPS_pth[0][0], ggH_UEPS_pth[1][0], ggH_UEPS_pth[2][0], ggH_UEPS_pth[3][0], ggH_UEPS_pth[4][0], ggH_UEPS_pth[5][0]]
 
-    nuisances['UEPS_PTH'] = [ ['lnN'], {'ggHBin0':ggH_UEPS_PTH[0], 'ggHBin1':ggH_UEPS_PTH[1],'ggHBin2':ggH_UEPS_PTH[2],'ggHBin3':ggH_UEPS_PTH[3],'ggHBin4':ggH_UEPS_PTH[4],'ggHBin5':ggH_UEPS_PTH[5], 'qqHBin0':1.10, 'qqHBin1':1.10,'qqHBin2':1.10,'qqHBin3':1.10,'qqHBin4':1.10,'qqHBin5':1.10, 'WHBin0':1.08, 'WHBin1':1.08,'WHBin2':1.08,'WHBin3':1.08,'WHBin4':1.08,'WHBin5':1.08, 'ZHBin0':1.08, 'ZHBin1':1.08,'ZHBin2':1.08,'ZHBin3':1.08,'ZHBin4':1.08,'ZHBin5':1.08}]
+#    nuisances['UEPS_PTH'] = [ ['lnN'], {'ggHBin0':ggH_UEPS_PTH[0], 'ggHBin1':ggH_UEPS_PTH[1],'ggHBin2':ggH_UEPS_PTH[2],'ggHBin3':ggH_UEPS_PTH[3],'ggHBin4':ggH_UEPS_PTH[4],'ggHBin5':ggH_UEPS_PTH[5], 'qqHBin0':1.10, 'qqHBin1':1.10,'qqHBin2':1.10,'qqHBin3':1.10,'qqHBin4':1.10,'qqHBin5':1.10, 'WHBin0':1.08, 'WHBin1':1.08,'WHBin2':1.08,'WHBin3':1.08,'WHBin4':1.08,'WHBin5':1.08, 'ZHBin0':1.08, 'ZHBin1':1.08,'ZHBin2':1.08,'ZHBin3':1.08,'ZHBin4':1.08,'ZHBin5':1.08}]
 
     if   jets == 0: nuisances['UEPS'] = [ ['lnN'], {'ggH':ggH_UEPS[mass]['u0'], 'ggH_SM':ggH_UEPS[mh_SM2]['u0']}]
     elif jets == 1: nuisances['UEPS'] = [ ['lnN'], {'ggH':ggH_UEPS[mass]['u1'], 'ggH_SM':ggH_UEPS[mh_SM2]['u1']}]
@@ -400,7 +443,7 @@ def getCommonSysts(mass,channel,jets,qqWWfromData,shape,options,suffix,isssactiv
     BRunc    = 1.+GetYRVal(HWW_BR_vals,mass)/100.
     BRunc_SM = 1.+GetYRVal(HWW_BR_vals,mh_SM)/100.
     print "BR UNCERTAINIES: ",BRunc,BRunc_SM
-    nuisances['BRhiggs_hvv'] = [ ['lnN'], {'ggH':BRunc, 'ggHBin0':BRunc,'ggHBin1':BRunc,'ggHBin2':BRunc,'ggHBin3':BRunc,'ggHBin4':BRunc,'ggHBin5':BRunc,'qqH':BRunc, 'qqHBin0':BRunc, 'qqHBin1':BRunc,'qqHBin2':BRunc,'qqHBin3':BRunc,'qqHBin4':BRunc,'qqHBin5':BRunc,'ZH':BRunc,'ZHBin0':BRunc, 'ZHBin1':BRunc,'ZHBin2':BRunc,'ZHBin3':BRunc,'ZHBin4':BRunc,'ZHBin5':BRunc,'WH':BRunc, 'WHBin0':BRunc, 'WHBin1':BRunc,'WHBin2':BRunc,'WHBin3':BRunc,'WHBin4':BRunc,'WHBin5':BRunc,'ggH_sbi':BRunc, 'ggH_b':BRunc, 'ggH_s':BRunc, 'qqH_sbi':BRunc, 'qqH_b':BRunc, 'qqH_s':BRunc , 'ggH_SM':BRunc_SM , 'qqH_SM':BRunc_SM , 'ZH_SM':BRunc_SM , 'WH_SM':BRunc_SM }]
+    nuisances['BRhiggs_hvv'] = [ ['lnN'], {'ggH':BRunc,'qqH':BRunc,'ZH':BRunc,'WH':BRunc,'ggH_sbi':BRunc, 'ggH_b':BRunc, 'ggH_s':BRunc, 'qqH_sbi':BRunc, 'qqH_b':BRunc, 'qqH_s':BRunc , 'ggH_SM':BRunc_SM , 'qqH_SM':BRunc_SM , 'ZH_SM':BRunc_SM , 'WH_SM':BRunc_SM }]
 
 
     #if options.WJsub:
