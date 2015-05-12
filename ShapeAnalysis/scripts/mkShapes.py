@@ -12,8 +12,10 @@ import string
 import logging
 from HWWAnalysis.Misc.odict import OrderedDict
 from HWWAnalysis.Misc.ROOTAndUtils import TH1AddDirSentry
+from HWWAnalysis.ShapeAnalysis.systematicUncertainties import GetYRVal as GetYRValWithErrors, loadYRSyst 
 import traceback
 from array import array
+from math import *
 
 pathWght = os.environ['CMSSW_BASE']+"/src/HWWAnalysis/ShapeAnalysis/ewksinglet/"
 ROOT.gROOT.ProcessLineSync('.L '+pathWght+'getCPSWght.C+')
@@ -345,8 +347,10 @@ class ShapeFactory:
       return 'mll:(mth+280*(0*('+hwwinfo.wwcuts.pth1+')+1*('+hwwinfo.wwcuts.pth2+')+2*('+hwwinfo.wwcuts.pth3+')+3*('+hwwinfo.wwcuts.pth4+')+4*('+hwwinfo.wwcuts.pth5+')+5*('+hwwinfo.wwcuts.pth6+')))'
 
     def _getRangePth(self,mass,cat):
-      rangemth = [60,70,80,90,100,110,120,140,160,180,200,220,240,260,280]
-      rangemthTotal = [60,70,80,90,100,110,120,140,160,180,200,220,240,260,280]
+      #rangemth = [60,70,80,90,100,110,120,140,160,180,200,220,240,260,280]
+      rangemth = [60,70,80,90,100,110,120,140,160,180,200,220,240,280]
+      #rangemthTotal = [60,70,80,90,100,110,120,140,160,180,200,220,240,260,280]
+      rangemthTotal = [60,70,80,90,100,110,120,140,160,180,200,220,240,280]
       for i in range(1,6):
 	for j in range(1, len(rangemth)):
 	  rangemthTotal.append(rangemth[j]+280*i) 		
@@ -1825,6 +1829,10 @@ if __name__ == '__main__':
               #systByWeight['btagsf_down'] = "( ((dataset>=10 && dataset<=19) && (njet>0)) ? ( (weightBtagSigDown/weightBtagSig)*(jetbjpb1<1.4) + (weightBtagCtrlDown/weightBtagCtrl)*(jetbjpb1>1.4)) : 1. )"
               systByWeight['btagsf_down'] = "( ( ((dataset>=10 && dataset<=19) || dataset==1125 || dataset==2125 || dataset==3125 ) && (njet>0)) ? ( (weightBtagSigDown/weightBtagSig)*(jetbjpb1<1.4) + (weightBtagCtrlDown/weightBtagCtrl)*(jetbjpb1>1.4)) : 1. )"
 
+              #ggH = 19.27(+7.2 -7.8 scale) (+7.5 - 6.9 pdf)
+              #vbf = 1.578(+0.2 -0.2 scale) (+2.6 -2.8 pdf)
+
+
               if selection in ['CutWW'] :
                 systByWeight['NNLL_down']  = 'nllW_Qdown/nllW'
                 systByWeight['NNLL_up']    = 'nllW_Qup/nllW'
@@ -1835,6 +1843,45 @@ if __name__ == '__main__':
                 systematics.pop('NNLL_up')
                 systematics.pop('NNLLR_down')
                 systematics.pop('NNLLR_up')
+
+              if 'pth' in selection:
+                loadYRSyst()
+                from HWWAnalysis.ShapeAnalysis.systematicUncertainties import ggH_pdfErrYR, vbfH_pdfErrYR, ggH_scaErrYR, vbfH_scaErrYR 
+                valgg = GetYRVal(factory._YRValues['YR3']['xs']['ggH'], 125. ,'XS_pb') 
+                valqq = GetYRVal(factory._YRValues['YR3']['xs']['qqH'], 125. ,'XS_pb') 
+                err_pdf_gg = GetYRValWithErrors(ggH_pdfErrYR, 125)-1
+                err_pdf_qq = GetYRValWithErrors(vbfH_pdfErrYR, 125)-1
+                err_sca_gg = GetYRValWithErrors(ggH_scaErrYR, 125)-1
+                err_sca_qq = GetYRValWithErrors(vbfH_scaErrYR, 125)-1
+                r = valqq/valgg
+                r_pdf_up = valqq*(1+err_pdf_qq)/(valgg*(1+err_pdf_gg))
+                r_pdf_down = valqq*(1-err_pdf_qq)/(valgg*(1-err_pdf_gg))
+
+                r_sca_up = valqq*(1+err_sca_qq)/(valgg*(1+err_sca_gg))
+                r_sca_down = valqq*(1-err_sca_qq)/(valgg*(1-err_sca_gg))
+
+                r_up_err   = sqrt((r_sca_up   - r)**2+(r_pdf_up   - r)**2)
+                r_down_err = sqrt((r_sca_down - r)**2+(r_pdf_down - r)**2)
+
+                print "valgg", valgg, " valqq ", valqq
+                print "err_pdf_gg", err_pdf_gg, " err_pdf_qq ", err_pdf_qq
+                print "err_sca_gg", err_sca_gg, " err_sca_qq ", err_sca_qq
+                print "r", r
+                print "r_pdf_up", r_pdf_up, " r_pdf_down", r_pdf_down
+                print "r_sca_up", r_sca_up, " r_sca_down", r_sca_down
+                print "r_up_err", r_up_err, " r_down_err", r_down_err
+
+                r_up   = r + r_up_err
+                r_down = r - r_down_err
+
+                eps_up = (r_up*valgg-valqq)/(r_up+1)
+                eps_do = (valqq-r_down*valgg)/(r_down+1)
+
+                print "eps_up", eps_up, " eps_do",eps_do
+                print "for r_up   variation VBF should be scaled up   by",eps_up/valqq, " and ggH should be scaled down by", eps_up/valgg
+                print "for r_down variation VBF should be scaled down by",eps_do/valqq, " and ggH should be scaled up   by", eps_do/valgg
+                      
+
 
 
               factory._systByWeight = systByWeight
