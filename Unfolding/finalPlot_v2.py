@@ -8,14 +8,15 @@ gInterpreter.ExecuteMacro("/afs/cern.ch/work/l/lviliani/DatacardFramework/CMSSW_
 
 lumi = 19.468
 
-file_ggH = TFile("syst_ggH_NEW.root")
-file_vbf = TFile("syst_vbf_NEW.root")
-file_truth = TFile("TRUTH.root")
+in_file = TFile("syst_tot_cov.root")
+#file_ggH = TFile("syst_ggH_NEW.root")
+#file_vbf = TFile("syst_vbf_NEW.root")
+file_truth = TFile("the_total_truth.root")
 
 pthbins = array("d",[7.5,30,66,106,143.5,181])
 err_pth = array("d",[7.5,15,21,19,18.5,19])
 zero = array("d",[0,0,0,0,0,0])
-central_tot = array("d")
+central_value_tot = array("d")
 syst_up_tot = array("d")
 syst_down_tot = array("d")
 up_tot = array("d")
@@ -23,123 +24,78 @@ down_tot = array("d")
 truth_tot = array("d")
 
 
-syst = ["CMS_8TeV_hww_FakeRate","CMS_8TeV_norm_DYTT","CMS_8TeV_norm_Vg","QCDscale_VV","QCDscale_VVV","QCDscale_VgS","QCDscale_WW","QCDscale_WW1in","QCDscale_ggWW","lumi_8TeV","pdf_gg_ACCEPT","pdf_qqbar_ACCEPT","CMS_8TeV_btagsf","CMS_8TeV_eff_l","CMS_8TeV_met","CMS_8TeV_p_res_e","CMS_8TeV_p_scale_e","CMS_8TeV_p_scale_j","CMS_8TeV_p_scale_m","CMS_8TeV_p_scale_met"]
+syst = ["up","down","btagsf","eff_l","met","p_res_e","p_scale_e","p_scale_j","p_scale_m","p_scale_met"]
 
 for bin in range(1,7):
-  err_up_ggH = 0
-  err_down_ggH = 0
-  err_up_vbf = 0
-  err_down_vbf = 0
-    
+  err_up = 0
+  err_down = 0
 
-  central_ggH = file_ggH.Get("central").GetBinContent(bin)
-  stat_ggH = file_ggH.Get("central").GetBinError(bin)
+  central_value = in_file.Get("central").GetBinContent(bin)
+  stat = in_file.Get("central").GetBinError(bin)
   
-  print "ggH bin ",bin," = ", central_ggH," +/- ", stat_ggH
-
-  central_vbf = file_vbf.Get("central").GetBinContent(bin)
-  stat_vbf = file_vbf.Get("central").GetBinError(bin)
-
-  print "vbf bin ",bin," = ", central_vbf," +/- ", stat_vbf
+  print "bin ",bin," = ", central_value," +/- ", stat
 
   truth = file_truth.Get("hTrue").GetBinContent(bin)
 
   print "truth = ",truth
 
   for s in syst:
-    up_ggH = file_ggH.Get(s+"Up").GetBinContent(bin)
-    down_ggH = file_ggH.Get(s+"Down").GetBinContent(bin)
-    up_vbf = file_vbf.Get(s+"Up").GetBinContent(bin)
-    down_vbf = file_vbf.Get(s+"Down").GetBinContent(bin)
+    if "up" in s or "down" in s:
+      up = in_file.Get(s).GetBinContent(bin)
+      down = in_file.Get(s).GetBinContent(bin)
+    else:
+      up = in_file.Get(s+"Up").GetBinContent(bin)
+      down = in_file.Get(s+"Down").GetBinContent(bin)
   
-    print "up ggH = ",up_ggH, " down ggH = ",down_ggH, " central = ", central_ggH
+    print "up = ",up, " down = ",down, " central = ", central_value
 
-    if ( (up_ggH > central_ggH) and (down_ggH < central_ggH) ) :
-      err_up_ggH += (up_ggH-central_ggH)**2
-      err_down_ggH += (down_ggH - central_ggH)**2
-    elif ( (up_ggH < central_ggH) and (down_ggH > central_ggH) ) :
-      err_up_ggH += (down_ggH-central_ggH)**2
-      err_down_ggH += (up_ggH - central_ggH)**2
-    elif ( (up_ggH > central_ggH) and (down_ggH > central_ggH) ) :
-      err_up_ggH += max((up_ggH-central_ggH)**2, (down_ggH - central_ggH)**2)
-      err_down_ggH += 0
-    elif ( (up_ggH < central_ggH) and (down_ggH < central_ggH) ) :
-      err_up_ggH += 0
-      err_down_ggH += max((up_ggH-central_ggH)**2, (down_ggH - central_ggH)**2)
-    elif ( (up_ggH == central_ggH) and (down_ggH > central_ggH) ) :
-      err_up_ggH += (down_ggH-central_ggH)**2
-      err_down_ggH += 0
-    elif ( (up_ggH == central_ggH) and (down_ggH < central_ggH)  ) :
-      err_up_ggH += 0
-      err_down_ggH += (down_ggH - central_ggH)**2
-    elif ( (up_ggH > central_ggH) and (down_ggH == central_ggH) ) :
-      err_up_ggH += (up_ggH-central_ggH)**2
-      err_down_ggH += 0
-    elif (  (up_ggH < central_ggH) and (down_ggH == central_ggH) ) :
-      err_up_ggH += 0
-      err_down_ggH += (up_ggH-central_ggH)**2
+    if ( (up > central_value) and (down < central_value) ) :
+      err_up += (up-central_value)**2
+      err_down += (down - central_value)**2
+    elif ( (up < central_value) and (down > central_value) ) :
+      err_up += (down-central_value)**2
+      err_down += (up - central_value)**2
+    elif ( (up > central_value) and (down > central_value) ) :
+      err_up += max((up-central_value)**2, (down - central_value)**2)
+      err_down += 0
+    elif ( (up < central_value) and (down < central_value) ) :
+      err_up += 0
+      err_down += max((up-central_value)**2, (down - central_value)**2)
+    elif ( (up == central_value) and (down > central_value) ) :
+      err_up += (down-central_value)**2
+      err_down += 0
+    elif ( (up == central_value) and (down < central_value)  ) :
+      err_up += 0
+      err_down += (down - central_value)**2
+    elif ( (up > central_value) and (down == central_value) ) :
+      err_up += (up-central_value)**2
+      err_down += 0
+    elif (  (up < central_value) and (down == central_value) ) :
+      err_up += 0
+      err_down += (up-central_value)**2
     else :
       print " ggH SYSTEMATIC ERROR...:)"
       break
-
-    if ( (up_vbf > central_vbf) and (down_vbf < central_vbf) ) :
-      err_up_vbf += (up_vbf-central_vbf)**2
-      err_down_vbf += (down_vbf - central_vbf)**2
-    elif ( (up_vbf < central_vbf) and (down_vbf > central_vbf) ) :
-      err_up_vbf += (down_vbf-central_vbf)**2
-      err_down_vbf += (up_vbf - central_vbf)**2
-    elif ( (up_vbf > central_vbf) and (down_vbf > central_vbf) ) :
-      err_up_vbf += max((up_vbf-central_vbf)**2, (down_vbf - central_vbf)**2)
-      err_down_vbf += 0
-    elif ( (up_vbf < central_vbf) and (down_vbf < central_vbf) ) :
-      err_up_vbf += 0
-      err_down_vbf += max((up_vbf-central_vbf)**2, (down_vbf - central_vbf)**2)
-    elif ( (up_vbf == central_vbf) and (down_vbf > central_vbf) ) :
-      err_up_vbf += (down_vbf-central_vbf)**2
-      err_down_vbf += 0
-    elif ( (up_vbf == central_vbf) and (down_vbf < central_vbf)  ) :
-      err_up_vbf += 0
-      err_down_vbf += (down_vbf - central_vbf)**2
-    elif (  (up_vbf > central_vbf) and (down_vbf == central_vbf) ) :
-      err_up_vbf += (up_vbf-central_vbf)**2
-      err_down_vbf += 0
-    elif (  (up_vbf < central_vbf) and (down_vbf == central_vbf) ) :
-      err_up_vbf += 0
-      err_down_vbf += (up_vbf-central_vbf)**2
-
-    else :
-      print " VBF SYSTEMATIC ERROR...:)"
-      break
   
-#  central_tot = central_ggH+central_vbf
-  central_tot.append((central_ggH+central_vbf)/(err_pth[bin-1]*2*lumi))
+  central_value_tot.append((central_value)/(err_pth[bin-1]*2*lumi))
 
-  print "central tot = ", (central_ggH+central_vbf)/(err_pth[bin-1]*2*lumi)
+  print "central tot = ", (central_value)/(err_pth[bin-1]*2*lumi)
   
-#  syst_up_tot = (sqrt( err_up_ggH ) + sqrt( err_up_vbf ))/(err_pth[bin]*2*lumi)
-#  syst_down_tot = (sqrt( err_down_ggH ) + sqrt( err_down_vbf ))/(err_pth[bin]*2*lumi)
-  syst_up_tot.append((sqrt( err_up_ggH ) + sqrt( err_up_vbf ))/(err_pth[bin-1]*2*lumi))
-  syst_down_tot.append(( sqrt( err_down_ggH ) +sqrt(  err_down_vbf))/(err_pth[bin-1]*2*lumi))
+  syst_up_tot.append( sqrt( err_up )/(err_pth[bin-1]*2*lumi) )
+  syst_down_tot.append( sqrt( err_down )/(err_pth[bin-1]*2*lumi) )
 
-#  stat_tot = (stat_ggH+stat_vbf)/(err_pth[bin]*2*lumi)
 
-#  up_tot = sqrt( (sqrt( err_up_ggH ) + sqrt( err_up_vbf ))**2 + (stat_ggH+stat_vbf)**2  )/(err_pth[bin]*2*lumi)
-#  down_tot = sqrt( (sqrt( err_down_ggH ) + sqrt( err_down_vbf ))**2 + (stat_ggH+stat_vbf)**2  )/(err_pth[bin]*2*lumi)
-
-  up_tot.append( sqrt( (sqrt( err_up_ggH ) + sqrt( err_up_vbf ))**2 + (stat_ggH+stat_vbf)**2  )/(err_pth[bin-1]*2*lumi) )
-  down_tot.append( sqrt( (sqrt( err_down_ggH ) + sqrt( err_down_vbf ))**2 + (stat_ggH+stat_vbf)**2  )/(err_pth[bin-1]*2*lumi) )
-
-#  up_tot.append( sqrt(  err_up_ggH  + err_up_vbf + stat_ggH**2 + stat_vbf**2  )/(err_pth[bin-1]*2*lumi))
-#  down_tot.append( sqrt(  err_down_ggH + err_down_vbf + stat_ggH**2 + stat_vbf**2  )/(err_pth[bin-1]*2*lumi))
+  up_tot.append( sqrt( err_up  + (stat)**2  )/(err_pth[bin-1]*2*lumi) )
+  down_tot.append( sqrt( err_down + (stat)**2 )/(err_pth[bin-1]*2*lumi) )
  
-  truth_tot.append(truth/(err_pth[bin-1]*lumi))
+  truth_tot.append(truth/(err_pth[bin-1]*2*lumi))
   
 #  print truth/(err_pth[bin-1]*2*lumi)
 
 print up_tot, down_tot
 
-gsyst = TGraphAsymmErrors(6, pthbins, central_tot, err_pth, err_pth, syst_down_tot, syst_up_tot)
-gtot = TGraphAsymmErrors(6, pthbins, central_tot, err_pth, err_pth, down_tot, up_tot)
+gsyst = TGraphAsymmErrors(6, pthbins, central_value_tot, err_pth, err_pth, syst_down_tot, syst_up_tot)
+gtot = TGraphAsymmErrors(6, pthbins, central_value_tot, err_pth, err_pth, down_tot, up_tot)
 gtruth = TGraphErrors(6, pthbins, truth_tot, err_pth, zero)
 
 gtot.SetTitle("")
