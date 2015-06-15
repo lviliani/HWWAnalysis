@@ -12,8 +12,9 @@ These systematics are:
 - jetEnergyScale (up/down)
 - electronScale (up/down)
 - muonScale (up/down)
+
 Type C uncertainties are the ones affecting only the response matrix and are accounted for varying the ggH/VBF ratio (so called up/down variation).
-To speed up the matrices creation, two scripts to submit the jobs on lSF can be used ("launchOnLSF.py" and submitOnLSF.py).
+To speed up the matrices creation, two scripts to submit the jobs on LSF can be used ("launchOnLSF.py" and "submitOnLSF.py").
 
 Unfold.py
 ===================
