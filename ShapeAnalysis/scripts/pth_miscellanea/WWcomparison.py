@@ -7,7 +7,7 @@ import numpy
 TH1.SetDefaultSumw2()
 gStyle.SetOptStat(0)
 
-selection = "(( (njet==0 && (mth>60.000000 && mth<280.000000 && mll<200.000000  && pt1>20 && pt2>10 && (ch1*ch2)<0 && trigger==1. && pfmet>20. && mll>12 && (zveto>-1||!sameflav) && mpmet>20. && bveto_mu==1 && nextra==0 && bveto_ip==1 && ptll>30.000000)) || (njet>0 && (mth>60.000000 && mth<280.000000 && mll<200.000000  && pt1>20 && pt2>10 && (ch1*ch2)<0 && trigger==1. && pfmet>20. && mll>12 && (zveto>-1||!sameflav) && mpmet>20. && nextra==0 && ( jetbjpb1<1.4 || jetpt1<30) && ( jetbjpb2<1.4 || jetpt2<30) && ( jetbjpb3<1.4 || jetpt3<30) && ( jetbjpb4<1.4 || jetpt4<30)  && ptll>30.000000 && mth>60.000000 && mth<280.000000 && mll<200.000000 ))) && !sameflav)"
+selection = "(( (njet==0 && (mth>60.000000 && mth<280.000000 && mth<200.000000  && pt1>20 && pt2>10 && (ch1*ch2)<0 && trigger==1. && pfmet>20. && mth>12 && (zveto>-1||!sameflav) && mpmet>20. && bveto_mu==1 && nextra==0 && bveto_ip==1 && ptll>30.000000)) || (njet>0 && (mth>60.000000 && mth<280.000000 && mth<200.000000  && pt1>20 && pt2>10 && (ch1*ch2)<0 && trigger==1. && pfmet>20. && mth>12 && (zveto>-1||!sameflav) && mpmet>20. && nextra==0 && ( jetbjpb1<1.4 || jetpt1<30) && ( jetbjpb2<1.4 || jetpt2<30) && ( jetbjpb3<1.4 || jetpt3<30) && ( jetbjpb4<1.4 || jetpt4<30)  && ptll>30.000000 && mth>60.000000 && mth<280.000000 && mth<200.000000 ))) && !sameflav)"
 
 pth = "sqrt((pt1*cos(phi1) + pt2*cos(phi2) + pfmet*cos(pfmetphi))**2 + (pt1*sin(phi1) + pt2*sin(phi2) + pfmet*sin(pfmetphi))**2)" 
 
@@ -29,7 +29,7 @@ treeMCNLO = fileMCNLO.Get("latino")
 treePowheg = filePowheg.Get("latino")
 
 
-outFile = TFile("mll.root","recreate")
+outFile = TFile("mth.root","recreate")
 
 c1 = TCanvas("c1")
 c2 = TCanvas("c2")
@@ -40,39 +40,39 @@ c6 = TCanvas("c6")
 
 canvas = [c1,c2,c3,c4,c5,c6]
 
-hWWBin1=TH1F("hWWBin1","hWWBin1",len(mllbins)-1,mllbins)
-hWWBin2=TH1F("hWWBin2","hWWBin2",len(mllbins)-1,mllbins)
-hWWBin3=TH1F("hWWBin3","hWWBin3",len(mllbins)-1,mllbins)
-hWWBin4=TH1F("hWWBin4","hWWBin4",len(mllbins)-1,mllbins)
-hWWBin5=TH1F("hWWBin5","hWWBin5",len(mllbins)-1,mllbins)
-hWWBin6=TH1F("hWWBin6","hWWBin6",len(mllbins)-1,mllbins)
+hWWBin1=TH1F("hWWBin1","hWWBin1",len(mthbins)-1,mthbins)
+hWWBin2=TH1F("hWWBin2","hWWBin2",len(mthbins)-1,mthbins)
+hWWBin3=TH1F("hWWBin3","hWWBin3",len(mthbins)-1,mthbins)
+hWWBin4=TH1F("hWWBin4","hWWBin4",len(mthbins)-1,mthbins)
+hWWBin5=TH1F("hWWBin5","hWWBin5",len(mthbins)-1,mthbins)
+hWWBin6=TH1F("hWWBin6","hWWBin6",len(mthbins)-1,mthbins)
 
 histosWW=[hWWBin1,hWWBin2,hWWBin3,hWWBin4,hWWBin5,hWWBin6]
 
-hWWnloBin1=TH1F("hWWnloBin1","hWWnloBin1",len(mllbins)-1,mllbins)
-hWWnloBin2=TH1F("hWWnloBin2","hWWnloBin2",len(mllbins)-1,mllbins)
-hWWnloBin3=TH1F("hWWnloBin3","hWWnloBin3",len(mllbins)-1,mllbins)
-hWWnloBin4=TH1F("hWWnloBin4","hWWnloBin4",len(mllbins)-1,mllbins)
-hWWnloBin5=TH1F("hWWnloBin5","hWWnloBin5",len(mllbins)-1,mllbins)
-hWWnloBin6=TH1F("hWWnloBin6","hWWnloBin6",len(mllbins)-1,mllbins)
+hWWnloBin1=TH1F("hWWnloBin1","hWWnloBin1",len(mthbins)-1,mthbins)
+hWWnloBin2=TH1F("hWWnloBin2","hWWnloBin2",len(mthbins)-1,mthbins)
+hWWnloBin3=TH1F("hWWnloBin3","hWWnloBin3",len(mthbins)-1,mthbins)
+hWWnloBin4=TH1F("hWWnloBin4","hWWnloBin4",len(mthbins)-1,mthbins)
+hWWnloBin5=TH1F("hWWnloBin5","hWWnloBin5",len(mthbins)-1,mthbins)
+hWWnloBin6=TH1F("hWWnloBin6","hWWnloBin6",len(mthbins)-1,mthbins)
 
 histosWWnlo=[hWWnloBin1,hWWnloBin2,hWWnloBin3,hWWnloBin4,hWWnloBin5,hWWnloBin6]
 
-hWWBinMCNLOMCNLO1=TH1F("hWWBinMCNLO1","hWWBinMCNLO1",len(mllbins)-1,mllbins)
-hWWBinMCNLOMCNLO2=TH1F("hWWBinMCNLO2","hWWBinMCNLO2",len(mllbins)-1,mllbins)
-hWWBinMCNLOMCNLO3=TH1F("hWWBinMCNLO3","hWWBinMCNLO3",len(mllbins)-1,mllbins)
-hWWBinMCNLOMCNLO4=TH1F("hWWBinMCNLO4","hWWBinMCNLO4",len(mllbins)-1,mllbins)
-hWWBinMCNLOMCNLO5=TH1F("hWWBinMCNLO5","hWWBinMCNLO5",len(mllbins)-1,mllbins)
-hWWBinMCNLOMCNLO6=TH1F("hWWBinMCNLO6","hWWBinMCNLO6",len(mllbins)-1,mllbins)
+hWWBinMCNLOMCNLO1=TH1F("hWWBinMCNLO1","hWWBinMCNLO1",len(mthbins)-1,mthbins)
+hWWBinMCNLOMCNLO2=TH1F("hWWBinMCNLO2","hWWBinMCNLO2",len(mthbins)-1,mthbins)
+hWWBinMCNLOMCNLO3=TH1F("hWWBinMCNLO3","hWWBinMCNLO3",len(mthbins)-1,mthbins)
+hWWBinMCNLOMCNLO4=TH1F("hWWBinMCNLO4","hWWBinMCNLO4",len(mthbins)-1,mthbins)
+hWWBinMCNLOMCNLO5=TH1F("hWWBinMCNLO5","hWWBinMCNLO5",len(mthbins)-1,mthbins)
+hWWBinMCNLOMCNLO6=TH1F("hWWBinMCNLO6","hWWBinMCNLO6",len(mthbins)-1,mthbins)
 
 histosMCNLO=[hWWBinMCNLO1,hWWBinMCNLO2,hWWBinMCNLO3,hWWBinMCNLO4,hWWBinMCNLO5,hWWBinMCNLO6]
 
-hWWBinPowhegPowheg1=TH1F("hWWBinPowheg1","hWWBinPowheg1",len(mllbins)-1,mllbins)
-hWWBinPowhegPowheg2=TH1F("hWWBinPowheg2","hWWBinPowheg2",len(mllbins)-1,mllbins)
-hWWBinPowhegPowheg3=TH1F("hWWBinPowheg3","hWWBinPowheg3",len(mllbins)-1,mllbins)
-hWWBinPowhegPowheg4=TH1F("hWWBinPowheg4","hWWBinPowheg4",len(mllbins)-1,mllbins)
-hWWBinPowhegPowheg5=TH1F("hWWBinPowheg5","hWWBinPowheg5",len(mllbins)-1,mllbins)
-hWWBinPowhegPowheg6=TH1F("hWWBinPowheg6","hWWBinPowheg6",len(mllbins)-1,mllbins)
+hWWBinPowhegPowheg1=TH1F("hWWBinPowheg1","hWWBinPowheg1",len(mthbins)-1,mthbins)
+hWWBinPowhegPowheg2=TH1F("hWWBinPowheg2","hWWBinPowheg2",len(mthbins)-1,mthbins)
+hWWBinPowhegPowheg3=TH1F("hWWBinPowheg3","hWWBinPowheg3",len(mthbins)-1,mthbins)
+hWWBinPowhegPowheg4=TH1F("hWWBinPowheg4","hWWBinPowheg4",len(mthbins)-1,mthbins)
+hWWBinPowhegPowheg5=TH1F("hWWBinPowheg5","hWWBinPowheg5",len(mthbins)-1,mthbins)
+hWWBinPowhegPowheg6=TH1F("hWWBinPowheg6","hWWBinPowheg6",len(mthbins)-1,mthbins)
 
 histosPowheg=[hWWBinPowheg1,hWWBinPowheg2,hWWBinPowheg3,hWWBinPowheg4,hWWBinPowheg5,hWWBinPowheg6]
 
@@ -100,12 +100,12 @@ for bin in range(1,len(edges)):
   histosMCNLO[bin-1].SetLineWidth(2)
   histosPowheg[bin-1].SetLineWidth(2)
 
-  histosWW[bin-1].GetXaxis().SetTitle("m_{ll} (GeV)")
+  histosWW[bin-1].GetXaxis().SetTitle("m_{T}^{H} (GeV)")
   
-  treeWW.Draw("mll>>hWWBin"+str(bin),selection+"*("+pth+"<"+str(edges[bin])+" && "+pth+">"+str(edges[bin-1])+")")
-  treeWW_nlo.Draw("mll>>hWWnloBin"+str(bin),selection+"*nllW*("+pth+"<"+str(edges[bin])+" && "+pth+">"+str(edges[bin-1])+")")
-  treeMCNLO.Draw("mll>>hWWBinMCNLO"+str(bin),selection+"*("+pth+"<"+str(edges[bin])+" && "+pth+">"+str(edges[bin-1])+")")
-  treePowheg.Draw("mll>>hWWBinPowheg"+str(bin),selection+"*("+pth+"<"+str(edges[bin])+" && "+pth+">"+str(edges[bin-1])+")")
+  treeWW.Draw("mth>>hWWBin"+str(bin),selection+"*("+pth+"<"+str(edges[bin])+" && "+pth+">"+str(edges[bin-1])+")")
+  treeWW_nlo.Draw("mth>>hWWnloBin"+str(bin),selection+"*nllW*("+pth+"<"+str(edges[bin])+" && "+pth+">"+str(edges[bin-1])+")")
+  treeMCNLO.Draw("mth>>hWWBinMCNLO"+str(bin),selection+"*("+pth+"<"+str(edges[bin])+" && "+pth+">"+str(edges[bin-1])+")")
+  treePowheg.Draw("mth>>hWWBinPowheg"+str(bin),selection+"*("+pth+"<"+str(edges[bin])+" && "+pth+">"+str(edges[bin-1])+")")
 
     
   print selection+"*("+pth+"<"+str(edges[bin])+")"
@@ -132,7 +132,7 @@ for bin in range(1,len(edges)):
   histosPowheg[bin-1].Draw("sames")
   legends[bin-1].Draw()
   canvas[bin-1].Write()
-  canvas[bin-1].Print("mllBin"+str(bin)+".eps")
+  canvas[bin-1].Print("mthBin"+str(bin)+".eps")
 
 #a=raw_input()
 outFile.Write()
