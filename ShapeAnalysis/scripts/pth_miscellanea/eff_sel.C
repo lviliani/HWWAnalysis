@@ -4,9 +4,9 @@ void eff_sel(){
   gStyle->SetOptStat("emrio") ;
   TH1::SetDefaultSumw2();
 
-  //TString var = "TMath::Min(PtHiggs,167.)";
+  TString var = "TMath::Min(PtHiggs,167.)";
   //TString var = "TMath::Min(sqrt( (leptonGenpt1*cos(leptonGenphi1)+leptonGenpt2*cos(leptonGenphi2)+neutrinoGenpt1*cos(neutrinoGenphi1)+neutrinoGenpt2*cos(neutrinoGenphi2) )**2 + (leptonGenpt1*sin(leptonGenphi1)+leptonGenpt2*sin(leptonGenphi2)+neutrinoGenpt1*sin(neutrinoGenphi1)+neutrinoGenpt2*sin(neutrinoGenphi2) )**2),167.)";
-  TString var = "1";
+  //TString var = "1";
   double vedges[] = {0,15,45,87,125,162,200};
   double nbins = 6;
 
@@ -28,7 +28,8 @@ void eff_sel(){
   TString mth_gen = "sqrt( ("+ptll_gen+" + "+ptnn_gen+" )**2 - ( ( leptonGenpt1*cos(leptonGenphi1) + leptonGenpt2*cos(leptonGenphi2) + neutrinoGenpt1*cos(neutrinoGenphi1) + neutrinoGenpt2*cos(neutrinoGenphi2) )**2 + ( leptonGenpt1*sin(leptonGenphi1) + leptonGenpt2*sin(leptonGenphi2) + neutrinoGenpt1*sin(neutrinoGenphi1) + neutrinoGenpt2*sin(neutrinoGenphi2)  )**2 ) )";
 
   TString acceptance = "( leptonGenpt1>18. && leptonGenpt2>8. && abs(leptonGeneta1)<2.5 && abs(leptonGeneta2)<2.5 && "+ptnn_gen+">15 && "+ptll_gen+">25 && "+mll_gen+">12 && "+mth_gen+">50 && "+of_gen+")";
-  TString acceptance_whzh = acceptance + "*( dataset!=3125 ? 1 : ((mctruth==24 || mctruth==26) && (mcHWWdecay==3) && (leptonGenpt3<0) && (neutrinoGenpt3<0))  )";
+  //TString acceptance = "1";
+  TString acceptance_whzh = "("+acceptance + "*( ((mctruth==24 || mctruth==26) && (mcHWWdecay==3) && (leptonGenpt3<0) && (neutrinoGenpt3<0))  ))";
 
   cout << acceptance << endl;
 
@@ -61,6 +62,7 @@ void eff_sel(){
   delete H125;
 
   cout << "Selected events = " << hpass->Integral() << " Tot events = " << htot->Integral() << endl;
+  cout << "Fake events = " << hfake->Integral() << endl;
 
   double err_pass = 0.;
   double int_pass = hpass->IntegralAndError(1,nbins,err_pass);
@@ -73,7 +75,7 @@ void eff_sel(){
   cout << "Efficiency = " << int_pass/int_tot << " +/- " << (int_pass/int_tot)*(err_tot/int_tot + err_pass/int_pass)  << endl;
   cout << "Fake rate  = " << int_fake/int_pass << " +/- " << (int_fake/int_pass)*(err_fake/int_fake + err_pass/int_pass)  << endl;
 
-  TFile * fout = new TFile("efficiencies_inclusive.root", "recreate");
+  TFile * fout = new TFile("efficiencies.root", "recreate");
   fout->cd();
   TCanvas * c = new TCanvas();
   c->cd();
