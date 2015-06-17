@@ -37,27 +37,29 @@ void eff_sel(){
 
   // Signal  
 
-  TChain * H125 =  new TChain("H125");
-  H125->Add(Dir+"latino_1125_ggToH125toWWTo2LAndTau2Nu.root/latino");
-  H125->Add(Dir+"latino_2125_vbfToH125toWWTo2LAndTau2Nu.root/latino");
+  TChain * H125 =  new TChain("latino");
+  H125->Add(Dir+"latino_1125_ggToH125toWWTo2LAndTau2Nu.root");
+  H125->Add(Dir+"latino_2125_vbfToH125toWWTo2LAndTau2Nu.root");
+  
+
   TChain * H125_wzh =  new TChain("H125_wzh");
   H125_wzh->Add(Dir+"latino_3125_wzttH125ToWW.root/latino");
 
 
 //  H125->Add(Dir+"latino_3125_wzttH125ToWW.root/latino");
 
-  TH1F* htot = new TH1F("htot","htot",nbins,vedges);
-  TH1F* hpass = new TH1F("hpass","hpass",nbins,vedges);
-  TH1F* hfake = new TH1F("hfake","hfake",nbins,vedges);
+  TH1D* htot = new TH1D("htot","htot",nbins,vedges);
+  TH1D* hpass = new TH1D("hpass","hpass",nbins,vedges);
+  TH1D* hfake = new TH1D("hfake","hfake",nbins,vedges);
 
 //  H125->Draw(var+">> hpass",selection+"*puW*baseW*effW*triggW"+LumiW);
   H125->Draw(var+">> hpass",selection+"*"+acceptance+"*puW*baseW*effW*triggW"+LumiW);
-  H125->Draw(var+">> htot","("+acceptance+" && "+selection+")*(1 - puW*effW*triggW)*baseW"+LumiW+" + ("+acceptance+" && !"+selection+")*baseW"+LumiW);
-  H125->Draw(var+">> hfake", selection+"*!"+acceptance+"*puW*baseW*effW*triggW"+LumiW);
+  H125->Draw(var+">> htot",acceptance+"*baseW"+LumiW);  
+  H125->Draw(var+">> hfake", selection+"*(!"+acceptance+")*puW*baseW*effW*triggW"+LumiW);
 
   H125_wzh->Draw(var+">>+ hpass",selection+"*"+acceptance_whzh+"*puW*baseW*effW*triggW"+LumiW);
-  H125_wzh->Draw(var+">>+ htot","("+acceptance_whzh+" && "+selection+")*(1 - puW*effW*triggW)*baseW"+LumiW+" + ("+acceptance_whzh+" && !"+selection+")*baseW"+LumiW);
-  H125_wzh->Draw(var+">>+ hfake", selection+"*!"+acceptance_whzh+"*puW*baseW*effW*triggW"+LumiW);
+  H125_wzh->Draw(var+">>+ htot","("+acceptance_whzh+")*baseW"+LumiW);
+  H125_wzh->Draw(var+">>+ hfake", selection+"*(!"+acceptance_whzh+")*puW*baseW*effW*triggW"+LumiW);
 
   delete H125;
 
