@@ -38,7 +38,7 @@ void eff_sel(){
   // Signal  
 
   TChain * H125 =  new TChain("latino");
-  H125->Add(Dir+"latino_1125_ggToH125toWWTo2LAndTau2Nu.root");
+//  H125->Add(Dir+"latino_1125_ggToH125toWWTo2LAndTau2Nu.root");
   H125->Add(Dir+"latino_2125_vbfToH125toWWTo2LAndTau2Nu.root");
   
 
@@ -57,9 +57,9 @@ void eff_sel(){
   H125->Draw(var+">> htot",acceptance+"*baseW"+LumiW);  
   H125->Draw(var+">> hfake", selection+"*(!"+acceptance+")*puW*baseW*effW*triggW"+LumiW);
 
-  H125_wzh->Draw(var+">>+ hpass",selection+"*"+acceptance_whzh+"*puW*baseW*effW*triggW"+LumiW);
-  H125_wzh->Draw(var+">>+ htot","("+acceptance_whzh+")*baseW"+LumiW);
-  H125_wzh->Draw(var+">>+ hfake", selection+"*(!"+acceptance_whzh+")*puW*baseW*effW*triggW"+LumiW);
+//  H125_wzh->Draw(var+">>+ hpass",selection+"*"+acceptance_whzh+"*puW*baseW*effW*triggW"+LumiW);
+//  H125_wzh->Draw(var+">>+ htot","("+acceptance_whzh+")*baseW"+LumiW);
+//  H125_wzh->Draw(var+">>+ hfake", selection+"*(!"+acceptance_whzh+")*puW*baseW*effW*triggW"+LumiW);
 
   delete H125;
 
