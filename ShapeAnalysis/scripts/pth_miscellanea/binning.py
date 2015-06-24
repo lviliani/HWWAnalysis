@@ -23,7 +23,7 @@ labelReco = "p_{T}^{H,RECO}"
 labelGen  = "p_{T}^{H,GEN}"
 label     = "p_{T}^{H}"
 
-bins = [0., 15., 45., 87., 125., 167., 200]
+bins = [0., 15., 45., 85., 125., 165., 200]
 binning=numpy.asarray(bins)
 
 plot2D = TH2F("recoVSgen", "recoVSgen", len(bins)-1, binning, len(bins)-1, binning)
