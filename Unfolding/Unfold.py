@@ -8,7 +8,7 @@ from ROOT import RooUnfoldSvd
 # from ROOT import RooUnfoldTUnfold
 from array import *
 from math import *
-import finalPlot
+import nicePlot_unfolded 
 
 
 lumi = 19.468
@@ -17,12 +17,12 @@ kreg=3
 out_file = TFile("unfolded.root","recreate")
 
 ### File with signal extracted from the fit for each nuisance up/down variation
-syst_file = TFile("plotsFromFit_20150604.root")
+syst_file = TFile("plotsFromFit_newBinning.root")
 
 ### File with the response martices for the systematics which need them
 #matrix_file = TFile("responseMatricesWithFakesAndWZttH.root")
 
-pthbins = array("d",[0,15,45,87,125,162,200])
+pthbins = array("d",[0,15,45,85,125,165,200])
 
 ### First of all get the central distribution and unfold with central, up and down matrices, corresponding to the ggH/VBF ratio variation
 h = syst_file.Get("HcentralNotChangingRM")
@@ -31,7 +31,7 @@ list = ["central","up","down"]
 print "==================================== UNFOLD CENTRAL ==================================="
 
 for l in list :
-  matrix_file = TFile("responseMatrix_"+str(l)+".root")
+  matrix_file = TFile("responseMatrices/responseMatrix_"+str(l)+".root")
   response = matrix_file.Get(l)
   unfold = RooUnfoldSvd(response, h, kreg)
 
@@ -52,7 +52,7 @@ syst = ["statOnly","btagsfUp","btagsfDown","eff_lUp","eff_lDown","metUp","metDow
 for s in syst:
   print "==================================== UNFOLD ",s," ==================================="
   h = syst_file.Get("HCMS_8TeV_"+s)
-  matrix_file = TFile("responseMatrix_"+str(l)+".root")
+  matrix_file = TFile("responseMatrices/responseMatrix_"+str(l)+".root")
 
   if "btagsfUp" in s:
     matrix = matrix_file.Get("btagsf_up")
@@ -83,7 +83,7 @@ for s in syst:
   elif "p_scale_jDown" in s:
     matrix = matrix_file.Get("jetEnergyScale_down")
   elif "statOnly" in s:
-    matrix_file = TFile("responseMatrix_central.root")
+    matrix_file = TFile("responseMatrices/responseMatrix_central.root")
     h = syst_file.Get("HcentralStat")
     matrix = matrix_file.Get("central")
   else: 
@@ -106,7 +106,7 @@ print "Plotting the unfolded spectrum..."
 plot_file = "unfolded.root"
 truth_file = "TheTruth.root"
 
-finalPlot.finalPlot(plot_file, truth_file)
+nicePlot_unfolded.finalPlot(plot_file, truth_file)
 
 
 

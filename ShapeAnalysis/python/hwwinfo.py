@@ -174,6 +174,23 @@ class wwcuts:
     pth6 = 'sqrt((pt1*cos(phi1) + pt2*cos(phi2) + pfmet*cos(pfmetphi))**2 + (pt1*sin(phi1) + pt2*sin(phi2) + pfmet*sin(pfmetphi))**2) >= 165.'
     pthincl = 'sqrt((pt1*cos(phi1) + pt2*cos(phi2) + pfmet*cos(pfmetphi))**2 + (pt1*sin(phi1) + pt2*sin(phi2) + pfmet*sin(pfmetphi))**2) >= 0'
 
+    pthgen1 = 'PtHiggs < 15. '
+    pthgen2 = 'PtHiggs >= 15. && PtHiggs < 45.'
+    pthgen3 = 'PtHiggs >= 45. && PtHiggs < 85.'
+    pthgen4 = 'PtHiggs >= 85. && PtHiggs < 125.'
+    pthgen5 = 'PtHiggs >= 125. && PtHiggs < 165.'
+    pthgen6 = 'PtHiggs >= 165.'
+
+    of_gen = "( (abs(leptonGenpid1)==11 && abs(leptonGenpid2)==13) || (abs(leptonGenpid1)==13 && abs(leptonGenpid2)==11) )";
+    mll_gen = "sqrt(2*leptonGenpt1*leptonGenpt2*(cosh(leptonGeneta1 - leptonGeneta2 ) - cos(leptonGenphi1 - leptonGenphi2)))";
+    ptll_gen = "sqrt((((leptonGenpt1*cos(leptonGenphi1))+(leptonGenpt2*cos(leptonGenphi2)))*((leptonGenpt1*cos(leptonGenphi1))+(leptonGenpt2*cos(leptonGenphi2))))+(((leptonGenpt1*sin(leptonGenphi1))+(leptonGenpt2*sin(leptonGenphi2)))*((leptonGenpt1*sin(leptonGenphi1))+(leptonGenpt2*sin(leptonGenphi2)))))";
+    ptnn_gen = "sqrt((((neutrinoGenpt1*cos(neutrinoGenphi1))+(neutrinoGenpt2*cos(neutrinoGenphi2)))*((neutrinoGenpt1*cos(neutrinoGenphi1))+(neutrinoGenpt2*cos(neutrinoGenphi2))))+(((neutrinoGenpt1*sin(neutrinoGenphi1))+(neutrinoGenpt2*sin(neutrinoGenphi2)))*((neutrinoGenpt1*sin(neutrinoGenphi1))+(neutrinoGenpt2*sin(neutrinoGenphi2)))))";
+    mth_gen = "sqrt( ("+ptll_gen+" + "+ptnn_gen+" )**2 - ( ( leptonGenpt1*cos(leptonGenphi1) + leptonGenpt2*cos(leptonGenphi2) + neutrinoGenpt1*cos(neutrinoGenphi1) + neutrinoGenpt2*cos(neutrinoGenphi2) )**2 + ( leptonGenpt1*sin(leptonGenphi1) + leptonGenpt2*sin(leptonGenphi2) + neutrinoGenpt1*sin(neutrinoGenphi1) + neutrinoGenpt2*sin(neutrinoGenphi2)  )**2 ) )";
+
+    acceptance = "( leptonGenpt1>18. && leptonGenpt2>8. && abs(leptonGeneta1)<2.5 && abs(leptonGeneta2)<2.5 && "+ptnn_gen+">15 && "+ptll_gen+">25 && "+mll_gen+">12 && "+mth_gen+">50 && "+of_gen+")";
+    # dedicated acceptance for wzh because mcHWWdecay is not in other signal samples
+    acceptance_wzh = "("+acceptance + "*( ((dataset == 3125) && ((mctruth==24 || mctruth==26) && (mcHWWdecay==3) && (leptonGenpt3<0) && (neutrinoGenpt3<0))  ) || (dataset != 3125)) )"
+
 
 # vbf
 class vbfcuts:
@@ -790,6 +807,7 @@ def massSelections(mass):
     sel['shape-pth-top-enriched-selection'] = '( trigger==1. &&  mll>50 && nextra==0 && pt1>20 && pt2>10 && (ch1*ch2)<0 && (zveto==1||!sameflav) && ptll>45 && (njet==0 || njet==1 || (dphilljetjet<pi/180.*165. || !sameflav )) )*(!sameflav && jetbjpb1>1.4 && jetpt1>30)*(pfmet>20. && mpmet>20. && ( !sameflav || ( (njet!=0 || dymva1>0.88 || mpmet>35) && (njet!=1 || dymva1>0.84 || mpmet>35) && ( njet==0 || njet==1 || (pfmet > 45.0)) ) ))'
 
     sel['shape-pth-selection']    = ('( (njet==0 && ('+sel['shape-lomass']+' && '+sel['ww-pth-0j'].replace("zveto==1", "zveto>-1")+'))'+' || '+'(njet>0 && ('+sel['shape-lomass']+' && '+sel['ww-pth-12j'].replace("zveto==1", "zveto>-1")+' && '+sel['shape-lomass']+')))')
+
 
     sel['pth-selection-top0jet']  = sel['ww-pth-0j'].replace("zveto==1", "zveto>-1")+' && '+sel['shape-lomass']+' && njet==0' 
 
