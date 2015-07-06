@@ -12,7 +12,7 @@ sample_ggH="latino_1125_ggToH125toWWTo2LAndTau2Nu.root"
 sample_VBF="latino_2125_vbfToH125toWWTo2LAndTau2Nu.root"
 sample_WZH="latino_3125_wzttH125ToWW.root"
 
-pthbins = array("d",[0,15,45,87,125,162,200])
+pthbins = array("d",[0,15,45,85,125,165,200])
 
 chain = TChain("latino")
 chain.Add(base+"samples/nominals/"+sample_ggH)

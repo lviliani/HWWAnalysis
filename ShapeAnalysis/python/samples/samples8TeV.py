@@ -325,8 +325,21 @@ def signalSamples(sigtag,mass=125,suffix=''):
             signals['WH'+suffix]    = [f.format(mass = mass) for f in WH]
             signals['ZH'+suffix]    = [f.format(mass = mass) for f in ZH]
             signals['ttH'+suffix]   = [f.format(mass = mass) for f in ttH]
-  
-
+    
+    elif sigtag == 'PTHEmbeddedUnfolding' :
+        ggH   = ['nominals/latino_1{mass}_ggToH{mass}toWWTo2LAndTau2Nu_weights_gen.root']
+        qqH   = ['nominals/latino_2{mass}_vbfToH{mass}toWWTo2LAndTau2Nu_weights_gen.root']
+        wzttH = ['nominals/latino_3{mass}_wzttH{mass}ToWW_weigths_gen.root']
+        WH    = ['nominals/latino_3{mass}_wzttH{mass}ToWW_weights_gen.root']
+        ZH    = ['nominals/latino_3{mass}_wzttH{mass}ToWW_weights_gen.root']
+        ttH   = ['nominals/latino_3{mass}_wzttH{mass}ToWW_weights_gen.root']
+        if mass <= 300:
+            signals['ggH'+suffix]   = [f.format(mass = mass) for f in ggH]
+            signals['qqH'+suffix]   = [f.format(mass = mass) for f in qqH]
+            signals['wzttH'+suffix] = [f.format(mass = mass) for f in wzttH]
+            signals['WH'+suffix]    = [f.format(mass = mass) for f in WH]
+            signals['ZH'+suffix]    = [f.format(mass = mass) for f in ZH]
+            signals['ttH'+suffix]   = [f.format(mass = mass) for f in ttH]   
 
     elif sigtag == 'SM' or sigtag == 'Hwidth' :
         ggH   = ['nominals/latino_1{mass}_ggToH{mass}toWWTo2LAndTau2Nu.root',
