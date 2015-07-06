@@ -93,6 +93,7 @@ class ShapeFactory:
         ranges['Hwidth-range']       = self._getHwidthrange
         ranges['HwidthSimple-range'] = self._getSimpleHwidthrange
         ranges['Pth-range'] = self._getRangePth
+        ranges['Pth-range-inclusive'] = self._getRangePthIncl
 
         self._ranges = ranges
 
@@ -346,6 +347,7 @@ class ShapeFactory:
 
       return 'mll:(mth+280*(0*('+hwwinfo.wwcuts.pth1+')+1*('+hwwinfo.wwcuts.pth2+')+2*('+hwwinfo.wwcuts.pth3+')+3*('+hwwinfo.wwcuts.pth4+')+4*('+hwwinfo.wwcuts.pth5+')+5*('+hwwinfo.wwcuts.pth6+')))'
 
+    # _____________________________________________________________________________
     def _getRangePth(self,mass,cat):
       #rangemth = [60,70,80,90,100,110,120,140,160,180,200,220,240,260,280]
       rangemth = [60,70,80,90,100,110,120,140,160,180,200,220,240,280]
@@ -356,6 +358,9 @@ class ShapeFactory:
 	  rangemthTotal.append(rangemth[j]+280*i) 		
       return (rangemthTotal,[12,30,45,60,75,100,125,150,175,200])
        
+    # _____________________________________________________________________________
+    def _getRangePthIncl(self,mass,cat):
+      return ([60,70,80,90,100,110,120,140,160,180,200,220,240,280],[12,30,45,60,75,100,125,150,175,200])
 
     # _____________________________________________________________________________
     def getrange(self,tag,mass,cat):

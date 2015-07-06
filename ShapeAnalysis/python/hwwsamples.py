@@ -414,6 +414,29 @@ mcsets = {
          # templates
          #'VgS-template','Vg-template',
      ], 
+     '0j1j-inclusive' : [
+        #signals
+        'ggH','qqH','WH','ZH',
+        # bkgs
+         'WW','ggWW','VgS','Vg','WJet','VV','VVV','DYTT','WWnlo','WWnloUp','WWnloDown',
+         ('DYLL','ggH'),
+         # systematics
+         'WJetFakeRate-nominal',
+         ('WJetFakeRate-eUp', 'WJetFakeRate-nominal'),
+         ('WJetFakeRate-eDn', 'WJetFakeRate-nominal'),
+         ('WJetFakeRate-mUp', 'WJetFakeRate-nominal'),
+         ('WJetFakeRate-mDn', 'WJetFakeRate-nominal'),
+         #('TopTW',   'Top'),
+         ('Top0jet',   'Top'),
+         ('Topge1jet',   'Top'),
+         #('Top0jet_nowe',   'Top'),
+         #('Topge1jet_nowe',   'Top'),
+
+
+         #('TopCtrl', 'Top'),
+         # templates
+         #'VgS-template','Vg-template',
+     ],
 
      'differential' : [
          #signals
