@@ -2,7 +2,25 @@ import hwwtools
 import re
 
 
-signals = ['ggH','ggHBin0','ggHBin1','ggHBin2','ggHBin3','ggHBin4','ggHBin5', 'ggHFidBin0','ggHFidBin1','ggHFidBin2','ggHFidBin3','ggHFidBin4','ggHFidBin5', 'qqH','qqHBin0','qqHBin1','qqHBin2','qqHBin3','qqHBin4','qqHBin5', 'qqHFidBin0','qqHFidBin1','qqHFidBin2','qqHFidBin3','qqHFidBin4','qqHFidBin5', 'wzttH','ggH_ALT','qqH_ALT','WH','WHBin0','WHBin1','WHBin2','WHBin3','WHBin4','WHBin5','WHFidBin0','WHFidBin1','WHFidBin2','WHFidBin3','WHFidBin4','WHFidBin5','ZH','ZHBin0','ZHBin1','ZHBin2','ZHBin3','ZHBin4','ZHBin5','ZHFidBin0','ZHFidBin1','ZHFidBin2','ZHFidBin3','ZHFidBin4','ZHFidBin5','ttH','VH']
+signals = ['ggH',
+           'ggHBin0','ggHBin1','ggHBin2','ggHBin3','ggHBin4','ggHBin5', 
+           'ggHFidBin0','ggHFidBin1','ggHFidBin2','ggHFidBin3','ggHFidBin4','ggHFidBin5', 
+           'ggHFidRecBin0','ggHFidRecBin1','ggHFidRecBin2','ggHFidRecBin3','ggHFidRecBin4','ggHFidRecBin5', 
+           'qqH',
+           'qqHBin0','qqHBin1','qqHBin2','qqHBin3','qqHBin4','qqHBin5', 
+           'qqHFidBin0','qqHFidBin1','qqHFidBin2','qqHFidBin3','qqHFidBin4','qqHFidBin5', 
+           'qqHFidRecBin0','qqHFidRecBin1','qqHFidRecBin2','qqHFidRecBin3','qqHFidRecBin4','qqHFidRecBin5', 
+           'wzttH','ggH_ALT','qqH_ALT',
+           'WH',
+           'WHBin0','WHBin1','WHBin2','WHBin3','WHBin4','WHBin5',
+           'WHFidBin0','WHFidBin1','WHFidBin2','WHFidBin3','WHFidBin4','WHFidBin5',
+           'WHFidRecBin0','WHFidRecBin1','WHFidRecBin2','WHFidRecBin3','WHFidRecBin4','WHFidRecBin5',
+           'ZH',
+           'ZHBin0','ZHBin1','ZHBin2','ZHBin3','ZHBin4','ZHBin5',
+           'ZHFidBin0','ZHFidBin1','ZHFidBin2','ZHFidBin3','ZHFidBin4','ZHFidBin5',
+           'ZHFidRecBin0','ZHFidRecBin1','ZHFidRecBin2','ZHFidRecBin3','ZHFidRecBin4','ZHFidRecBin5',
+           'ttH','VH']
+
 
 #--------------
 # mcsets,
@@ -263,6 +281,84 @@ mcsets = {
          # templates
          'VgS-template','Vg-template',
      ],
+     '0j1j-differential4' : [
+        #signals
+#        ('sigSMBin0', 'sigSM'),
+#        ('sigSMBin1', 'sigSM'),
+#        ('sigSMBin2', 'sigSM'),
+#        ('sigSMBin3', 'sigSM'),
+#        ('sigSMBin4', 'sigSM'),
+#        ('sigSMBin5', 'sigSM'),
+         ('ggHFidRecBin0','ggH'),
+         ('ggHFidRecBin1','ggH'),
+         ('ggHFidRecBin2','ggH'),
+         ('ggHFidRecBin3','ggH'),
+         ('ggHFidRecBin4','ggH'),
+         ('ggHFidRecBin5','ggH'),
+         ('qqHFidRecBin0','qqH'),
+         ('qqHFidRecBin1','qqH'),
+         ('qqHFidRecBin2','qqH'),
+         ('qqHFidRecBin3','qqH'),
+         ('qqHFidRecBin4','qqH'),
+         ('qqHFidRecBin5','qqH'),
+         ('WHFidRecBin0','WH'),
+         ('WHFidRecBin1','WH'),
+         ('WHFidRecBin2','WH'),
+         ('WHFidRecBin3','WH'),
+         ('WHFidRecBin4','WH'),
+         ('WHFidRecBin5','WH'),
+         ('ZHFidRecBin0','ZH'),
+         ('ZHFidRecBin1','ZH'),
+         ('ZHFidRecBin2','ZH'),
+         ('ZHFidRecBin3','ZH'),
+         ('ZHFidRecBin4','ZH'),
+         ('ZHFidRecBin5','ZH'),
+
+        # bkgs
+         ("ggHNonFid", "ggH"),
+         ("qqHNonFid", "qqH"),
+         ("WHNonFid", "WH"),
+         ("ZHNonFid", "ZH"),
+         
+         ('WWBin0', 'WW'),
+         ('WWBin1', 'WW'),
+         ('WWBin2', 'WW'),
+         ('WWBin3', 'WW'),
+         ('WWBin4', 'WW'),
+         ('WWBin5', 'WW'),
+
+
+         'ggWW','VgS','Vg','WJet','VV','VVV','DYTT','WWnlo','WWnloUp','WWnloDown',
+         ('DYLL','ggH'),
+         # systematics
+         'WJetFakeRate-nominal',
+         ('WJetFakeRate-eUp', 'WJetFakeRate-nominal'),
+         ('WJetFakeRate-eDn', 'WJetFakeRate-nominal'),
+         ('WJetFakeRate-mUp', 'WJetFakeRate-nominal'),
+         ('WJetFakeRate-mDn', 'WJetFakeRate-nominal'),
+         ('TopTWge1jetBin0',   'Top'),
+         ('TopTWge1jetBin1',   'Top'),
+         ('TopTWge1jetBin2',   'Top'),
+         ('TopTWge1jetBin3',   'Top'),
+         ('TopTWge1jetBin4',   'Top'),
+         ('TopTWge1jetBin5',   'Top'),
+         ('TopTW0jet',   'Top'),
+         ('Top0jet',   'Top'),
+         ('Topge1jetBin0',   'Top'),
+         ('Topge1jetBin1',   'Top'),
+         ('Topge1jetBin2',   'Top'),
+         ('Topge1jetBin3',   'Top'),
+         ('Topge1jetBin4',   'Top'),
+         ('Topge1jetBin5',   'Top'),
+
+         #('Top0jet_nowe',   'Top'),
+         #('Topge1jet_nowe',   'Top'),
+
+
+         ('TopCtrl', 'Top'),
+         # templates
+         'VgS-template','Vg-template',
+     ], 
       '0j1j-differential3EmbeddedUnfolding' : [
         #signals
 #        ('sigSMBin0', 'sigSM'),
