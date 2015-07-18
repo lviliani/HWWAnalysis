@@ -1311,6 +1311,34 @@ class ShapeFactory:
         weights['ZHBin4']                = self._stdWgt+'*'+self._HiggsWgt('ZH',mass,flavor)+'*(mctruth == 24)*'+self._muVal+'*('+hwwinfo.wwcuts.pth5+')'
         weights['ZHBin5']                = self._stdWgt+'*'+self._HiggsWgt('ZH',mass,flavor)+'*(mctruth == 24)*'+self._muVal+'*('+hwwinfo.wwcuts.pth6+')'
 
+        weights['ggHFidRecBin0'] = weights['ggHBin0']
+        weights['ggHFidRecBin1'] = weights['ggHBin1']
+        weights['ggHFidRecBin2'] = weights['ggHBin2']
+        weights['ggHFidRecBin3'] = weights['ggHBin3']
+        weights['ggHFidRecBin4'] = weights['ggHBin4']
+        weights['ggHFidRecBin5'] = weights['ggHBin5']
+
+        weights['qqHFidRecBin0'] = weights['qqHBin0']
+        weights['qqHFidRecBin1'] = weights['qqHBin1']
+        weights['qqHFidRecBin2'] = weights['qqHBin2']
+        weights['qqHFidRecBin3'] = weights['qqHBin3']
+        weights['qqHFidRecBin4'] = weights['qqHBin4']
+        weights['qqHFidRecBin5'] = weights['qqHBin5']
+
+        weights['WHFidRecBin0'] = weights['WHBin0']
+        weights['WHFidRecBin1'] = weights['WHBin1']
+        weights['WHFidRecBin2'] = weights['WHBin2'] 
+        weights['WHFidRecBin3'] = weights['WHBin3']
+        weights['WHFidRecBin4'] = weights['WHBin4']
+        weights['WHFidRecBin5'] = weights['WHBin5']
+
+        weights['ZHFidRecBin0'] = weights['ZHBin0']
+        weights['ZHFidRecBin1'] = weights['ZHBin1']
+        weights['ZHFidRecBin2'] = weights['ZHBin2']
+        weights['ZHFidRecBin3'] = weights['ZHBin3']
+        weights['ZHFidRecBin4'] = weights['ZHBin4']
+        weights['ZHFidRecBin5'] = weights['ZHBin5']
+
         weights['ggHFidBin0']               = self._stdWgt+'*'+self._HiggsWgt('ggH',mass,flavor)+'*'+self._muVal+'*('+hwwinfo.wwcuts.pthgen1+')'
         weights['ggHFidBin1']               = self._stdWgt+'*'+self._HiggsWgt('ggH',mass,flavor)+'*'+self._muVal+'*('+hwwinfo.wwcuts.pthgen2+')'
         weights['ggHFidBin2']               = self._stdWgt+'*'+self._HiggsWgt('ggH',mass,flavor)+'*'+self._muVal+'*('+hwwinfo.wwcuts.pthgen3+')'
@@ -1947,7 +1975,36 @@ if __name__ == '__main__':
 
               factory._systByWeight = systByWeight
 
-              processMask = ['ggH','ggHBin0','ggHBin1','ggHBin2','ggHBin3','ggHBin4','ggHBin5', 'ggHFidBin0','ggHFidBin1','ggHFidBin2','ggHFidBin3','ggHFidBin4','ggHFidBin5', 'ggH_ALT',  'qqH', 'qqHBin0', 'qqHBin1', 'qqHBin2', 'qqHBin3', 'qqHBin4', 'qqHBin5', 'qqHFidBin0', 'qqHFidBin1', 'qqHFidBin2', 'qqHFidBin3', 'qqHFidBin4', 'qqHFidBin5', 'qqH_ALT', 'wzttH', 'ZH', 'ZHBin0', 'ZHBin1', 'ZHBin2', 'ZHBin3', 'ZHBin4', 'ZHBin5', 'ZHFidBin0', 'ZHFidBin1', 'ZHFidBin2', 'ZHFidBin3', 'ZHFidBin4', 'ZHFidBin5','WH', 'WHBin0', 'WHBin1', 'WHBin2', 'WHBin3', 'WHBin4', 'WHBin5', 'WHFidBin0', 'WHFidBin1', 'WHFidBin2', 'WHFidBin3', 'WHFidBin4', 'WHFidBin5', 'ggHNonFid', 'qqHNonFid', 'WHNonFid', 'ZHNonFid', 'ttH', 'ggWW', 'Top', 'Top0jet', 'Topge1jet', 'Topge1jetBin0', 'Topge1jetBin1','Topge1jetBin2','Topge1jetBin3','Topge1jetBin4','Topge1jetBin5','Top0jet_nowe', 'Topge1jet_nowe', 'Topge1jetCtrl','Topge1jetCtrlBin0', 'Topge1jetCtrlBin1','Topge1jetCtrlBin2','Topge1jetCtrlBin3','Topge1jetCtrlBin4','Topge1jetCtrlBin5','TopPt0', 'TopPt1', 'TopPt2', 'TopPt3', 'TopPt4', 'TopPt5', 'TopPt6', 'TopPt7', 'TopPt8', 'WW', 'VV', 'VgS', 'Vg', 'DYTT', 'Other', 'VVV', 'WWewk', 'CHITOP-Top' , 'CHITOP-Top0jet', 'ggH_SM', 'qqH_SM', 'wzttH_SM' , 'WH_SM','ZH_SM','ttH_SM','ggH_sbi','ggH_b','ggH_s','qqH_sbi','qqH_b','qqH_s', 'WWBin0', 'WWBin1', 'WWBin2', 'WWBin3', 'WWBin4', 'WWBin5',]
+              processMask = ['ggH',
+              'ggHBin0','ggHBin1','ggHBin2','ggHBin3','ggHBin4','ggHBin5', 
+              'ggHFidBin0','ggHFidBin1','ggHFidBin2','ggHFidBin3','ggHFidBin4','ggHFidBin5', 
+              'ggHFidRecBin0','ggHFidRecBin1','ggHFidRecBin2','ggHFidRecBin3','ggHFidRecBin4','ggHFidRecBin5', 
+              'ggH_ALT',  
+              'qqH', 
+              'qqHBin0', 'qqHBin1', 'qqHBin2', 'qqHBin3', 'qqHBin4', 'qqHBin5', 
+              'qqHFidBin0', 'qqHFidBin1', 'qqHFidBin2', 'qqHFidBin3', 'qqHFidBin4', 'qqHFidBin5', 
+              'qqHFidRecBin0', 'qqHFidRecBin1', 'qqHFidRecBin2', 'qqHFidRecBin3', 'qqHFidRecBin4', 'qqHFidRecBin5', 
+              'qqH_ALT', 
+              'wzttH', 
+              'ZH', 
+              'ZHBin0', 'ZHBin1', 'ZHBin2', 'ZHBin3', 'ZHBin4', 'ZHBin5', 
+              'ZHFidBin0', 'ZHFidBin1', 'ZHFidBin2', 'ZHFidBin3', 'ZHFidBin4', 'ZHFidBin5',
+              'ZHFidRecBin0', 'ZHFidRecBin1', 'ZHFidRecBin2', 'ZHFidRecBin3', 'ZHFidRecBin4', 'ZHFidRecBin5',
+              'WH', 
+              'WHBin0', 'WHBin1', 'WHBin2', 'WHBin3', 'WHBin4', 'WHBin5', 
+              'WHFidBin0', 'WHFidBin1', 'WHFidBin2', 'WHFidBin3', 'WHFidBin4', 'WHFidBin5', 
+              'WHFidRecBin0', 'WHFidRecBin1', 'WHFidRecBin2', 'WHFidRecBin3', 'WHFidRecBin4', 'WHFidRecBin5', 
+              'WHFidBin0', 'WHFidBin1', 'WHFidBin2', 'WHFidBin3', 'WHFidBin4', 'WHFidBin5', 
+              'ggHNonFid', 'qqHNonFid', 'WHNonFid', 'ZHNonFid', 
+              'ttH', 'ggWW', 
+              'Top', 
+              'Top0jet', 'Topge1jet', 'Topge1jetBin0', 'Topge1jetBin1','Topge1jetBin2','Topge1jetBin3','Topge1jetBin4','Topge1jetBin5',
+              'Top0jet_nowe', 'Topge1jet_nowe', 
+              'Topge1jetCtrl','Topge1jetCtrlBin0', 'Topge1jetCtrlBin1','Topge1jetCtrlBin2','Topge1jetCtrlBin3','Topge1jetCtrlBin4','Topge1jetCtrlBin5',
+              'TopPt0', 'TopPt1', 'TopPt2', 'TopPt3', 'TopPt4', 'TopPt5', 'TopPt6', 'TopPt7', 'TopPt8', 
+              'WW', 'VV', 'VgS', 'Vg', 'DYTT', 'Other', 'VVV', 'WWewk', 'CHITOP-Top' , 'CHITOP-Top0jet', 'ggH_SM', 'qqH_SM', 'wzttH_SM' , 
+              'WH_SM','ZH_SM','ttH_SM','ggH_sbi','ggH_b','ggH_s','qqH_sbi','qqH_b','qqH_s', 
+              'WWBin0', 'WWBin1', 'WWBin2', 'WWBin3', 'WWBin4', 'WWBin5',]
 
               if '2011' in opt.dataset:
                   processMask = ['ggH', 'ggH_ALT', 'qqH', 'qqH_ALT', 'VH' , 'wzttH', 'ZH', 'WH', 'ttH', 'ggWW', 'Top', 'WW', 'VV', 'CHITOP-Top', 'ggH_SM', 'qqH_SM','VH_SM', 'wzttH_SM', 'ZH_SM', 'WH_SM', 'ttH_SM']
