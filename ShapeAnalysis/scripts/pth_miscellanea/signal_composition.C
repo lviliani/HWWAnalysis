@@ -1,5 +1,5 @@
 
-void eff_sel(){
+void signal_composition(){
 
   gStyle->SetOptStat("emrio") ;
   TH1::SetDefaultSumw2();
@@ -14,10 +14,10 @@ void eff_sel(){
 
   TString leptons_cut = "(!sameflav && trigger==1 && nextra==0 && pt1>20 && pt2>10  && ch1*ch2<0)";
   TString mll_cut = "*(mll>12 && mll<200)";
-  TString ptll_cut = "*(ptll>30)";  
+  TString ptll_cut = "*(ptll>30)";
   TString met_cut = "*(mpmet>20. && pfmet>20.)";
   TString mth_cut = "*(mth>60 && mth<280)";
-  TString btag_cut = "*((njet==0)*(bveto_mu==1 && bveto_ip==1) || (njet>0)*(( jetbjpb1<1.4 || jetpt1<30) && ( jetbjpb2<1.4 || jetpt2<30) && ( jetbjpb3<1.4 || jetpt3<30) && ( jetbjpb4<1.4 || jetpt4<30)))"; 
+  TString btag_cut = "*((njet==0)*(bveto_mu==1 && bveto_ip==1) || (njet>0)*(( jetbjpb1<1.4 || jetpt1<30) && ( jetbjpb2<1.4 || jetpt2<30) && ( jetbjpb3<1.4 || jetpt3<30) && ( jetbjpb4<1.4 || jetpt4<30)))";
 
   TString selection = "("+leptons_cut+mll_cut+met_cut+mth_cut+btag_cut+ptll_cut+")";
 
@@ -41,74 +41,74 @@ void eff_sel(){
 
   // Signal  
 
-  TChain * H125 =  new TChain("latino");
-  H125->Add(Dir+"latino_1125_ggToH125toWWTo2LAndTau2Nu.root");
-  H125->Add(Dir+"latino_2125_vbfToH125toWWTo2LAndTau2Nu.root");
+  TChain * ggH =  new TChain("ggH");
+  ggH->Add(Dir+"latino_1125_ggToH125toWWTo2LAndTau2Nu.root/latino");
+
+  TChain * VBF =  new TChain("VBF");
+  VBF->Add(Dir+"latino_2125_vbfToH125toWWTo2LAndTau2Nu.root/latino");
   
-
-  TChain * H125_wzh =  new TChain("H125_wzh");
-  H125_wzh->Add(Dir+"latino_3125_wzttH125ToWW.root/latino");
-
-
-//  H125->Add(Dir+"latino_3125_wzttH125ToWW.root/latino");
-
-  TH1D* htot = new TH1D("htot","htot",nbins,vedges);
-  TH1D* hpass = new TH1D("hpass","hpass",nbins,vedges);
-  TH1D* hfake = new TH1D("hfake","hfake",nbins,vedges);
-
-//  H125->Draw(var+">> hpass",selection+"*puW*baseW*effW*triggW"+LumiW);
-  H125->Draw(var+">> hpass",selection+"*"+acceptance+"*puW*baseW*effW*triggW"+LumiW);
-  H125->Draw(var+">> htot",acceptance+"*baseW"+LumiW);  
-  H125->Draw(var+">> hfake", selection+"*(!"+acceptance+")*puW*baseW*effW*triggW"+LumiW);
-
-  H125_wzh->Draw(var+">>+ hpass",selection+"*"+acceptance_whzh+"*puW*baseW*effW*triggW"+LumiW);
-  H125_wzh->Draw(var+">>+ htot","("+acceptance_whzh+")*baseW"+LumiW);
-  H125_wzh->Draw(var+">>+ hfake", selection+"*(!"+acceptance_whzh+")*puW*baseW*effW*triggW"+LumiW);
-
-  delete H125;
-
-  cout << "Selected events = " << hpass->Integral() << " Tot events = " << htot->Integral() << endl;
-  cout << "Fake events = " << hfake->Integral() << endl;
-
-  double err_pass = 0.;
-  double int_pass = hpass->IntegralAndError(1,nbins,err_pass);
-  double err_tot = 0.;
-  double int_tot = htot->IntegralAndError(1,nbins,err_tot);
-  double err_fake = 0.;
-  double int_fake = hfake->IntegralAndError(1,nbins,err_fake);
+  TChain * WZH =  new TChain("WZH");
+  WZH->Add(Dir+"latino_3125_wzttH125ToWW.root/latino");
 
 
-  cout << "Efficiency = " << int_pass/int_tot << " +/- " << (int_pass/int_tot)*(err_tot/int_tot + err_pass/int_pass)  << endl;
-  cout << "Fake rate  = " << int_fake/int_pass << " +/- " << (int_fake/int_pass)*(err_fake/int_fake + err_pass/int_pass)  << endl;
+  TH1D* hggH = new TH1D("hggH","hggH",nbins,vedges);
+  TH1D* hVBF = new TH1D("hVBF","hVBF",nbins,vedges);
+  TH1D* hWZH = new TH1D("hWZH","hWZH",nbins,vedges);
 
-  TFile * fout = new TFile("efficiencies.root", "recreate");
-  fout->cd();
-  TCanvas * c = new TCanvas();
-  c->cd();
-  TGraphAsymmErrors* g = new TGraphAsymmErrors(hpass,htot);
-  g->SetNameTitle("Selection_efficiency","Selection efficiency");
-  g->GetXaxis()->SetTitle("p_{T,gen}^{H} (GeV)");
-  g->GetXaxis()->SetRangeUser(0,200);
-  g->GetYaxis()->SetTitle("Efficiency");
-  g->SetLineColor(kRed);
-  g->SetLineWidth(3);
-  g->Draw("AP");
+//  ggH->Draw(var+">> hggH",acceptance+"*baseW"+LumiW);  
+//  VBF->Draw(var+">> hVBF",acceptance+"*baseW"+LumiW);
+//  WZH->Draw(var+">> hWZH","("+acceptance_whzh+")*baseW"+LumiW);
 
+  ggH->Draw(var+">> hggH",selection+"*baseW"+LumiW);  
+  VBF->Draw(var+">> hVBF",selection+"*baseW"+LumiW);
+  WZH->Draw(var+">> hWZH",selection+"*baseW"+LumiW);
 
-  TCanvas * c1 = new TCanvas();
-  c1->cd();
-  TGraphAsymmErrors* g1 = new TGraphAsymmErrors(hfake,hpass);
-  g1->SetNameTitle("Fake_rate","Fake rate");
-  g1->GetXaxis()->SetTitle("p_{T,gen}^{H} (GeV)");
-  g1->GetXaxis()->SetRangeUser(0,200);
-  g1->GetYaxis()->SetTitle("Fake rate");
-  g1->SetLineColor(kRed);
-  g1->SetLineWidth(3);
-  g1->Draw("AP");
-  g->Write();
-  g1->Write();
+  double tot = hggH->Integral()+hVBF->Integral()+hWZH->Integral();
+  hggH->Scale(1./tot);
+  hVBF->Scale(1./tot);
+  hWZH->Scale(1./tot);
 
 
-  fout->Write();  
+  TH1D* hggH2 = (TH1D*)hggH->Clone();
+  TH1D* hVBF2 = (TH1D*)hVBF->Clone();
+  TH1D* hWZH2 = (TH1D*)hWZH->Clone();
+
+  hggH2->SetLineColor(kBlue);
+  hVBF2->SetLineColor(kRed);
+  hWZH2->SetLineColor(kGreen);
+  hggH2->SetLineWidth(2);
+  hVBF2->SetLineWidth(2);
+  hWZH2->SetLineWidth(2);
+  
+  for(int bin=1; bin<7; bin++){
+    double bin_int = hggH->GetBinContent(bin)+hVBF->GetBinContent(bin)+hWZH->GetBinContent(bin);
+    hggH2->SetBinContent(bin, (hggH->GetBinContent(bin))/bin_int);
+    hVBF2->SetBinContent(bin, (hVBF->GetBinContent(bin))/bin_int);
+    hWZH2->SetBinContent(bin, (hWZH->GetBinContent(bin))/bin_int);
+  }
+
+  TCanvas* c2 = new TCanvas();
+  c2->cd();
+
+  TLegend * leg2 = new TLegend(0.2, 0.6, 0.8, 0.9);
+  leg2->SetFillColor(0);
+  leg2->AddEntry(hggH2, "ggH", "f");
+  leg2->AddEntry(hVBF2, "VBF", "f");
+  leg2->AddEntry(hWZH2, "VH", "f");
+
+  hggH2->SetFillColor(kBlue);
+  hVBF2->SetFillColor(kRed);
+  hWZH2->SetFillColor(kGreen);
+  hggH2->SetFillStyle(3004);
+  hVBF2->SetFillStyle(3004);
+  hWZH2->SetFillStyle(3004);
+
+  THStack* stack = new THStack();
+  stack->Add(hggH2,"histo");
+  stack->Add(hVBF2,"histo");
+  stack->Add(hWZH2,"histo");
+
+  stack->Draw();
+  leg2->Draw();
 
 }
