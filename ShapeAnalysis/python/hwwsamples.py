@@ -248,8 +248,25 @@ mcsets = {
          ('WWBin3', 'WW'),
          ('WWBin4', 'WW'),
          ('WWBin5', 'WW'),
-
-
+	 ('WWnloBin0', 'WWnlo'),
+	 ('WWnloBin1', 'WWnlo'), 
+	 ('WWnloBin2', 'WWnlo'),
+	 ('WWnloBin3', 'WWnlo'), 
+	 ('WWnloBin4', 'WWnlo'),
+	 ('WWnloBin5', 'WWnlo'),
+         ('WWnloUpBin0', 'WWnloUp'),
+         ('WWnloUpBin1', 'WWnloUp'),
+         ('WWnloUpBin2', 'WWnloUp'), 
+         ('WWnloUpBin3', 'WWnloUp'), 
+         ('WWnloUpBin4', 'WWnloUp'), 
+         ('WWnloUpBin5', 'WWnloUp'),
+         ('WWnloDownBin0', 'WWnloDown'),
+         ('WWnloDownBin1', 'WWnloDown'),
+         ('WWnloDownBin2', 'WWnloDown'), 
+         ('WWnloDownBin3', 'WWnloDown'), 
+         ('WWnloDownBin4', 'WWnloDown'), 
+         ('WWnloDownBin5', 'WWnloDown'),
+	
          'ggWW','VgS','Vg','WJet','VV','VVV','DYTT','WWnlo','WWnloUp','WWnloDown',
          ('DYLL','ggH'),
          # systematics

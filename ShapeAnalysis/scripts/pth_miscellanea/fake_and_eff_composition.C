@@ -39,9 +39,9 @@ void fake_and_eff_composition(){
   TString name_pass;
   TString name_tot;
   TString AccCuts[6];
-  AccCuts[0] = doLoose ? "(leptonGenpt1>18. && leptonGenpt2>8. && abs(leptonGeneta1)<2.5 && abs(leptonGeneta2)<2.5 )" : "(leptonGenpt1>20. && leptonGenpt2>10. && abs(leptonGeneta1)<2.5 && abs(leptonGeneta2)<2.5 )";
+  AccCuts[0] = doLoose ? "(leptonGenpt1>20. && leptonGenpt2>10. && abs(leptonGeneta1)<2.5 && abs(leptonGeneta2)<2.5 )" : "(leptonGenpt1>20. && leptonGenpt2>10. && abs(leptonGeneta1)<2.5 && abs(leptonGeneta2)<2.5 )";
   AccCuts[1] = AccCuts[0]+" && ("+mll_gen+">12 )";
-  AccCuts[2] = doLoose ? AccCuts[1]+" && ("+ptll_gen+">25 )" : AccCuts[1]+" && ("+ptll_gen+">30 )";
+  AccCuts[2] = doLoose ? AccCuts[1]+" && ("+ptll_gen+">30 )" : AccCuts[1]+" && ("+ptll_gen+">30 )";
   AccCuts[3] = doLoose ? AccCuts[2]+" && ("+ptnn_gen+">0 )" : AccCuts[2]+" && ("+ptnn_gen+">20 )";
   AccCuts[4] = doLoose ? AccCuts[3]+" && ("+mth_gen+">50 )" : AccCuts[3]+" && ("+mth_gen+">60 )";
   AccCuts[5] = doTau ? AccCuts[4]+" && ("+of_gen_tau+" )" : AccCuts[4]+" && ("+of_gen+" )";
@@ -123,8 +123,8 @@ void fake_and_eff_composition(){
 		  double err_fake = 0.;
 		  double int_fake = hfake5->IntegralAndError(1,nbins,err_fake);
 
-		  cout << "Efficiency = " << int_pass/int_tot << " +/- " << (int_pass/int_tot)*(err_tot/int_tot + err_pass/int_pass)  << endl;
-		  cout << "Fake rate  = " << int_fake/int_pass << " +/- " << (int_fake/int_pass)*(err_fake/int_fake + err_pass/int_pass)  << endl;
+		  cout << "############# Efficiency = " << int_pass/int_tot << " +/- " << (int_pass/int_tot)*(err_tot/int_tot + err_pass/int_pass)  << endl;
+		  cout << "############# Fake rate  = " << int_fake/int_pass << " +/- " << (int_fake/int_pass)*(err_fake/int_fake + err_pass/int_pass)  << endl;
 	  }
 
   }
@@ -132,6 +132,9 @@ void fake_and_eff_composition(){
 
   TFile * fout = new TFile("fakes.root", "recreate");
   fout->cd();
+  hfake5->SetNameTitle("hfake","Fake histogram");
+  hfake5->Write();
+  fout->Close();
 
   TGraphAsymmErrors* g0 = new TGraphAsymmErrors(hfake0,hsel);
   TGraphAsymmErrors* g1 = new TGraphAsymmErrors(hfake1,hsel);
@@ -140,11 +143,11 @@ void fake_and_eff_composition(){
   TGraphAsymmErrors* g4 = new TGraphAsymmErrors(hfake4,hsel);
   TGraphAsymmErrors* g5 = new TGraphAsymmErrors(hfake5,hsel);
 
-  TLegend* leg = new TLegend(0.1, 0.7, 0.4, 0.9);
+  TLegend* leg = new TLegend(0.15, 0.65, 0.45, 0.85);
   leg->AddEntry(g0, "Lepton cuts", "lp");
   leg->AddEntry(g1, "mll cut", "lp");
   leg->AddEntry(g2, "pTll cut", "lp");
-  leg->AddEntry(g3, "pTnn cut", "lp");
+  //leg->AddEntry(g3, "pTnn cut", "lp");
   leg->AddEntry(g4, "mTH cut", "lp");
   leg->AddEntry(g5, "of cut", "lp");
   leg->SetFillColor(kWhite);
@@ -157,11 +160,11 @@ void fake_and_eff_composition(){
   TGraphAsymmErrors* gr4 = new TGraphAsymmErrors(hpass4,htot4);
   TGraphAsymmErrors* gr5 = new TGraphAsymmErrors(hpass5,htot5);
 
-  TLegend* leg2 = new TLegend(0.1, 0.4, 0.4, 0.7);
+  TLegend* leg2 = new TLegend(0.15, 0.65, 0.45, 0.85);
   leg2->AddEntry(gr0, "Lepton cuts", "lp");
   leg2->AddEntry(gr1, "mll cut", "lp");
   leg2->AddEntry(gr2, "pTll cut", "lp");
-  leg2->AddEntry(gr3, "pTnn cut", "lp");
+  //leg2->AddEntry(gr3, "pTnn cut", "lp");
   leg2->AddEntry(gr4, "mTH cut", "lp");
   leg2->AddEntry(gr5, "of cut", "lp");
   leg2->SetFillColor(kWhite);
@@ -170,6 +173,7 @@ void fake_and_eff_composition(){
 
   TCanvas * c1 = new TCanvas();
   c1->cd();
+  c1->SetTicky();
 
   g0->SetNameTitle("Fake_rate","Fakes Composition");
   g0->GetXaxis()->SetTitle("p_{T,gen}^{H} (GeV)");
@@ -178,7 +182,7 @@ void fake_and_eff_composition(){
   g0->SetLineColor(kRed);
   g0->SetLineWidth(3);
 //  g0->SetMarkerStyle(20);
-  g0->GetYaxis()->SetRangeUser(0.,0.45);
+  g0->GetYaxis()->SetRangeUser(0.,1);
   g0->Draw("AP");
 //  g0->Write();
   cout << "here" << endl;
@@ -201,7 +205,7 @@ void fake_and_eff_composition(){
   g3->SetLineColor(kMagenta);
   g3->SetLineWidth(3);
 //  g3->SetMarkerStyle(23);
-  g3->Draw("Psame");
+//  g3->Draw("Psame");
 //  g3->Write();
   cout << "here" << endl;
 
@@ -223,6 +227,7 @@ void fake_and_eff_composition(){
 
   TCanvas* c2 = new TCanvas();
   c2->cd();
+  c2->SetTicky();
 
   gr0->SetNameTitle("eff_sel","Efficiency Composition");
   gr0->GetXaxis()->SetTitle("p_{T,gen}^{H} (GeV)");
@@ -231,7 +236,7 @@ void fake_and_eff_composition(){
   gr0->SetLineColor(kRed);
   gr0->SetLineWidth(3);
 //  g0->SetMarkerStyle(20);
-  gr0->GetYaxis()->SetRangeUser(0.,0.4);
+  gr0->GetYaxis()->SetRangeUser(0.,1);
   gr0->Draw("AP");
 //  g0->Write();
 
@@ -251,7 +256,7 @@ void fake_and_eff_composition(){
   gr3->SetLineColor(kMagenta);
   gr3->SetLineWidth(3);
 //  g3->SetMarkerStyle(23);
-  gr3->Draw("Psame");
+//  gr3->Draw("Psame");
 //  g3->Write();
 
   gr4->SetLineColor(kAzure+1);

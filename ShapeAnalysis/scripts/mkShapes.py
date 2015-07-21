@@ -1380,6 +1380,28 @@ class ShapeFactory:
         weights['WWBin4']                = self._stdWgt+'*('+hwwinfo.wwcuts.pth5+')'
         weights['WWBin5']                = self._stdWgt+'*('+hwwinfo.wwcuts.pth6+')'
 
+        weights['WWnloBin0']             = self._stdWgt+'*('+hwwinfo.wwcuts.pth1+')'
+        weights['WWnloBin1']             = self._stdWgt+'*('+hwwinfo.wwcuts.pth2+')'
+        weights['WWnloBin2']             = self._stdWgt+'*('+hwwinfo.wwcuts.pth3+')'
+        weights['WWnloBin3']             = self._stdWgt+'*('+hwwinfo.wwcuts.pth4+')'
+        weights['WWnloBin4']             = self._stdWgt+'*('+hwwinfo.wwcuts.pth5+')'
+        weights['WWnloBin5']             = self._stdWgt+'*('+hwwinfo.wwcuts.pth6+')'
+
+        weights['WWnloUpBin0']           = self._stdWgt+'*('+hwwinfo.wwcuts.pth1+')'
+        weights['WWnloUpBin1']           = self._stdWgt+'*('+hwwinfo.wwcuts.pth2+')'
+        weights['WWnloUpBin2']           = self._stdWgt+'*('+hwwinfo.wwcuts.pth3+')'
+        weights['WWnloUpBin3']           = self._stdWgt+'*('+hwwinfo.wwcuts.pth4+')'
+        weights['WWnloUpBin4']           = self._stdWgt+'*('+hwwinfo.wwcuts.pth5+')'
+        weights['WWnloUpBin5']           = self._stdWgt+'*('+hwwinfo.wwcuts.pth6+')'
+
+        weights['WWnloDownBin0']         = self._stdWgt+'*('+hwwinfo.wwcuts.pth1+')'
+        weights['WWnloDownBin1']         = self._stdWgt+'*('+hwwinfo.wwcuts.pth2+')'
+        weights['WWnloDownBin2']         = self._stdWgt+'*('+hwwinfo.wwcuts.pth3+')'
+        weights['WWnloDownBin3']         = self._stdWgt+'*('+hwwinfo.wwcuts.pth4+')'
+        weights['WWnloDownBin4']         = self._stdWgt+'*('+hwwinfo.wwcuts.pth5+')'
+        weights['WWnloDownBin5']         = self._stdWgt+'*('+hwwinfo.wwcuts.pth6+')'
+
+
         weights['ggH']               = self._stdWgt+'*'+self._HiggsWgt('ggH',mass,flavor)+'*'+self._muVal
         weights['qqH']               = self._stdWgt+'*'+self._HiggsWgt('qqH',mass,flavor)+'*'+self._muVal
         weights['ggHminlo']          = 'effW*triggW*kfW*puW*HEPMCweight/497500.*1000*0.108*0.108*9*0.216'+self._muVal
