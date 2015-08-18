@@ -739,22 +739,28 @@ class ShapeMixer:
         # WW generator shapes
         #
 	mcAtNLOBin = {}
+        print "nominals = ", self.nominals
 	if 'WWBin0' in self.nominals:
-	  wwNLOs = ['WWnloBin0','WWnloUpBin0','WWnloDownBin0','WWnloBin1','WWnloUpBin1','WWnloDownBin1','WWnloBin2','WWnloUpBin2','WWnloDownBin2','WWnloBin3','WWnloUpBin3','WWnloDownBin3','WWnloBin4','WWnloUpBin4','WWnloDownBin4','WWnloBin5','WWnloUpBin5','WWnloDownBin5']
+          print "In the loop!!!"
+	  wwNLOs = ['WWnloBin0','WWnloBin0Up','WWnloBin0Down','WWnloBin1','WWnloBin1Up','WWnloBin1Down','WWnloBin2','WWnloBin2Up','WWnloBin2Down','WWnloBin3','WWnloBin3Up','WWnloBin3Down','WWnloBin4','WWnloBin4Up','WWnloBin4Down','WWnloBin5','WWnloBin5Up','WWnloBin5Down']
           if set(wwNLOs).issubset(self.nominals):
+	       print "In the second loop!!!" 	
                for t in wwNLOs:
                    mcAtNLOBin[t] = self.nominals[t]
                    del self.nominals[t]
 	       for bin in range(6):
+		 print "BIN ", str(bin)
                  madWW = self.nominals['WWBin'+str(bin)]
 	         if madWW.GetNbinsX()>1:
-                   wwGenUp = mcAtNLOBin['WWnloBin'+str(bin)].Clone('histo_WW_Gen_nlo_'+chan+suffix+'_WWUpBin'+str(bin))
+		   print "In the third loop!!!"
+                   wwGenUp = mcAtNLOBin['WWnloBin'+str(bin)].Clone('histo_WWBin'+str(bin)+'_Gen_nlo_'+chan+suffix+'_WWBin'+str(bin)+'Up')
                    wwGenUp.SetTitle('WW Gen_nlo_WW Up Bin '+str(bin))
 		   wwGenUp.Scale(madWW.Integral()/wwGenUp.Integral())
 		   self.generators[wwGenUp.GetTitle()] = wwGenUp
+		   print "generators = ", self.generators 
 
                    #copy the nominal
-                   wwGenDown = mcAtNLOBin['WWnloBin'+str(bin)].Clone('histo_WW_Gen_nlo_'+chan+suffix+'_WWDownBin'+str(bin))
+                   wwGenDown = mcAtNLOBin['WWnloBin'+str(bin)].Clone('histo_WWBin'+str(bin)+'_Gen_nlo_'+chan+suffix+'_WWBin'+str(bin)+'Down')
                    wwGenDown.SetTitle('WW Gen_nlo_WW Down Bin'+str(bin))
                    wwGenDown.Scale(2.)
                    wwGenDown.Add(wwGenUp, -1)
@@ -762,14 +768,14 @@ class ShapeMixer:
                    self.generators[wwGenDown.GetTitle()] = wwGenDown
 
                    # MC@NLO scale
-                   wwScaleUp = mcAtNLOBin['WWnloUpBin'+str(bin)].Clone('histo_WW_Gen_scale_'+chan+suffix+'_WWUpBin'+str(bin))
+                   wwScaleUp = mcAtNLOBin['WWnloBin'+str(bin)+'Up'].Clone('histo_WWBin'+str(bin)+'_Gen_scale_'+chan+suffix+'_WWBin'+str(bin)+'Up')
                    wwScaleUp.SetTitle('WW Gen_scale_WW Up Bin'+str(bin))
                    wwScaleUp.Divide(mcAtNLOBin['WWnloBin'+str(bin)]) 
                    wwScaleUp.Multiply(madWW)
                    if  (wwScaleUp.Integral() != 0) : wwScaleUp.Scale(madWW.Integral()/wwScaleUp.Integral())
                    self.generators[wwScaleUp.GetTitle()] = wwScaleUp
 
-                   wwScaleDown = mcAtNLOBin['WWnloDownBin'+str(bin)].Clone('histo_WW_Gen_scale_'+chan+suffix+'_WWDownBin'+str(bin))
+                   wwScaleDown = mcAtNLOBin['WWnloBin'+str(bin)+'Down'].Clone('histo_WWBin'+str(bin)+'_Gen_scale_'+chan+suffix+'_WWBin'+str(bin)+'Down')
                    wwScaleDown.SetTitle('WW Gen_scale_WW Down Bin'+str(bin))
                    wwScaleDown.Divide(mcAtNLOBin['WWnloBin'+str(bin)])
                    wwScaleDown.Multiply(madWW)

@@ -4,12 +4,13 @@ void fake_and_eff_composition(){
   bool doLoose = true;
   bool doVH = true;
   bool doTau = false;
+  bool doFourPi = false;
 
   gStyle->SetOptStat("emrio") ;
   TH1::SetDefaultSumw2();
 
-  TString var = "TMath::Min(PtHiggs,167.)";
-  //TString var = "TMath::Min(sqrt( (leptonGenpt1*cos(leptonGenphi1)+leptonGenpt2*cos(leptonGenphi2)+neutrinoGenpt1*cos(neutrinoGenphi1)+neutrinoGenpt2*cos(neutrinoGenphi2) )**2 + (leptonGenpt1*sin(leptonGenphi1)+leptonGenpt2*sin(leptonGenphi2)+neutrinoGenpt1*sin(neutrinoGenphi1)+neutrinoGenpt2*sin(neutrinoGenphi2) )**2),167.)";
+  //TString var = "TMath::Min(PtHiggs,167.)";
+  TString var = "TMath::Min(sqrt( (leptonGenpt1*cos(leptonGenphi1)+leptonGenpt2*cos(leptonGenphi2)+neutrinoGenpt1*cos(neutrinoGenphi1)+neutrinoGenpt2*cos(neutrinoGenphi2) )**2 + (leptonGenpt1*sin(leptonGenphi1)+leptonGenpt2*sin(leptonGenphi2)+neutrinoGenpt1*sin(neutrinoGenphi1)+neutrinoGenpt2*sin(neutrinoGenphi2) )**2),167.)";
   //TString var = "1";
   double vedges[] = {0,15,45,85,125,165,200};
   double nbins = 6;
@@ -25,6 +26,8 @@ void fake_and_eff_composition(){
 
   TString selection = "("+leptons_cut+mll_cut+met_cut+mth_cut+btag_cut+ptll_cut+")";
 
+  cout << selection << endl;
+
   TString of_gen = "( (abs(leptonGenpid1)==11 && abs(leptonGenpid2)==13) || (abs(leptonGenpid1)==13 && abs(leptonGenpid2)==11) )";
   TString of_gen_tau = "( (abs(leptonGenpid1)==11 && abs(leptonGenpid2)==13) || (abs(leptonGenpid1)==13 && abs(leptonGenpid2)==11) || (abs(leptonGenpid1)==11 && abs(leptonGenpid2)==15) || (abs(leptonGenpid1)==15 && abs(leptonGenpid2)==11) || (abs(leptonGenpid1)==15 && abs(leptonGenpid2)==13) || (abs(leptonGenpid1)==13 && abs(leptonGenpid2)==15) || (abs(leptonGenpid1)==15 && abs(leptonGenpid2)==15) || (abs(leptonGenpid1)==15 && abs(leptonGenpid2)==15) )";
 
@@ -39,12 +42,24 @@ void fake_and_eff_composition(){
   TString name_pass;
   TString name_tot;
   TString AccCuts[6];
-  AccCuts[0] = doLoose ? "(leptonGenpt1>20. && leptonGenpt2>10. && abs(leptonGeneta1)<2.5 && abs(leptonGeneta2)<2.5 )" : "(leptonGenpt1>20. && leptonGenpt2>10. && abs(leptonGeneta1)<2.5 && abs(leptonGeneta2)<2.5 )";
-  AccCuts[1] = AccCuts[0]+" && ("+mll_gen+">12 )";
-  AccCuts[2] = doLoose ? AccCuts[1]+" && ("+ptll_gen+">30 )" : AccCuts[1]+" && ("+ptll_gen+">30 )";
-  AccCuts[3] = doLoose ? AccCuts[2]+" && ("+ptnn_gen+">0 )" : AccCuts[2]+" && ("+ptnn_gen+">20 )";
-  AccCuts[4] = doLoose ? AccCuts[3]+" && ("+mth_gen+">50 )" : AccCuts[3]+" && ("+mth_gen+">60 )";
-  AccCuts[5] = doTau ? AccCuts[4]+" && ("+of_gen_tau+" )" : AccCuts[4]+" && ("+of_gen+" )";
+
+  if (doFourPi){
+	  AccCuts[0] = "1";
+	  AccCuts[1] = "1";
+	  AccCuts[2] = "1";
+	  AccCuts[3] = "1";
+	  AccCuts[4] = "1";
+	  AccCuts[5] = "(leptonGenpt1>0. && leptonGenpt2>0. && neutrinoGenpt1>0. && neutrinoGenpt2>0. && abs(leptonGeneta1)<2.5 && abs(leptonGeneta2)<2.5)";
+  }
+  else{
+	  AccCuts[0] = doLoose ? "(leptonGenpt1>20. && leptonGenpt2>10. && abs(leptonGeneta1)<2.5 && abs(leptonGeneta2)<2.5)" : "(leptonGenpt1>20. && leptonGenpt2>10. && abs(leptonGeneta1)<2.5 && abs(leptonGeneta2)<2.5 )";
+	  AccCuts[1] = AccCuts[0]+" && ("+mll_gen+">12 )";
+	  AccCuts[2] = doLoose ? AccCuts[1]+" && ("+ptll_gen+">30 )" : AccCuts[1]+" && ("+ptll_gen+">30 )";
+	  AccCuts[3] = doLoose ? AccCuts[2]+" && ("+ptnn_gen+">-9999999999999999 )" : AccCuts[2]+" && ("+ptnn_gen+">20 )";
+	  AccCuts[4] = doLoose ? AccCuts[3]+" && ("+mth_gen+">50 )" : AccCuts[3]+" && ("+mth_gen+">60 )";
+	  AccCuts[5] = doTau ? AccCuts[4]+" && ("+of_gen_tau+" )" : AccCuts[4]+" && ("+of_gen+" )";
+  }
+  cout << AccCuts[5] << endl;
 
   TString Dir = "/data/lenzip/differential/tree_noskim_gen/nominals/";
 
@@ -96,7 +111,13 @@ void fake_and_eff_composition(){
 
 	  cout << "iCut = " << iCut << endl;
 	  acceptance = "("+AccCuts[iCut]+")";
-	  if (doVH) acceptance_whzh = "("+acceptance+"*( ((mctruth==24 || mctruth==26) && (mcHWWdecay==3) && (leptonGenpt3<0) && (neutrinoGenpt3<0))  ))";
+	  if (doVH && !doFourPi){
+	 	 acceptance_whzh = "("+acceptance+"*( ((mctruth==24 || mctruth==26) && (mcHWWdecay==3) && (leptonGenpt3<0) && (neutrinoGenpt3<0))  ))";
+	  }
+          else{
+	  	acceptance_whzh = "1";
+	  }
+	  //if (doVH) acceptance_whzh = "("+acceptance+"*( ((mctruth==24 || mctruth==26) && (mcHWWdecay==3)  )))";
 
           cout << acceptance << endl;
 
@@ -122,9 +143,13 @@ void fake_and_eff_composition(){
 		  double int_tot = htot5->IntegralAndError(1,nbins,err_tot);
 		  double err_fake = 0.;
 		  double int_fake = hfake5->IntegralAndError(1,nbins,err_fake);
-
+		  double err_sel = 0.;
+		  double int_sel = hsel->IntegralAndError(1,nbins,err_sel);
+		  cout << "############# Events passing the selection and the acceptance = " << int_pass << endl;
+                  cout << "############# Events passing the acceptance = " << int_tot << endl;
+                  cout << "############# Fake events = " << int_fake << endl;
 		  cout << "############# Efficiency = " << int_pass/int_tot << " +/- " << (int_pass/int_tot)*(err_tot/int_tot + err_pass/int_pass)  << endl;
-		  cout << "############# Fake rate  = " << int_fake/int_pass << " +/- " << (int_fake/int_pass)*(err_fake/int_fake + err_pass/int_pass)  << endl;
+		  cout << "############# Fake rate  = " << int_fake/int_sel << " +/- " << (int_fake/int_sel)*(err_fake/int_fake + err_sel/int_sel)  << endl;
 	  }
 
   }
