@@ -11,19 +11,22 @@ from math import *
 import nicePlot_unfolded
 
 
-lumi = 19.468
-kreg=4
+lumi = 19.47
+kreg = 3
 
-out_file = TFile("unfolded.root","recreate")
+dir = "data/"
+
+out_file = TFile(dir+"unfolded.root","recreate")
 
 ### File with signal extracted from the fit for each nuisance up/down variation
-syst_file = TFile("plotsFromFit.root")
+syst_file = TFile(dir+"plotsFromFit.root")
 
 ### File with the response martices for the systematics which need them
 #matrix_file = TFile("responseMatricesPreAppWithFakesAndWZttH.root")
 
 ### First of all get the central distribution and unfold with central, up and down matrices, corresponding to the ggH/VBF ratio variation
 h = syst_file.Get("HcentralNotChangingRM")
+
 
 list = ["central","up","down"]
 print "==================================== UNFOLD CENTRAL ==================================="
@@ -121,6 +124,7 @@ for s in syst:
     print "####################### Error!!!"
     break
 
+
   unfold = RooUnfoldSvd(matrix, h, kreg)
 
   hReco = unfold.Hreco(2)
@@ -152,7 +156,7 @@ ccov.Print("covariance_"+str(kreg)+".eps")
 
 print "Plotting the unfolded spectrum..."
 
-plot_file = "unfolded.root"
-truth_file = "TheTruth.root"
+plot_file = dir+"unfolded.root"
+#truth_file = "TheTruth.root"
 
-nicePlot_unfolded.finalPlot(plot_file, truth_file)
+nicePlot_unfolded.finalPlot(plot_file)

@@ -4,7 +4,7 @@ from ROOT import *
 from array import *
 from math import *
 import CMS_lumi, tdrstyle
-def finalPlot(input_file, truth_file):
+def finalPlot(input_file):
 
   #set the tdr style
   tdrstyle.setTDRStyle()
@@ -46,7 +46,11 @@ def finalPlot(input_file, truth_file):
 
   lumi = 19.468
   in_file = TFile(input_file)
-  file_truth = TFile(truth_file)
+  #file_truth = TFile(truth_file)
+  file_powhegV2_central = TFile("powhegV2_central.root")
+  file_powhegV2_scaleup = TFile("powhegV2_scaleup.root")
+  file_powhegV2_scaledown = TFile("powhegV2_scaledown.root")
+  file_XH = TFile("TheTruthXH.root")
 
   pthbins = array("d",[7.5,30,65,105,145,182.5])
   err_pth = array("d",[7.5,15,20,20,20,17.5])
@@ -58,8 +62,28 @@ def finalPlot(input_file, truth_file):
   down_tot = array("d")
   up_theo = array("d")
   down_theo = array("d")
-  truth_tot = array("d")
+  syst_no_matrix_tot = array("d")
+  #truth_tot = array("d")
+  powhegV2_central_tot = array("d")
+  powhegV2_scaleup_tot = array("d")
+  powhegV2_scaledown_tot = array("d")
   stat_error_tot = array("d")
+  XH_tot = array("d")
+
+##################################################
+############## HRes --- Hardcoded ################
+##################################################
+  hres_central = array("d", [0.342830, 0.268013, 0.820749E-01, 0.271278E-01, 0.116930E-01, 0.144969E-02])
+  hres_stat = array("d", [0.553522E-02, 0.298860E-02, 0.249445E-02, 0.131942E-02, 0.269466E-03, 0.199257E-05])
+  hres_scaleup = array("d", [0.322700, 0.244752, 0.713427E-01, 0.225048E-01, 0.927317E-02, 0.117876E-02])
+  hres_scaledown = array("d", [0.380556, 0.292041, 0.920276E-01, 0.321461E-01, 0.144447E-01, 0.170412E-02])
+
+  print "##################################################"
+  print "############## HRes --- Hardcoded ################"
+  print "##################################################"
+  print "CENTRAL VALUES: ", hres_central
+  print "SCALE UP VALUES: ", hres_scaleup
+  print "SCALE DONW VALUES: ", hres_scaledown
 
   syst = ["up","down","btagsf","eff_l","met","p_res_e","p_scale_e","p_scale_j","p_scale_m","p_scale_met"]
 
@@ -74,13 +98,24 @@ def finalPlot(input_file, truth_file):
     err_down = 0
     err_up_th = 0  
     err_down_th = 0
+
+    XH = file_XH.Get("hTrue").GetBinContent(bin)/(err_pth[bin-1]*2*lumi)
+
+############# HRes ---  emu flavor correction - ew corrections - resummation correction ##############
+    hres_scaleup[bin-1] = (hres_central[bin-1]-hres_scaleup[bin-1])*2*1.05*1.06 + XH
+    hres_scaledown[bin-1] = (hres_scaledown[bin-1]-hres_central[bin-1])*2*1.05*1.06 + XH
+    hres_central[bin-1] = hres_central[bin-1]*2*1.05*1.06 + XH
+    hres_stat[bin-1] = hres_stat[bin-1]*2*1.05*1.06
  
     central_value = in_file.Get("central").GetBinContent(bin)
     syst_no_matrix = in_file.Get("central").GetBinError(bin)
     
     stat_error = in_file.Get("statOnly").GetBinError(bin)
   
-    truth = file_truth.Get("hTrue").GetBinContent(bin)
+    #truth = file_truth.Get("hTrue").GetBinContent(bin)
+    powhegV2_central = file_powhegV2_central.Get("hDummy").GetBinContent(bin)
+    powhegV2_scaleup = powhegV2_central - file_powhegV2_scaleup.Get("hDummy").GetBinContent(bin)
+    powhegV2_scaledown = file_powhegV2_scaledown.Get("hDummy").GetBinContent(bin)- powhegV2_central
   
     for s in syst:
       if "up" in s or "down" in s:
@@ -153,21 +188,30 @@ def finalPlot(input_file, truth_file):
 #    syst_up_tot.append( sqrt( err_up )/(err_pth[bin-1]*2*lumi) )
 #    syst_down_tot.append( sqrt( err_down )/(err_pth[bin-1]*2*lumi) )
 
-    up_tot.append( sqrt( err_up + err_up_th  + (syst_no_matrix)**2  )/(err_pth[bin-1]*2*lumi) )
+    up_tot.append( sqrt( err_up + err_up_th  + (syst_no_matrix)**2 )/(err_pth[bin-1]*2*lumi) )
     down_tot.append( sqrt( err_down + err_down_th + (syst_no_matrix)**2 )/(err_pth[bin-1]*2*lumi) )
  
     up_theo.append( sqrt(err_up_th)/(err_pth[bin-1]*2*lumi) )
     down_theo.append( sqrt(err_down_th)/(err_pth[bin-1]*2*lumi) ) 
 
     stat_error_tot.append(stat_error/(err_pth[bin-1]*2*lumi))
+    syst_no_matrix_tot.append( sqrt(syst_no_matrix**2 - stat_error**2)/(err_pth[bin-1]*2*lumi)  )
 
-    truth_tot.append(truth/(err_pth[bin-1]*2*lumi))
+    XH_tot.append(XH)
+
+    #truth_tot.append(truth/(err_pth[bin-1]*2*lumi))
+    powhegV2_central_tot.append(powhegV2_central/(err_pth[bin-1]*2) + XH)
+    powhegV2_scaleup_tot.append(powhegV2_scaleup/(err_pth[bin-1]*2) + XH)
+    powhegV2_scaledown_tot.append(powhegV2_scaledown/(err_pth[bin-1]*2) + XH)
 
     print "###### BIN ",bin
     print "central tot = ", (central_value)/(err_pth[bin-1]*2*lumi)
-    print "Truth = ", truth/(err_pth[bin-1]*2*lumi)
-    print "Err up = ",up_tot, " Err down = ", down_tot
-    textable+=str(bin)+" & $%1.2f & +%1.1f/-%1.1f & \pm%1.1f & +%1.1f/-%1.1f  &  %1.2f \\\ \n" %(central_value_tot[bin-1], (100*up_tot[bin-1]/central_value_tot[bin-1]), (100*down_tot[bin-1]/central_value_tot[bin-1]), (100*stat_error_tot[bin-1]/central_value_tot[bin-1]), 100*(sqrt(up_tot[bin-1]**2 - stat_error_tot[bin-1]**2)/central_value_tot[bin-1]), 100*(sqrt(down_tot[bin-1]**2 - stat_error_tot[bin-1]**2)/central_value_tot[bin-1]), truth_tot[bin-1])
+    print "Err up = ", up_tot[bin-1], " Err down = ", down_tot[bin-1]
+    print "Stat = ", stat_error_tot[bin-1]
+    print "Type A = ", syst_no_matrix_tot[bin-1]
+    print "Type B up = ", sqrt(err_up)/(err_pth[bin-1]*2*lumi), "Type B down = ", sqrt(err_down)/(err_pth[bin-1]*2*lumi)
+    print "Type C up = ", sqrt(err_up_th)/(err_pth[bin-1]*2*lumi), "Type C down = ", sqrt(err_down_th)/(err_pth[bin-1]*2*lumi)
+    textable+=str(bin)+" & %1.3f & +%1.3f/-%1.3f & $\pm$%1.3f & $\pm$%1.3f & +%1.3f/-%1.3f  & +%1.4f/-%1.4f \\\ \n" %(central_value_tot[bin-1], (up_tot[bin-1]), (down_tot[bin-1]), (stat_error_tot[bin-1]), (syst_no_matrix_tot[bin-1]), (sqrt(err_up)/(err_pth[bin-1]*2*lumi)), (sqrt(err_down)/(err_pth[bin-1]*2*lumi)), (sqrt(err_up_th)/(err_pth[bin-1]*2*lumi)), (sqrt(err_down_th)/(err_pth[bin-1]*2*lumi)) )
   textable+="\hline \n"
   textable+="\end{tabular}\n"
 
@@ -175,20 +219,30 @@ def finalPlot(input_file, truth_file):
 
 
   for bin in range(6):
-    #syst_up_tot.append( Decimal(up_tot[bin]**2 - stat_error_tot[bin]**2).sqrt() )
-    #syst_down_tot.append( Decimal(down_tot[bin]**2 - stat_error_tot[bin]**2).sqrt() )
     print "bin ",bin, " tot up = ", up_tot[bin], " tot down = ", down_tot[bin], " stat = ", stat_error_tot[bin]
     print up_tot[bin]**2 - stat_error_tot[bin]**2, " ", down_tot[bin]**2 - stat_error_tot[bin]**2
     syst_up_tot.append( sqrt(up_tot[bin]**2 - stat_error_tot[bin]**2 ))
     syst_down_tot.append( sqrt(down_tot[bin]**2 - stat_error_tot[bin]**2 ))
 
-  x_pth = array("d",[7.5*0.5,15*0.5,20*0.5,20*0.5,20*0.5,17.5*0.5])
+#  x_pth = array("d",[7.5*0.5,15*0.5,20*0.5,20*0.5,20*0.5,17.5*0.5])
+#  x_pth_stat = array("d",[7.5*0.2,15*0.2,20*0.2,20*0.2,20*0.2,17.5*0.2])
+#  x_pth_syst = array("d",[7.5*0.1,15*0.1,20*0.1,20*0.1,20*0.1,17.5*0.1])
 
-  gsyst = TGraphAsymmErrors(6, pthbins, central_value_tot, x_pth, x_pth, syst_down_tot, syst_up_tot)
+  x_pth = array("d",[5,5,5,5,5,5])
+  x_pth_stat = array("d",[4,4,4,4,4,4])
+  x_pth_syst = array("d",[2,2,2,2,2,2])
+
+  gsyst = TGraphAsymmErrors(6, pthbins, central_value_tot, x_pth_syst, x_pth_syst, syst_down_tot, syst_up_tot)
   gtot = TGraphAsymmErrors(6, pthbins, central_value_tot, zero, zero, down_tot, up_tot)
-  gtruth = TGraphErrors(6, pthbins, truth_tot, err_pth, zero)
-  gstat = TGraphErrors(6, pthbins, central_value_tot, x_pth, stat_error_tot)
+  gXH = TGraphErrors(6, pthbins, XH_tot, err_pth, zero)
+  #gtruth = TGraphErrors(6, pthbins, truth_tot, err_pth, zero)
+  gpowhegV2 = TGraphErrors(6, pthbins, powhegV2_central_tot, err_pth, zero)
+  gpowhegV2_scale = TGraphAsymmErrors(6, pthbins, powhegV2_central_tot, err_pth, err_pth, powhegV2_scaleup_tot, powhegV2_scaledown_tot)
+  gstat = TGraphErrors(6, pthbins, central_value_tot, x_pth_stat, stat_error_tot)
   gtheo = TGraphAsymmErrors(6, pthbins, central_value_tot, x_pth, x_pth, up_theo, down_theo)
+  ghres = TGraphErrors(6, pthbins, hres_central, err_pth, zero)
+  ghres_scale = TGraphAsymmErrors(6, pthbins, hres_central, err_pth, err_pth, hres_scaleup, hres_scaledown)
+  
 
 #  gtot.SetTitle("k_{reg} = 1")
   gtot.SetLineColor(kBlack)
@@ -210,35 +264,73 @@ def finalPlot(input_file, truth_file):
   gstat.SetFillColor(kAzure-8) 
 #  gstat.SetFillStyle(3002) 
   gstat.SetLineWidth(1) 
-  gstat.Draw("P2Z") 
+  #gstat.Draw("P2Z") 
 
-  gsyst.SetFillStyle(3004)
+  gStyle.SetHatchesSpacing(0.5)
+  gStyle.SetHatchesLineWidth(1)
+  #  gsyst.SetFillStyle(3004)
+  # gsyst.SetFillStyle(3354)
+  gsyst.SetFillColor(kGray)
   gsyst.SetLineWidth(1)
-  gsyst.Draw("P2Z")
+  #gsyst.Draw("P2Z")
 
   gtheo.SetFillColor(kRed)
   gtheo.SetLineWidth(1)
-  gtheo.Draw("P2Z")
+  #gtheo.Draw("P2Z")
 
-  gtruth.SetMarkerSize(0)
-  gtruth.SetLineColor(kGreen)
-  gtruth.SetLineWidth(3)
- # gtruth.SetLineStyle(7)
-  gtruth.Draw("PZ")
+  #gtruth.SetMarkerSize(0)
+  #gtruth.SetLineColor(kGreen)
+  #gtruth.SetLineWidth(3)
+ ## gtruth.SetLineStyle(7)
+  #gtruth.Draw("PZ")
+
+  gpowhegV2_scale.SetFillStyle(3354)
+  gpowhegV2_scale.SetLineWidth(2)
+  gpowhegV2_scale.SetLineColor(kGreen)
+  gpowhegV2_scale.SetFillColor(kGreen)
+  gpowhegV2_scale.Draw("2Z")
+
+  ghres_scale.SetFillStyle(3345)
+  ghres_scale.SetLineWidth(2)
+  ghres_scale.SetLineColor(kMagenta)
+  ghres_scale.SetFillColor(kMagenta)
+  ghres_scale.Draw("2Z")
+
+  gpowhegV2.SetMarkerSize(0)
+  gpowhegV2.SetLineColor(kGreen)
+  gpowhegV2.SetLineWidth(3)
+  gpowhegV2.Draw("PZ")
+
+  ghres.SetMarkerSize(0)
+  ghres.SetLineColor(kMagenta)
+  ghres.SetLineWidth(3)
+  ghres.Draw("PZ")
+
+  gXH.SetMarkerSize(0)
+  gXH.SetLineColor(kBlue)
+  gXH.SetLineWidth(3)
+  gXH.Draw("PZ")
+
+  gstat.Draw("P2Z")
+  gsyst.Draw("P2Z")
+  gtheo.Draw("P2Z")
   gtot.Draw("PZ")
 
   leg = TLegend(0.4,0.6,0.6,0.8)
+  leg.SetFillStyle(0)
   leg.SetBorderSize(0)
   leg.SetFillColor(kWhite)
-  leg.SetTextSize(32)
+  #leg.SetTextSize(32)
 #  leg.SetBorderSize(0)
-  leg.SetTextFont(72) 
-  leg.SetTextSize(0.04) 
+  #leg.SetTextFont(72) 
+  #leg.SetTextSize(0.04) 
   leg.AddEntry(gtot,"Data","lep") 
   leg.AddEntry(gstat,"Statistical uncertainty","F") 
   leg.AddEntry(gsyst,"Systematic uncertainty","F")
   leg.AddEntry(gtheo,"Theoretical uncertainty","F")
-  leg.AddEntry(gtruth,"POWHEG","L")
+  leg.AddEntry(gpowhegV2_scale,"ggH (PowhegV2+JHUGen) + XH","F")
+  leg.AddEntry(ghres_scale, "ggH (HRes) + XH","F")
+  leg.AddEntry(gXH, "XH = VBF + VH","L")
   leg.Draw() 
 
   CMS_lumi.CMS_lumi(canvas, 2, iPos)

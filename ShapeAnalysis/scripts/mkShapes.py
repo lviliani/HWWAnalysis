@@ -62,7 +62,7 @@ class ShapeFactory:
  
     # _____________________________________________________________________________
     def __init__(self):
-        self._stdWgt = 'baseW*puW*effW*triggW'
+        self._stdWgt = 'baseW*puW*effW*triggW*(1*(dataset==1)+1)'
         self._systByWeight = {}
 
         ranges = {}
